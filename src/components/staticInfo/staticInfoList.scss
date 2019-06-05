@@ -1,0 +1,16 @@
+.staticInfoList {
+  line-height: 1.2;
+  &_item {
+    position: relative;
+    padding-left: 15px;
+    &:not(:first-child) {
+      margin-top: 20px;
+    }
+    &:before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+}

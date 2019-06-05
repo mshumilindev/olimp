@@ -1,0 +1,14 @@
+.section {
+  margin-bottom: $pageIndent;
+  &_title {
+    text-transform: uppercase;
+    margin-bottom: $pageIndent / 2;
+    font-family: $RobotoCondensed;
+    font-size: 20px;
+  }
+  &_actions {
+    margin-top: $pageIndent;
+    display: flex;
+    justify-content: center;
+  }
+}

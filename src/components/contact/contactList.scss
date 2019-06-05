@@ -1,0 +1,15 @@
+.contactList {
+  &_item {
+    display: flex;
+    &:not(:first-child) {
+      margin-top: 20px;
+    }
+  }
+  &_title {
+    font-weight: bold;
+    width: 120px;
+  }
+  &_phone {
+    white-space: nowrap;
+  }
+}

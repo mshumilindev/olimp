@@ -1,0 +1,27 @@
+$scheduleDayIndent: 20px;
+
+.schedule {
+  &--scheduleList {
+    display: flex;
+    margin: 0 (-$scheduleDayIndent);
+    &_day {
+      width: 20%;
+      flex: 0 0 auto;
+    }
+    &_day-inner {
+      padding: 0 $scheduleDayIndent;
+    }
+    &_title {
+
+    }
+    &_classes {
+
+    }
+    &_classes-item {
+
+    }
+    &_classes-text {
+
+    }
+  }
+}

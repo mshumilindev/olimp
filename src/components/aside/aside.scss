@@ -1,0 +1,54 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+
+.aside {
+  &--scheduleList {
+    &_day {
+      box-sizing: border-box;
+      box-shadow: none;
+      position: relative;
+      max-width: 400px;
+      &:not(:first-child) {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid $lightGreyColor;
+      }
+    }
+    &_day-inner {
+      width: 100%;
+    }
+    &_title {
+      margin-bottom: 20px;
+      font-weight: normal;
+      text-transform: uppercase;
+    }
+    &_classes {
+
+    }
+    &_classes-item {
+      margin-top: 20px;
+      color: $greyColor;
+    }
+    &_classes-text {
+
+    }
+  }
+  &--consultationsList {
+    &_item {
+      display: flex;
+      flex-wrap: wrap;
+      &:not(:first-child) {
+        margin-top: 20px;
+      }
+    }
+    &_time {
+      margin-right: 10px;
+      color: $greyColor;
+    }
+    &_title {
+      white-space: nowrap;
+      font-weight: bold;
+    }
+  }
+}

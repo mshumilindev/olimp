@@ -1,0 +1,63 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/fonts';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  left: $navWidth;
+  right: 0;
+  top: 0;
+  padding: 0 $pageIndent;
+  height: $headerHeight;
+  background: $white;
+  z-index: 1;
+  &_user {
+    font-family: $RobotoCondensed;
+    font-size: 20px;
+  }
+  &_actions {
+    display: flex;
+  }
+  &_actions-item {
+    margin-left: 20px;
+    position: relative;
+  }
+  &_icon {
+    font-size: 20px;
+    position: relative;
+    z-index: 1;
+    &:hover {
+      cursor: pointer;
+      color: $linkHoverColor;
+      + .header_icon-descr {
+        opacity: 1;
+        z-index: 0;
+        transform: translate(-50%, 0);
+      }
+    }
+  }
+  &_icon-descr {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 10px);
+    bottom: 100%;
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    font-size: 12px;
+    margin-bottom: 5px;
+    opacity: 0;
+    z-index: -1;
+    transition: all .15s ease-in-out;
+    color: $linkHoverColor;
+  }
+  &_divider {
+    width: 1px;
+    height: 20px;
+    background: $baseColor;
+    margin-left: 20px;
+    opacity: .25;
+  }
+}

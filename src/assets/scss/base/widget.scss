@@ -1,0 +1,19 @@
+$widgetIndent: 20px;
+
+.widget {
+  background: $white;
+  padding: $widgetIndent;
+  overflow: hidden;
+  &:not(:first-child) {
+    margin-top: $pageIndent;
+  }
+  &_title {
+    color: $white;
+    background: $baseColor;
+    margin: -$widgetIndent (-$widgetIndent) $widgetIndent;
+    padding: $widgetIndent;
+  }
+  &_icon {
+    margin-right: $widgetIndent;
+  }
+}

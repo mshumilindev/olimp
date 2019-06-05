@@ -1,0 +1,115 @@
+$gridIndent: 20px;
+
+.grid {
+  display: flex;
+  margin: -$gridIndent;
+  &_col {
+    padding: $gridIndent;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: 100%;
+    &.small-col-1 {
+      width: 8.33333%;
+    }
+    &.small-col-2 {
+      width: 16.66666%;
+    }
+    &.small-col-3 {
+      width: 25%;
+    }
+    &.small-col-4 {
+      width: 33.33333%;
+    }
+    &.small-col-5 {
+      width: 41.66666%;
+    }
+    &.small-col-6 {
+      width: 50%;
+    }
+    &.small-col-7 {
+      width: 58.33333%;
+    }
+    &.small-col-8 {
+      width: 66.66666%;
+    }
+    &.small-col-9 {
+      width: 75%;
+    }
+    &.small-col-10 {
+      width: 83.33333%;
+    }
+    &.small-col-11 {
+      width: 91.66666%;
+    }
+    @media screen and (min-width: 1200px) {
+      &.medium-col-1 {
+        width: 8.33333%;
+      }
+      &.medium-col-2 {
+        width: 16.66666%;
+      }
+      &.medium-col-3 {
+        width: 25%;
+      }
+      &.medium-col-4 {
+        width: 33.33333%;
+      }
+      &.medium-col-5 {
+        width: 41.66666%;
+      }
+      &.medium-col-6 {
+        width: 50%;
+      }
+      &.medium-col-7 {
+        width: 58.33333%;
+      }
+      &.medium-col-8 {
+        width: 66.66666%;
+      }
+      &.medium-col-9 {
+        width: 75%;
+      }
+      &.medium-col-10 {
+        width: 83.33333%;
+      }
+      &.medium-col-11 {
+        width: 91.66666%;
+      }
+    }
+    @media screen and (min-width: 1600px) {
+      &.large-col-1 {
+        width: 8.33333%;
+      }
+      &.large-col-2 {
+        width: 16.66666%;
+      }
+      &.large-col-3 {
+        width: 25%;
+      }
+      &.large-col-4 {
+        width: 33.33333%;
+      }
+      &.large-col-5 {
+        width: 41.66666%;
+      }
+      &.large-col-6 {
+        width: 50%;
+      }
+      &.large-col-7 {
+        width: 58.33333%;
+      }
+      &.large-col-8 {
+        width: 66.66666%;
+      }
+      &.large-col-9 {
+        width: 75%;
+      }
+      &.large-col-10 {
+        width: 83.33333%;
+      }
+      &.large-col-11 {
+        width: 91.66666%;
+      }
+    }
+  }
+}

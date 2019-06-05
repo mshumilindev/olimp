@@ -1,0 +1,27 @@
+.page {
+  padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
+  background: $lightColor;
+  min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: $white;
+    opacity: .75;
+    z-index: -1;
+  }
+}
