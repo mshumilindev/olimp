@@ -1,0 +1,64 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+$datePadding: 10px;
+
+%s-eventsCalendar-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+%s-eventsCalendar-list-item {
+  width: calc(100% / 7);
+  padding: $datePadding;
+  box-sizing: border-box;
+}
+
+.eventsCalendar {
+  box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+  &__daysList {
+    background: $baseColor;
+    color: $white;
+    @extend %s-eventsCalendar-list;
+  }
+  &__day {
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    text-align: center;
+    @extend %s-eventsCalendar-list-item;
+  }
+  &__day-short {
+    display: none;
+  }
+  &__day-full {
+    display: block;
+  }
+  &__datesList {
+    background: $white;
+    border-right: 1px solid $mediumGreyColor;
+    border-bottom: 1px solid $mediumGreyColor;
+    @extend %s-eventsCalendar-list;
+  }
+  &__date {
+    border-left: 1px solid $mediumGreyColor;
+    border-top: 1px solid $mediumGreyColor;
+    &.isDisabled {
+      opacity: .25;
+    }
+    &.isWeekend {
+      background: $lightRedColor;
+      .eventsCalendar__date-title {
+        color: $redColor;
+      }
+    }
+    @extend %s-eventsCalendar-list-item;
+  }
+  &__date-title {
+    font-weight: bold;
+    margin: -$datePadding (-$datePadding) $datePadding;
+    padding: $datePadding;
+  }
+  &__date-content {
+    font-size: 14px;
+    //min-height: 20px;
+  }
+}

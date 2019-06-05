@@ -4,6 +4,8 @@ $widgetIndent: 20px;
   background: $white;
   padding: $widgetIndent;
   overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
   &:not(:first-child) {
     margin-top: $pageIndent;
   }

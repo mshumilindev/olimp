@@ -23,7 +23,7 @@ class ScheduleItem extends React.Component {
         return (
             course ?
                 <div className={prefix + 'scheduleList_classes-item'}>
-                    <Link to={'/classes/' + courseID} className={prefix + 'scheduleList_classes-text'}>{ course.name[lang] ? course.name[lang] : course.name['ua'] }</Link>
+                    <Link to={'/courses/' + courseID} className={prefix + 'scheduleList_classes-text'}>{ course.name[lang] ? course.name[lang] : course.name['ua'] }</Link>
                 </div>
                 :
                 null

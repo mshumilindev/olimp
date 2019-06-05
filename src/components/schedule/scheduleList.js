@@ -33,7 +33,7 @@ export default class ScheduleList extends React.Component {
                             day.classes.length && levelCoursesList.length ?
                                 day.classes.map((item) => this._renderClass(item))
                                 :
-                                <div>PLACEHOLDER Немає уроків</div>
+                                <div className={prefix + 'scheduleList_classes-item'}>PLACEHOLDER Немає уроків</div>
                         }
                     </div>
                 </div>
