@@ -3,147 +3,37 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import EventsCalendarDate from "./EventsCalendarDate";
 import EventsCalendarDay from './EventsCalendarDay';
 import './eventsCalendar.scss';
+import {saveCourse} from "../../redux/actions/scheduleActions";
+import withSaveCourse from '../../utils/SaveCourse';
+import {connect} from "react-redux";
 
-export default class EventsCalendar extends React.Component {
+class EventsCalendar extends React.Component {
     constructor() {
         super();
 
         this.config = {
             months: {
-                ua: {
-                    1: 'Січень',
-                    2: 'Лютий',
-                    3: 'Березень',
-                    4: 'Квітень',
-                    5: 'Травень',
-                    6: 'Червень',
-                    7: 'Липень',
-                    8: 'Серпень',
-                    9: 'Вересень',
-                    10: 'Жовтень',
-                    11: 'Листопад',
-                    12: 'Грудень'
-                },
-                ru: {
-                    1: 'Январь',
-                    2: 'Февраль',
-                    3: 'Март',
-                    4: 'Апрель',
-                    5: 'Май',
-                    6: 'Июнь',
-                    7: 'Июль',
-                    8: 'Август',
-                    9: 'Сентябрь',
-                    10: 'Октябрь',
-                    11: 'Ноябрь',
-                    12: 'Декабрь'
-                },
-                en: {
-                    1: 'January',
-                    2: 'February',
-                    3: 'March',
-                    4: 'April',
-                    5: 'May',
-                    6: 'June',
-                    7: 'July',
-                    8: 'August',
-                    9: 'September',
-                    10: 'October',
-                    11: 'November',
-                    12: 'December'
-                }
+                1: 'january',
+                2: 'fabruary',
+                3: 'march',
+                4: 'april',
+                5: 'may',
+                6: 'june',
+                7: 'july',
+                8: 'august',
+                9: 'september',
+                10: 'october',
+                11: 'november',
+                12: 'december'
             },
             days: {
-                ua: {
-                    0: {
-                        short: 'Нд',
-                        full: 'Неділя'
-                    },
-                    1: {
-                        short: 'Пн',
-                        full: 'Понеділок'
-                    },
-                    2: {
-                        short: 'Вт',
-                        full: 'Вівторок'
-                    },
-                    3: {
-                        short: 'Ср',
-                        full: 'Середа'
-                    },
-                    4: {
-                        short: 'Чт',
-                        full: 'Четвер'
-                    },
-                    5: {
-                        short: 'Пт',
-                        full: 'П\'ятниця'
-                    },
-                    6: {
-                        short: 'Сб',
-                        full: 'Субота'
-                    }
-                },
-                ru: {
-                    0: {
-                        short: 'Вс',
-                        full: 'Воскресенье'
-                    },
-                    1: {
-                        short: 'Пн',
-                        full: 'Понедельник'
-                    },
-                    2: {
-                        short: 'Вт',
-                        full: 'Вторник'
-                    },
-                    3: {
-                        short: 'Ср',
-                        full: 'Среда'
-                    },
-                    4: {
-                        short: 'Чт',
-                        full: 'Четверг'
-                    },
-                    5: {
-                        short: 'Пт',
-                        full: 'Пятница'
-                    },
-                    6: {
-                        short: 'Сб',
-                        full: 'Суббота'
-                    }
-                },
-                en: {
-                    0: {
-                        short: 'Sun',
-                        full: 'Sunday'
-                    },
-                    1: {
-                        short: 'Mon',
-                        full: 'Monday'
-                    },
-                    2: {
-                        short: 'Tue',
-                        full: 'Tuesday'
-                    },
-                    3: {
-                        short: 'Wed',
-                        full: 'Wednesday'
-                    },
-                    4: {
-                        short: 'Thu',
-                        full: 'Thursday'
-                    },
-                    5: {
-                        short: 'Fri',
-                        full: 'Friday'
-                    },
-                    6: {
-                        short: 'Sat',
-                        full: ''
-                    }
-                }
+                0: 'sunday',
+                1: 'monday',
+                2: 'tuesday',
+                3: 'wednesday',
+                4: 'thursday',
+                5: 'friday',
+                6: 'saturday'
             }
         };
 
@@ -153,44 +43,58 @@ export default class EventsCalendar extends React.Component {
     }
 
     componentDidMount() {
-        this.buildCalendar();
+        this.buildMonth();
+        this.createCalendar()
+    }
+
+    // === Needs to be moved out of this component
+    createCalendar() {
+        const { scheduleList, calendar } = this.props;
+
+        console.log(scheduleList, calendar);
     }
 
     render() {
         const { calendarMonthsArray } = this.state;
-        const { lang } = this.context;
-        const { scheduleList } = this.props;
+        const { translate } = this.context;
+        const { scheduleList, getCourseToSave, coursesList } = this.props;
 
         return (
             <div className="eventsCalendar">
-                {
-                    this.config.days[lang] ?
-                        <div className="eventsCalendar__daysList">
-                            {
-                                Object.keys(this.config.days[lang]).filter(key => key !== '0').map(key => <EventsCalendarDay day={this.config.days[lang][key]} key={key}/>)
-                            }
-                            {
-                                <EventsCalendarDay day={this.config.days[lang][0]}/>
-                            }
-                        </div>
-                        :
-                        null
-                }
-                {
-                    calendarMonthsArray.length ?
-                        <div className="eventsCalendar__datesList">
-                            {
-                                calendarMonthsArray.map(date => <EventsCalendarDate key={date.date} date={date} daySchedule={scheduleList[new Date(date.date).getDay() - 1]}/>)
-                            }
-                        </div>
-                        :
-                        null
-                }
+                <div className="eventsCalendar__controls">
+                    <a href="/" className="eventsCalendar__controls-prev">
+                        <i className="fa fa-chevron-left" />
+                    </a>
+                    <h2 className="eventsCalendar__controls-heading">{ this.currentMonth + ' ' + this.currentYear }</h2>
+                    <a href="/" className="eventsCalendar__controls-next">
+                        <i className="fa fa-chevron-right" />
+                    </a>
+                </div>
+                <div className="eventsCalendar__data">
+                    <div className="eventsCalendar__daysList">
+                        {
+                            Object.keys(this.config.days).filter(key => key !== '0').map(key => <EventsCalendarDay day={translate(this.config.days[key])} key={key}/>)
+                        }
+                        {
+                            <EventsCalendarDay day={translate(this.config.days[0])}/>
+                        }
+                    </div>
+                    {
+                        calendarMonthsArray.length ?
+                            <div className="eventsCalendar__datesList">
+                                {
+                                    calendarMonthsArray.map((date, index) => <EventsCalendarDate getCourseToSave={getCourseToSave} key={date.date} date={date} daySchedule={scheduleList[new Date(date.date).getDay() - 1]} isLastDate={index === calendarMonthsArray.length - 1} coursesList={coursesList}/>)
+                                }
+                            </div>
+                            :
+                            null
+                    }
+                </div>
             </div>
         )
     }
 
-    buildCalendar() {
+    buildMonth() {
         const calendarMonthsArray = [];
 
         // === Getting previous month days
@@ -229,15 +133,14 @@ export default class EventsCalendar extends React.Component {
     }
 
     createDay(i) {
-        const newDay = new Date(+this.currentYear, new Date().getMonth(), i);
-        return newDay;
+        return new Date(+this.currentYear, new Date().getMonth(), i);
     }
 
     get currentMonth() {
         const { months } = this.config;
-        const { lang } = this.context;
+        const { translate } = this.context;
 
-        return months[lang][new Date().getMonth() + 1];
+        return translate(months[new Date().getMonth() + 1]);
     }
 
     get firstMonthDay() {
@@ -275,3 +178,11 @@ export default class EventsCalendar extends React.Component {
 }
 
 EventsCalendar.contextType = siteSettingsContext;
+
+const mapStateToProps = state => ({
+    scheduleList: state.scheduleReducer.scheduleList,
+    coursesList: state.scheduleReducer.coursesList,
+    calendar: state.scheduleReducer.calendar,
+    loading: state.scheduleReducer.loading
+});
+export default connect(mapStateToProps, { saveCourse })(withSaveCourse(EventsCalendar));

@@ -1,50 +1,28 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import {Link} from "react-router-dom";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {saveCourse} from "../../redux/actions/scheduleActions";
-import firebase from "../../db/firestore";
-import {connect} from "react-redux";
+import LinePreloader from "../UI/LinePreloader";
 
-const db = firebase.firestore();
+const ScheduleItem = React.memo(({prefix, course, subject, courseID, isLast, getCourseToSave}) => {
+    const { lang } = useContext(siteSettingsContext);
 
-class ScheduleItem extends React.Component {
-    componentDidMount() {
-        const { course } = this.props;
-
+    useEffect(() => {
         if ( !course ) {
-            this.getCourse();
+            getCourseToSave(subject, courseID, isLast);
         }
-    }
+    });
 
-    render() {
-        const { prefix, courseID, course } = this.props;
-        const { lang } = this.context;
-
-        return (
-            course ?
-                <div className={prefix + 'scheduleList_classes-item'}>
+    return (
+        <div className={prefix + 'scheduleList_classes-item'}>
+            {
+                course ?
                     <Link to={'/courses/' + courseID} className={prefix + 'scheduleList_classes-text'}>{ course.name[lang] ? course.name[lang] : course.name['ua'] }</Link>
-                </div>
-                :
-                null
-        )
-    }
-
-    getCourse() {
-        const { subject, saveCourse, courseID } = this.props;
-
-        const courseRef = db.doc('courses/' + subject + '/coursesList/' + courseID);
-
-        courseRef.get().then(doc => {
-            if ( doc.exists ) {
-                saveCourse(doc.data());
+                    :
+                    <LinePreloader height={19}/>
             }
-        });
-    }
-}
-ScheduleItem.contextType = siteSettingsContext;
+        </div>
+    )
 
-export default connect(
-    null,
-    { saveCourse }
-)(ScheduleItem)
+});
+
+export default ScheduleItem;

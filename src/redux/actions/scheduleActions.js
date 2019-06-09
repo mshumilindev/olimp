@@ -8,7 +8,7 @@ const level = '1a'; // === THIS IS PLACEHOLDER, NEEDS TO BE DYNAMIC
 // === FETCH SCHEDULE
 export const FETCH_SCHEDULE_BEGIN = 'FETCH_SCHEDULE_BEGIN';
 export const FETCH_SCHEDULE_SUCCESS = 'FETCH_SCHEDULE_SUCCESS';
-const newSchedule = [];
+const newSchedule = localStorage.getItem('schedule') ? JSON.parse(localStorage.getItem('schedule')).data : [];
 const scheduleCollection = db.collection('levels/' + level + '/schedule');
 
 export function fetchSchedule() {
@@ -17,6 +17,7 @@ export function fetchSchedule() {
             dispatch(fetchScheduleBegin());
             return scheduleCollection.get().then((data) => {
                 data.docs.map(doc => newSchedule.push(doc.data()));
+                localStorage.setItem('schedule', JSON.stringify({data: newSchedule}));
 
                 dispatch(fetchScheduleSuccess(newSchedule));
             });
@@ -45,7 +46,7 @@ export const fetchScheduleSuccess = scheduleList => {
 export const FETCH_LEVEL_COURSES_BEGIN = 'FETCH_LEVEL_COURSES_BEGIN';
 export const FETCH_LEVEL_COURSES_SUCCESS = 'FETCH_LEVEL_COURSES_SUCCESS';
 
-const newLevelCourses = [];
+const newLevelCourses = localStorage.getItem('levelCourses') ? JSON.parse(localStorage.getItem('levelCourses')).data : [];
 const levelCoursesCollection = db.collection('levels/' + level + '/courses');
 
 export function fetchLevelCourses() {
@@ -54,6 +55,7 @@ export function fetchLevelCourses() {
             dispatch(fetchLevelCoursesBegin());
             return levelCoursesCollection.get().then((data) => {
                 data.docs.map(doc => newLevelCourses.push({[doc.id]: doc.data().course}));
+                localStorage.setItem('levelCourses', JSON.stringify({data: newLevelCourses}));
 
                 dispatch(fetchLevelCoursesSuccess(newLevelCourses));
             });
@@ -78,17 +80,36 @@ export const fetchLevelCoursesSuccess = levelCoursesList => {
     }
 };
 
+// === COURSES ACTIONS
+const coursesCollection = localStorage.getItem('courses') ? JSON.parse(localStorage.getItem('courses')).data : [];
+
+// === FETCH COURSES
+export const FETCH_COURSES_BEGIN = 'FETCH_COURSES_BEGIN';
+export const FETCH_COURSES_SUCCESS = 'FETCH_COURSES_SUCCESS';
+
+export function fetchCourses() {
+    return dispatch => {
+        dispatch(fetchCourseSuccess(coursesCollection));
+    }
+}
+
+export const fetchCourseSuccess = coursesList => {
+    return {
+        type: FETCH_COURSES_SUCCESS,
+        payload: { coursesList }
+    }
+};
+
 // === SAVE FETCHED COURSES
 export const SAVE_COURSE_BEGIN = 'SAVE_COURSE_BEGIN';
 export const SAVE_COURSE_SUCCESS = 'SAVE_COURSE_SUCCESS';
-
-const coursesCollection = [];
 
 export function saveCourse(course) {
     return dispatch => {
         dispatch(saveCourseBegin());
         if (!coursesCollection.some(item => item.id === course.id)) {
             coursesCollection.push(course);
+            localStorage.setItem('courses', JSON.stringify({data: coursesCollection}));
         }
         dispatch(saveCourseSuccess(coursesCollection))
     }
@@ -103,5 +124,43 @@ export const saveCourseSuccess = coursesList => {
     return {
         type: SAVE_COURSE_SUCCESS,
         payload: { coursesList }
+    }
+};
+
+// === FETCH CALENDAR
+export const FETCH_CALENDAR_BEGIN = 'FETCH_CALENDAR_BEGIN';
+export const FETCH_CALENDAR_SUCCESS = 'FETCH_CALENDAR_SUCCESS';
+
+const newCalendar = localStorage.getItem('calendar') ? JSON.parse(localStorage.getItem('calendar')) : {};
+const calendarCollection = db.collection('calendar');
+
+export function fetchCalendar() {
+    if ( !Object.keys(newCalendar).length ) {
+        return dispatch => {
+            dispatch(fetchCalendarBegin());
+            return calendarCollection.get().then(data => {
+                data.docs.map(doc => newCalendar[doc.id] = doc.data());
+                localStorage.setItem('calendar', JSON.stringify(newCalendar));
+
+                dispatch(fetchCalendarSuccess(newCalendar));
+            });
+        }
+    }
+    else {
+        return dispatch => {
+            dispatch(fetchCalendarSuccess(newCalendar))
+        }
+    }
+}
+
+export const fetchCalendarBegin =() => {
+    return {
+        type: FETCH_CALENDAR_BEGIN
+    }
+};
+export const fetchCalendarSuccess = calendar => {
+    return {
+        type: FETCH_CALENDAR_SUCCESS,
+        payload: { calendar }
     }
 };

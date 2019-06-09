@@ -2,6 +2,7 @@
 @import '../../assets/scss/utils/fonts';
 
 $datePadding: 10px;
+$dateOpenIndent: 20px;
 
 %s-eventsCalendar-list {
   display: flex;
@@ -14,7 +15,28 @@ $datePadding: 10px;
 }
 
 .eventsCalendar {
-  box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+  &__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+  &__controls-prev {
+    padding: 10px;
+  }
+  &__controls-next {
+    padding: 10px;
+  }
+  &__controls-heading {
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    min-width: 300px;
+    text-align: center;
+  }
+  &__data {
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+  }
   &__daysList {
     background: $baseColor;
     color: $white;
@@ -26,12 +48,6 @@ $datePadding: 10px;
     text-align: center;
     @extend %s-eventsCalendar-list-item;
   }
-  &__day-short {
-    display: none;
-  }
-  &__day-full {
-    display: block;
-  }
   &__datesList {
     background: $white;
     border-right: 1px solid $mediumGreyColor;
@@ -41,24 +57,102 @@ $datePadding: 10px;
   &__date {
     border-left: 1px solid $mediumGreyColor;
     border-top: 1px solid $mediumGreyColor;
+    @extend %s-eventsCalendar-list-item;
     &.isDisabled {
       opacity: .25;
     }
     &.isWeekend {
       background: $lightRedColor;
+      .eventsCalendar__date-content {
+        border-top-color: transparent;
+      }
       .eventsCalendar__date-title {
         color: $redColor;
       }
     }
-    @extend %s-eventsCalendar-list-item;
+    &:hover {
+      &:not(.isWeekend):not(.isDisabled) {
+        background: $lightColor;
+        .eventsCalendar__date-link {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  &__date-inner {
+    &.isDateOpen {
+      position: fixed;
+      z-index: 99999;
+      left: $dateOpenIndent;
+      right: $dateOpenIndent;
+      top: $dateOpenIndent;
+      bottom: $dateOpenIndent;
+      .eventsCalendar__date-block {
+        position: absolute;
+        background: $white;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 300px;
+      }
+      .eventsCalendar__date-link {
+        opacity: 1;
+        font-size: 20px;
+        transform: rotate(0);
+        transition: transform .25s ease-in-out;
+        &:hover {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+  &__date-overflow {
+    background: $baseColor;
+    opacity: .5;
+    position: absolute;
+    left: -$dateOpenIndent;
+    top: -$dateOpenIndent;
+    right: -$dateOpenIndent;
+    bottom: -$dateOpenIndent;
+    z-index: -1;
   }
   &__date-title {
     font-weight: bold;
-    margin: -$datePadding (-$datePadding) $datePadding;
+    margin: -$datePadding (-$datePadding) 0;
     padding: $datePadding;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__date-link {
+    cursor: pointer;
+    opacity: 0;
+    padding: 10px;
+    margin: -10px;
+    &:hover {
+      color: $linkHoverColor;
+    }
   }
   &__date-content {
+    border-top: 1px solid $lightGreyColor;
     font-size: 14px;
-    //min-height: 20px;
+    padding-top: $datePadding;
+  }
+  &__date-content-item {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 17px;
+    &:not(:first-child) {
+      margin-top: 10px;
+    }
+  }
+  &__date-content-item-empty {
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }

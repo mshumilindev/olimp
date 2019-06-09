@@ -4,29 +4,36 @@ import firebase from "../db/firestore";
 
 const db = firebase.firestore();
 
+// === Methods must be moved to redux, properties must be moved to context to make stateless components
+
 export default class SiteSettingsProvider extends React.Component{
     constructor() {
         super();
         this.state = {
-            siteName: 'КОЛЕГІУМ "ОЛІМП"',
-            translations: {},
-            lang: localStorage.getItem('lang'),
+            siteName: 'КОЛЕГІУМ "ОЛІМП"', // === Need to get it from db and save to localStorage
+            translations: [],
+            lang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'ua',
             level: '1a',
             changeLang: (lang) => {
                 this.setLang(lang);
-                this.getTranslations();
             },
             translate: (term) => {
-                return this.state.translations[term] ? this.state.translations[term] : term;
+                return !this.state.translations[this.state.lang] || !this.state.translations[this.state.lang][term] ? term :this.state.translations[this.state.lang][term];
             }
         };
     }
 
     componentDidMount() {
-        if ( !this.state.lang ) {
+        if ( !localStorage.getItem('lang') ) {
             localStorage.setItem('lang', 'ua');
         }
         this.getTranslations();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if ( prevState.lang !== this.state.lang && !this.state.translations[this.state.lang] ) {
+            this.getTranslations();
+        }
     }
 
     render() {
@@ -49,14 +56,30 @@ export default class SiteSettingsProvider extends React.Component{
     }
 
     getTranslations() {
-        const navCollection = db.collection('translations').doc(localStorage.getItem('lang'));
+        const newTranslations = this.state.translations;
+        const { lang } = this.state;
 
-        navCollection.get().then((doc) => {
+        if ( !localStorage.getItem('translations' + lang) ) {
+            const navCollection = db.collection('translations').doc(lang);
+
+            navCollection.get().then((doc) => {
+                newTranslations[lang] = doc.data();
+
+                this.setState(() => {
+                    return {
+                        translations: newTranslations
+                    }
+                });
+                localStorage.setItem('translations' + lang, JSON.stringify(newTranslations[lang]));
+            });
+        }
+        else {
+            newTranslations[lang] = JSON.parse(localStorage.getItem('translations' + lang));
             this.setState(() => {
                 return {
-                    translations: doc.data()
+                    translations: newTranslations
                 }
             });
-        });
+        }
     }
 }

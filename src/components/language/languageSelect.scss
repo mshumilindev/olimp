@@ -16,7 +16,12 @@
     }
   }
   &_icon {
-    width: 30px;
+    width: 20px !important;
+    height: 20px;
+    background-size: cover;
+    background-position: 50% 50%;
+    border-radius: 100%;
+    overflow: hidden;
     flex: 0 0 auto;
     margin-right: 5px;
   }

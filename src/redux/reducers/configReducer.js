@@ -1,11 +1,11 @@
-import { FETCH_NAV_BEGIN, FETCH_NAV_SUCCESS } from '../actions/mainActions';
+import { FETCH_NAV_BEGIN, FETCH_NAV_SUCCESS } from '../actions/configActions';
 
 const initialState = {
     nav: [],
     loading: false
 };
 
-export default function handleApp(state = initialState, action) {
+export default function configReducer(state = initialState, action) {
     switch ( action.type ) {
         case FETCH_NAV_BEGIN:
             return {

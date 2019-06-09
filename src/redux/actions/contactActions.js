@@ -2,7 +2,7 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const contactCollection = db.collection('contact');
-const newContact = [];
+const newContact = localStorage.getItem('contact') ? JSON.parse(localStorage.getItem('contact')).data : [];
 
 export const FETCH_CONTACT_BEGIN = 'FETCH_CONTACT_BEGIN';
 export const FETCH_CONTACT_SUCCESS = 'FETCH_CONTACT_SUCCESS';
@@ -13,6 +13,7 @@ export function fetchContact() {
             dispatch(fetchContactBegin());
             return contactCollection.get().then((data) => {
                 data.docs.map(doc => newContact.push(doc.data()));
+                localStorage.setItem('contact', JSON.stringify({data: newContact}));
 
                 dispatch(fetchContactSuccess(newContact));
             });

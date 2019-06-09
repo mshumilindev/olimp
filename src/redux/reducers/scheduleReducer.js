@@ -1,20 +1,20 @@
 import {
-    FETCH_LEVEL_COURSES_BEGIN,
-    FETCH_LEVEL_COURSES_SUCCESS,
-    FETCH_SCHEDULE_BEGIN,
-    FETCH_SCHEDULE_SUCCESS,
-    SAVE_COURSE_BEGIN,
-    SAVE_COURSE_SUCCESS
+    FETCH_LEVEL_COURSES_BEGIN, FETCH_LEVEL_COURSES_SUCCESS,
+    FETCH_SCHEDULE_BEGIN, FETCH_SCHEDULE_SUCCESS,
+    FETCH_COURSES_BEGIN, FETCH_COURSES_SUCCESS,
+    SAVE_COURSE_BEGIN, SAVE_COURSE_SUCCESS,
+    FETCH_CALENDAR_BEGIN, FETCH_CALENDAR_SUCCESS
 } from '../actions/scheduleActions';
 
 const initialState = {
     scheduleList: [],
     levelCoursesList: [],
     coursesList: [],
+    calendar: {},
     loading: false
 };
 
-export default function handleContact(state = initialState, action) {
+export default function scheduleReducer(state = initialState, action) {
     switch ( action.type ) {
         case FETCH_SCHEDULE_BEGIN:
             return {
@@ -42,6 +42,19 @@ export default function handleContact(state = initialState, action) {
                 levelCoursesList: action.payload.levelCoursesList
             };
 
+        case FETCH_COURSES_BEGIN:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case FETCH_COURSES_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                coursesList: action.payload.coursesList
+            };
+
         case SAVE_COURSE_BEGIN:
             return {
                 ...state,
@@ -53,6 +66,19 @@ export default function handleContact(state = initialState, action) {
                 ...state,
                 loading: false,
                 coursesList: action.payload.coursesList
+            };
+
+        case FETCH_CALENDAR_BEGIN:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case FETCH_CALENDAR_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                calendar: action.payload.calendar
             };
 
         default:

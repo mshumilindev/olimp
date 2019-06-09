@@ -3,13 +3,12 @@ import {Link} from "react-router-dom";
 import ConsultationsList from "../consultations/consultationsList";
 import ContactContainer from "../../containers/contactContainer";
 import StaticInfoContainer from "../../containers/staticInfoContainer";
-import ScheduleContainer from '../../containers/scheduleContainer';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import './aside.scss';
 import { Provider } from 'react-redux';
 import { contactStore } from '../../redux/stores/contactStore';
-import { scheduleStore } from '../../redux/stores/scheduleStore';
 import { staticInfoListStore } from '../../redux/stores/staticInfoListStore';
+import ScheduleList from "../schedule/scheduleList";
 
 export default class Aside extends React.Component {
     render() {
@@ -22,9 +21,7 @@ export default class Aside extends React.Component {
                         <i className="widget_icon fa fa-calendar-alt" />
                         { translate('current_schedule') }
                     </h2>
-                    <Provider store={scheduleStore}>
-                        <ScheduleContainer current prefix="aside--" />
-                    </Provider>
+                    <ScheduleList current prefix="aside--" />
                     <div className="section_actions">
                         <Link to="/schedule" className="btn btn_primary">{ translate('go_to_schedule') }</Link>
                     </div>

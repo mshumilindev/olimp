@@ -1,10 +1,7 @@
 import React, { Fragment } from 'react';
-import {Provider} from "react-redux";
-import {scheduleStore} from "../../redux/stores/scheduleStore";
-import ScheduleContainer from "../../containers/scheduleContainer";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import EventsCalendar from '../../components/EventsCalendar/EventsCalendar';
-import EventsCalendarContainer from '../../containers/EventsCalendarContainer';
+import ScheduleList from '../../components/schedule/scheduleList';
 
 export default class Schedule extends React.PureComponent {
     render() {
@@ -20,14 +17,10 @@ export default class Schedule extends React.PureComponent {
                             { translate('schedule') }
                         </h2>
                         {/*<section className="section">*/}
-                        {/*    <Provider store={scheduleStore}>*/}
-                        {/*        <ScheduleContainer prefix="schedule--" />*/}
-                        {/*    </Provider>*/}
+                        {/*    <ScheduleList prefix="schedule--" />*/}
                         {/*</section>*/}
                         <section className="section">
-                            <Provider store={scheduleStore}>
-                                <EventsCalendarContainer />
-                            </Provider>
+                            <EventsCalendar />
                         </section>
                     </div>
                 </div>
