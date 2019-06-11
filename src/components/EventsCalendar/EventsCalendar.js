@@ -6,6 +6,7 @@ import './eventsCalendar.scss';
 import {saveCourse} from "../../redux/actions/scheduleActions";
 import withSaveCourse from '../../utils/SaveCourse';
 import {connect} from "react-redux";
+import moment from 'moment';
 
 class EventsCalendar extends React.Component {
     constructor() {
@@ -44,14 +45,137 @@ class EventsCalendar extends React.Component {
 
     componentDidMount() {
         this.buildMonth();
-        this.createCalendar()
+        this.createCalendar();
     }
 
     // === Needs to be moved out of this component
     createCalendar() {
-        const { scheduleList, calendar } = this.props;
+        const { calendar } = this.props;
+        const { firstSemester, secondSemester } = calendar.studyTime;
+        const today = this.getCurrentDayNumber(new Date());
+        const firstStudyDay = this.getCurrentDayNumber(new Date(firstSemester.from + ' ' + this.currentYear));
+        const lastStudyDay = this.getCurrentDayNumber(new Date(secondSemester.to + ' ' + this.currentYear));
+        let startYear = this.currentYear;
+        const indexArr = [];
 
-        console.log(scheduleList, calendar);
+        if ( today >= lastStudyDay && today < firstStudyDay ) {
+            startYear--;
+            console.log('We are on summer vacation');
+        }
+        else {
+            if ( today > lastStudyDay ) {
+                startYear--;
+                console.log('We are in first semester');
+            }
+            else {
+                console.log('We are in second semester');
+            }
+        }
+        if ( this.daysOfAYear(startYear) === 365 && this.daysOfAYear(startYear + 1) === 365 ) {
+            indexArr[364] = 'end';
+        }
+        else {
+            indexArr[365] = 'end';
+        }
+
+        this.calendarArray = [];
+
+        for ( let i = 0; i < indexArr.length; i++ ) {
+            const nextDate = new Date(firstSemester.from + ' ' + startYear).setDate(new Date(firstSemester.from + ' ' + startYear).getDate() + i);
+            this.createDaySchedule(nextDate, startYear);
+        }
+        console.log(this.calendarArray);
+    }
+
+    daysOfAYear(year) {
+        return this.isLeapYear(year) ? 366 : 365;
+    }
+
+    isLeapYear(year) {
+        return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
+    }
+
+    createDaySchedule(date, startYear) {
+        const { scheduleList, calendar } = this.props;
+        const dateDay = new Date(date).getDay();
+        const dateFormatted = moment(date).format('DD MMMM');
+        const dateFormattedNumber = moment(date).format('DD');
+        let dateFormattedMonth = moment(date).format('MM');
+        const dayToSave = {
+            date: date,
+            daySchedule: null
+        };
+
+        if ( getVacation() ) {
+            dayToSave.daySchedule = 'vacation';
+        }
+        if ( getHoliday() ) {
+            dayToSave.daySchedule = 'holiday';
+        }
+        if ( !dayToSave.daySchedule ) {
+            dayToSave.daySchedule = scheduleList.find(item => item.day === this.config.days[dateDay]) ? scheduleList.find(item => item.day === this.config.days[dateDay]): 'weekend';
+        }
+
+        this.calendarArray.push(dayToSave);
+
+        function getHoliday() {
+            return calendar.leisureTime.holidays.find(holiday => {
+                if ( dateDay === 1 ) {
+                    const holidayDateNum = parseInt(holiday.date);
+                    const holidayMonth = holiday.date.replace(('' + holidayDateNum + ' '), '');
+                    const holidayOneDayAgo = holidayDateNum + 1 + ' ' + holidayMonth;
+                    const holidayTwoDaysAgo = holidayDateNum + 2 + ' ' + holidayMonth;
+
+                    if ( holiday.date === dateFormatted || holidayOneDayAgo === dateFormatted || holidayTwoDaysAgo === dateFormatted ) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    if ( dateDay > 0 && dateDay < 6 && holiday.date === dateFormatted ) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function getVacation() {
+            return Object.keys(calendar.leisureTime.vacations).some(seasonType => {
+                const seasonFrom = moment(calendar.leisureTime.vacations[seasonType].from + startYear);
+                const seasonFromNumber = seasonFrom.format('DD');
+                let seasonFromMonth = seasonFrom.format('MM');
+
+                const seasonTo = moment(calendar.leisureTime.vacations[seasonType].to + startYear);
+                const seasonToNumber = seasonTo.format('DD');
+                let seasonToMonth = seasonTo.format('MM');
+
+                if ( +dateFormattedMonth === 1 ) {
+                    dateFormattedMonth = 13;
+                }
+                if ( +seasonFromMonth === 1 ) {
+                    seasonFromMonth = 13;
+                }
+                if ( +seasonToMonth === 1 ) {
+                    seasonToMonth = 13;
+                }
+
+                return +(dateFormattedMonth + dateFormattedNumber) >= +(seasonFromMonth + seasonFromNumber) && +(dateFormattedMonth + dateFormattedNumber) <= +(seasonToMonth + seasonToNumber);
+            });
+        }
+    }
+
+    getCurrentDayNumber(date) {
+        const now = new Date(date);
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+
+        return Math.floor(diff / oneDay);
     }
 
     render() {
@@ -141,6 +265,12 @@ class EventsCalendar extends React.Component {
         const { translate } = this.context;
 
         return translate(months[new Date().getMonth() + 1]);
+    }
+
+    get currentMonthNumber() {
+        const { months } = this.config;
+
+        return months[new Date().getMonth() + 1];
     }
 
     get firstMonthDay() {
