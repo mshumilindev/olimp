@@ -49,6 +49,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $baseColor;
+  &.overflow {
+    overflow: hidden;
+  }
 }
 a {
   color: $anchorColor;

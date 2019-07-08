@@ -1,0 +1,39 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/sizes';
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  &__overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: $baseColor;
+    opacity: .8;
+    z-index: -1;
+  }
+  &__inner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__box {
+    background: $white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 4px;
+    padding: $pageIndent / 2;
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+  }
+}

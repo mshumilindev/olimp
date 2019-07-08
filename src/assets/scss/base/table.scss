@@ -1,7 +1,7 @@
 %s-row {
   &.disabled {
     td {
-      > *:not(.table__actions-btn):not(.status) {
+      > *:not(.table__actions-btn):not(.status):not(.modal) {
         opacity: .35;
       }
     }

@@ -17,6 +17,10 @@
   &__row {
     margin-top: 20px;
   }
+  &__field-holder {
+    position: relative;
+    z-index: 1;
+  }
   &__field {
     border: 1px solid $mediumGreyColor;
     background: none;
@@ -32,6 +36,15 @@
     font-family: $RobotoCondensed;
     &:focus {
       border-color: $btnPrimary;
+      ~ .form__field-placeholder {
+        top: 0;
+        z-index: 1;
+        background: $white;
+        padding: 2px;
+        margin-left: -2px;
+        line-height: 1;
+        color: $btnPrimary;
+      }
     }
     &.hasErrors {
       border-color: $errorColor;
@@ -47,6 +60,27 @@
     }
     &:-moz-placeholder {
       color: $mediumGreyColor;
+    }
+  }
+  &__field-placeholder {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: -1;
+    color: $mediumGreyColor;
+    font-family: $RobotoCondensed;
+    font-size: 14px;
+    line-height: 32px;
+    user-select: none;
+    transition: all .15s ease-in-out;
+    &.isFilled {
+      top: 0;
+      z-index: 1;
+      background: $white;
+      padding: 2px;
+      margin-left: -2px;
+      line-height: 1;
     }
   }
   &__btn-holder {

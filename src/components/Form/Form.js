@@ -27,7 +27,12 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     :
                     null
             }
-            { fields.map(field => _renderField(field)) }
+            {
+                fields && fields.length ?
+                    fields.map(field => _renderField(field))
+                    :
+                    null
+            }
         </form>
     );
 
@@ -41,6 +46,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
 
     function getFormFieldType(field) {
         const name = translate(field.name);
+        const placeholder = field.placeholder ? translate(field.placeholder) : name;
 
         switch ( field.type ) {
             case 'text':
@@ -50,7 +56,12 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'name':
             case 'search':
             case 'url':
-                return <input className={classNames('form__field', {required: field.required, hasErrors: field.required && hasErrors && !field.value})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} placeholder={name} title={name} value={field.value} autoComplete="new-password" />;
+                return (
+                    <div className="form__field-holder">
+                        <input className={classNames('form__field', {required: field.required, hasErrors: field.required && hasErrors && !field.value})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" />
+                        <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                    </div>
+                );
             case 'submit':
                 return (
                     <div className="form__btn-holder">

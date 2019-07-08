@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import MainContainer from "../containers/configContainer";
 import AdminContainer from '../containers/adminContainer';
 import {Provider} from "react-redux";
@@ -7,22 +7,35 @@ import userContext from "../context/userContext";
 import { withRouter } from 'react-router-dom';
 
 function Page({location, children, history}) {
-    const { isLoggedIn, userRole } = useContext(userContext);
+    const { userRole } = useContext(userContext);
 
-    if ( !isLoggedIn ) {
+    if ( !localStorage.getItem('user') ) {
         location.pathname = '/login';
     }
-    if ( userRole === 'admin' && !location.pathname.includes('admin') ) {
-        history.push('/admin');
+    else {
+        if ( userRole === 'admin' && !location.pathname.includes('admin') ) {
+            history.push('/admin');
+        }
+        else if ( userRole === 'student' && location.pathname.includes('admin') ) {
+            history.push('/');
+        }
     }
-    else if ( userRole === 'student' && location.pathname.includes('admin') ) {
-        history.push('/');
-    }
+
+    useEffect(() => {
+        const unlisten = history.listen(location => {
+            if ( !localStorage.getItem('user') && !location.pathname.includes('/login') ) {
+                history.push('/login');
+            }
+        });
+        return () => {
+            unlisten();
+        }
+    });
 
     return (
         <Provider store={mainStore}>
             {
-                isLoggedIn ?
+                localStorage.getItem('user') ?
                     userRole === 'student' ?
                         <MainContainer location={location} children={children}/>
                         :

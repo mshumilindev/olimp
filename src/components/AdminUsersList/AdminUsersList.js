@@ -3,6 +3,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import { Preloader } from "../UI/preloader";
 import classNames from 'classnames';
+import AdminUsersListModal from './AdminUsersListModal';
 
 function AdminUsersList({usersList}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -50,11 +51,11 @@ function AdminUsersList({usersList}) {
                         <div className="table__holder">
                             <table className="adminUsersList__table table">
                                 <colgroup>
-                                    { cols.map((col, index) => <col width={col.width} key={index + col.title}/>) }
+                                    { cols.map((col, index) => <col width={col.width} key={index}/>) }
                                 </colgroup>
                                 <thead>
                                     <tr className="table__head-row">
-                                        { cols.map((col, index) => <th className="table__head-cell" key={index + col.title}>{ translate(col.title) }</th>) }
+                                        { cols.map((col, index) => <th className="table__head-cell" key={index}>{ translate(col.title) }</th>) }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,10 +96,7 @@ function AdminUsersList({usersList}) {
                     <span>{ user.data && user.data.class ? user.data.class[lang] : null }</span>
                 </td>
                 <td className="table__body-cell table__actions">
-                    <a href="/" className="table__actions-btn">
-                        <i className={'content_title-icon fa fa-user-edit'} />
-                        { translate('edit') }
-                    </a>
+                    <AdminUsersListModal user={user} />
                 </td>
             </tr>
         )
