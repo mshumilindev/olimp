@@ -17,7 +17,8 @@ export function fetchUsers() {
                     usersList.push({
                         name: docData.name,
                         role: docData.role,
-                        data: docData.data
+                        data: docData.data,
+                        status: docData.status
                     });
                 });
                 dispatch(fetchUsersSuccess(usersList));

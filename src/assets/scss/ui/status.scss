@@ -1,0 +1,12 @@
+.status {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  &__active {
+    background: $statusActiveColor;
+  }
+  &__suspended {
+    background: $statusSuspendedColor;
+  }
+}

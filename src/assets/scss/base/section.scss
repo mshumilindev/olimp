@@ -1,5 +1,15 @@
 .section {
   margin-bottom: $pageIndent;
+  &__title-holder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $pageIndent / 2;
+    margin-top: -12px;
+    [class$="__title"] {
+      margin-bottom: 0;
+    }
+  }
   &__title {
     text-transform: uppercase;
     margin-bottom: $pageIndent / 2;
