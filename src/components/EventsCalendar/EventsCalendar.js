@@ -39,7 +39,8 @@ class EventsCalendar extends React.Component {
         };
 
         this.state = {
-            calendarMonthsArray: []
+            calendarMonthsArray: [],
+            calendarArray: []
         }
     }
 
@@ -71,20 +72,27 @@ class EventsCalendar extends React.Component {
                 console.log('We are in second semester');
             }
         }
-        if ( this.daysOfAYear(startYear) === 365 && this.daysOfAYear(startYear + 1) === 365 ) {
+        if ( this.daysOfAYear(startYear + 1) === 365 ) {
             indexArr[364] = 'end';
         }
         else {
             indexArr[365] = 'end';
         }
 
-        this.calendarArray = [];
+        const calendarArray = [];
 
         for ( let i = 0; i < indexArr.length; i++ ) {
             const nextDate = new Date(firstSemester.from + ' ' + startYear).setDate(new Date(firstSemester.from + ' ' + startYear).getDate() + i);
-            this.createDaySchedule(nextDate, startYear);
+            calendarArray.push(this.createDaySchedule(nextDate, startYear, indexArr[i]));
+
+            if ( indexArr[i] === 'end' ) {
+                this.setState(() => {
+                    return {
+                        calendarArray: calendarArray
+                    }
+                });
+            }
         }
-        console.log(this.calendarArray);
     }
 
     daysOfAYear(year) {
@@ -105,18 +113,20 @@ class EventsCalendar extends React.Component {
             date: date,
             daySchedule: null
         };
+        let holidayInfo = null;
 
         if ( getVacation() ) {
             dayToSave.daySchedule = 'vacation';
         }
         if ( getHoliday() ) {
             dayToSave.daySchedule = 'holiday';
+            dayToSave.holiday = holidayInfo;
         }
         if ( !dayToSave.daySchedule ) {
             dayToSave.daySchedule = scheduleList.find(item => item.day === this.config.days[dateDay]) ? scheduleList.find(item => item.day === this.config.days[dateDay]): 'weekend';
         }
 
-        this.calendarArray.push(dayToSave);
+        return dayToSave;
 
         function getHoliday() {
             return calendar.leisureTime.holidays.find(holiday => {
@@ -127,20 +137,17 @@ class EventsCalendar extends React.Component {
                     const holidayTwoDaysAgo = holidayDateNum + 2 + ' ' + holidayMonth;
 
                     if ( holiday.date === dateFormatted || holidayOneDayAgo === dateFormatted || holidayTwoDaysAgo === dateFormatted ) {
+                        holidayInfo = holiday;
                         return true;
-                    }
-                    else {
-                        return false;
                     }
                 }
                 else {
                     if ( dateDay > 0 && dateDay < 6 && holiday.date === dateFormatted ) {
+                        holidayInfo = holiday;
                         return true;
                     }
-                    else {
-                        return false;
-                    }
                 }
+                return false;
             });
         }
 
@@ -179,9 +186,9 @@ class EventsCalendar extends React.Component {
     }
 
     render() {
-        const { calendarMonthsArray } = this.state;
+        const { calendarMonthsArray, calendarArray } = this.state;
         const { translate } = this.context;
-        const { scheduleList, getCourseToSave, coursesList } = this.props;
+        const { getCourseToSave, coursesList } = this.props;
 
         return (
             <div className="eventsCalendar">
@@ -204,10 +211,18 @@ class EventsCalendar extends React.Component {
                         }
                     </div>
                     {
-                        calendarMonthsArray.length ?
+                        calendarMonthsArray.length && calendarArray.length ?
                             <div className="eventsCalendar__datesList">
                                 {
-                                    calendarMonthsArray.map((date, index) => <EventsCalendarDate getCourseToSave={getCourseToSave} key={date.date} date={date} daySchedule={scheduleList[new Date(date.date).getDay() - 1]} isLastDate={index === calendarMonthsArray.length - 1} coursesList={coursesList}/>)
+                                    calendarMonthsArray.map((date, index) => {
+                                        return <EventsCalendarDate
+                                                    date={calendarArray.find(calItem => calItem.date === moment(date.date).unix() * 1000)}
+                                                    key={index + date.date}
+                                                    isDisabled={date.disabled}
+                                                    getCourseToSave={getCourseToSave}
+                                                    isLastDate={index === calendarMonthsArray.length - 1}
+                                                    coursesList={coursesList} />
+                                    })
                                 }
                             </div>
                             :

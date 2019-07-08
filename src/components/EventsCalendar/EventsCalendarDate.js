@@ -4,14 +4,14 @@ import classNames from 'classnames';
 import EventsCalendarClass from "./EventsCalendarClass";
 import {connect} from "react-redux";
 
-const EventsCalendarDate = React.memo(({ date, daySchedule, isLastDate, levelCoursesList, coursesList, getCourseToSave, loading }) => {
+const EventsCalendarDate = React.memo(({ date, isDisabled, isLastDate, levelCoursesList, coursesList, getCourseToSave }) => {
     let [ isDateOpen, toggleDate ] = useState(false);
     const formattedDate = moment(date.date);
     const dateDay = new Date(date.date).getDay();
     const $date = React.createRef();
 
     return (
-        <div ref={$date} className={classNames('eventsCalendar__date', {isDisabled: date.disabled, isWeekend: dateDay === 6 || dateDay === 0})}>
+        <div ref={$date} className={classNames('eventsCalendar__date', {isDisabled: isDisabled, isHoliday: date.daySchedule === 'holiday', isVacation: date.daySchedule === 'vacation', isWeekend: date.daySchedule === 'weekend'})}>
             <div className={classNames('eventsCalendar__date-inner', {isDateOpen: isDateOpen})}>
                 {
                     isDateOpen ?
@@ -23,7 +23,7 @@ const EventsCalendarDate = React.memo(({ date, daySchedule, isLastDate, levelCou
                     <div className="eventsCalendar__date-title">
                         { !isDateOpen ? formattedDate.format('DD') : formattedDate.format('DD.MM.YYYY') }
                         {
-                            !date.disabled && dateDay !== 6 && dateDay !== 0 ?
+                            !date.disabled && date.daySchedule !== 'holiday' && date.daySchedule !== 'vacation' && date.daySchedule !== 'weekend' ?
                                 !isDateOpen ?
                                     <i className="eventsCalendar__date-link fa fa-external-link-alt" onClick={() => toggleDate(()=> true)}/>
                                     :
@@ -41,25 +41,23 @@ const EventsCalendarDate = React.memo(({ date, daySchedule, isLastDate, levelCou
     );
 
     function _renderClasses() {
+        const { daySchedule } = date;
+
         return (
-            daySchedule ?
+            daySchedule === 'holiday' || daySchedule === 'weekend' || daySchedule === 'vacation'?
+                _renderEmptyDate(daySchedule)
+                :
                 daySchedule.classes.length && levelCoursesList.length ?
                     daySchedule.classes.map(item => {
                         return _renderClass(item);
                     })
                     :
-                    _renderEmptyClasses()
-                :
-                _renderHoliday()
+                    _renderEmptyDate('noClasses')
         )
     }
 
-    function _renderEmptyClasses() {
-        return <EventsCalendarClass isNoClasses getCourseToSave={getCourseToSave} isLast={isLastDate} />;
-    }
-
-    function _renderHoliday() {
-        return <EventsCalendarClass isHoliday getCourseToSave={getCourseToSave} isLast={isLastDate} />
+    function _renderEmptyDate(type) {
+        return <EventsCalendarClass empty={type} getCourseToSave={getCourseToSave} isLast={isLastDate} holiday={date.holiday} />
     }
 
     function _renderClass(item) {

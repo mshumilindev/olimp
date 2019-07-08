@@ -1,41 +1,38 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import DocumentTitle from "react-document-title";
-import Header from "../components/header/header";
-import Nav from "../components/nav/nav";
+import Header from "../components/Header/Header";
+import Nav from "../components/Nav/Nav";
 import SiteSettingsContext from "../context/siteSettingsContext";
 import Loader from '../assets/img/loader.svg';
 
-export default class Layout extends React.Component {
-    render() {
-        const { siteName, translate } = this.context;
-        const nav = this.getSortedNav(this.props.nav);
+export default function Layout({children, nav, location}) {
+    const { siteName, translate } = useContext(SiteSettingsContext);
+    const sortedNav = getSortedNav(nav);
 
-        const currentPage = nav && nav.length ? nav.find(item => item.url === this.props.location.pathname).name : '';
+    const currentPage = sortedNav && sortedNav.length ? sortedNav.find(item => item.url === location.pathname).name : '';
 
-        const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
+    const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
 
-        return (
-            <DocumentTitle title={ docTitle }>
-                {
-                    translate('current_schedule') === 'current_schedule' ?
-                        <div className="loader">
-                            <img src={Loader} alt="Loading..."/>
+    return (
+        <DocumentTitle title={ docTitle }>
+            {
+                translate('current_schedule') === 'current_schedule' ?
+                    <div className="loader">
+                        <img src={Loader} alt="Loading..."/>
+                    </div>
+                    :
+                    <div className="page">
+                        <Header/>
+                        <Nav nav={sortedNav} prefix="main--" showLogo />
+                        <div className="grid">
+                            { children }
                         </div>
-                        :
-                        <div className="page">
-                            <Header/>
-                            <Nav nav={nav} prefix="main--" showLogo />
-                            <div className="grid">
-                                { this.props.children }
-                            </div>
-                        </div>
-                }
-            </DocumentTitle>
-        )
-    }
+                    </div>
+            }
+        </DocumentTitle>
+    );
 
-    getSortedNav(arr) {
+    function getSortedNav(arr) {
         return arr.sort((a, b) => a.id - b.id);
     }
 }
-Layout.contextType = SiteSettingsContext;

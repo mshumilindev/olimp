@@ -70,8 +70,26 @@ $dateOpenIndent: 20px;
         color: $redColor;
       }
     }
+    &.isVacation {
+      background: $lightRedColor;
+      .eventsCalendar__date-content {
+        border-top-color: transparent;
+      }
+      .eventsCalendar__date-title {
+        color: $redColor;
+      }
+    }
+    &.isHoliday {
+      background: $lightGreenColor;
+      .eventsCalendar__date-content {
+        border-top-color: transparent;
+      }
+      .eventsCalendar__date-title {
+        color: $greenColor;
+      }
+    }
     &:hover {
-      &:not(.isWeekend):not(.isDisabled) {
+      &:not(.isWeekend):not(.isDisabled):not(.isHoliday):not(.isVacation) {
         background: $lightColor;
         .eventsCalendar__date-link {
           opacity: 1;

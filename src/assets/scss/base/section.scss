@@ -1,12 +1,13 @@
 .section {
   margin-bottom: $pageIndent;
-  &_title {
+  &__title {
     text-transform: uppercase;
     margin-bottom: $pageIndent / 2;
     font-family: $RobotoCondensed;
     font-size: 20px;
+    font-weight: normal;
   }
-  &_actions {
+  &__actions {
     margin-top: $pageIndent;
     display: flex;
     justify-content: center;

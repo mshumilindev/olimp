@@ -17,7 +17,7 @@ export default class Aside extends React.Component {
         return (
             <div className="aside">
                 <div className="widget">
-                    <h2 className="section_title widget_title">
+                    <h2 className="section_title widget__title">
                         <i className="widget_icon fa fa-calendar-alt" />
                         { translate('current_schedule') }
                     </h2>
@@ -27,7 +27,7 @@ export default class Aside extends React.Component {
                     </div>
                 </div>
                 <div className="widget">
-                    <h2 className="section_title widget_title">
+                    <h2 className="section_title widget__title">
                         <i className="widget_icon fa fa-comments" />
                         { translate('consultations') }
                     </h2>
@@ -37,7 +37,7 @@ export default class Aside extends React.Component {
                     </div>
                 </div>
                 <div className="widget">
-                    <h2 className="section_title widget_title">
+                    <h2 className="section_title widget__title">
                         <i className="widget_icon fa fa-phone" />
                         { translate('contact') }
                     </h2>
@@ -46,7 +46,7 @@ export default class Aside extends React.Component {
                     </Provider>
                 </div>
                 <div className="widget">
-                    <h2 className="section_title widget_title">
+                    <h2 className="section_title widget__title">
                         <i className="widget_icon fa fa-info" />
                         { translate('info') }
                     </h2>

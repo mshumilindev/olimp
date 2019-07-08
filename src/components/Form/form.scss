@@ -1,0 +1,67 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.form {
+  width: 100%;
+  &.hasErrors {
+    animation: shake .25s ease-in-out;
+  }
+  &__heading {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: normal;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-family: $RobotoCondensed;
+  }
+  &__row {
+    margin-top: 20px;
+  }
+  &__field {
+    border: 1px solid $mediumGreyColor;
+    background: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 32px;
+    height: 40px;
+    border-radius: 4px;
+    outline: none;
+    box-shadow: none;
+    font-family: $RobotoCondensed;
+    &:focus {
+      border-color: $btnPrimary;
+    }
+    &.hasErrors {
+      border-color: $errorColor;
+    }
+    &::-webkit-input-placeholder {
+      color: $mediumGreyColor;
+    }
+    &::-moz-placeholder {
+      color: $mediumGreyColor;
+    }
+    &:-ms-input-placeholder {
+      color: $mediumGreyColor;
+    }
+    &:-moz-placeholder {
+      color: $mediumGreyColor;
+    }
+  }
+  &__btn-holder {
+    text-align: center;
+  }
+  &__btn {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+  }
+  &__error {
+    background: $errorColor;
+    color: $white;
+    text-align: center;
+    padding: 10px;
+  }
+}

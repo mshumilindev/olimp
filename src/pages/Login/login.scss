@@ -1,0 +1,49 @@
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/colors';
+
+.login {
+  padding: $pageIndent;
+  background: $baseColor;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &__box {
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,.5);
+    padding: $pageIndent;
+    background: $white;
+    border-radius: 4px;
+    max-width: 400px;
+    width: 100%;
+    flex: 0 0 auto;
+    position: relative;
+  }
+  .preloader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      background: $white;
+      opacity: .75;
+    }
+  }
+  .languageSelect {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
+}

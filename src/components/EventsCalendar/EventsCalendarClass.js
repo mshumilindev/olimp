@@ -3,8 +3,8 @@ import {Link} from "react-router-dom";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import LinePreloader from '../UI/LinePreloader';
 
-const EventsCalendarClass = ({subject, courseID, course, getCourseToSave, isLast, isHoliday, isNoClasses}) => {
-    const { lang } = useContext(siteSettingsContext);
+const EventsCalendarClass = ({subject, courseID, course, getCourseToSave, isLast, empty, holiday}) => {
+    const { lang, translate } = useContext(siteSettingsContext);
 
     useEffect(() => {
         if ( !course ) {
@@ -18,13 +18,22 @@ const EventsCalendarClass = ({subject, courseID, course, getCourseToSave, isLast
                 course ?
                     <Link to={'/courses/' + courseID} title={course.name[lang] ? course.name[lang] : course.name['ua']}>{ course.name[lang] ? course.name[lang] : course.name['ua'] }</Link>
                     :
-                    isNoClasses ?
-                        <div className="eventsCalendar__date-content-item-empty">PLACEHOLDER Немає уроків</div>
+                    empty === 'holiday' ?
+                        <div className="eventsCalendar__date-content-item-empty" title={holiday.name[lang]}>{ holiday.name[lang] }</div>
                         :
-                        !isHoliday ?
-                            <LinePreloader/>
+                        empty === 'weekend' ?
+                            <div className="eventsCalendar__date-content-item-empty" />
                             :
-                            null
+                            empty === 'vacation' ?
+                                <div className="eventsCalendar__date-content-item-empty">{ translate('vacation') }</div>
+                                :
+                                empty === 'noClasses' ?
+                                    <div className="eventsCalendar__date-content-item-empty">{ translate('dayoff') }</div>
+                                    :
+                                    !empty ?
+                                        <LinePreloader/>
+                                        :
+                                        null
             }
         </div>
     )

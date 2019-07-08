@@ -9,13 +9,13 @@ $widgetIndent: 20px;
   &:not(:first-child) {
     margin-top: $pageIndent;
   }
-  &_title {
+  &__title {
     color: $white;
     background: $baseColor;
     margin: -$widgetIndent (-$widgetIndent) $widgetIndent;
     padding: $widgetIndent;
   }
-  &_icon {
+  &__icon {
     margin-right: $widgetIndent;
   }
 }
