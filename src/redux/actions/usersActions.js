@@ -14,12 +14,12 @@ export function fetchUsers() {
             return usersCollection.get().then((data) => {
                 data.docs.map(doc => {
                     const docData = doc.data();
-                    usersList.push({
-                        name: docData.name,
-                        role: docData.role,
-                        data: docData.data,
-                        status: docData.status
+
+                    Object.assign(docData, {
+                        id: doc.id
                     });
+
+                    usersList.push(docData);
                 });
                 dispatch(fetchUsersSuccess(usersList));
             });
@@ -32,7 +32,7 @@ export function fetchUsers() {
     }
 }
 
-export const fetchUsersBegin =() => {
+export const fetchUsersBegin = () => {
     return {
         type: FETCH_USERS_BEGIN
     }
@@ -40,6 +40,46 @@ export const fetchUsersBegin =() => {
 export const fetchUsersSuccess = usersList => {
     return {
         type: FETCH_USERS_SUCCESS,
+        payload: { usersList }
+    }
+};
+
+export const UPDATE_USER_BEGIN = 'UPDATE_USER_BEGIN';
+export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+
+export function updateUser(id, updatedFields) {
+    const userDoc = db.collection('users').doc(id);
+
+    return dispatch => {
+        dispatch(updateUserBegin());
+        return userDoc.set({
+            ...updatedFields
+        }).then(() => {
+            return usersCollection.get().then((data) => {
+                usersList.splice(0, usersList.length);
+                data.docs.map(doc => {
+                    const docData = doc.data();
+
+                    Object.assign(docData, {
+                        id: doc.id
+                    });
+
+                    usersList.push(docData);
+                });
+                dispatch(updateUserSuccess());
+            });
+        });
+    }
+}
+
+export const updateUserBegin = () => {
+    return {
+        type: UPDATE_USER_BEGIN
+    }
+};
+export const updateUserSuccess = usersList => {
+    return {
+        type: UPDATE_USER_SUCCESS,
         payload: { usersList }
     }
 };

@@ -17,6 +17,10 @@
       color: $white;
     }
   }
+  &__error {
+    background: $errorColor;
+    color: $white;
+  }
   &:hover {
     opacity: .75;
   }

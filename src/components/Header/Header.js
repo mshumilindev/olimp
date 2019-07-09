@@ -5,16 +5,16 @@ import userContext from "../../context/userContext";
 import LanguageSelect from '../language/languageSelect';
 
 export default function Header() {
-    const { translate, lang } = useContext(SiteSettingsContext);
-    const { userName, userData } = useContext(userContext);
+    const { translate } = useContext(SiteSettingsContext);
+    const { userName, userClass } = useContext(userContext);
 
     return (
         <header className="header">
             <div className="header_user">
-                { userName[lang] }
+                { userName }
                 {
-                    userData && userData.class ?
-                        ', ' + userData.class[lang]
+                    userClass ?
+                        ', ' + userClass
                         :
                         null
                 }

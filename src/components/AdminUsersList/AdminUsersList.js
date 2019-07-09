@@ -1,12 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import { Preloader } from "../UI/preloader";
 import classNames from 'classnames';
 import AdminUsersListModal from './AdminUsersListModal';
+import generator from "generate-password";
 
-function AdminUsersList({usersList}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
+const Form = React.lazy(() => import('../../components/Form/Form'));
+
+function AdminUsersList({usersList, loading}) {
+    const [ showModal, toggleModal ] = useState(false);
+    const { translate, getUserFormFields } = useContext(siteSettingsContext);
     const cols = [
         {
             width: 20
@@ -39,10 +44,25 @@ function AdminUsersList({usersList}) {
                     { translate('users') }
                 </h2>
                 <div className="section__title-actions">
-                    <a href="/" className="btn btn_primary">
+                    <a href="/" className="btn btn_primary" onClick={e => {e.preventDefault(); toggleModal(true)}}>
                         <i className={'content_title-icon fa fa-plus'} />
                         { translate('add_new') }
                     </a>
+                    {
+                        showModal ?
+                            <Modal onHideModal={() => toggleModal(false)}>
+                                <Form
+                                    loading={loading}
+                                    heading={translate('create_user')}
+                                    fields={getFormFields()}
+                                    // setFieldValue={setFieldValue}
+                                    // formAction={createUser}
+                                    // formReset={resetUser}
+                                />
+                            </Modal>
+                            :
+                            null
+                    }
                 </div>
             </div>
             {
@@ -72,7 +92,7 @@ function AdminUsersList({usersList}) {
 
     function _renderUsers(user) {
         return (
-            <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.name[lang]}>
+            <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.name}>
                 <td className="table__body-cell">
                     <div className={'status status__' + user.status} title={translate(user.status)}/>
                 </td>
@@ -87,19 +107,47 @@ function AdminUsersList({usersList}) {
                     }
                 </td>
                 <td className="table__body-cell">
-                    <span>{ user.name[lang] }</span>
+                    <span>{ user.name }</span>
                 </td>
                 <td className="table__body-cell">
                     <span>{ translate(user.role) }</span>
                 </td>
                 <td className="table__body-cell">
-                    <span>{ user.data && user.data.class ? user.data.class[lang] : null }</span>
+                    <span>{ user.class ? user.class : null }</span>
                 </td>
                 <td className="table__body-cell table__actions">
-                    <AdminUsersListModal user={user} />
+                    <AdminUsersListModal user={user} loading={loading} />
                 </td>
             </tr>
         )
+    }
+
+    function getFormFields() {
+        const formFields = getUserFormFields(null, generatePassword);
+
+        formFields.push(
+            {
+                type: 'submit',
+                id: 'save',
+                name: translate('create')
+            }
+        );
+
+        return formFields;
+    }
+
+    function generatePassword(fieldID) {
+        const newPassword = generator.generate({
+            length: 16,
+            symbols: true,
+            strict: true
+        });
+
+        setFieldValue(fieldID, newPassword);
+    }
+
+    function setFieldValue(fieldID, value) {
+        console.log(fieldID, value);
     }
 }
 const mapStateToProps = state => ({

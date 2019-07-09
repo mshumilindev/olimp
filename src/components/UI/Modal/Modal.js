@@ -12,9 +12,9 @@ export default function Modal({children, onHideModal}) {
     return (
         <div className="modal">
             <div className="modal__overlay"/>
-            {/* remove onclick from inner, set to close btn or check if keydown was originated on modal box and its children */}
-            <div className="modal__inner" onClick={onHideModal}>
-                <div className="modal__box" onClick={e => e.stopPropagation()}>
+            <div className="modal__inner">
+                <div className="modal__box">
+                    <i className={'modal__close fa fa-times'} onClick={onHideModal} />
                     { children }
                 </div>
             </div>
