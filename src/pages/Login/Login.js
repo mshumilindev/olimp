@@ -117,7 +117,6 @@ export default class Login extends React.Component {
                     });
                     localStorage.setItem('user', JSON.stringify({
                         name: snapshot.docs[0].data().name,
-                        login: snapshot.docs[0].data().login,
                         role: snapshot.docs[0].data().role,
                         class: snapshot.docs[0].data().class,
                         avatar: snapshot.docs[0].data().avatar,

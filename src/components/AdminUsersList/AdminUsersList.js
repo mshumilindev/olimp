@@ -53,7 +53,7 @@ class AdminUsersList extends React.Component {
                         { translate('users') }
                     </h2>
                     <div className="section__title-actions">
-                        <AdminUsersListModal user={this.state.userModel} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
+                        <AdminUsersListModal user={this.state.userModel} usersList={this.filterUsersList()} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
                     </div>
                 </div>
                 { filters }
@@ -117,7 +117,7 @@ class AdminUsersList extends React.Component {
                     <span>{ user.class ? user.class : null }</span>
                 </td>
                 <td className="table__body-cell table__actions">
-                    <AdminUsersListModal user={user} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
+                    <AdminUsersListModal user={user} usersList={this.filterUsersList()} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
                     <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
                         <i className={'content_title-icon fa fa-user-times'} />
                         { translate('delete') }

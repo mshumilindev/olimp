@@ -103,10 +103,24 @@ class AdminUsersListModal extends React.Component {
 
     setFieldValue(fieldID, value, placeholder) {
         const { userFields } = this.state;
+        const { user, usersList } = this.props;
+        const { translate } = this.context;
+
         let field = userFields.find(field => field.id === fieldID);
 
         if ( !field ) {
             field = userFields.find(field => field.type === 'block' || field.type === 'cols').children.find(child => child.id === fieldID);
+        }
+
+        if ( fieldID === 'login' ) {
+            if ( usersList.some(item => item.id !== user.id && item.login === value) ) {
+                field.hasErrors = true;
+                field.errorMessage = translate('login_already_exists');
+            }
+            else {
+                field.hasErrors = false;
+                field.errorMessage = null;
+            }
         }
 
         field.value = value;

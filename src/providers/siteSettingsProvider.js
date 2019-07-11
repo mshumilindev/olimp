@@ -182,6 +182,7 @@ export default class SiteSettingsProvider extends React.Component{
                 name: 'login',
                 placeholder: 'login',
                 hasErrors: false,
+                errorMessage: null,
                 required: true,
                 value: user ? user.login : '',
                 updated: false

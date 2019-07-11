@@ -93,13 +93,21 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'url':
                 return (
                     <div className="form__field-holder">
-                        <input className={classNames('form__field', {required: field.required, hasErrors: field.required && hasErrors && !field.value, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" />
+                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" />
                         <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
                         {
                             field.btn ?
                                 <span className="form__field-btn" onClick={() => field.btn.action(field.id)} title={field.btn.title}>
                                     <i className={field.btn.icon} />
                                 </span>
+                                :
+                                null
+                        }
+                        {
+                            field.errorMessage ?
+                                <div className="form__field-error">
+                                    { field.errorMessage }
+                                </div>
                                 :
                                 null
                         }
@@ -243,7 +251,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     function validateForm() {
         const $requiredFields = $form.current.querySelectorAll('.required');
 
-        return ![...$requiredFields].some(field => !field.value.trim());
+        return ![...$requiredFields].some(field => !field.value.trim() || field.classList.contains('hasErrors'));
     }
 
     function getImageValue(fieldID, $input) {
