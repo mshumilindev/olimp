@@ -9,7 +9,7 @@ const LanguageSelect = () => {
 
     return (
         <div className="languageSelect">
-            <Dropdown width={65} trigger={<span><FlagIcon squared code={lang === 'en' ? 'gb' : lang } className="languageSelect_icon header_icon" /><span className="header_icon-descr">{ translate('language') }</span></span>}>
+            <Dropdown width={65} trigger={<span><FlagIcon squared code={lang === 'en' ? 'gb' : lang } className="languageSelect_icon header__icon" /><span className="header__icon-descr">{ translate('language') }</span></span>}>
                 <div className="languageSelect_item">
                     <span className="languageSelect_link" onClick={() => changeLanguage('ua')}>
                         <FlagIcon code={'ua'} squared className="languageSelect_icon" />

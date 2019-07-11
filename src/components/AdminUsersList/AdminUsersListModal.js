@@ -23,26 +23,14 @@ class AdminUsersListModal extends React.Component {
         this.resetUser = this.resetUser.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if ( prevProps.user !== this.props.user ) {
-            this.setState(() => {
-                return {
-                    userFields: this.getUserFields(this.props.user, this.context),
-                    showModal: false
-                }
-            });
-        }
-    }
-
     render() {
         const { translate } = this.context;
 
         return (
             <>
-                <a href="/" className="table__actions-btn" onClick={e => { e.preventDefault(); this.toggleModal() } }>
-                    <i className={'content_title-icon fa fa-user-edit'} />
-                    { translate('edit') }
-                </a>
+                <span onClick={e => { e.preventDefault(); this.toggleModal() } }>
+                    { this.props.modalTrigger }
+                </span>
                 {
                     this.state.showModal ?
                         <Modal onHideModal={() => this.toggleModal()}>
@@ -73,7 +61,7 @@ class AdminUsersListModal extends React.Component {
                     {
                         type: 'submit',
                         id: 'save',
-                        name: translate('update')
+                        name: user.id ? translate('update') : translate('create')
                     }
                 ]
             }
@@ -83,6 +71,9 @@ class AdminUsersListModal extends React.Component {
     }
 
     toggleModal() {
+        if ( this.state.showModal && this.props.onToggleModal ) {
+            this.props.onToggleModal();
+        }
         this.setState(state => {
             const newState = {
                 showModal: !state.showModal
@@ -110,16 +101,20 @@ class AdminUsersListModal extends React.Component {
         });
     }
 
-    setFieldValue(fieldID, value) {
+    setFieldValue(fieldID, value, placeholder) {
         const { userFields } = this.state;
         let field = userFields.find(field => field.id === fieldID);
 
         if ( !field ) {
-            field = userFields.find(field => field.type === 'block').children.find(child => child.id === fieldID);
+            field = userFields.find(field => field.type === 'block' || field.type === 'cols').children.find(child => child.id === fieldID);
         }
 
         field.value = value;
         field.updated = true;
+
+        if ( placeholder ) {
+            field.placeholder = placeholder;
+        }
 
         this.setState(() => {
             return {
@@ -140,10 +135,24 @@ class AdminUsersListModal extends React.Component {
 
     updateUser() {
         const { user, updateUser } = this.props;
+        let userID = user.id;
 
         const updatedFields = this.getUpdatedFields();
 
-        updateUser(user.id, updatedFields);
+        if ( user.id ) {
+            delete updatedFields.id;
+        }
+        else {
+            userID = this.generateID();
+        }
+
+        updateUser(userID, updatedFields);
+    }
+
+    generateID() {
+        return generator.generate({
+            length: 16
+        });
     }
 
     getUpdatedFields() {
@@ -154,15 +163,9 @@ class AdminUsersListModal extends React.Component {
 
         userFields.map(field => {
             if ( field.children ) {
-                const newValue = {
-                    [field.id]: {
-                        ...user[field.id]
-                    }
-                };
                 field.children.map(child => {
                     if ( child.updated ) {
-                        newValue[field.id][child.id] = child.value;
-                        Object.assign(updatedFields, newValue);
+                        Object.assign(updatedFields, {[child.id]: child.value});
                     }
                 });
             }
@@ -177,7 +180,7 @@ class AdminUsersListModal extends React.Component {
             ...updatedFields
         });
 
-        delete updatedFields.id;
+        delete updatedFields.isNew;
 
         return updatedFields;
     }

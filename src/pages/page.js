@@ -7,16 +7,16 @@ import userContext from "../context/userContext";
 import { withRouter } from 'react-router-dom';
 
 function Page({location, children, history}) {
-    const { userRole } = useContext(userContext);
+    const { user } = useContext(userContext);
 
     if ( !localStorage.getItem('user') ) {
         location.pathname = '/login';
     }
     else {
-        if ( userRole === 'admin' && !location.pathname.includes('admin') ) {
+        if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
             history.push('/admin');
         }
-        else if ( userRole === 'student' && location.pathname.includes('admin') ) {
+        else if ( user.role === 'student' && location.pathname.includes('admin') ) {
             history.push('/');
         }
     }
@@ -36,10 +36,10 @@ function Page({location, children, history}) {
         <Provider store={mainStore}>
             {
                 localStorage.getItem('user') ?
-                    userRole === 'student' ?
+                    user.role === 'student' ?
                         <MainContainer location={location} children={children}/>
                         :
-                        userRole === 'admin' ?
+                        user.role === 'admin' ?
                             <AdminContainer location={location} children={children}/>
                             :
                             null

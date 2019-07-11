@@ -42,8 +42,26 @@
       @extend %s-cell;
     }
   }
+  &__actions {
+    display: flex;
+    flex-direction: column;
+  }
   &__actions-btn {
     font-family: $RobotoCondensed;
+    margin-top: 10px;
+    &:first-child {
+      margin-top: 0;
+    }
+    &:hover {
+      color: $btnPrimary;
+      text-decoration: underline;
+    }
+    &-error {
+      color: $errorColor;
+      &:hover {
+        color: $errorColor;
+      }
+    }
   }
   &__img {
     position: relative;

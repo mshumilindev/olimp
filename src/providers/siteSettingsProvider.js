@@ -22,6 +22,9 @@ export default class SiteSettingsProvider extends React.Component{
             },
             getUserFormFields: (user, passwordAction) => {
                 return this.getUserFormFields(user, passwordAction);
+            },
+            getUserModel: (role, id) => {
+                return this.getUserModel(role, id)
             }
         };
     }
@@ -86,10 +89,83 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
+    getUserModel(role, id) {
+        const defaultModel = {
+            name: '',
+            login: '',
+            password: '',
+            role: role ? role : '',
+            status: 'suspended',
+            isNew: true
+        };
+
+        switch (role) {
+            case 'admin':
+                return {
+                    ...defaultModel
+                };
+
+            default:
+                return defaultModel;
+        }
+    }
+
     getUserFormFields(user, passwordAction) {
         const { translate } = this.state;
 
         const formFields = [
+            {
+                type: 'image',
+                id: 'avatar',
+                name: 'avatar',
+                label: 'choose_avatar',
+                value: user ? user.avatar : '',
+                icon: 'fas fa-camera-retro',
+                shape: 'round',
+                size: 150,
+                remove: true
+            },
+            {
+                type: 'cols',
+                id: 'infoCols',
+                children: [
+                    {
+                        type: 'select',
+                        id: 'role',
+                        name: 'role',
+                        placeholder: 'role',
+                        hasErrors: false,
+                        required: true,
+                        value: user ? user.role : '',
+                        updated: false,
+                        readonly: user ? !user.isNew : false,
+                        options: [
+                            {
+                                id: 'admin',
+                                title: translate('admin')
+                            },
+                            {
+                                id: 'teacher',
+                                title: translate('teacher')
+                            },
+                            {
+                                id: 'student',
+                                title: translate('student')
+                            }
+                        ]
+                    },
+                    {
+                        type: 'checkbox',
+                        id: 'status',
+                        name: 'status',
+                        label: 'status',
+                        value: user ? user.status : '',
+                        checked: 'active',
+                        unchecked: 'suspended',
+                        readonly: user.id === JSON.parse(localStorage.getItem('user')).id
+                    },
+                ]
+            },
             {
                 type: 'text',
                 id: 'name',
@@ -124,39 +200,8 @@ export default class SiteSettingsProvider extends React.Component{
                     action: passwordAction ? passwordAction : null,
                     title: translate('generate')
                 }
-            },
-            {
-                type: 'select',
-                id: 'role',
-                name: 'role',
-                placeholder: 'role',
-                hasErrors: false,
-                required: true,
-                value: user ? user.role : '',
-                updated: false,
-                options: [
-                    {
-                        id: 'admin',
-                        title: translate('admin')
-                    },
-                    {
-                        id: 'teacher',
-                        title: translate('teacher')
-                    },
-                    {
-                        id: 'student',
-                        title: translate('student')
-                    }
-                ]
             }
         ];
-
-        // if ( user.role === 'teacher' ) {
-        //     // === Teacher fields need to be pushed here
-        // }
-        // if ( user.role === 'student' ) {
-        //     // === Student fields need to be pushed here
-        // }
 
         return formFields;
     }

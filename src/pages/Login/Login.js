@@ -39,7 +39,8 @@ export default class Login extends React.Component {
                 },
                 {
                     name: 'login_btn',
-                    type: 'submit'
+                    type: 'submit',
+                    id: 'login_btn'
                 }
             ]
         };
@@ -89,10 +90,11 @@ export default class Login extends React.Component {
         const login = this.state.formFields.find(field => field.id === 'login').value;
         const password = this.state.formFields.find(field => field.id === 'password').value;
 
-        const userDoc = db.collection('users').doc(login);
+        const userRef = db.collection('users');
+        const userCollection = userRef.where('login', '==', login);
 
-        userDoc.get().then((doc) => {
-            if ( !doc.exists ) {
+        userCollection.get().then((snapshot) => {
+            if ( !snapshot.docs.length ) {
                 this.setState(() => {
                     return {
                         formError: errors.userNotFound
@@ -100,7 +102,7 @@ export default class Login extends React.Component {
                 });
             }
             else {
-                if ( doc.data().password !== password ) {
+                if ( snapshot.docs[0].data().password !== password ) {
                     this.setState(() => {
                         return {
                             formError: errors.wrongPassword
@@ -114,10 +116,12 @@ export default class Login extends React.Component {
                         }
                     });
                     localStorage.setItem('user', JSON.stringify({
-                        name: doc.data().name,
-                        data: doc.data().data,
-                        role: doc.data().role,
-                        class: doc.data().class
+                        name: snapshot.docs[0].data().name,
+                        login: snapshot.docs[0].data().login,
+                        role: snapshot.docs[0].data().role,
+                        class: snapshot.docs[0].data().class,
+                        avatar: snapshot.docs[0].data().avatar,
+                        id: snapshot.docs[0].id
                     }));
                     window.location.reload();
                 }

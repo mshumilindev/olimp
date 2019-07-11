@@ -83,3 +83,41 @@ export const updateUserSuccess = usersList => {
         payload: { usersList }
     }
 };
+
+export const DELETE_USER_BEGIN = 'DELETE_USER_BEGIN';
+export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
+
+export function deleteUser(id) {
+    const userDoc = db.collection('users').doc(id);
+
+    return dispatch => {
+        dispatch(deleteUserBegin());
+        return userDoc.delete().then(() => {
+            return usersCollection.get().then((data) => {
+                usersList.splice(0, usersList.length);
+                data.docs.map(doc => {
+                    const docData = doc.data();
+
+                    Object.assign(docData, {
+                        id: doc.id
+                    });
+
+                    usersList.push(docData);
+                });
+                dispatch(deleteUserSuccess());
+            });
+        });
+    }
+}
+
+export const deleteUserBegin = () => {
+    return {
+        type: DELETE_USER_BEGIN
+    }
+};
+export const deleteUserSuccess = usersList => {
+    return {
+        type: DELETE_USER_SUCCESS,
+        payload: { usersList }
+    }
+};

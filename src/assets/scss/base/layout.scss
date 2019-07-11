@@ -25,3 +25,10 @@
     z-index: -1;
   }
 }
+
+.nothingFound {
+  text-align: center;
+  color: $errorColor;
+  font-weight: bold;
+  padding: $pageIndent 0;
+}

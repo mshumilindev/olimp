@@ -14,32 +14,32 @@
   height: $headerHeight;
   background: $white;
   z-index: 1;
-  &_user {
+  &__user {
     font-family: $RobotoCondensed;
     font-size: 20px;
   }
-  &_actions {
+  &__actions {
     display: flex;
   }
-  &_actions-item {
+  &__actions-item {
     margin-left: 20px;
     position: relative;
   }
-  &_icon {
+  &__icon {
     font-size: 20px;
     position: relative;
     z-index: 1;
     &:hover {
       cursor: pointer;
       color: $linkHoverColor;
-      + .header_icon-descr {
+      + .header__icon-descr {
         opacity: 1;
         z-index: 0;
         transform: translate(-50%, 0);
       }
     }
   }
-  &_icon-descr {
+  &__icon-descr {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 10px);
@@ -53,11 +53,37 @@
     transition: all .15s ease-in-out;
     color: $linkHoverColor;
   }
-  &_divider {
+  &__divider {
     width: 1px;
     height: 20px;
     background: $baseColor;
     margin-left: 20px;
     opacity: .25;
+  }
+  &__user {
+    display: flex;
+    align-items: center;
+  }
+  &__user-avatar {
+    margin-right: 10px;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background-color: $mediumGreyColor;
+    border-radius: 100%;
+    background-size: cover;
+    background-position: 50% 50%;
+  }
+  &__user-avatar-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 14px;
+    color: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

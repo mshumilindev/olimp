@@ -37,6 +37,9 @@
         &:hover {
             background: $lightGreyColor;
         }
+        &.isReset {
+            color: $errorColor;
+        }
     }
     &__arrow {
         position: absolute;
@@ -45,6 +48,5 @@
         transform: translateY(-50%) rotate(0);
         transition: transform .25s ease-in-out;
         font-size: 12px;
-        z-index: -1;
     }
 }

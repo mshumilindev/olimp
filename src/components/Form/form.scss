@@ -25,13 +25,28 @@
     display: flex;
     justify-content: space-between;
     margin-top: -20px;
+    width: 100%;
   }
   &__row {
     margin-top: 20px;
+    display: flex;
+    align-items: center;
+  }
+  &__col {
+    width: 50%;
+    padding: 0 10px;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
   }
   &__field-holder {
     position: relative;
-    z-index: 1;
+    width: 100%;
   }
   &__field {
     border: 1px solid $mediumGreyColor;
@@ -46,7 +61,12 @@
     outline: none;
     box-shadow: none;
     font-family: $RobotoCondensed;
-    &:focus {
+    position: relative;
+    z-index: 1;
+    &.readonly {
+      cursor: not-allowed;
+    }
+    &:focus:not(.readonly) {
       border-color: $btnPrimary;
       ~ .form__field-placeholder {
         top: 0;
@@ -92,6 +112,7 @@
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+    z-index: 1;
     &:hover {
       color: $linkHoverColor;
     }
@@ -101,7 +122,6 @@
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    z-index: -1;
     color: $mediumGreyColor;
     font-family: $RobotoCondensed;
     font-size: 14px;
@@ -127,8 +147,188 @@
       }
     }
   }
+  &__checkbox {
+    display: none;
+    + label {
+      font-family: $RobotoCondensed;
+      font-size: 14px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      line-height: 26px;
+      &.isReadonly {
+        cursor: default;
+        .check-text {
+          margin-right: -5px;
+        }
+        .check {
+          display: none;
+        }
+      }
+      .check-text {
+        margin-right: 10px;
+      }
+      .check-descr {
+        margin-left: 10px;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 11px;
+        color: $mediumGreyColor;
+        margin-top: 1px;
+        margin-bottom: -1px;
+      }
+      .check {
+        width: 46px;
+        height: 26px;
+        background: $lightGreyColor;
+        border-radius: 20px;
+        position: relative;
+        transition: background .25s ease-in-out;
+        &:after {
+          content: '';
+          position: absolute;
+          left: 2px;
+          top: 2px;
+          width: 22px;
+          height: 22px;
+          background: $mediumGreyColor;
+          border-radius: 20px;
+          transform: translateX(0);
+          transition: all .25s ease-in-out;
+        }
+      }
+    }
+    &:checked,
+    &.checked {
+      + label {
+        .check-descr {
+          color: $greenColor;
+        }
+        .check {
+          background: $lightGreenColor;
+          &:after {
+            transform: translateX(20px);
+            background: $greenColor;
+          }
+        }
+      }
+    }
+  }
+  &__radio-holder {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  &__radio-heading {
+    font-size: 14px;
+    font-family: $RobotoCondensed;
+    margin-right: 10px;
+  }
+  &__radio-item {
+    &:after {
+      content: '|';
+      color: $mediumGreyColor;
+      margin: 0 10px;
+      font-weight: 300;
+    }
+    &:last-child {
+      &:after {
+        display: none;
+      }
+    }
+  }
+  &__radio {
+    display: none;
+    + label {
+      cursor: pointer;
+      &:hover {
+        color: $linkHoverColor;
+      }
+    }
+    &:checked {
+      + label {
+        color: $linkHoverColor;
+      }
+    }
+  }
+  &__file-holder {
+    position: relative;
+    margin: 0 auto;
+    > .textTooltip {
+      display: block;
+      .textTooltip__trigger {
+        display: block;
+        overflow: hidden;
+      }
+    }
+    &:hover {
+      color: $anchorColor;
+      [class$="__file-trigger"] {
+        background: $lightBlueColor;
+      }
+      [class$="__file-icon"] {
+        color: $anchorColor;
+      }
+    }
+  }
+  &__file {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+  }
+  &__file-trigger {
+    padding-top: 100%;
+    display: block;
+    background: $lightGreyColor;
+    position: relative;
+    overflow: hidden;
+    &.round {
+      border-radius: 100%;
+    }
+  }
+  &__file-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: $mediumGreyColor;
+  }
+  &__file-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+  }
+  &__file-remove-holder {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: $errorColor;
+  }
+  &__file-remove {
+    cursor: pointer;
+    padding: 5px;
+    margin: -5px;
+    transform: scale(1) translateZ(0);
+    transition: transform .15s ease-in-out;
+    z-index: 1;
+  }
   &__btn-holder {
     text-align: center;
+    width: 100%;
   }
   &__btn {
     border: none;

@@ -1,0 +1,42 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/sizes';
+
+$filtersIndent: $pageIndent / 2;
+
+.filters {
+  margin: #{-$filtersIndent} #{-$pageIndent} 0;
+  padding: $filtersIndent $pageIndent;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.15);
+  background: $lightGreyColor;
+  &__body {
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 #{-$filtersIndent};
+  }
+  .form {
+    box-sizing: border-box;
+    display: flex;
+    &__row {
+      width: 100%;
+      padding: 0 $filtersIndent;
+      box-sizing: border-box;
+    }
+    &__field {
+      &:focus:not(.readonly) {
+        ~ .form__field-placeholder {
+          background: $lightGreyColor;
+        }
+      }
+    }
+    &__field-placeholder {
+      &.isFilled {
+        background: $lightGreyColor;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { FETCH_USERS_BEGIN, FETCH_USERS_SUCCESS, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS } from '../actions/usersActions';
+import { FETCH_USERS_BEGIN, FETCH_USERS_SUCCESS, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, DELETE_USER_BEGIN, DELETE_USER_SUCCESS } from '../actions/usersActions';
 
 const initialState = {
     usersList: [],
@@ -27,6 +27,18 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case UPDATE_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false
+            };
+
+        case DELETE_USER_BEGIN:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case DELETE_USER_SUCCESS:
             return {
                 ...state,
                 loading: false
