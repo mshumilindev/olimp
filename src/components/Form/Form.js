@@ -5,8 +5,9 @@ import classNames from 'classnames';
 import CustomSelect from '../UI/CustomSelect/CustomSelect';
 import { Preloader } from '../UI/preloader';
 import TextTooltip from '../UI/TextTooltip/TextTooltip';
+import Tabs from '../UI/Tabs/Tabs';
 
-export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading}) {
+export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
     const $form = useRef(null);
     const [ hasErrors, setHasErrors ] = useState(false);
     const { translate } = useContext(SiteSettingsContext);
@@ -65,9 +66,27 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         const placeholder = field.placeholder ? translate(field.placeholder) : name;
 
         switch ( field.type ) {
+            case 'tabs':
+                return (
+                    <Tabs tabs={
+                        field.tabs.map(tab => {
+                            return {
+                                heading: translate(tab.heading),
+                                content: tab.content.map(item => _renderField(item))
+                            }
+                        })
+                    }/>
+                );
+
             case 'block':
                 return (
                     <div className="form__block">
+                        {
+                            field.heading ?
+                                <div className="form__block-heading">{ translate(field.heading) }</div>
+                                :
+                                null
+                        }
                         { field.children.map(childField => _renderField(childField)) }
                     </div>
                 );
@@ -94,7 +113,12 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                 return (
                     <div className="form__field-holder">
                         <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" />
-                        <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                        {
+                            field.icon ?
+                                <i className={classNames('form__field-icon ' + field.icon, { isFilled: field.value })} />
+                                :
+                                <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                        }
                         {
                             field.btn ?
                                 <span className="form__field-btn" onClick={() => field.btn.action(field.id)} title={field.btn.title}>
@@ -120,7 +144,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         {
                             field.readonly ?
                                 <div className="form__field-holder">
-                                    <input className={classNames('form__field readonly', {required: field.required, hasErrors: field.required && hasErrors && !field.value, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" readOnly />
+                                    <input className={classNames('form__field readonly', {required: field.required, hasErrors: field.required && hasErrors && !field.value, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={translate(field.value)} autoComplete="new-password" readOnly />
                                     <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
                                 </div>
                                 :
@@ -180,7 +204,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                 const $file = React.createRef(null);
 
                 return (
-                    <div className="form__file-holder" style={{width: field.size}}>
+                    <div className={classNames('form__file-holder', {isUpdated: field.updated})} style={{width: field.size}}>
                         <TextTooltip text={translate(field.label)} position="left">
                             <span className={field.shape ? field.shape + ' form__file-trigger' : 'form__file-trigger'}>
                                 <i className={field.icon ? field.icon + ' form__file-icon' : 'form__file-icon'} />
@@ -206,14 +230,14 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'submit':
                 return (
                     <div className="form__btn-holder">
-                        <button type="submit" className="form__btn btn btn_primary" title={name}>{ name }</button>
+                        <button type="submit" className="form__btn btn btn_primary" title={name} disabled={typeof formUpdated !== 'undefined' ? !formUpdated : false}>{ name }</button>
                     </div>
                 );
 
             case 'reset':
                 return (
                     <div className="form__btn-holder">
-                        <button type="reset" className="form__btn btn btn__error" title={name} onClick={formReset}>{ name }</button>
+                        <button type="reset" className="form__btn btn btn__error" title={name} onClick={formReset} disabled={typeof formUpdated !== 'undefined' ? !formUpdated : false}>{ name }</button>
                     </div>
                 );
 

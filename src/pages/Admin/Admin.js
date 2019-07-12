@@ -13,25 +13,37 @@ export default function Admin({children, location}) {
             name: 'admin'
         },
         {
-            id: 1,
+            id: 2,
+            url: '/admin-profile',
+            icon: 'fa fa-user',
+            name: 'profile'
+        },
+        {
+            id: 3,
+            url: '/admin-messages',
+            icon: 'fa fa-comments',
+            name: 'messages'
+        },
+        {
+            id: 4,
             url: '/admin-users',
             icon: 'fa fa-users',
             name: 'users'
         },
         {
-            id: 2,
+            id: 5,
             url: '/admin-courses',
             icon: 'fa fa-graduation-cap',
             name: 'courses'
         },
         {
-            id: 3,
+            id: 6,
             url: '/admin-translations',
             icon: 'fa fa-language',
             name: 'translations'
         },
         {
-            id: 4,
+            id: 7,
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'

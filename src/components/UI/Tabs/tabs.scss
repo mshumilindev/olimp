@@ -1,0 +1,35 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/fonts';
+
+.tabs {
+  &__nav {
+    font-family: $RobotoCondensed;
+    border-bottom: 1px solid $mediumGreyColor;
+    padding: 0 10px 10px;
+    display: flex;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+  &__nav-item {
+    cursor: pointer;
+    margin-left: 20px;
+    color: $baseColor;
+    transition: color .25s ease-in-out;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:hover {
+      color: $linkHoverColor;
+    }
+    &.active {
+      color: $linkHoverColor;
+    }
+  }
+  &__contents-item {
+    display: none;
+    &.active {
+      display: block;
+    }
+  }
+}

@@ -24,10 +24,14 @@
   }
   &__head {
     &-row {
-      border-bottom: 1px solid $mediumGreyColor;
+      background: $baseColor;
+      color: $white;
       @extend %s-row;
     }
     &-cell {
+      font-weight: normal;
+      text-transform: uppercase;
+      font-family: $RobotoCondensed;
       @extend %s-cell;
     }
   }

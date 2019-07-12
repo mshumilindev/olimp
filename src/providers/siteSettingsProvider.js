@@ -167,40 +167,88 @@ export default class SiteSettingsProvider extends React.Component{
                 ]
             },
             {
-                type: 'text',
-                id: 'name',
-                name: 'name',
-                placeholder: 'name',
-                hasErrors: false,
-                required: true,
-                value: user ? user.name : '',
-                updated: false
-            },
-            {
-                type: 'text',
-                id: 'login',
-                name: 'login',
-                placeholder: 'login',
-                hasErrors: false,
-                errorMessage: null,
-                required: true,
-                value: user ? user.login : '',
-                updated: false
-            },
-            {
-                type: 'text',
-                id: 'password',
-                name: 'password',
-                placeholder: 'password',
-                hasErrors: false,
-                required: true,
-                value: user ? user.password : '',
-                updated: false,
-                btn: {
-                    icon: 'fas fa-random',
-                    action: passwordAction ? passwordAction : null,
-                    title: translate('generate')
-                }
+                type: 'tabs',
+                id: 'infoTabs',
+                tabs: [
+                    {
+                        heading: 'info',
+                        content: [
+                            {
+                                type: 'text',
+                                id: 'name',
+                                name: 'name',
+                                placeholder: 'name',
+                                hasErrors: false,
+                                required: true,
+                                value: user ? user.name : '',
+                                updated: false
+                            },
+                            {
+                                type: 'text',
+                                id: 'login',
+                                name: 'login',
+                                placeholder: 'login',
+                                hasErrors: false,
+                                errorMessage: null,
+                                required: true,
+                                value: user ? user.login : '',
+                                updated: false
+                            },
+                            {
+                                type: 'text',
+                                id: 'password',
+                                name: 'password',
+                                placeholder: 'password',
+                                hasErrors: false,
+                                required: true,
+                                value: user ? user.password : '',
+                                updated: false,
+                                btn: {
+                                    icon: 'fas fa-random',
+                                    action: passwordAction ? passwordAction : null,
+                                    title: translate('generate')
+                                }
+                            },
+                            {
+                                type: 'block',
+                                id: 'contactsBlock',
+                                heading: 'contacts',
+                                children: [
+                                    {
+                                        type: 'email',
+                                        id: 'email',
+                                        name: 'email',
+                                        placeholder: 'email',
+                                        hasErrors: false,
+                                        value: user ? user.email : '',
+                                        updated: false,
+                                        icon: 'far fa-envelope'
+                                    },
+                                    {
+                                        type: 'tel',
+                                        id: 'tel',
+                                        name: 'tel',
+                                        placeholder: 'tel',
+                                        hasErrors: false,
+                                        value: user ? user.tel : '',
+                                        updated: false,
+                                        icon: 'fas fa-mobile-alt'
+                                    },
+                                    {
+                                        type: 'text',
+                                        id: 'skype',
+                                        name: 'skype',
+                                        placeholder: 'skype',
+                                        hasErrors: false,
+                                        value: user ? user.skype : '',
+                                        updated: false,
+                                        icon: 'fab fa-skype'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
             }
         ];
 

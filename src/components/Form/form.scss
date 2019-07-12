@@ -4,6 +4,12 @@
 .form {
   width: 100%;
   position: relative;
+  .tabs {
+    width: 100%;
+    &__noTabs {
+      margin-top: -20px;
+    }
+  }
   &.hasErrors {
     animation: shake .25s ease-in-out;
   }
@@ -20,6 +26,20 @@
     padding: 0 10px 10px;
     box-sizing: border-box;
     margin: 0 -10px;
+    width: calc(100% + 20px);
+    position: relative;
+  }
+  &__block-heading {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateY(-50%) translateX(-50%);
+    font-family: $RobotoCondensed;
+    color: $mediumGreyColor;
+    background: $white;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 2px;
   }
   &__actions {
     display: flex;
@@ -47,6 +67,9 @@
   &__field-holder {
     position: relative;
     width: 100%;
+    &:focus {
+      background: #000;
+    }
   }
   &__field {
     border: 1px solid $mediumGreyColor;
@@ -77,10 +100,18 @@
         line-height: 1;
         color: $btnPrimary;
       }
+      ~ .form__field-icon {
+        top: 0;
+        z-index: 1;
+        color: $btnPrimary;
+      }
     }
     &.isUpdated {
       border-color: $greenColor;
       ~ .form__field-placeholder {
+        color: $greenColor;
+      }
+      ~ .form__field-icon {
         color: $greenColor;
       }
     }
@@ -90,6 +121,9 @@
     &.hasErrors {
       border-color: $errorColor;
       ~ .form__field-placeholder {
+        color: $errorColor;
+      }
+      ~ .form__field-icon {
         color: $errorColor;
       }
     }
@@ -104,6 +138,26 @@
     }
     &:-moz-placeholder {
       color: $mediumGreyColor;
+    }
+  }
+  &__field-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $mediumGreyColor;
+    background: $white;
+    transition: all .15s ease-in-out;
+    padding: 2px;
+    &.isFilled {
+      top: 0;
+      z-index: 1;
+    }
+    ~ .form__field-placeholder {
+      left: 35px;
     }
   }
   &__field-error {
@@ -276,6 +330,15 @@
         color: $anchorColor;
       }
     }
+    &.isUpdated {
+      [class$="__file-trigger"] {
+        border-color: $greenColor;
+        background: $lightGreenColor;
+      }
+      [class$="__file-icon"] {
+        color: $greenColor;
+      }
+    }
   }
   &__file {
     opacity: 0;
@@ -292,6 +355,7 @@
     background: $lightGreyColor;
     position: relative;
     overflow: hidden;
+    border: 1px solid transparent;
     &.round {
       border-radius: 100%;
     }

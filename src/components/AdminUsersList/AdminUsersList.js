@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import AdminUsersListModal from './AdminUsersListModal';
 import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
+import { Link } from 'react-router-dom';
 
 class AdminUsersList extends React.Component {
     constructor(props, context) {
@@ -109,7 +110,7 @@ class AdminUsersList extends React.Component {
                     }
                 </td>
                 <td className="table__body-cell">
-                    <span>{ user.name }</span>
+                    <span><Link to={'/user/' + user.login}>{ user.name }</Link></span>
                 </td>
                 <td className="table__body-cell">
                     <span>{ translate(user.role) }</span>

@@ -13,7 +13,8 @@ class AdminUsersListModal extends React.Component {
 
         this.state = {
             showModal: false,
-            userFields: this.getUserFields(props.user, context)
+            userFields: this.getUserFields(props.user, context),
+            formUpdated: false
         };
 
         this.getUserFields = this.getUserFields.bind(this);
@@ -34,7 +35,7 @@ class AdminUsersListModal extends React.Component {
                 {
                     this.state.showModal ?
                         <Modal onHideModal={() => this.toggleModal()}>
-                            <Form loading={this.props.loading} heading={translate('editing_user')} fields={this.state.userFields} setFieldValue={this.setFieldValue} formAction={this.updateUser} formReset={this.resetUser}/>
+                            <Form formUpdated={this.state.formUpdated} loading={this.props.loading} heading={translate('editing_user')} fields={this.state.userFields} setFieldValue={this.setFieldValue} formAction={this.updateUser} formReset={this.resetUser}/>
                         </Modal>
                         :
                         null
@@ -84,7 +85,8 @@ class AdminUsersListModal extends React.Component {
             }
 
             return {
-                ...newState
+                ...newState,
+                formUpdated: false
             }
         });
     }
@@ -96,21 +98,54 @@ class AdminUsersListModal extends React.Component {
             newState.userFields = this.getUserFields(this.props.user, this.context);
 
             return {
-                ...newState
+                ...newState,
+                formUpdated: false
             }
         });
     }
 
-    setFieldValue(fieldID, value, placeholder) {
+    findFieldInBlock(item, fieldID) {
+        return item.children.find(child => {
+            if ( child.id === fieldID ) {
+                return child;
+            }
+        });
+    }
+
+    setFieldValue(fieldID, value) {
         const { userFields } = this.state;
         const { user, usersList } = this.props;
         const { translate } = this.context;
 
-        let field = userFields.find(field => field.id === fieldID);
+        let field = null;
 
-        if ( !field ) {
-            field = userFields.find(field => field.type === 'block' || field.type === 'cols').children.find(child => child.id === fieldID);
-        }
+        userFields.find(fieldItem => {
+            if ( fieldItem.type === 'tabs' ) {
+                fieldItem.tabs.find(tabItem => {
+                    tabItem.content.find(item => {
+                        if ( item.type === 'block' || item.type === 'cols' ) {
+                            field = this.findFieldInBlock(item, fieldID);
+                        }
+                        else {
+                            if ( item.id === fieldID ) {
+                                field = item;
+                            }
+                        }
+                        return field;
+                    });
+                    return field;
+                });
+            }
+            else if ( fieldItem.type === 'block' || fieldItem.type === 'cols' ) {
+                field = this.findFieldInBlock(fieldItem, fieldID);
+            }
+            else {
+                if ( fieldItem.id === fieldID ) {
+                    field = fieldItem;
+                }
+            }
+            return field;
+        });
 
         if ( fieldID === 'login' ) {
             if ( usersList.some(item => item.id !== user.id && item.login === value) ) {
@@ -126,13 +161,10 @@ class AdminUsersListModal extends React.Component {
         field.value = value;
         field.updated = true;
 
-        if ( placeholder ) {
-            field.placeholder = placeholder;
-        }
-
         this.setState(() => {
             return {
-                userFields: userFields
+                userFields: userFields,
+                formUpdated: true
             }
         });
     }

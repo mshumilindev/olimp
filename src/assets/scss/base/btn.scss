@@ -24,4 +24,9 @@
   &:hover {
     opacity: .75;
   }
+  &[disabled] {
+    cursor: not-allowed;
+    filter: grayscale(100%);
+    opacity: .5;
+  }
 }

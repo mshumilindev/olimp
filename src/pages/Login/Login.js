@@ -120,6 +120,9 @@ export default class Login extends React.Component {
                         role: snapshot.docs[0].data().role,
                         class: snapshot.docs[0].data().class,
                         avatar: snapshot.docs[0].data().avatar,
+                        email: snapshot.docs[0].data().email,
+                        tel: snapshot.docs[0].data().tel,
+                        skype: snapshot.docs[0].data().skype,
                         id: snapshot.docs[0].id
                     }));
                     window.location.reload();
