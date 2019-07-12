@@ -5,6 +5,7 @@ import { Preloader } from "../UI/preloader";
 import classNames from 'classnames';
 import AdminUsersListModal from './AdminUsersListModal';
 import {deleteUser} from "../../redux/actions/usersActions";
+import './adminUsersList.scss';
 
 class AdminUsersList extends React.Component {
     constructor(props, context) {
@@ -118,10 +119,15 @@ class AdminUsersList extends React.Component {
                 </td>
                 <td className="table__body-cell table__actions">
                     <AdminUsersListModal user={user} usersList={this.filterUsersList()} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
-                    <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
-                        <i className={'content_title-icon fa fa-user-times'} />
-                        { translate('delete') }
-                    </a>
+                    {
+                        user.id !== JSON.parse(localStorage.getItem('user')).id ?
+                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
+                                <i className={'content_title-icon fa fa-user-times'} />
+                                { translate('delete') }
+                            </a>
+                            :
+                            null
+                    }
                 </td>
             </tr>
         )

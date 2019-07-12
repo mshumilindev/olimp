@@ -45,6 +45,7 @@
   &__actions {
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
   &__actions-btn {
     font-family: $RobotoCondensed;
