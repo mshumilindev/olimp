@@ -33,17 +33,29 @@ export default function Admin({children, location}) {
         {
             id: 5,
             url: '/admin-courses',
-            icon: 'fa fa-graduation-cap',
+            icon: 'fa fa-book',
             name: 'courses'
         },
         {
             id: 6,
+            url: '/admin-classes',
+            icon: 'fa fa-graduation-cap',
+            name: 'classes'
+        },
+        {
+            id: 7,
+            url: '/admin-library',
+            icon: 'fa fa-bookmark',
+            name: 'library'
+        },
+        {
+            id: 8,
             url: '/admin-translations',
             icon: 'fa fa-language',
             name: 'translations'
         },
         {
-            id: 7,
+            id: 9,
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'

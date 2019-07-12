@@ -10,6 +10,8 @@ const Dashboard = React.lazy(() => import('./pages/dashboard/dashboard'));
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
 
+// === Need to remove nav from firebase and move it to the new Student component
+
 export default function App() {
     return (
         <SiteSettingsProvider>
