@@ -1,0 +1,26 @@
+.pager {
+  display: flex;
+  justify-content: center;
+  padding: $pageIndent / 2 $pageIndent / 2 0;
+  flex-wrap: wrap;
+  &[hidden] {
+    display: none;
+  }
+  &__item {
+    display: block;
+    padding: 10px;
+    margin: 1px;
+    background: $lightColor;
+    color: $mediumGreyColor;
+    cursor: pointer;
+    &:hover {
+      background: $lightBlueColor;
+      color: $anchorColor;
+    }
+    &.active {
+      background: $lightBlueColor;
+      color: $anchorColor;
+      cursor: default;
+    }
+  }
+}

@@ -11,7 +11,12 @@ export default function CustomSelect({options, placeholder, name, updated, id, v
             <div className="form__field-holder">
                 <input className={classNames('form__field customSelect__value', {isUpdated: updated})} type="text" title={name} value={value} readOnly onChange={e => e} />
                 <i className="fa fa-chevron-down customSelect__arrow" />
-                <span className={classNames('form__field-placeholder', { isFilled: value })}>{ placeholder }</span>
+                {
+                    placeholder ?
+                        <span className={classNames('form__field-placeholder', { isFilled: value })}>{ placeholder }</span>
+                        :
+                        null
+                }
                 <div className="customSelect__drop">
                     {
                         hasReset && value ?

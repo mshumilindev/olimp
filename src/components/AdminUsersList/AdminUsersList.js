@@ -7,6 +7,7 @@ import AdminUsersListModal from './AdminUsersListModal';
 import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
 import { Link } from 'react-router-dom';
+import withPager from "../../utils/withPager";
 
 class AdminUsersList extends React.Component {
     constructor(props, context) {
@@ -44,7 +45,7 @@ class AdminUsersList extends React.Component {
     }
 
     render() {
-        const { loading, filters } = this.props;
+        const { loading, filters, pager, list } = this.props;
         const { translate } = this.context;
 
         return (
@@ -55,13 +56,13 @@ class AdminUsersList extends React.Component {
                         { translate('users') }
                     </h2>
                     <div className="section__title-actions">
-                        <AdminUsersListModal user={this.state.userModel} usersList={this.filterUsersList()} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
+                        <AdminUsersListModal user={this.state.userModel} usersList={list} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
                     </div>
                 </div>
                 { filters }
                 <div className="adminUsersList widget">
                     {
-                        this.filterUsersList().length ?
+                        list && list.length ?
                             <div className="table__holder">
                                 <table className="adminUsersList__table table">
                                     <colgroup>
@@ -73,9 +74,10 @@ class AdminUsersList extends React.Component {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    { this.filterUsersList().map(user => this._renderUsers(user)) }
+                                        { list.map(user => this._renderUsers(user)) }
                                     </tbody>
                                 </table>
+                                { pager }
                             </div>
                             :
                             loading ?
@@ -91,7 +93,7 @@ class AdminUsersList extends React.Component {
     }
 
     _renderUsers(user) {
-        const { loading } = this.props;
+        const { loading, list } = this.props;
         const { translate } = this.context;
 
         return (
@@ -119,7 +121,7 @@ class AdminUsersList extends React.Component {
                     <span>{ user.class ? user.class : null }</span>
                 </td>
                 <td className="table__body-cell table__actions">
-                    <AdminUsersListModal user={user} usersList={this.filterUsersList()} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
+                    <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
                     {
                         user.id !== JSON.parse(localStorage.getItem('user')).id ?
                             <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
@@ -134,63 +136,6 @@ class AdminUsersList extends React.Component {
         )
     }
 
-    filterUsersList() {
-        const { usersList, searchQuery, sortBy, filterBy } = this.props;
-
-        return usersList
-            .sort((a, b) => {
-                if ( a.name < b.name ) {
-                    return -1;
-                }
-                if ( a.name > b.name ) {
-                    return 1;
-                }
-                return 0;
-            })
-            .sort((a, b) => {
-                const aValue = a[sortBy.value] === 'admin' ? 'a' : a[sortBy.value] === 'teacher' ? 'b' : a[sortBy.value] === 'student' ? 'c' : a[sortBy.value];
-                const bValue = b[sortBy.value] === 'admin' ? 'a' : b[sortBy.value] === 'teacher' ? 'b' : b[sortBy.value] === 'student' ? 'c' : b[sortBy.value];
-
-                if ( a[sortBy.value] === undefined ) {
-                    return 1;
-                }
-                if ( b[sortBy.value] === undefined ) {
-                    return -1;
-                }
-                if ( aValue < bValue ) {
-                    return -1;
-                }
-                if ( aValue > bValue ) {
-                    return 1;
-                }
-                return 0;
-            })
-            .filter(user => {
-                const returnValues = [];
-                const filterByRole = filterBy.find(filter => filter.id === 'filterByRole');
-                const filterByStatus = filterBy.find(filter => filter.id === 'filterByStatus');
-
-                filterByRole.value ?
-                    user.role === filterByRole.value ?
-                        returnValues.push(true)
-                        :
-                        returnValues.push(false)
-                    :
-                    returnValues.push(true);
-
-                filterByStatus.value ?
-                    user.status === filterByStatus.value ?
-                        returnValues.push(true)
-                        :
-                        returnValues.push(false)
-                    :
-                    returnValues.push(true);
-
-                return returnValues.every(value => value);
-            })
-            .filter(user => user.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-
     deleteUser(e, userID) {
         const { translate } = this.context;
         e.preventDefault();
@@ -202,12 +147,8 @@ class AdminUsersList extends React.Component {
 }
 AdminUsersList.contextType = siteSettingsContext;
 
-const mapStateToProps = state => ({
-    usersList: state.usersReducer.usersList,
-    loading: state.usersReducer.loading
-});
 const mapDispatchToProps = dispatch => ({
     deleteUser: (id) => dispatch(deleteUser(id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdminUsersList);
+export default connect(null, mapDispatchToProps)(withPager(AdminUsersList));

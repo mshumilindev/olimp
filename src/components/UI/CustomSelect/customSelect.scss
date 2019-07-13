@@ -6,6 +6,8 @@
     position: relative;
     &__value {
         cursor: pointer;
+        padding-right: 34px;
+        text-overflow: ellipsis;
         &:focus {
             ~ [class$="__drop"] {
                 max-height: 200px;

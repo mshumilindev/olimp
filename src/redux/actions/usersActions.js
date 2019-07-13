@@ -12,7 +12,7 @@ export function fetchUsers() {
         return dispatch => {
             dispatch(fetchUsersBegin());
             return usersCollection.get().then((data) => {
-                data.docs.map(doc => {
+                data.docs.forEach(doc => {
                     const docData = doc.data();
 
                     Object.assign(docData, {
@@ -57,7 +57,7 @@ export function updateUser(id, updatedFields) {
         }).then(() => {
             return usersCollection.get().then((data) => {
                 usersList.splice(0, usersList.length);
-                data.docs.map(doc => {
+                data.docs.forEach(doc => {
                     const docData = doc.data();
 
                     Object.assign(docData, {
@@ -95,7 +95,7 @@ export function deleteUser(id) {
         return userDoc.delete().then(() => {
             return usersCollection.get().then((data) => {
                 usersList.splice(0, usersList.length);
-                data.docs.map(doc => {
+                data.docs.forEach(doc => {
                     const docData = doc.data();
 
                     Object.assign(docData, {

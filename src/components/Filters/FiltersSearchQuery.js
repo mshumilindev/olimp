@@ -19,7 +19,7 @@ export default function FiltersSearchQuery({searchQuery, filterChanged}) {
                 value: searchQuery
             }]);
         }
-    });
+    }, [formFields, searchQuery]);
 
     return (
         <Form fields={formFields} setFieldValue={filterChanged} />

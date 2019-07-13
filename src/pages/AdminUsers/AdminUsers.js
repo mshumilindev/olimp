@@ -1,119 +1,99 @@
 import React from 'react';
-import Filters from '../../components/Filters/Filters';
-import siteSettingsContext from "../../context/siteSettingsContext";
+import {connect} from "react-redux";
+import withFilters from "../../utils/withFilters";
 
 const AdminUsersList = React.lazy(() => import('../../components/AdminUsersList/AdminUsersList'));
 
-export default class AdminUsers extends React.Component {
-    constructor(props, context) {
-        super();
-
-        const { translate } = context;
-
-        this.state = {
-            searchQuery: '',
-            sortBy: {
-                type: 'radio',
-                name: 'sort_by',
-                id: 'sortBy',
-                value: 'name',
-                placeholder: translate('sort_by'),
-                options: [
-                    {
-                        'name': 'name',
-                        'icon': 'fas fa-sort-alpha-up'
-                    },
-                    {
-                        'name': 'role',
-                        'icon': 'fas fa-user-tag'
-                    },
-                    {
-                        'name': 'class',
-                        'icon': 'fas fa-graduation-cap'
-                    }
-                ]
-            },
-            filterBy: [
-                {
-                    type: 'select',
-                    id: 'filterByRole',
-                    hasReset: true,
-                    options: [
-                        {
-                            title: translate('admin'),
-                            id: 'admin'
-                        }, {
-                            title: translate('teacher'),
-                            id: 'teacher'
-                        }, {
-                            title: translate('student'),
-                            id: 'student'
-                        }
-                    ],
-                    placeholder: translate('role'),
-                    value: ''
-                },
-                {
-                    type: 'select',
-                    id: 'filterByStatus',
-                    hasReset: true,
-                    options: [
-                        {
-                            title: translate('active'),
-                            id: 'active'
-                        },
-                        {
-                            title: translate('suspended'),
-                            id: 'suspended'
-                        }
-                    ],
-                    placeholder: translate('status'),
-                    value: ''
-                }
-            ]
-        };
-
-        this.filterChanged = this.filterChanged.bind(this);
+const sortByOptions = [
+    {
+        title: 'name',
+        icon: 'fas fa-sort-alpha-up'
+    },
+    {
+        title: 'role',
+        icon: 'fas fa-user-tag'
+    },
+    {
+        title: 'class',
+        icon: 'fas fa-graduation-cap'
     }
+];
 
-    render() {
-        const { searchQuery, sortBy, filterBy } = this.state;
-
-        return (
-            <AdminUsersList searchQuery={searchQuery} sortBy={sortBy} filterBy={filterBy} filters={this._renderFilters()} />
-        );
+const filterByOptions = [
+    {
+        id: 'filterByRole',
+        options: ['admin', 'teacher', 'student'],
+        placeholder: 'role'
+    },
+    {
+        id: 'filterByStatus',
+        options: ['active', 'suspended'],
+        placeholder: 'status',
     }
+];
 
-    _renderFilters() {
-        const { searchQuery, sortBy, filterBy } = this.state;
+function AdminUsers({usersList, searchQuery, sortBy, showPerPage, filterBy, filters}) {
+    return <AdminUsersList showPerPage={showPerPage} list={filterUsersList()} searchQuery={searchQuery} sortBy={sortBy} filterBy={filterBy} filters={filters} />;
 
-        return <Filters searchQuery={searchQuery} sortBy={sortBy} filterBy={filterBy} filterChanged={this.filterChanged} />;
-    }
-
-    filterChanged(type, value) {
-        if ( type === 'searchQuery' ) {
-            this.setState({
-                searchQuery: value
-            });
-        }
-        else if ( type === 'sortBy' ) {
-            this.setState(state => {
-                return {
-                    sortBy: {
-                        ...state.sortBy,
-                        value: value
-                    }
+    function filterUsersList() {
+        return usersList && filterBy.length ? usersList
+            .sort((a, b) => {
+                if ( a.name < b.name ) {
+                    return -1;
                 }
-            });
-        }
-        else {
-            this.state.filterBy.find(filter => filter.id === type).value = value;
-            this.setState(state => {
-                return {
-                    filterBy: state.filterBy
+                if ( a.name > b.name ) {
+                    return 1;
                 }
-            });
-        }
+                return 0;
+            })
+            .sort((a, b) => {
+                const aValue = a[sortBy.value] === 'admin' ? 'a' : a[sortBy.value] === 'teacher' ? 'b' : a[sortBy.value] === 'student' ? 'c' : a[sortBy.value];
+                const bValue = b[sortBy.value] === 'admin' ? 'a' : b[sortBy.value] === 'teacher' ? 'b' : b[sortBy.value] === 'student' ? 'c' : b[sortBy.value];
+
+                if ( a[sortBy.value] === undefined ) {
+                    return 1;
+                }
+                if ( b[sortBy.value] === undefined ) {
+                    return -1;
+                }
+                if ( aValue < bValue ) {
+                    return -1;
+                }
+                if ( aValue > bValue ) {
+                    return 1;
+                }
+                return 0;
+            })
+            .filter(user => {
+                const returnValues = [];
+                const filterByRole = filterBy.find(filter => filter.id === 'filterByRole');
+                const filterByStatus = filterBy.find(filter => filter.id === 'filterByStatus');
+
+                filterByRole.value ?
+                    user.role === filterByRole.value ?
+                        returnValues.push(true)
+                        :
+                        returnValues.push(false)
+                    :
+                    returnValues.push(true);
+
+                filterByStatus.value ?
+                    user.status === filterByStatus.value ?
+                        returnValues.push(true)
+                        :
+                        returnValues.push(false)
+                    :
+                    returnValues.push(true);
+
+                return returnValues.every(value => value);
+            })
+            .filter(user => user.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            :
+            usersList;
     }
 }
-AdminUsers.contextType = siteSettingsContext;
+const mapStateToProps = state => ({
+    usersList: state.usersReducer.usersList,
+    loading: state.usersReducer.loading
+});
+export default connect(mapStateToProps)(withFilters(AdminUsers, sortByOptions, filterByOptions));

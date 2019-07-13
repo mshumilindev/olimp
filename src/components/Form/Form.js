@@ -117,7 +117,10 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                             field.icon ?
                                 <i className={classNames('form__field-icon ' + field.icon, { isFilled: field.value })} />
                                 :
-                                <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                                field.placeholder ?
+                                    <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                                    :
+                                    null
                         }
                         {
                             field.btn ?
@@ -145,7 +148,12 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                             field.readonly ?
                                 <div className="form__field-holder">
                                     <input className={classNames('form__field readonly', {required: field.required, hasErrors: field.required && hasErrors && !field.value, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={translate(field.value)} autoComplete="new-password" readOnly />
-                                    <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                                    {
+                                        field.placeholder ?
+                                            <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                                            :
+                                            null
+                                    }
                                 </div>
                                 :
                                 <div className={classNames('form__select-holder', {hasErrors: field.required && hasErrors && !field.value})}>

@@ -86,6 +86,7 @@
     font-family: $RobotoCondensed;
     position: relative;
     z-index: 1;
+    text-overflow: ellipsis;
     &.readonly {
       cursor: not-allowed;
     }

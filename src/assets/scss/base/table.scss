@@ -6,7 +6,7 @@
       }
     }
   }
-  &:nth-child(2) {
+  &:nth-child(2n) {
     background: $lightGreyColor;
   }
 }
@@ -20,7 +20,8 @@
   width: 100%;
   text-align: left;
   &__holder {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   &__head {
     &-row {
@@ -89,5 +90,12 @@
     align-items: center;
     color: $white;
     font-size: 12px;
+  }
+  &__key {
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    display: block;
+    border-right: 1px solid $mediumGreyColor;
+    font-weight: bold;
   }
 }

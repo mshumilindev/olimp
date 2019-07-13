@@ -109,6 +109,7 @@ class AdminUsersListModal extends React.Component {
             if ( child.id === fieldID ) {
                 return child;
             }
+            return false;
         });
     }
 
@@ -207,9 +208,9 @@ class AdminUsersListModal extends React.Component {
 
         const updatedFields = {};
 
-        userFields.map(field => {
+        userFields.forEach(field => {
             if ( field.children ) {
-                field.children.map(child => {
+                field.children.forEach(child => {
                     if ( child.updated ) {
                         Object.assign(updatedFields, {[child.id]: child.value});
                     }
