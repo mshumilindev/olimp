@@ -6,42 +6,42 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 
 export default function Admin({children, location}) {
     const adminNav = [
-        {
-            id: 0,
-            url: '/admin',
-            icon: 'fa fa-home',
-            name: 'admin'
-        },
-        {
-            id: 2,
-            url: '/admin-profile',
-            icon: 'fa fa-user',
-            name: 'profile'
-        },
-        {
-            id: 3,
-            url: '/admin-messages',
-            icon: 'fa fa-comments',
-            name: 'messages'
-        },
+        // {
+        //     id: 0,
+        //     url: '/admin',
+        //     icon: 'fa fa-home',
+        //     name: 'admin'
+        // },
+        // {
+        //     id: 2,
+        //     url: '/admin-profile',
+        //     icon: 'fa fa-user',
+        //     name: 'profile'
+        // },
+        // {
+        //     id: 3,
+        //     url: '/admin-messages',
+        //     icon: 'fa fa-comments',
+        //     name: 'messages'
+        // },
         {
             id: 4,
             url: '/admin-users',
             icon: 'fa fa-users',
             name: 'users'
         },
-        {
-            id: 5,
-            url: '/admin-courses',
-            icon: 'fa fa-book',
-            name: 'courses'
-        },
-        {
-            id: 6,
-            url: '/admin-classes',
-            icon: 'fa fa-graduation-cap',
-            name: 'classes'
-        },
+        // {
+        //     id: 5,
+        //     url: '/admin-courses',
+        //     icon: 'fa fa-book',
+        //     name: 'courses'
+        // },
+        // {
+        //     id: 6,
+        //     url: '/admin-classes',
+        //     icon: 'fa fa-graduation-cap',
+        //     name: 'classes'
+        // },
         {
             id: 7,
             url: '/admin-library',
@@ -54,24 +54,24 @@ export default function Admin({children, location}) {
             icon: 'fa fa-language',
             name: 'translations'
         },
-        {
-            id: 9,
-            url: '/admin-tags',
-            icon: 'fa fa-tags',
-            name: 'tags'
-        },
-        {
-            id: 10,
-            url: '/admin-templates',
-            icon: 'fa fa-file',
-            name: 'templates'
-        },
-        {
-            id: 11,
-            url: '/admin-settings',
-            icon: 'fa fa-cogs',
-            name: 'settings'
-        }
+        // {
+        //     id: 9,
+        //     url: '/admin-tags',
+        //     icon: 'fa fa-tags',
+        //     name: 'tags'
+        // },
+        // {
+        //     id: 10,
+        //     url: '/admin-templates',
+        //     icon: 'fa fa-file',
+        //     name: 'templates'
+        // },
+        // {
+        //     id: 11,
+        //     url: '/admin-settings',
+        //     icon: 'fa fa-cogs',
+        //     name: 'settings'
+        // }
     ];
 
     const { siteName, translate } = useContext(SiteSettingsContext);

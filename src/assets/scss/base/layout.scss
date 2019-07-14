@@ -32,3 +32,21 @@
   font-weight: bold;
   padding: $pageIndent 0;
 }
+
+.pageNotFound {
+  height: calc(100vh - #{$headerHeight} - #{$pageIndent * 2});
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: $greyColor;
+  font-weight: bold;
+  padding-top: $pageIndent;
+  box-sizing: border-box;
+  font-family: $RobotoCondensed;
+}
