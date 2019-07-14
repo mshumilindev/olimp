@@ -56,6 +56,18 @@ export default function Admin({children, location}) {
         },
         {
             id: 9,
+            url: '/admin-tags',
+            icon: 'fa fa-tags',
+            name: 'tags'
+        },
+        {
+            id: 10,
+            url: '/admin-templates',
+            icon: 'fa fa-file',
+            name: 'templates'
+        },
+        {
+            id: 11,
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'

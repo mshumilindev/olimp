@@ -1,0 +1,23 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/fonts';
+
+.tagsList {
+  display: flex;
+  align-items: center;
+  margin: -5px;
+  &__item {
+    margin: 5px;
+    padding: 7px 12px;
+    background: $greyColor;
+    color: $white;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: $RobotoCondensed;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    &:hover {
+      background: $btnPrimary;
+    }
+  }
+}

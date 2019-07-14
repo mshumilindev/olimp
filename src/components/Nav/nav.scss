@@ -31,6 +31,7 @@ $navIndent: 20px;
     color: $linkColor;
     &.active {
       color: $linkHoverColor;
+      cursor: default;
     }
   }
   &_icon {

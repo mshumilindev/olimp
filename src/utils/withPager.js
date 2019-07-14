@@ -14,7 +14,7 @@ function usePrevious(value) {
 const withPager = WrappedComponent => {
     return function Pager(props) {
         const [ offset, setOffset ] = useState(0);
-        const [ limit, setLimit ] = useState(props.showPerPage ? props.showPerPage : 10);
+        const [ limit, setLimit ] = useState(props.showPerPage ? props.showPerPage : 1);
         const [ totalPages, setTotalPages ] = useState(Math.ceil(props.list ? props.list.length / limit : 0));
         const prevList = usePrevious(props.list);
         const prevLimit = usePrevious(props.showPerPage);

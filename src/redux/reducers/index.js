@@ -3,10 +3,12 @@ import configReducer from './configReducer';
 import scheduleReducer from './scheduleReducer';
 import usersReducer from './usersReducer';
 import translationsReducer from './translationsReducer';
+import libraryReducer from './libraryReducer';
 
 export default combineReducers({
     configReducer: configReducer,
     scheduleReducer: scheduleReducer,
     usersReducer: usersReducer,
-    translationsReducer: translationsReducer
+    translationsReducer: translationsReducer,
+    libraryReducer: libraryReducer
 });

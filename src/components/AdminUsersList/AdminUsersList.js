@@ -120,17 +120,19 @@ class AdminUsersList extends React.Component {
                 <td className="table__body-cell">
                     <span>{ user.class ? user.class : null }</span>
                 </td>
-                <td className="table__body-cell table__actions">
-                    <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
-                    {
-                        user.id !== JSON.parse(localStorage.getItem('user')).id ?
-                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
-                                <i className={'content_title-icon fa fa-user-times'} />
-                                { translate('delete') }
-                            </a>
-                            :
-                            null
-                    }
+                <td className="table__body-cell">
+                    <div className="table__actions">
+                        <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
+                        {
+                            user.id !== JSON.parse(localStorage.getItem('user')).id ?
+                                <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
+                                    <i className={'content_title-icon fa fa-user-times'} />
+                                    { translate('delete') }
+                                </a>
+                                :
+                                null
+                        }
+                    </div>
                 </td>
             </tr>
         )

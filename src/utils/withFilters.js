@@ -65,7 +65,6 @@ const withFilters = (WrappedComponent, sortByOptions, filterByOptions) => {
                 setShowPerPage(value);
             }
 
-
             if ( type === 'searchQuery' ) {
                 setSearchQuery(value);
             }
