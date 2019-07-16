@@ -104,7 +104,7 @@ export const UPLOAD_DOC_BEGIN = 'UPLOAD_DOC_BEGIN';
 export const UPLOAD_DOC_SUCCESS = 'UPLOAD_DOC_SUCCESS';
 
 export function uploadDoc(newFile, file, id) {
-    const documentRef = storageRef.child('library/' + newFile.name);
+    const documentRef = storageRef.child('library/' + file.name);
     const documentDoc = db.collection('library').doc(id);
 
     return dispatch => {
