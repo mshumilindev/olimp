@@ -141,6 +141,19 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     </div>
                 );
 
+            case 'itemList':
+                return (
+                    <div className="form__field-holder form__itemList-holder">
+                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated})} onChange={(e) => itemListChange(field.id, e.target.value)} type="text" title={name} value={field.value.join(' ')} />
+                        {
+                            field.placeholder ?
+                                <span className={classNames('form__field-placeholder', { isFilled: field.value.length })}>{ placeholder }</span>
+                                :
+                                null
+                        }
+                    </div>
+                );
+
             case 'select':
                 return (
                     <div className="form__field-holder">
@@ -297,6 +310,34 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                 handleFieldChange(fieldID, reader.result);
             };
         });
+    }
 
+    function itemListChange(fieldID, value) {
+        const newValue = [];
+        let intValue = value;
+
+        // === Checking for an empty tag
+        intValue = intValue.split('').reverse().join('');
+        if ( intValue.indexOf('#') === 0 ) {
+            intValue = intValue.substr(2, intValue.length);
+        }
+        intValue = intValue.split('').reverse().join('');
+
+        // === Modifying tags
+        intValue = intValue.split('#').join('');
+
+
+        intValue = intValue.split(' ');
+
+        if ( Array.isArray(intValue) ) {
+            intValue.forEach(item => {
+                newValue.push('#' + item);
+            });
+        }
+        else {
+            newValue.push('#' + intValue);
+        }
+
+        handleFieldChange(fieldID, newValue);
     }
 }

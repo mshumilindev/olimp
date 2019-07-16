@@ -1,17 +1,61 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import {connect} from "react-redux";
 import withFilters from "../../utils/withFilters";
-import { fetchLibrary } from '../../redux/actions/libraryActions';
+import { fetchLibrary, deleteDoc, uploadDoc } from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../../components/UI/preloader";
 import withPager from "../../utils/withPager";
-import TagsList from '../../components/UI/TagsList/TagsList';
+import withTags from '../../utils/withTags';
+import Modal from '../../components/UI/Modal/Modal';
+import Form from '../../components/Form/Form';
+import generator from "generate-password";
+import AdminLibraryItem from "./AdminLibraryItem";
 
-function AdminLibrary({list, filters, searchQuery, pager}) {
-    const { translate } = useContext(siteSettingsContext);
+function usePrevious(value) {
+    const ref = useRef(null);
+
+    useEffect(() => {
+        ref.current = value;
+    }, [value]);
+
+    return ref.current;
+}
+
+function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, selectedTags, deleteDoc, uploadDoc}) {
+    const { translate, getDocFormFields } = useContext(siteSettingsContext);
+    const $fileRef = React.createRef();
+    const [ showModal, setShowModal ] = useState(false);
+    const [ newFile, setFile ] = useState({
+        name: '',
+        tags: []
+    });
+    const uploadFields = getDocFormFields(newFile.name, newFile.tags, translate('upload'));
+    const prevList = usePrevious(list);
+
+    useEffect(() => {
+        if ( JSON.stringify(prevList) !== JSON.stringify(list) ) {
+            setFile({name: '', tags: []});
+            setShowModal(false);
+
+            if ( $fileRef.current ) {
+                $fileRef.current.value = '';
+            }
+        }
+    });
 
     return (
         <div className="adminLibrary">
+            <input type="file" hidden ref={$fileRef} onChange={e => fileChanged(e)} accept="application/pdf"/>
+            {
+                showModal ?
+                    <>
+                        <Modal onHideModal={onHideModal}>
+                            <Form heading={translate('upload_doc')} fields={uploadFields} formAction={handleUploadFile} setFieldValue={setFieldValue} loading={loading} />
+                        </Modal>
+                    </>
+                    :
+                    null
+            }
             <div className="section">
                 <div className="section__title-holder">
                     <h2 className="section__title">
@@ -19,7 +63,7 @@ function AdminLibrary({list, filters, searchQuery, pager}) {
                         { translate('library') }
                     </h2>
                     <div className="section__title-actions">
-                        <a href="/" className="btn btn_primary">
+                        <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
                             <i className="content_title-icon fa fa-cloud-upload-alt" />
                             { translate('upload') }
                         </a>
@@ -29,56 +73,50 @@ function AdminLibrary({list, filters, searchQuery, pager}) {
                 <div className="adminLibrary__list widget">
                     {
                         list ?
-                            <div className="table__holder">
-                                <table className="table">
-                                    <colgroup>
-                                        <col width="300"/>
-                                        <col width="300"/>
-                                        <col width="100"/>
-                                    </colgroup>
-                                    <thead>
-                                        <tr className="table__head-row">
-                                            <th className="table__head-cell">
-                                                { translate('doc') }
-                                            </th>
-                                            <th className="table__head-cell">
-                                                { translate('tags') }
-                                            </th>
-                                            <th className="table__head-cell"/>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            filterList().map(item => {
-                                                return (
-                                                    <tr className="table__body-row" key={item.id}>
-                                                        <td className="table__body-cell">
-                                                            <div className="table__ellipsis">
-                                                                <a href="/" title={item.name}>
-                                                                    <i className="content_title-icon fa fa-external-link-alt" />
-                                                                    { item.name }
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                        <td className="table__body-cell">
-                                                            <TagsList tagsList={item.tags} />
-                                                        </td>
-                                                        <td className="table__body-cell">
-                                                            <div className="table__actions">
-                                                                <a href="/" className="table__actions-btn table__actions-btn-error">
-                                                                    <i className="content_title-icon fa fa-trash-alt" />
-                                                                    { translate('delete') }
-                                                                </a>
-                                                            </div>
-                                                        </td>
+                            !loading ?
+                                list.length ?
+                                    <>
+                                        { selectedTags }
+                                        <div className="table__holder">
+                                            <table className="table">
+                                                <colgroup>
+                                                    <col width="300"/>
+                                                    <col width="300"/>
+                                                    <col width="150"/>
+                                                </colgroup>
+                                                <thead>
+                                                    <tr className="table__head-row">
+                                                        <th className="table__head-cell">
+                                                            { translate('doc') }
+                                                        </th>
+                                                        <th className="table__head-cell">
+                                                            { translate('tags') }
+                                                        </th>
+                                                        <th className="table__head-cell"/>
                                                     </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
-                                { pager }
-                            </div>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        filterList().map(item => {
+                                                            return (
+                                                                <AdminLibraryItem key={item.id} item={item} setTags={setTags} onDeleteDoc={onDeleteDoc} loading={loading} />
+                                                            )
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        { pager }
+                                    </>
+                                    :
+                                    <div className="nothingFound">
+                                        <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
+                                            <i className="content_title-icon fa fa-cloud-upload-alt" />
+                                            { translate('upload') }
+                                        </a>
+                                    </div>
+                                :
+                                <Preloader/>
                             :
                             <Preloader/>
                     }
@@ -90,12 +128,59 @@ function AdminLibrary({list, filters, searchQuery, pager}) {
     function filterList() {
         return list.filter(item => searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
+
+    function onDeleteDoc(e, doc) {
+        e.preventDefault();
+
+        if ( window.confirm(translate('sure_to_delete_doc')) ) {
+            deleteDoc(doc.id, doc.ref);
+        }
+    }
+
+    function onUploadFile(e) {
+        e.preventDefault();
+        $fileRef.current.click();
+    }
+
+    function fileChanged() {
+        const file = $fileRef.current.files[0];
+        setFile({
+            ...newFile,
+            name: file.name
+        });
+        setShowModal(true);
+    }
+
+    function setFieldValue(fieldID, value) {
+        setFile({
+            ...newFile,
+            [fieldID]: value
+        });
+    }
+
+    function handleUploadFile() {
+        const newID = generator.generate({
+            length: 16
+        });
+        uploadDoc(newFile, $fileRef.current.files[0], newID);
+    }
+
+    function onHideModal() {
+        $fileRef.current.value = '';
+        setShowModal(false);
+        setFile({
+            name: '',
+            tags: []
+        });
+    }
 }
 const mapStateToProps = state => ({
     list: state.libraryReducer.libraryList,
     loading: state.libraryReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: dispatch(fetchLibrary())
+    fetchLibrary: dispatch(fetchLibrary()),
+    deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
+    uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(AdminLibrary)));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(withTags(AdminLibrary))));

@@ -63,22 +63,24 @@ class AdminUsersList extends React.Component {
                 <div className="adminUsersList widget">
                     {
                         list && list.length ?
-                            <div className="table__holder">
-                                <table className="adminUsersList__table table">
-                                    <colgroup>
-                                        { this.cols.map((col, index) => <col width={col.width} key={index}/>) }
-                                    </colgroup>
-                                    <thead>
-                                    <tr className="table__head-row">
-                                        { this.cols.map((col, index) => <th className="table__head-cell" key={index}>{ translate(col.title) }</th>) }
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        { list.map(user => this._renderUsers(user)) }
-                                    </tbody>
-                                </table>
+                            <>
+                                <div className="table__holder">
+                                    <table className="adminUsersList__table table">
+                                        <colgroup>
+                                            { this.cols.map((col, index) => <col width={col.width} key={index}/>) }
+                                        </colgroup>
+                                        <thead>
+                                        <tr className="table__head-row">
+                                            { this.cols.map((col, index) => <th className="table__head-cell" key={index}>{ translate(col.title) }</th>) }
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            { list.map(user => this._renderUsers(user)) }
+                                        </tbody>
+                                    </table>
+                                </div>
                                 { pager }
-                            </div>
+                            </>
                             :
                             loading ?
                                 <Preloader/>
@@ -139,8 +141,9 @@ class AdminUsersList extends React.Component {
     }
 
     deleteUser(e, userID) {
-        const { translate } = this.context;
         e.preventDefault();
+
+        const { translate } = this.context;
 
         if ( window.confirm(translate('sure_to_delete_user')) ) {
             this.props.deleteUser(userID);

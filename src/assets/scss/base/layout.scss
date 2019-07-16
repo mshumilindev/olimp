@@ -50,3 +50,14 @@
   box-sizing: border-box;
   font-family: $RobotoCondensed;
 }
+
+.section__title-holder {
+  ~ .widget {
+    margin-top: $sectionTitleHeight !important;
+  }
+  + .filters {
+    ~ .widget {
+      margin-top: $sectionTitleHeight + $filtersHeight !important;
+    }
+  }
+}

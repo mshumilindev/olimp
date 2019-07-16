@@ -7,17 +7,25 @@
   margin: -5px;
   &__item {
     margin: 5px;
-    padding: 7px 12px;
-    background: $greyColor;
-    color: $white;
-    border-radius: 20px;
-    font-size: 14px;
     font-family: $RobotoCondensed;
     cursor: pointer;
     user-select: none;
     position: relative;
+    color: $greyColor;
     &:hover {
-      background: $btnPrimary;
+      color: $btnPrimary;
+    }
+  }
+}
+.selectedTags {
+  margin-bottom: 10px;
+  &__heading {
+    margin-right: 10px;
+    margin-left: 5px;
+  }
+  &__item {
+    &:hover {
+      color: $errorColor;
     }
   }
 }

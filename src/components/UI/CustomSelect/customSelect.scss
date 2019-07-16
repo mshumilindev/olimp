@@ -36,6 +36,8 @@
         font-size: 14px;
         padding: 10px;
         cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
         &:hover {
             background: $lightGreyColor;
         }

@@ -48,47 +48,49 @@ class AdminTranslationsList extends React.Component {
             <div className="adminTranslations__list widget">
                 {
                     list && list.length ?
-                        <div className="table__holder">
-                            <table className="adminTranslations__table table">
-                                <colgroup>
-                                    { this.cols.map(col => <col width={col.width} key={col.id}/>) }
-                                </colgroup>
-                                <thead>
-                                    <tr className="table__head-row">
-                                        { this.cols.map(col => <th className="table__head-cell" key={col.id}>{ translate(col.name) }</th>) }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        list.map((item, index) => {
-                                            return (
-                                                <tr className="table__body-row" key={item.id + index}>
-                                                    <td className="table__body-cell">
-                                                        <span className="table__key">{ item.id }</span>
-                                                    </td>
-                                                    {
-                                                        item.langs.map(lang => {
-                                                            return (
-                                                                <td className="table__body-cell" key={Object.keys(lang)[0]}>
-                                                                    <AdminTranslationsListItem lang={Object.keys(lang)[0]} item={lang[Object.keys(lang)[0]]} itemKey={item.id} />
-                                                                </td>
-                                                            )
-                                                        })
-                                                    }
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
+                        <>
+                            <div className="table__holder">
+                                <table className="adminTranslations__table table">
+                                    <colgroup>
+                                        { this.cols.map(col => <col width={col.width} key={col.id}/>) }
+                                    </colgroup>
+                                    <thead>
+                                        <tr className="table__head-row">
+                                            { this.cols.map(col => <th className="table__head-cell" key={col.id}>{ translate(col.name) }</th>) }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            list.map((item, index) => {
+                                                return (
+                                                    <tr className="table__body-row" key={item.id + index}>
+                                                        <td className="table__body-cell">
+                                                            <span className="table__key">{ item.id }</span>
+                                                        </td>
+                                                        {
+                                                            item.langs.map(lang => {
+                                                                return (
+                                                                    <td className="table__body-cell" key={Object.keys(lang)[0]}>
+                                                                        <AdminTranslationsListItem lang={Object.keys(lang)[0]} item={lang[Object.keys(lang)[0]]} itemKey={item.id} />
+                                                                    </td>
+                                                                )
+                                                            })
+                                                        }
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                                {
+                                    this.props.loading ?
+                                        <Preloader/>
+                                        :
+                                        null
+                                }
+                            </div>
                             { this.props.pager }
-                            {
-                                this.props.loading ?
-                                    <Preloader/>
-                                    :
-                                    null
-                            }
-                        </div>
+                        </>
                         :
                         !searchQuery ?
                             <Preloader/>

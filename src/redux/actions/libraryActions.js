@@ -4,7 +4,10 @@ const db = firebase.firestore();
 const libraryCollection = db.collection('library');
 const libraryList = [];
 
-export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN ';
+const storage = firebase.storage();
+const storageRef = storage.ref();
+
+export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN';
 export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
 
 export function fetchLibrary() {
@@ -54,6 +57,119 @@ export const fetchLibraryBegin = () => {
 export const fetchLibrarySuccess = libraryList => {
     return {
         type: FETCH_LIBRARY_SUCCESS,
+        payload: { libraryList }
+    }
+};
+
+export const DELETE_DOC_BEGIN = 'DELETE_DOC_BEGIN';
+export const DELETE_DOC_SUCCESS = 'DELETE_DOC_SUCCESS';
+
+export function deleteDoc(docID, docRef) {
+    const documentRef = storageRef.child('library/' + docRef);
+    const documentDoc = db.collection('library').doc(docID);
+
+    return dispatch => {
+        dispatch(deleteDocBegin());
+        return documentRef.delete().then(() => {
+            return documentDoc.delete().then(() => {
+                const doc = libraryList.find(item => item.id === docID);
+                libraryList.splice(libraryList.indexOf(doc), libraryList.indexOf(doc) + 1);
+                dispatch(deleteDocSuccess(libraryList.sort((a, b) => {
+                    if ( a.name < b.name ) {
+                        return -1;
+                    }
+                    if ( a.name > b.name ) {
+                        return 1;
+                    }
+                    return 0;
+                })));
+            });
+        });
+    };
+}
+
+export const deleteDocBegin = () => {
+    return {
+        type: DELETE_DOC_BEGIN
+    }
+};
+export const deleteDocSuccess = libraryList => {
+    return {
+        type: DELETE_DOC_SUCCESS,
+        payload: { libraryList }
+    }
+};
+
+export const UPLOAD_DOC_BEGIN = 'UPLOAD_DOC_BEGIN';
+export const UPLOAD_DOC_SUCCESS = 'UPLOAD_DOC_SUCCESS';
+
+export function uploadDoc(newFile, file, id) {
+    const documentRef = storageRef.child('library/' + newFile.name);
+    const documentDoc = db.collection('library').doc(id);
+
+    return dispatch => {
+        dispatch(uploadDocBegin());
+        return documentRef.put(file).then((snapshot) => {
+            return documentDoc.set({...newFile, ref: file.name}).then(() => {
+                libraryList.push({...newFile, ref: file.name, id: id});
+                dispatch(uploadDocSuccess(libraryList.sort((a, b) => {
+                    if ( a.name < b.name ) {
+                        return -1;
+                    }
+                    if ( a.name > b.name ) {
+                        return 1;
+                    }
+                    return 0;
+                })));
+            });
+        });
+    };
+}
+
+export const uploadDocBegin = () => {
+    return {
+        type: UPLOAD_DOC_BEGIN
+    }
+};
+export const uploadDocSuccess = libraryList => {
+    return {
+        type: UPLOAD_DOC_SUCCESS,
+        payload: { libraryList }
+    }
+};
+
+export const UPDATE_DOC_BEGIN = 'UPDATE_DOC_BEGIN ';
+export const UPDATE_DOC_SUCCESS = 'UPDATE_DOC_SUCCESS';
+
+export function updateDoc(newFile, id) {
+    const documentDoc = db.collection('library').doc(id);
+
+    return dispatch => {
+        dispatch(updateDocBegin());
+        return documentDoc.update({...newFile}).then(() => {
+            libraryList.find(item => item.ref === newFile.ref).name = newFile.name;
+            libraryList.find(item => item.ref === newFile.ref).tags = newFile.tags;
+            dispatch(updateDocSuccess(libraryList.sort((a, b) => {
+                if ( a.name < b.name ) {
+                    return -1;
+                }
+                if ( a.name > b.name ) {
+                    return 1;
+                }
+                return 0;
+            })));
+        });
+    };
+}
+
+export const updateDocBegin = () => {
+    return {
+        type: UPDATE_DOC_BEGIN
+    }
+};
+export const updateDocSuccess = libraryList => {
+    return {
+        type: UPDATE_DOC_SUCCESS,
         payload: { libraryList }
     }
 };

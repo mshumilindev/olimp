@@ -12,10 +12,9 @@ const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
 const AdminTranslations = React.lazy(() => import('./pages/AdminTranslations/AdminTranslations'));
 const AdminLibrary = React.lazy(() => import('./pages/AdminLibrary/AdminLibrary'));
+const AdminCourses = React.lazy(() => import('./pages/AdminCourses/AdminCourses'));
 
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound/PageNotFound'));
-
-// === Need to remove nav from firebase and move it to the new Student component
 
 export default function App() {
     return (
@@ -30,6 +29,7 @@ export default function App() {
 
                             <Route path='/admin' component={AdminPanel} />
                             <Route path='/admin-users' component={AdminUsers} />
+                            <Route path='/admin-courses' component={AdminCourses} />
                             <Route path='/admin-translations' component={AdminTranslations} />
                             <Route path='/admin-library' component={AdminLibrary} />
 

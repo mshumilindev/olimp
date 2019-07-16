@@ -5,10 +5,14 @@
     justify-content: space-between;
     align-items: center;
     background: $baseColor;
-    margin: -$pageIndent #{-$pageIndent} #{$pageIndent / 2};
     padding: $pageIndent / 2 $pageIndent;
     min-height: 85px;
     box-sizing: border-box;
+    position: fixed;
+    left: $navWidth;
+    top: $headerHeight;
+    right: 0;
+    z-index: 10;
     [class$="__title"] {
       margin-bottom: 0;
     }

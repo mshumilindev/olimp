@@ -24,7 +24,10 @@ export default class SiteSettingsProvider extends React.Component{
                 return this.getUserFormFields(user, passwordAction);
             },
             getUserModel: (role, id) => {
-                return this.getUserModel(role, id)
+                return this.getUserModel(role, id);
+            },
+            getDocFormFields: (name, tags, action) => {
+                return this.getUserFormFields(name, tags, action);
             }
         };
     }
@@ -113,6 +116,7 @@ export default class SiteSettingsProvider extends React.Component{
     getUserFormFields(user, passwordAction) {
         const { translate } = this.state;
 
+        // === Need to move this to json file
         const formFields = [
             {
                 type: 'image',
@@ -253,5 +257,33 @@ export default class SiteSettingsProvider extends React.Component{
         ];
 
         return formFields;
+    }
+
+    getUserFormFields(name, tags, action) {
+        const { translate } = this.state;
+
+        // === Need to move this to json file
+        return [
+            {
+                type: 'text',
+                name: 'name',
+                id: 'name',
+                placeholder: translate('title'),
+                value: name,
+                required: true
+            },
+            {
+                type: 'itemList',
+                name: 'tags',
+                id: 'tags',
+                placeholder: translate('tags'),
+                value: tags
+            },
+            {
+                type: 'submit',
+                name: action,
+                id: 'upload'
+            }
+        ];
     }
 }
