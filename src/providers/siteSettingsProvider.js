@@ -27,7 +27,7 @@ export default class SiteSettingsProvider extends React.Component{
                 return this.getUserModel(role, id);
             },
             getDocFormFields: (name, tags, action) => {
-                return this.getUserFormFields(name, tags, action);
+                return this.getDocFormFields(name, tags, action);
             }
         };
     }
@@ -259,7 +259,7 @@ export default class SiteSettingsProvider extends React.Component{
         return formFields;
     }
 
-    getUserFormFields(name, tags, action) {
+    getDocFormFields(name, tags, action) {
         const { translate } = this.state;
 
         // === Need to move this to json file
