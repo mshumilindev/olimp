@@ -138,7 +138,7 @@ export const uploadDocSuccess = libraryList => {
     }
 };
 
-export const UPDATE_DOC_BEGIN = 'UPDATE_DOC_BEGIN ';
+export const UPDATE_DOC_BEGIN = 'UPDATE_DOC_BEGIN';
 export const UPDATE_DOC_SUCCESS = 'UPDATE_DOC_SUCCESS';
 
 export function updateDoc(newFile, id) {
@@ -171,5 +171,40 @@ export const updateDocSuccess = libraryList => {
     return {
         type: UPDATE_DOC_SUCCESS,
         payload: { libraryList }
+    }
+};
+
+export const DOWNLOAD_DOC_BEGIN = 'DOWNLOAD_DOC_BEGIN';
+export const DOWNLOAD_DOC_SUCCESS = 'DOWNLOAD_DOC_SUCCESS';
+
+export function downloadDoc(ref) {
+    console.log(ref);
+    return dispatch => {
+        dispatch(downloadDocBegin());
+        storageRef.child('library/' + ref).getDownloadURL().then((url) => {
+            const element = document.createElement('a');
+            element.setAttribute('href', url);
+            element.setAttribute('target', '_blank');
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+            dispatch(downloadDocSuccess());
+        });
+    }
+}
+
+export const downloadDocBegin = () => {
+    return {
+        type: DOWNLOAD_DOC_BEGIN
+    }
+};
+
+export const downloadDocSuccess = () => {
+    return {
+        type: DOWNLOAD_DOC_SUCCESS
     }
 };

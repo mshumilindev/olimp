@@ -3,10 +3,10 @@ import TagsList from "../../components/UI/TagsList/TagsList";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from "../../components/UI/Modal/Modal";
 import Form from "../../components/Form/Form";
-import {updateDoc} from "../../redux/actions/libraryActions";
+import {updateDoc, downloadDoc} from "../../redux/actions/libraryActions";
 import {connect} from "react-redux";
 
-function AdminLibraryItem({item, setTags, onDeleteDoc, loading, updateDoc}) {
+function AdminLibraryItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ docItem, setDocItem ] = useState(JSON.stringify(item));
@@ -19,7 +19,7 @@ function AdminLibraryItem({item, setTags, onDeleteDoc, loading, updateDoc}) {
         <tr className="table__body-row">
             <td className="table__body-cell">
                 <div className="table__ellipsis">
-                    <a href="/" title={JSON.parse(docItem).name}>
+                    <a href="/" title={JSON.parse(docItem).name} onClick={e => onDownloadFile(e)}>
                         <i className="content_title-icon fa fa-external-link-alt" />
                         { JSON.parse(docItem).name }
                     </a>
@@ -79,8 +79,15 @@ function AdminLibraryItem({item, setTags, onDeleteDoc, loading, updateDoc}) {
 
         updateDoc(newFile, JSON.parse(docItem).id);
     }
+
+    function onDownloadFile(e) {
+        e.preventDefault();
+
+        downloadDoc(JSON.parse(docItem).ref);
+    }
 }
 const mapDispatchToProps = dispatch => ({
-    updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id))
+    updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
+    downloadDoc: (ref) => dispatch(downloadDoc(ref))
 });
 export default connect(null, mapDispatchToProps)(AdminLibraryItem);
