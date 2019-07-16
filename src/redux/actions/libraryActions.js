@@ -178,7 +178,6 @@ export const DOWNLOAD_DOC_BEGIN = 'DOWNLOAD_DOC_BEGIN';
 export const DOWNLOAD_DOC_SUCCESS = 'DOWNLOAD_DOC_SUCCESS';
 
 export function downloadDoc(ref) {
-    console.log(ref);
     return dispatch => {
         dispatch(downloadDocBegin());
         storageRef.child('library/' + ref).getDownloadURL().then((url) => {

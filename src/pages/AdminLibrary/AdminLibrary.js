@@ -73,50 +73,53 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
                 <div className="adminLibrary__list widget">
                     {
                         list ?
-                            !loading ?
-                                list.length ?
-                                    <>
-                                        { selectedTags }
-                                        <div className="table__holder">
-                                            <table className="table">
-                                                <colgroup>
-                                                    <col width="300"/>
-                                                    <col width="300"/>
-                                                    <col width="150"/>
-                                                </colgroup>
-                                                <thead>
-                                                    <tr className="table__head-row">
-                                                        <th className="table__head-cell">
-                                                            { translate('doc') }
-                                                        </th>
-                                                        <th className="table__head-cell">
-                                                            { translate('tags') }
-                                                        </th>
-                                                        <th className="table__head-cell"/>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        filterList().map(item => {
-                                                            return (
-                                                                <AdminLibraryItem key={item.id} item={item} setTags={setTags} onDeleteDoc={onDeleteDoc} loading={loading} />
-                                                            )
-                                                        })
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        { pager }
-                                    </>
-                                    :
-                                    <div className="nothingFound">
-                                        <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
-                                            <i className="content_title-icon fa fa-cloud-upload-alt" />
-                                            { translate('upload') }
-                                        </a>
+                            list.length ?
+                                <>
+                                    { selectedTags }
+                                    <div className="table__holder">
+                                        <table className="table">
+                                            <colgroup>
+                                                <col width="300"/>
+                                                <col width="300"/>
+                                                <col width="150"/>
+                                            </colgroup>
+                                            <thead>
+                                                <tr className="table__head-row">
+                                                    <th className="table__head-cell">
+                                                        { translate('doc') }
+                                                    </th>
+                                                    <th className="table__head-cell">
+                                                        { translate('tags') }
+                                                    </th>
+                                                    <th className="table__head-cell"/>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    filterList().map(item => {
+                                                        return (
+                                                            <AdminLibraryItem key={item.id} item={item} setTags={setTags} onDeleteDoc={onDeleteDoc} loading={loading} />
+                                                        )
+                                                    })
+                                                }
+                                            </tbody>
+                                        </table>
+                                        {
+                                            loading ?
+                                                <Preloader/>
+                                                :
+                                                null
+                                        }
                                     </div>
+                                    { pager }
+                                </>
                                 :
-                                <Preloader/>
+                                <div className="nothingFound">
+                                    <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
+                                        <i className="content_title-icon fa fa-cloud-upload-alt" />
+                                        { translate('upload') }
+                                    </a>
+                                </div>
                             :
                             <Preloader/>
                     }
