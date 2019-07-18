@@ -1,7 +1,7 @@
 import { FETCH_TRANSLATIONS_BEGIN, FETCH_TRANSLATIONS_SUCCESS, UPDATE_TRANSLATION_BEGIN, UPDATE_TRANSLATION_SUCCESS } from '../actions/translationsActions';
 
 const initialState = {
-    usersList: [],
+    translationsList: [],
     loading: false
 };
 

@@ -30,7 +30,7 @@ export default function Nav({nav, prefix, showLogo, hideItems}) {
         if ( !hideItems || !hideItems.some(hiddenItem => item.name === hiddenItem) ) {
             return (
                 <li key={item.id} className={prefix + 'nav_item'}>
-                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {'active': item.url === pathName})}>
+                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {'active': pathName.includes(item.url)})}>
                         <i className={prefix + 'nav_icon ' + item.icon} />
                         <span className={prefix + 'nav_text'}>{ translate(item.name) }</span>
                     </Link>

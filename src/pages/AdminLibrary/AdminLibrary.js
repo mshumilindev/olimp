@@ -9,7 +9,7 @@ import withTags from '../../utils/withTags';
 import Modal from '../../components/UI/Modal/Modal';
 import Form from '../../components/Form/Form';
 import generator from "generate-password";
-import AdminLibraryItem from "./AdminLibraryItem";
+import AdminLibraryList from "../../components/AdminLibraryList/AdminLibraryList";
 
 function usePrevious(value) {
     const ref = useRef(null);
@@ -76,41 +76,7 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
                             list.length ?
                                 <>
                                     { selectedTags }
-                                    <div className="table__holder">
-                                        <table className="table">
-                                            <colgroup>
-                                                <col width="300"/>
-                                                <col width="300"/>
-                                                <col width="150"/>
-                                            </colgroup>
-                                            <thead>
-                                                <tr className="table__head-row">
-                                                    <th className="table__head-cell">
-                                                        { translate('doc') }
-                                                    </th>
-                                                    <th className="table__head-cell">
-                                                        { translate('tags') }
-                                                    </th>
-                                                    <th className="table__head-cell"/>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    filterList().map(item => {
-                                                        return (
-                                                            <AdminLibraryItem key={item.id} item={item} setTags={setTags} onDeleteDoc={onDeleteDoc} loading={loading} />
-                                                        )
-                                                    })
-                                                }
-                                            </tbody>
-                                        </table>
-                                        {
-                                            loading ?
-                                                <Preloader/>
-                                                :
-                                                null
-                                        }
-                                    </div>
+                                    <AdminLibraryList list={filterList()} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags}/>
                                     { pager }
                                 </>
                                 :

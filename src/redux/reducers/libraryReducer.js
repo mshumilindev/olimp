@@ -1,7 +1,7 @@
 import { FETCH_LIBRARY_BEGIN, FETCH_LIBRARY_SUCCESS, DELETE_DOC_BEGIN, DELETE_DOC_SUCCESS, UPLOAD_DOC_BEGIN, UPLOAD_DOC_SUCCESS, UPDATE_DOC_BEGIN, UPDATE_DOC_SUCCESS, DOWNLOAD_DOC_BEGIN, DOWNLOAD_DOC_SUCCESS } from '../actions/libraryActions';
 
 const initialState = {
-    usersList: [],
+    libraryList: [],
     loading: false
 };
 

@@ -1,0 +1,25 @@
+@import '../../../assets/scss/utils/fonts';
+
+.breadcrumbs {
+  display: flex;
+  &__item {
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    &:before {
+      content: '/';
+      margin: 0 10px;
+      opacity: .5;
+    }
+    &:first-child {
+      &:before {
+        display: none;
+      }
+    }
+  }
+  &__noLink {
+
+  }
+  &__link {
+
+  }
+}

@@ -6,8 +6,9 @@ import {mainStore} from "../redux/stores/mainStore";
 import userContext from "../context/userContext";
 import { withRouter } from 'react-router-dom';
 
-function Page({location, children, history}) {
+function Page(props) {
     const { user } = useContext(userContext);
+    const {location, children, history} = props;
 
     if ( !localStorage.getItem('user') ) {
         location.pathname = '/login';

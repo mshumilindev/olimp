@@ -29,7 +29,10 @@ export default function App() {
 
                             <Route path='/admin' component={AdminPanel} />
                             <Route path='/admin-users' component={AdminUsers} />
-                            <Route path='/admin-courses' component={AdminCourses} />
+                            <Route exact path='/admin-courses' component={AdminCourses} />
+                            <Route exact path="/admin-courses/:subjectID" render={props => <AdminCourses {...props.match} />} />
+                            <Route exact path="/admin-courses/:subjectID/:courseID" render={props => <AdminCourses {...props.match} />} />
+                            <Route exact path="/admin-courses/:subjectID/:courseID/:moduleID" render={props => <AdminCourses {...props.match} />} />
                             <Route path='/admin-translations' component={AdminTranslations} />
                             <Route path='/admin-library' component={AdminLibrary} />
 

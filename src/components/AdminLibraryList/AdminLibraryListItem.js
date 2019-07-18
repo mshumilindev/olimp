@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
-import TagsList from "../../components/UI/TagsList/TagsList";
+import TagsList from "../UI/TagsList/TagsList";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import Modal from "../../components/UI/Modal/Modal";
-import Form from "../../components/Form/Form";
+import Modal from "../UI/Modal/Modal";
+import Form from "../Form/Form";
 import {updateDoc, downloadDoc} from "../../redux/actions/libraryActions";
 import {connect} from "react-redux";
 
-function AdminLibraryItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc}) {
+function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ docItem, setDocItem ] = useState(JSON.stringify(item));
@@ -90,4 +90,4 @@ const mapDispatchToProps = dispatch => ({
     updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
     downloadDoc: (ref) => dispatch(downloadDoc(ref))
 });
-export default connect(null, mapDispatchToProps)(AdminLibraryItem);
+export default connect(null, mapDispatchToProps)(AdminLibraryListItem);

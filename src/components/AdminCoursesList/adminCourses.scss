@@ -1,0 +1,70 @@
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+$courseItemIndent: $pageIndent / 2;
+
+%s-content-link {
+  position: relative;
+  padding-left: 28px;
+  font-family: $RobotoCondensed;
+  .content_title-icon {
+    position: absolute;
+    left: 0;
+    top: 1px;
+  }
+}
+
+.adminCourses {
+  &__list-item {
+    margin-top: $courseItemIndent;
+    &.someOpen {
+      opacity: .25;
+    }
+    &.isOpen {
+      opacity: 1;
+      > [class$="__list-link"] {
+        color: $linkHoverColor;
+      }
+      > [class$="__list-courses-link"] {
+        color: $linkHoverColor;
+      }
+    }
+  }
+  &__list-link {
+    color: $baseColor;
+    @extend %s-content-link;
+  }
+  &__list-courses {
+    padding: $courseItemIndent / 2 0 0 28px;
+  }
+  &__list-courses-link {
+    font-family: $RobotoCondensed;
+    color: $baseColor;
+    position: relative;
+    padding-left: 28px;
+    .content_title-icon {
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+  }
+  &__add-holder {
+    margin-top: 10px;
+  }
+  &__add {
+    display: inline-block;
+    vertical-align: top;
+    @extend %s-content-link;
+    .content_title-icon {
+      top: 0;
+    }
+  }
+  &__list-item-nothingFound {
+    color: $mediumGreyColor;
+    @extend %s-content-link;
+    .content_title-icon {
+      top: 0;
+    }
+  }
+}
