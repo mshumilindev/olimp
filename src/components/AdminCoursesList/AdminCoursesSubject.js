@@ -17,7 +17,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList}) {
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
-            <Link to={'/admin-courses/' + (params && params.subjectID === subject.id ? '' : subject.id)} className="adminCourses__list-link">
+            <Link to={'/admin-courses/' + (params && params.subjectID === subject.id && !params.courseID ? '' : subject.id)} className="adminCourses__list-link">
                 {
                     checkIfIsOpen() ?
                         loading ?

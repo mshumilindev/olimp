@@ -16,7 +16,7 @@ function AdminCoursesModule({module, params, loading, fetchLessons}) {
 
     return (
         <div className={classNames('adminCourses__list-item', {isOpen: params && params.moduleID === module.id})} style={{marginTop: 0}}>
-            <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + (params && params.moduleID === module.id ? '' : '/' + module.id)} className="adminCourses__list-courses-link">
+            <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + module.id} className="adminCourses__list-courses-link">
                 {
                     checkIfIsOpen() ?
                         loading ?
