@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import siteSettingsContext from "../context/siteSettingsContext";
 import Filters from "../components/Filters/Filters";
 
-const withFilters = (WrappedComponent, sortByOptions, filterByOptions) => {
+const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions) => {
     return (props) => {
         const { translate } = useContext(siteSettingsContext);
         const [ searchQuery, setSearchQuery ] = useState('');
@@ -86,7 +86,7 @@ const withFilters = (WrappedComponent, sortByOptions, filterByOptions) => {
         }
 
         function _renderFilters() {
-            return <Filters showPerPage={showPerPage} searchQuery={searchQuery} sortBy={sortBy.options ? sortBy : undefined} filterBy={JSON.parse(filterBy).length ? JSON.parse(filterBy) : undefined} filterChanged={filterChanged} />
+            return <Filters showPerPage={hasShowPerPage ? showPerPage : undefined} searchQuery={hasSearch ? searchQuery : undefined} sortBy={sortBy.options ? sortBy : undefined} filterBy={JSON.parse(filterBy).length ? JSON.parse(filterBy) : undefined} filterChanged={filterChanged} />
         }
     }
 };

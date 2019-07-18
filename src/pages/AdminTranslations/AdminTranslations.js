@@ -72,4 +72,4 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     updateTranslation: (lang, key, value) => dispatch(updateTranslation(lang, key, value))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminTranslations));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminTranslations, true, true));

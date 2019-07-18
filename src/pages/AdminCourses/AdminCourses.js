@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
-import withPager from "../../utils/withPager";
 import {fetchSubjects} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
@@ -117,4 +116,4 @@ const mapDispatchToProps = dispatch => ({
     fetchSubjects: dispatch(fetchSubjects())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(AdminCourses)));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminCourses, true));

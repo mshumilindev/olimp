@@ -152,4 +152,4 @@ const mapDispatchToProps = dispatch => ({
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
     uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(withTags(AdminLibrary))));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(withTags(AdminLibrary)), true, true));

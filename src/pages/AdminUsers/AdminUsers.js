@@ -96,4 +96,4 @@ const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
     loading: state.usersReducer.loading
 });
-export default connect(mapStateToProps)(withFilters(AdminUsers, sortByOptions, filterByOptions));
+export default connect(mapStateToProps)(withFilters(AdminUsers, true, true, sortByOptions, filterByOptions));
