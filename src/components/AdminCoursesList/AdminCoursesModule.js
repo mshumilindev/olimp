@@ -15,7 +15,7 @@ function AdminCoursesModule({module, params, loading, fetchLessons}) {
     });
 
     return (
-        <div className={classNames('adminCourses__list-item', {isOpen: params && params.moduleID === module.id})} style={{marginTop: 0}}>
+        <div className={classNames('adminCourses__list-item', {isOpen: params && params.moduleID === module.id})} style={{marginTop: 10}}>
             <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + module.id} className="adminCourses__list-courses-link">
                 {
                     checkIfIsOpen() ?
@@ -30,12 +30,12 @@ function AdminCoursesModule({module, params, loading, fetchLessons}) {
             </Link>
             {
                 params && params.moduleID === module.id ?
-                    <div className="adminCourses__list-courses">
+                    <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             module.lessons && module.lessons.length ?
                                 module.lessons.map(item => <div>{ item.name[lang] }</div>)
                                 :
-                                <div className="adminCourses__list-item-nothingFound">
+                                <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
                                     { translate('nothing_found') }
                                 </div>

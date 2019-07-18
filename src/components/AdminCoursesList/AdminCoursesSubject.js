@@ -31,22 +31,27 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList}) {
             </Link>
             {
                 params && params.subjectID === subject.id ?
-                    <div className="adminCourses__list-courses">
+                    <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             subject.coursesList && subject.coursesList.length ?
                                 subject.coursesList.map(item => <AdminCoursesCourse course={item} key={item.id} params={params} loading={loading} />)
                                 :
-                                <div className="adminCourses__list-item-nothingFound">
+                                <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
                                     { translate('nothing_found') }
                                 </div>
                         }
-                        <div className="adminCourses__list-item adminCourses__add-holder">
-                            <a href="/" className="adminCourses__add" onClick={createCourse}>
-                                <i className="content_title-icon fa fa-plus" />
-                                { translate('create_course') }
-                            </a>
-                        </div>
+                        {
+                            !params.courseID ?
+                                <div className="adminCourses__list-item adminCourses__add-holder">
+                                    <a href="/" className="adminCourses__add" onClick={createCourse}>
+                                        <i className="content_title-icon fa fa-plus" />
+                                        { translate('create_course') }
+                                    </a>
+                                </div>
+                                :
+                                null
+                        }
                     </div>
                     :
                     null

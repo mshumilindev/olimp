@@ -44,12 +44,6 @@ function AdminCourses({filters, pager, list, loading, searchQuery, params}) {
                                     {
                                         filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
                                     }
-                                    <div className="adminCourses__list-item">
-                                        <a href="/" className="adminCourses__add" onClick={createSubject}>
-                                            <i className="content_title-icon fa fa-plus" />
-                                            { translate('create_subject') }
-                                        </a>
-                                    </div>
                                 </div>
                                 { pager }
                             </>

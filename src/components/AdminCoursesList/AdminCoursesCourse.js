@@ -16,7 +16,7 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
     });
 
     return (
-        <div className={classNames('adminCourses__list-item', {isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 0}}>
+        <div className={classNames('adminCourses__list-item', {isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
             <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
                 {
                     checkIfIsOpen() ?
@@ -31,22 +31,27 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
             </Link>
             {
                 params && params.courseID === course.id ?
-                    <div className="adminCourses__list-courses">
+                    <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             course.modules && course.modules.length ?
                                 course.modules.map(item => <AdminCoursesModule module={item} key={item.id} params={params} loading={loading} />)
                                 :
-                                <div className="adminCourses__list-item-nothingFound">
+                                <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
                                     { translate('nothing_found') }
                                 </div>
                         }
-                        <div className="adminCourses__list-item adminCourses__add-holder">
-                            <a href="/" className="adminCourses__add" onClick={createCourse}>
-                                <i className="content_title-icon fa fa-plus" />
-                                { translate('create_module') }
-                            </a>
-                        </div>
+                        {
+                            !params.moduleID ?
+                                <div className="adminCourses__list-item adminCourses__add-holder">
+                                    <a href="/" className="adminCourses__add" onClick={createCourse}>
+                                        <i className="content_title-icon fa fa-plus" />
+                                        { translate('create_module') }
+                                    </a>
+                                </div>
+                                :
+                                null
+                        }
                     </div>
                     :
                     null
