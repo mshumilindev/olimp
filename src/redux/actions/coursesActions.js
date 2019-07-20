@@ -147,3 +147,82 @@ export const fetchLessonsSuccess = subjectsList => {
         payload: { subjectsList }
     }
 };
+
+export const UPDATE_SUBJECT_BEGIN = 'UPDATE_SUBJECT_BEGIN';
+export const UPDATE_SUBJECT_SUCCESS = 'UPDATE_SUBJECT_SUCCESS';
+
+export function updateSubject(subject) {
+    const subjectRef = db.collection('courses').doc(subject.id);
+    const subjectID = subject.id;
+
+    delete subject.id;
+
+    return dispatch => {
+        dispatch(updateSubjectBegin());
+        return subjectRef.set({
+            ...subject
+        }).then(() => {
+            subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
+            subjectsList.push({
+                ...subject,
+                id: subjectID
+            });
+            dispatch(updateSubjectSuccess(subjectsList.sort((a, b) => {
+                if ( a.id < b.id ) {
+                    return -1;
+                }
+                else if ( a.id > b.id ) {
+                    return 1;
+                }
+                return 0;
+            })));
+        });
+    };
+}
+
+export const updateSubjectBegin = () => {
+    return {
+        type: UPDATE_SUBJECT_BEGIN
+    }
+};
+export const updateSubjectSuccess = subjectsList => {
+    return {
+        type: UPDATE_SUBJECT_SUCCESS,
+        payload: { subjectsList }
+    }
+};
+
+export const DELETE_SUBJECT_BEGIN = 'DELETE_SUBJECT_BEGIN';
+export const DELETE_SUBJECT_SUCCESS = 'DELETE_SUBJECT_SUCCESS';
+
+export function deleteSubject(subjectID) {
+    const subjectRef = db.collection('courses').doc(subjectID);
+
+    return dispatch => {
+        dispatch(deteleSubjectBegin());
+        return subjectRef.delete().then(() => {
+            subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
+            dispatch(deleteSubjectSuccess(subjectsList.sort((a, b) => {
+                if ( a.id < b.id ) {
+                    return -1;
+                }
+                else if ( a.id > b.id ) {
+                    return 1;
+                }
+                return 0;
+            })));
+        });
+    };
+}
+
+export const deteleSubjectBegin = () => {
+    return {
+        type: DELETE_SUBJECT_BEGIN
+    }
+};
+export const deleteSubjectSuccess = subjectsList => {
+    return {
+        type: DELETE_SUBJECT_SUCCESS,
+        payload: { subjectsList }
+    }
+};

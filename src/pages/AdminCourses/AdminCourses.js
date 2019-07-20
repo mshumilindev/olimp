@@ -1,21 +1,52 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
-import {fetchSubjects} from "../../redux/actions/coursesActions";
+import { withRouter } from 'react-router-dom';
+import {fetchSubjects, updateSubject} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
-import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject";
+import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
 
-function AdminCourses({filters, pager, list, loading, searchQuery, params}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
+const Form = React.lazy(() => import('../../components/Form/Form'));
+
+// === Need to move this to a separate file from all the files it's used in
+function usePrevious(value) {
+    const ref = useRef(null);
+
+    useEffect(() => {
+        ref.current = value;
+    }, [value]);
+
+    return ref.current;
+}
+
+function AdminCourses({history, filters, pager, list, loading, searchQuery, params, updateSubject}) {
+    if ( params ) {
+        if ( params.subjectID && list && list.length && !list.find(item => item.id === params.subjectID) ) {
+            history.push('/admin-courses');
+        }
+    }
+    const { translate, lang, getSubjectModel, getSubjectFields, identify, transliterize } = useContext(siteSettingsContext);
     const breadcrumbs = [
         {
             name: translate('subjects'),
             url: '/admin-courses'
         }
     ];
+    const [ showModal, setShowModal ] = useState(false);
+    const [ subjectFields, setSubjectFields ] = useState(JSON.stringify(getSubjectFields(getSubjectModel())));
+    const [ formError, setFormError ] = useState(null);
+    const [ formUpdated, setFormUpdated ] = useState(false);
+    let prevLoading = usePrevious(loading);
+
+    useEffect(() => {
+        if ( showModal && prevLoading && !loading ) {
+            toggleModal();
+        }
+    });
 
     return (
         <div className="adminCourses">
@@ -26,7 +57,7 @@ function AdminCourses({filters, pager, list, loading, searchQuery, params}) {
                         { translate('courses') }
                     </h2>
                     <div className="section__title-actions">
-                        <a href="/" className="btn btn_primary" onClick={createSubject}>
+                        <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
                             <i className="content_title-icon fa fa-plus" />
                             { translate('create_subject') }
                         </a>
@@ -52,17 +83,60 @@ function AdminCourses({filters, pager, list, loading, searchQuery, params}) {
                     }
                 </div>
             </div>
+            {
+                showModal ?
+                    <Modal onHideModal={() => toggleModal()}>
+                        <Form loading={loading} heading={translate('create_subject')} fields={JSON.parse(subjectFields)} setFieldValue={setFieldValue} formAction={handleCreateSubject} formError={formError} formUpdated={formUpdated}/>
+                    </Modal>
+                    :
+                    null
+            }
         </div>
     );
+
+    function handleCreateSubject() {
+        const newSubjectFields = JSON.parse(subjectFields);
+        const newSubject = {};
+
+        newSubject.name = {
+            en: newSubjectFields.find(item => item.id === 'subjectName_en').value,
+            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value,
+            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value
+        };
+        newSubject.id = identify(transliterize(newSubject.name['ua']));
+
+        if ( list.some(item => item.id === newSubject.id) ) {
+            setFormError(translate('subject_already_exists'));
+        }
+        else {
+            setFormError(null);
+            updateSubject(newSubject);
+        }
+    }
+
+    function setFieldValue(fieldID, value) {
+        const newSubjectFields = JSON.parse(subjectFields);
+
+        newSubjectFields.find(item => item.id === fieldID).value = value;
+        newSubjectFields.find(item => item.id === fieldID).updated = true;
+        setFormUpdated(true);
+
+        setSubjectFields(JSON.stringify(newSubjectFields));
+    }
+
+    function toggleModal() {
+        setShowModal(false);
+        setSubjectFields(JSON.stringify(getSubjectFields(getSubjectModel())));
+    }
 
     function filterList() {
         return list.filter(item => searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
 
-    function createSubject(e) {
+    function showCreateSubjectModal(e) {
         e.preventDefault();
 
-        console.log('create subject');
+        setShowModal(true);
     }
 
     function getBreadcrumbs() {
@@ -107,7 +181,8 @@ const mapStateToProps = state => ({
     loading: state.coursesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    fetchSubjects: dispatch(fetchSubjects())
+    fetchSubjects: dispatch(fetchSubjects()),
+    updateSubject: (subject) => dispatch(updateSubject(subject))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminCourses, true));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withFilters(AdminCourses, true)));

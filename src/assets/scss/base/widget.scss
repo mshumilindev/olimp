@@ -3,7 +3,6 @@ $widgetIndent: 20px;
 .widget {
   background: $white;
   padding: $widgetIndent;
-  overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.15);
   &:not(:first-child) {
@@ -14,6 +13,7 @@ $widgetIndent: 20px;
     background: $baseColor;
     margin: -$widgetIndent (-$widgetIndent) $widgetIndent;
     padding: $widgetIndent;
+    border-radius: 4px 4px 0 0;
   }
   &__icon {
     margin-right: $widgetIndent;

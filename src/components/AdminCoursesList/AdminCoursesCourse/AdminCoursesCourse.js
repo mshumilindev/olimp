@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
-import siteSettingsContext from "../../context/siteSettingsContext";
+import siteSettingsContext from "../../../context/siteSettingsContext";
 import {Link} from "react-router-dom";
-import {fetchModules} from "../../redux/actions/coursesActions";
+import {fetchModules} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
-import AdminCoursesModule from './AdminCoursesModule';
+import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
 import classNames from "classnames";
 
 function AdminCoursesCourse({course, params, loading, fetchModules}) {
@@ -16,7 +16,7 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
     });
 
     return (
-        <div className={classNames('adminCourses__list-item', {isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
+        <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
             <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
                 {
                     checkIfIsOpen() ?
@@ -40,17 +40,6 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
                                     <i className="content_title-icon fa fa-unlink" />
                                     { translate('nothing_found') }
                                 </div>
-                        }
-                        {
-                            !params.moduleID ?
-                                <div className="adminCourses__list-item adminCourses__add-holder">
-                                    <a href="/" className="adminCourses__add" onClick={createCourse}>
-                                        <i className="content_title-icon fa fa-plus" />
-                                        { translate('create_module') }
-                                    </a>
-                                </div>
-                                :
-                                null
                         }
                     </div>
                     :

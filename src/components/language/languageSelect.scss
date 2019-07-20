@@ -2,6 +2,8 @@
 @import '../../assets/scss/utils/fonts';
 
 .languageSelect {
+  position: relative;
+  z-index: 10;
   &_item {
     &:not(:first-child) {
       margin-top: 20px;

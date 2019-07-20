@@ -75,6 +75,12 @@ class AdminUsersListModal extends React.Component {
         if ( this.state.showModal && this.props.onToggleModal ) {
             this.props.onToggleModal();
         }
+        if ( this.state.showModal ) {
+            document.querySelector('.section__title-holder').style.zIndex = 10;
+        }
+        else {
+            document.querySelector('.section__title-holder').style.zIndex = 9999;
+        }
         this.setState(state => {
             const newState = {
                 showModal: !state.showModal

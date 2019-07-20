@@ -17,6 +17,9 @@
       color: $white;
     }
   }
+  &__xs {
+    padding: 10px 15px;
+  }
   &__error {
     background: $errorColor;
     color: $white;

@@ -20,6 +20,12 @@ export default class SiteSettingsProvider extends React.Component{
             translate: (term) => {
                 return !this.state.translations[this.state.lang] || !this.state.translations[this.state.lang][term] ? term :this.state.translations[this.state.lang][term];
             },
+            identify: (value) => {
+                return this.identify(value);
+            },
+            transliterize: (value) => {
+                return this.transliterize(value);
+            },
             getUserFormFields: (user, passwordAction) => {
                 return this.getUserFormFields(user, passwordAction);
             },
@@ -28,6 +34,12 @@ export default class SiteSettingsProvider extends React.Component{
             },
             getDocFormFields: (name, tags, action) => {
                 return this.getDocFormFields(name, tags, action);
+            },
+            getSubjectModel: () => {
+                return this.getSubjectModel();
+            },
+            getSubjectFields: (subject) => {
+                return this.getSubjectFields(subject);
             }
         };
     }
@@ -92,7 +104,138 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
-    getUserModel(role, id) {
+    identify(value) {
+        return value.replace(/^a-z0-9]/gi,'').split(' ').join('_').toLowerCase();
+    }
+
+    transliterize(value) {
+        let newValue = value.split('');
+
+        const dictionary = {
+            'А': 'A',
+            'а': 'a',
+            'Б': 'B',
+            'б': 'b',
+            'В': 'V',
+            'в': 'v',
+            'Г': 'H',
+            'г': 'h',
+            'Д': 'D',
+            'д': 'd',
+            'Е': 'E',
+            'е': 'e',
+            'Є': 'Ie',
+            'є': 'ie',
+            'Ж': 'Zh',
+            'ж': 'zh',
+            'З': 'Z',
+            'з': 'z',
+            'И': 'Y',
+            'и': 'y',
+            'І': 'I',
+            'і': 'i',
+            'Ї': 'Ii',
+            'ї': 'ii',
+            'Й': 'Y',
+            'й': 'y',
+            'К': 'K',
+            'к': 'k',
+            'Л': 'L',
+            'л': 'l',
+            'М': 'M',
+            'м': 'm',
+            'Н': 'N',
+            'н': 'n',
+            'О': 'O',
+            'о': 'o',
+            'П': 'P',
+            'п': 'p',
+            'Р': 'R',
+            'р': 'r',
+            'С': 'S',
+            'с': 's',
+            'Т': 'T',
+            'т': 't',
+            'У': 'U',
+            'у': 'u',
+            'Ф': 'F',
+            'ф': 'f',
+            'Х': 'Kh',
+            'х': 'kh',
+            'Ц': 'Ts',
+            'ц': 'ts',
+            'Ч': 'Ch',
+            'ч': 'ch',
+            'Ш': 'Sh',
+            'ш': 'sh',
+            'Щ': 'Shch',
+            'щ': 'shch',
+            'Ь': '\'',
+            'ь': '\'',
+            'Ю': 'Iu',
+            'ю': 'iu',
+            'Я': 'Ia',
+            'я': 'ia'
+        };
+
+        newValue.forEach((char, index) => {
+            if ( dictionary[char] ) {
+                newValue[index] = dictionary[char];
+            }
+        });
+
+        return newValue.join('');
+    }
+
+    getSubjectModel() {
+        return {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            id: ''
+        }
+    }
+
+    getSubjectFields(subject) {
+        const { translate } = this.state;
+
+        return [
+            {
+                type: 'text',
+                name: 'subjectName_ua',
+                id: 'subjectName_ua',
+                placeholder: translate('title') + ' ' + translate('in_ua'),
+                value: subject.name.ua,
+                required: true,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'subjectName_ru',
+                id: 'subjectName_ru',
+                placeholder: translate('title') + ' ' + translate('in_ru'),
+                value: subject.name.ru,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'subjectName_en',
+                id: 'subjectName_en',
+                placeholder: translate('title') + ' ' + translate('in_en'),
+                value: subject.name.en,
+                updated: false
+            },
+            {
+                type: 'submit',
+                name: subject.id ? translate('update') : translate('create'),
+                id: 'subjectSubmit',
+            }
+        ]
+    }
+
+    getUserModel(role) {
         const defaultModel = {
             name: '',
             login: '',
@@ -270,14 +413,16 @@ export default class SiteSettingsProvider extends React.Component{
                 id: 'name',
                 placeholder: translate('title'),
                 value: name,
-                required: true
+                required: true,
+                updated: false
             },
             {
                 type: 'itemList',
                 name: 'tags',
                 id: 'tags',
                 placeholder: translate('tags'),
-                value: tags
+                value: tags,
+                updated: false
             },
             {
                 type: 'submit',

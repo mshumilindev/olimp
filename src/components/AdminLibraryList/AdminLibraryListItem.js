@@ -11,6 +11,7 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
     const [ showModal, setShowModal ] = useState(false);
     const [ docItem, setDocItem ] = useState(JSON.stringify(item));
     const [ initialDocItem ] = useState(JSON.stringify(item));
+    const [ formUpdated, setFormUpdated ] = useState(false);
 
     // === Need to move this to context
     const itemFields = getDocFormFields(JSON.parse(docItem).name, JSON.parse(docItem).tags, translate('update'));
@@ -43,7 +44,7 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
                     showModal ?
                         <>
                             <Modal onHideModal={onHideModal}>
-                                <Form heading={translate('edit_doc')} fields={itemFields} formAction={handleUpdateFile} setFieldValue={setFieldValue} loading={loading} />
+                                <Form heading={translate('edit_doc')} fields={itemFields} formAction={handleUpdateFile} setFieldValue={setFieldValue} loading={loading} formUpdated={formUpdated} />
                             </Modal>
                         </>
                         :
@@ -57,6 +58,9 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
         const newField = JSON.parse(docItem);
 
         newField[fieldID] = value;
+        newField.updated = true;
+
+        setFormUpdated(true);
 
         setDocItem(JSON.stringify(newField));
     }

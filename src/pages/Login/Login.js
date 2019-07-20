@@ -15,8 +15,10 @@ const errors = {
 };
 
 export default class Login extends React.Component {
-    constructor() {
+    constructor(props, context) {
         super();
+
+        const { translate } = context;
 
         this.state = {
             formError: null,
@@ -27,6 +29,7 @@ export default class Login extends React.Component {
                     id: 'login',
                     name: 'login',
                     type: 'text',
+                    placeholder: translate('login'),
                     value: '',
                     required: true
                 },
@@ -34,6 +37,7 @@ export default class Login extends React.Component {
                     id: 'password',
                     name: 'password',
                     type: 'password',
+                    placeholder: translate('password'),
                     value: '',
                     required: true
                 },
