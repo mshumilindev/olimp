@@ -19,16 +19,26 @@ $courseItemIndent: $pageIndent / 2;
   &__list-item {
     margin-top: $courseItemIndent;
     &.someOpen {
-      opacity: .25;
+      a {
+        color: $mediumGreyColor;
+      }
     }
     &.isOpen {
-      opacity: 1;
       > [class$="__list-link"] {
         color: $linkHoverColor;
       }
       > [class$="__list-courses-link"] {
         color: $linkHoverColor;
       }
+      > * > [class$="__list-link"] {
+        color: $linkHoverColor;
+      }
+      > * > [class$="__list-courses-link"] {
+        color: $linkHoverColor;
+      }
+    }
+    i.isOpen {
+      transform: rotate(-15deg);
     }
   }
   &__list-link {

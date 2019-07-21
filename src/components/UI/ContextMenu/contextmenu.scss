@@ -37,7 +37,7 @@
     margin: 5px 0;
   }
   &__drop-link {
-    color: $baseColor;
+    color: $baseColor !important;
     padding: 15px 20px 15px 40px;
     display: block;
     white-space: nowrap;
@@ -51,17 +51,13 @@
       text-align: center;
     }
     &:hover {
-      color: $baseColor;
       background: $lightColor;
     }
     &:active {
       background: $lightGreyColor;
     }
     &.link-error {
-      color: $errorColor;
-      &:hover {
-        color: $errorColor;
-      }
+      color: $errorColor !important;
     }
   }
 }

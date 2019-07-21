@@ -4,7 +4,7 @@ import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 
-export default function Admin({children, location}) {
+export default function Admin({children, location, params}) {
     const adminNav = [
         // {
         //     id: 0,
@@ -69,8 +69,13 @@ export default function Admin({children, location}) {
     ];
 
     const { siteName, translate } = useContext(SiteSettingsContext);
+    let firstLevelPath = location.pathname;
 
-    const currentPage = adminNav && adminNav.length ? adminNav.find(item => item.url === location.pathname) ? adminNav.find(item => item.url === location.pathname).name : 'admin' : '';
+    firstLevelPath = firstLevelPath.substr(1, firstLevelPath.length);
+    firstLevelPath = firstLevelPath.substr(0, firstLevelPath.indexOf('/'));
+    firstLevelPath = '/' + firstLevelPath;
+
+    const currentPage = adminNav && adminNav.length ? adminNav.find(item => item.url === firstLevelPath) ? adminNav.find(item => item.url === firstLevelPath).name : 'admin' : '';
 
     const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
 

@@ -6,8 +6,35 @@ import {connect} from "react-redux";
 import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
 import classNames from "classnames";
 
+const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
+
 function AdminCoursesCourse({course, params, loading, fetchModules}) {
     const { lang, translate } = useContext(siteSettingsContext);
+    const contextLinks = [
+        {
+            name: translate('create_module'),
+            icon: 'fa fa-plus',
+            action: handleCreateModule,
+            id: 0
+        },
+        {
+            type: 'divider',
+            id: 1
+        },
+        {
+            name: translate('edit_course'),
+            icon: 'fa fa-pencil-alt',
+            action: handleEditCourse,
+            id: 2
+        },
+        {
+            name: translate('delete_course'),
+            icon: 'fa fa-trash-alt',
+            type: 'error',
+            action: handleDeleteCourse,
+            id: 3
+        }
+    ];
 
     useEffect(() => {
         if ( checkIfIsOpen() && !course.modules ) {
@@ -17,18 +44,20 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
-            <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
-                {
-                    checkIfIsOpen() ?
-                        loading ?
-                            <i className="content_title-icon fas fa-spinner" />
+            <ContextMenu links={contextLinks}>
+                <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
+                    {
+                        checkIfIsOpen() ?
+                            loading ?
+                                <i className="content_title-icon fas fa-spinner" />
+                                :
+                                <i className="content_title-icon fa fa-graduation-cap isOpen" />
                             :
-                            <i className="content_title-icon fa fa-folder-open" />
-                        :
-                        <i className="content_title-icon fa fa-folder" />
-                }
-                { course.name[lang] ? course.name[lang] : course.name['ua'] }
-            </Link>
+                            <i className="content_title-icon fa fa-graduation-cap" />
+                    }
+                    { course.name[lang] ? course.name[lang] : course.name['ua'] }
+                </Link>
+            </ContextMenu>
             {
                 params && params.courseID === course.id ?
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
@@ -48,14 +77,20 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
         </div>
     );
 
-    function createCourse(e) {
-        e.preventDefault();
+    function checkIfIsOpen() {
+        return params && params.courseID === course.id;
+    }
 
+    function handleCreateModule() {
         console.log('create module');
     }
 
-    function checkIfIsOpen() {
-        return params && params.courseID === course.id;
+    function handleEditCourse() {
+        console.log('edit course');
+    }
+
+    function handleDeleteCourse() {
+        console.log('delete course');
     }
 }
 const mapDispatchToProps = dispatch => ({

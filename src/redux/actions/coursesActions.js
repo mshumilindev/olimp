@@ -4,13 +4,10 @@ const db = firebase.firestore();
 const coursesCollection = db.collection('courses');
 const subjectsList = [];
 
-export const FETCH_SUBJECTS_BEGIN = 'FETCH_SUBJECTS_BEGIN';
-export const FETCH_SUBJECTS_SUCCESS = 'FETCH_SUBJECTS_SUCCESS';
-
 export function fetchSubjects() {
     if ( !subjectsList.length ) {
         return dispatch => {
-            dispatch(fetchSubjectsBegin());
+            dispatch(coursesBegin());
 
             return coursesCollection.get().then((snapshot) => {
                 snapshot.docs.forEach(doc => {
@@ -19,37 +16,22 @@ export function fetchSubjects() {
                         id: doc.id
                     });
                 });
-                dispatch(fetchSubjectsSuccess(subjectsList));
+                dispatch(coursesSuccess(subjectsList));
             });
         }
     }
     else {
         return dispatch => {
-            dispatch(fetchSubjectsSuccess(subjectsList))
+            dispatch(coursesSuccess(subjectsList))
         }
     }
 }
-
-export const fetchSubjectsBegin = () => {
-    return {
-        type: FETCH_SUBJECTS_BEGIN
-    }
-};
-export const fetchSubjectsSuccess = subjectsList => {
-    return {
-        type: FETCH_SUBJECTS_SUCCESS,
-        payload: { subjectsList }
-    }
-};
-
-export const FETCH_COURSESLIST_BEGIN = 'FETCH_COURSESLIST_BEGIN';
-export const FETCH_COURSESLIST_SUCCESS = 'FETCH_COURSESLIST_SUCCESS';
 
 export function fetchCoursesList(subjectID) {
     const courseListRef = db.collection('courses').doc(subjectID).collection('coursesList');
 
     return dispatch => {
-        dispatch(fetchCoursesListBegin());
+        dispatch(coursesBegin());
         return courseListRef.get().then((snapshot) => {
             subjectsList.find(item => item.id === subjectID).coursesList = [];
             snapshot.docs.forEach(doc => {
@@ -58,31 +40,16 @@ export function fetchCoursesList(subjectID) {
                     id: doc.id
                 });
             });
-            dispatch(fetchCoursesListSuccess(subjectsList));
+            dispatch(coursesSuccess(subjectsList));
         });
     };
 }
-
-export const fetchCoursesListBegin = () => {
-    return {
-        type: FETCH_COURSESLIST_BEGIN
-    }
-};
-export const fetchCoursesListSuccess = subjectsList => {
-    return {
-        type: FETCH_COURSESLIST_SUCCESS,
-        payload: { subjectsList }
-    }
-};
-
-export const FETCH_MODULES_BEGIN = 'FETCH_MODULES_BEGIN';
-export const FETCH_MODULES_SUCCESS = 'FETCH_MODULES_SUCCESS';
 
 export function fetchModules(subjectID, courseID) {
     const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
 
     return dispatch => {
-        dispatch(fetchModulesBegin());
+        dispatch(coursesBegin());
         return modulesRef.get().then((snapshot) => {
             subjectsList.find(item => item.id === subjectID).coursesList.find(item => item.id === courseID).modules = [];
             snapshot.docs.forEach(doc => {
@@ -91,31 +58,16 @@ export function fetchModules(subjectID, courseID) {
                     id: doc.id
                 });
             });
-            dispatch(fetchModulesSuccess(subjectsList));
+            dispatch(coursesSuccess(subjectsList));
         });
     };
 }
-
-export const fetchModulesBegin = () => {
-    return {
-        type: FETCH_MODULES_BEGIN
-    }
-};
-export const fetchModulesSuccess = subjectsList => {
-    return {
-        type: FETCH_MODULES_SUCCESS,
-        payload: { subjectsList }
-    }
-};
-
-export const FETCH_LESSONS_BEGIN = 'FETCH_LESSONS_BEGIN';
-export const FETCH_LESSONS_SUCCESS = 'FETCH_LESSONS_SUCCESS';
 
 export function fetchLessons(subjectID, courseID, moduleID) {
     const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
 
     return dispatch => {
-        dispatch(fetchLessonsBegin());
+        dispatch(coursesBegin());
         return lessonsRef.get().then((snapshot) => {
             subjectsList
                 .find(item => item.id === subjectID).coursesList
@@ -131,25 +83,10 @@ export function fetchLessons(subjectID, courseID, moduleID) {
                         id: doc.id
                     });
             });
-            dispatch(fetchLessonsSuccess(subjectsList));
+            dispatch(coursesSuccess(subjectsList));
         });
     };
 }
-
-export const fetchLessonsBegin = () => {
-    return {
-        type: FETCH_LESSONS_BEGIN
-    }
-};
-export const fetchLessonsSuccess = subjectsList => {
-    return {
-        type: FETCH_LESSONS_SUCCESS,
-        payload: { subjectsList }
-    }
-};
-
-export const UPDATE_SUBJECT_BEGIN = 'UPDATE_SUBJECT_BEGIN';
-export const UPDATE_SUBJECT_SUCCESS = 'UPDATE_SUBJECT_SUCCESS';
 
 export function updateSubject(subject) {
     const subjectRef = db.collection('courses').doc(subject.id);
@@ -158,16 +95,18 @@ export function updateSubject(subject) {
     delete subject.id;
 
     return dispatch => {
-        dispatch(updateSubjectBegin());
+        dispatch(coursesBegin());
         return subjectRef.set({
             ...subject
         }).then(() => {
-            subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
+            if ( subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)) !== -1 ) {
+                subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
+            }
             subjectsList.push({
                 ...subject,
                 id: subjectID
             });
-            dispatch(updateSubjectSuccess(subjectsList.sort((a, b) => {
+            dispatch(coursesSuccess(subjectsList.sort((a, b) => {
                 if ( a.id < b.id ) {
                     return -1;
                 }
@@ -179,30 +118,15 @@ export function updateSubject(subject) {
         });
     };
 }
-
-export const updateSubjectBegin = () => {
-    return {
-        type: UPDATE_SUBJECT_BEGIN
-    }
-};
-export const updateSubjectSuccess = subjectsList => {
-    return {
-        type: UPDATE_SUBJECT_SUCCESS,
-        payload: { subjectsList }
-    }
-};
-
-export const DELETE_SUBJECT_BEGIN = 'DELETE_SUBJECT_BEGIN';
-export const DELETE_SUBJECT_SUCCESS = 'DELETE_SUBJECT_SUCCESS';
 
 export function deleteSubject(subjectID) {
     const subjectRef = db.collection('courses').doc(subjectID);
 
     return dispatch => {
-        dispatch(deteleSubjectBegin());
+        dispatch(coursesBegin());
         return subjectRef.delete().then(() => {
             subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
-            dispatch(deleteSubjectSuccess(subjectsList.sort((a, b) => {
+            dispatch(coursesSuccess(subjectsList.sort((a, b) => {
                 if ( a.id < b.id ) {
                     return -1;
                 }
@@ -215,14 +139,59 @@ export function deleteSubject(subjectID) {
     };
 }
 
-export const deteleSubjectBegin = () => {
+export function updateCourse(subjectID, course) {
+    const courseRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id);
+    const courseID = course.id;
+
+    delete course.id;
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return courseRef.set({
+            ...course
+        }).then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            let foundCourse = null;
+
+            if ( foundSubject.coursesList ) {
+                foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+            }
+
+            if ( foundCourse ) {
+                foundSubject.splice(foundSubject.indexOf(foundCourse), 1);
+            }
+
+            if ( foundSubject.coursesList ) {
+                foundSubject.coursesList.push({
+                    ...course,
+                    id: courseID
+                });
+            }
+
+            dispatch(coursesSuccess(subjectsList.sort((a, b) => {
+                if ( a.id < b.id ) {
+                    return -1;
+                }
+                else if ( a.id > b.id ) {
+                    return 1;
+                }
+                return 0;
+            })));
+        });
+    };
+}
+
+export const coursesBegin = () => {
     return {
-        type: DELETE_SUBJECT_BEGIN
+        type: COURSES_BEGIN
     }
 };
-export const deleteSubjectSuccess = subjectsList => {
+export const coursesSuccess = subjectsList => {
     return {
-        type: DELETE_SUBJECT_SUCCESS,
+        type: COURSES_SUCCESS,
         payload: { subjectsList }
     }
 };
+
+export const COURSES_BEGIN = 'COURSES_BEGIN';
+export const COURSES_SUCCESS = 'COURSES_SUCCESS';

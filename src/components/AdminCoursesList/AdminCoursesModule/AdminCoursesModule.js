@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {fetchLessons} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import classNames from "classnames";
+import AdminCoursesLesson from '../AdminCoursesLesson/AdminCoursesLesson';
 
 function AdminCoursesModule({module, params, loading, fetchLessons}) {
     const { lang, translate } = useContext(siteSettingsContext);
@@ -22,9 +23,9 @@ function AdminCoursesModule({module, params, loading, fetchLessons}) {
                         loading ?
                             <i className="content_title-icon fas fa-spinner" />
                             :
-                            <i className="content_title-icon fa fa-folder-open" />
+                            <i className="content_title-icon fa fa-book-open" />
                         :
-                        <i className="content_title-icon fa fa-folder" />
+                        <i className="content_title-icon fa fa-book" />
                 }
                 { module.name[lang] ? module.name[lang] : module.name['ua'] }
             </Link>
@@ -33,7 +34,7 @@ function AdminCoursesModule({module, params, loading, fetchLessons}) {
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             module.lessons && module.lessons.length ?
-                                module.lessons.map(item => <div>{ item.name[lang] }</div>)
+                                module.lessons.map(item => <AdminCoursesLesson key={item.id} lesson={item} params={params} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />

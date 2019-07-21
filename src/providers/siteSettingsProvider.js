@@ -40,6 +40,12 @@ export default class SiteSettingsProvider extends React.Component{
             },
             getSubjectFields: (subject) => {
                 return this.getSubjectFields(subject);
+            },
+            getCourseModel: () => {
+                return this.getCourseModel();
+            },
+            getCourseFields: (course) => {
+                return this.getCourseFields(course);
             }
         };
     }
@@ -231,6 +237,54 @@ export default class SiteSettingsProvider extends React.Component{
                 type: 'submit',
                 name: subject.id ? translate('update') : translate('create'),
                 id: 'subjectSubmit',
+            }
+        ]
+    }
+
+    getCourseModel() {
+        return {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            id: ''
+        }
+    }
+
+    getCourseFields(course) {
+        const { translate } = this.state;
+
+        return [
+            {
+                type: 'text',
+                name: 'courseName_ua',
+                id: 'courseName_ua',
+                placeholder: translate('title') + ' ' + translate('in_ua'),
+                value: course.name.ua,
+                required: true,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'courseName_ru',
+                id: 'courseName_ru',
+                placeholder: translate('title') + ' ' + translate('in_ru'),
+                value: course.name.ru,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'courseName_en',
+                id: 'courseName_en',
+                placeholder: translate('title') + ' ' + translate('in_en'),
+                value: course.name.en,
+                updated: false
+            },
+            {
+                type: 'submit',
+                name: course.id ? translate('update') : translate('create'),
+                id: 'courseSubmit',
             }
         ]
     }

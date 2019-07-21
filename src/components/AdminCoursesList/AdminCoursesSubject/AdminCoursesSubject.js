@@ -5,22 +5,22 @@ import AdminCoursesCourse from '../AdminCoursesCourse/AdminCoursesCourse';
 import {fetchCoursesList, deleteSubject} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import classNames from 'classnames';
-import ContextMenu from '../../UI/ContextMenu/ContextMenu';
 import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
 
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
+const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 
 function AdminCoursesSubject({loading, subject, params, fetchCoursesList, deleteSubject}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showUpdateSubject, setShowUpdateSubject ] = useState(false);
-    const [ showCreateCourse, setShowCreateCourse ] = useState(false);
+    const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
     const contextLinks = [
         {
             name: translate('create_course'),
             icon: 'fa fa-plus',
-            action: () => setShowCreateCourse(true),
+            action: handleShowCourseUpdate,
             id: 0
         },
         {
@@ -51,7 +51,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
             <ContextMenu links={contextLinks}>
-                <Link to={'/admin-courses/' + (params && params.subjectID === subject.id && !params.courseID ? '' : subject.id)} className="adminCourses__list-link">
+                <Link to={'/admin-courses' + (params && params.subjectID === subject.id && !params.courseID ? '' : '/' + subject.id)} className="adminCourses__list-link">
                     {
                         checkIfIsOpen() ?
                             loading ?
@@ -69,7 +69,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             subject.coursesList && subject.coursesList.length ?
-                                subject.coursesList.map(item => <AdminCoursesCourse course={item} key={item.id} params={params} loading={loading} />)
+                                sortCoursesList().map(item => <AdminCoursesCourse course={item} key={item.id} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
@@ -87,8 +87,8 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
                     null
             }
             {
-                showCreateCourse ?
-                    <UpdateCourse/>
+                showUpdateCourse ?
+                    <UpdateCourse params={params} subjectID={subject.id} course={null} loading={loading} setShowUpdateCourse={setShowUpdateCourse}/>
                     :
                     null
             }
@@ -105,19 +105,22 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         return params && params.subjectID === subject.id;
     }
 
-    function createCourse() {
-        console.log('create course');
-    }
-
     function hideConfirm() {
         setShowConfirm(false);
     }
 
     function onDeleteSubject() {
+        // === Need to write function in database to implement recursive item deletion (for now subject isn't deleted completely)
+        // === Solution can be found here https://firebase.google.com/docs/firestore/solutions/delete-collections
         setShowConfirm(true);
-        // if ( window.confirm(translate('sure_to_delete_subject')) ) {
-        //     deleteSubject(subject.id);
-        // }
+    }
+
+    function handleShowCourseUpdate() {
+        setShowUpdateCourse(true);
+    }
+
+    function sortCoursesList() {
+        return subject.coursesList.sort((a, b) => a.index - b.index);
     }
 }
 const mapDispatchToProps = dispatch => ({
