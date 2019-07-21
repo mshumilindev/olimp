@@ -1,15 +1,21 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import {Link} from "react-router-dom";
-import {fetchModules} from "../../../redux/actions/coursesActions";
+import {deleteCourse, fetchModules} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
 import classNames from "classnames";
+import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
+import UpdateModule from "../AdminCoursesActions/UpdateModule";
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
+const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesCourse({course, params, loading, fetchModules}) {
+function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse}) {
     const { lang, translate } = useContext(siteSettingsContext);
+    const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
+    const [ showUpdateModule, setShowUpdateModule ] = useState(false);
+    const [ showConfirm, setShowConfirm ] = useState(false);
     const contextLinks = [
         {
             name: translate('create_module'),
@@ -63,7 +69,7 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             course.modules && course.modules.length ?
-                                course.modules.map(item => <AdminCoursesModule module={item} key={item.id} params={params} loading={loading} />)
+                                sortModules().map(item => <AdminCoursesModule subjectID={subjectID} courseID={course.id} module={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
@@ -71,6 +77,24 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
                                 </div>
                         }
                     </div>
+                    :
+                    null
+            }
+            {
+                showUpdateCourse ?
+                    <UpdateCourse params={params} subjectID={subjectID} course={course} loading={loading} setShowUpdateCourse={setShowUpdateCourse}/>
+                    :
+                    null
+            }
+            {
+                showUpdateModule ?
+                    <UpdateModule params={params} subjectID={subjectID} courseID={course.id} module={null} loading={loading} setShowUpdateModule={setShowUpdateModule}/>
+                    :
+                    null
+            }
+            {
+                showConfirm ?
+                    <Confirm message={translate('sure_to_delete_course')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteCourse(subjectID, course.id)} />
                     :
                     null
             }
@@ -82,18 +106,31 @@ function AdminCoursesCourse({course, params, loading, fetchModules}) {
     }
 
     function handleCreateModule() {
-        console.log('create module');
+        setShowUpdateModule(true);
     }
 
     function handleEditCourse() {
-        console.log('edit course');
+        setShowUpdateCourse(true);
     }
 
     function handleDeleteCourse() {
-        console.log('delete course');
+        setShowConfirm(true);
+    }
+
+    function sortModules() {
+        return course.modules.sort((a, b) => {
+            if ( a.index < b.index ) {
+                return -1;
+            }
+            if ( a.index > b.index ) {
+                return 1;
+            }
+            return 0;
+        });
     }
 }
 const mapDispatchToProps = dispatch => ({
-    fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID))
+    fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
+    deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID))
 });
 export default connect(null, mapDispatchToProps)(AdminCoursesCourse);

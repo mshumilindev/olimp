@@ -26,6 +26,7 @@ export default class SiteSettingsProvider extends React.Component{
             transliterize: (value) => {
                 return this.transliterize(value);
             },
+            // === Need to optimize model and formfields functions, replace it with a single function
             getUserFormFields: (user, passwordAction) => {
                 return this.getUserFormFields(user, passwordAction);
             },
@@ -46,6 +47,18 @@ export default class SiteSettingsProvider extends React.Component{
             },
             getCourseFields: (course) => {
                 return this.getCourseFields(course);
+            },
+            getModuleModel: () => {
+                return this.getModuleModel();
+            },
+            getModuleFields: (module) => {
+                return this.getModuleFields(module);
+            },
+            getLessonModel: () => {
+                return this.getLessonModel();
+            },
+            getLessonFields: (lesson) => {
+                return this.getLessonFields(lesson);
             }
         };
     }
@@ -285,6 +298,102 @@ export default class SiteSettingsProvider extends React.Component{
                 type: 'submit',
                 name: course.id ? translate('update') : translate('create'),
                 id: 'courseSubmit',
+            }
+        ]
+    }
+
+    getModuleModel() {
+        return {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            id: ''
+        }
+    }
+
+    getModuleFields(module) {
+        const { translate } = this.state;
+
+        return [
+            {
+                type: 'text',
+                name: 'moduleName_ua',
+                id: 'moduleName_ua',
+                placeholder: translate('title') + ' ' + translate('in_ua'),
+                value: module.name.ua,
+                required: true,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'moduleName_ru',
+                id: 'moduleName_ru',
+                placeholder: translate('title') + ' ' + translate('in_ru'),
+                value: module.name.ru,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'moduleName_en',
+                id: 'moduleName_en',
+                placeholder: translate('title') + ' ' + translate('in_en'),
+                value: module.name.en,
+                updated: false
+            },
+            {
+                type: 'submit',
+                name: module.id ? translate('update') : translate('create'),
+                id: 'moduleSubmit',
+            }
+        ]
+    }
+
+    getLessonModel() {
+        return {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            id: ''
+        }
+    }
+
+    getLessonFields(lesson) {
+        const { translate } = this.state;
+
+        return [
+            {
+                type: 'text',
+                name: 'lessonName_ua',
+                id: 'lessonName_ua',
+                placeholder: translate('title') + ' ' + translate('in_ua'),
+                value: lesson.name.ua,
+                required: true,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'lessonName_ru',
+                id: 'lessonName_ru',
+                placeholder: translate('title') + ' ' + translate('in_ru'),
+                value: lesson.name.ru,
+                updated: false
+            },
+            {
+                type: 'text',
+                name: 'lessonName_en',
+                id: 'lessonName_en',
+                placeholder: translate('title') + ' ' + translate('in_en'),
+                value: lesson.name.en,
+                updated: false
+            },
+            {
+                type: 'submit',
+                name: lesson.id ? translate('update') : translate('create'),
+                id: 'lessonSubmit',
             }
         ]
     }

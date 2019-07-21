@@ -158,7 +158,7 @@ export function updateCourse(subjectID, course) {
             }
 
             if ( foundCourse ) {
-                foundSubject.splice(foundSubject.indexOf(foundCourse), 1);
+                foundSubject.coursesList.splice(foundSubject.coursesList.indexOf(foundCourse), 1);
             }
 
             if ( foundSubject.coursesList ) {
@@ -180,6 +180,122 @@ export function updateCourse(subjectID, course) {
         });
     };
 }
+
+export function deleteCourse(subjectID, courseID) {
+    const courseRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID);
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return courseRef.delete().then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            foundSubject.coursesList.splice(foundSubject.coursesList.indexOf(foundSubject.coursesList.find(item => item.id === courseID)), 1);
+            dispatch(coursesSuccess(subjectsList));
+        });
+    };
+}
+
+export function updateModule(subjectID, courseID, module) {
+    const moduleRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id);
+    const moduleID = module.id;
+
+    delete module.id;
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return moduleRef.set({
+            ...module
+        }).then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+            let foundModule = null;
+
+            if ( foundCourse.modules ) {
+                foundModule = foundCourse.modules.find(item => item.id === moduleID);
+            }
+
+            if ( foundModule ) {
+                foundCourse.modules.splice(foundCourse.modules.indexOf(foundModule), 1);
+            }
+
+            if ( foundCourse.modules ) {
+                foundCourse.modules.push({
+                    ...module,
+                    id: moduleID
+                });
+            }
+
+            dispatch(coursesSuccess(subjectsList));
+        });
+    };
+}
+
+export function deleteModule(subjectID, courseID, moduleID) {
+    const moduleRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID);
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return moduleRef.delete().then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+
+            foundCourse.modules.splice(foundCourse.modules.indexOf(foundCourse.modules.find(item => item.id === moduleID)), 1);
+            dispatch(coursesSuccess(subjectsList));
+        });
+    };
+}
+
+export function updateLesson(subjectID, courseID, moduleID, lesson) {
+    const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lesson.id);
+    const lessonID = lesson.id;
+
+    delete lesson.id;
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return lessonRef.set({
+            ...lesson
+        }).then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+            const foundModule = foundCourse.modules.find(item => item.id === moduleID);
+            let foundLesson = null;
+
+            if ( foundModule.lessons ) {
+                foundLesson = foundModule.lessons.find(item => item.id === lessonID);
+            }
+
+            if ( foundLesson ) {
+                foundModule.lessons.splice(foundModule.lessons.indexOf(foundLesson), 1);
+            }
+
+            if ( foundModule.lessons ) {
+                foundModule.lessons.push({
+                    ...lesson,
+                    id: lessonID
+                });
+            }
+
+            dispatch(coursesSuccess(subjectsList));
+        });
+    };
+}
+
+export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
+    const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
+
+    return dispatch => {
+        dispatch(coursesBegin());
+        return lessonRef.delete().then(() => {
+            const foundSubject = subjectsList.find(item => item.id === subjectID);
+            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+            const foundModule = foundCourse.modules.find(item => item.id === moduleID);
+
+            foundModule.lessons.splice(foundModule.lessons.indexOf(foundModule.lessons.find(item => item.id === lessonID)), 1);
+            dispatch(coursesSuccess(subjectsList));
+        });
+    };
+}
+
 
 export const coursesBegin = () => {
     return {

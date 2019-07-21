@@ -69,7 +69,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
                             subject.coursesList && subject.coursesList.length ?
-                                sortCoursesList().map(item => <AdminCoursesCourse course={item} key={item.id} params={params} loading={loading} />)
+                                sortCoursesList().map(item => <AdminCoursesCourse subjectID={subject.id} course={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
@@ -94,7 +94,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
             }
             {
                 showConfirm ?
-                    <Confirm message={translate('sure_to_delete_subject')} cancelAction={hideConfirm} confirmAction={() => deleteSubject(subject.id)} />
+                    <Confirm message={translate('sure_to_delete_subject')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteSubject(subject.id)} />
                     :
                     null
             }
@@ -103,10 +103,6 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
 
     function checkIfIsOpen() {
         return params && params.subjectID === subject.id;
-    }
-
-    function hideConfirm() {
-        setShowConfirm(false);
     }
 
     function onDeleteSubject() {

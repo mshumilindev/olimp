@@ -1,17 +1,57 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
-import {Link} from "react-router-dom";
+import {withRouter, Link} from "react-router-dom";
+import {deleteLesson} from "../../../redux/actions/coursesActions";
+import {connect} from "react-redux";
 
-function AdminCoursesLesson({lesson, params}) {
-    const { lang } = useContext(siteSettingsContext);
+const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
+const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
+
+function AdminCoursesLesson({history, subjectID, courseID, moduleID, lesson, params, deleteLesson}) {
+    const { lang, translate } = useContext(siteSettingsContext);
+    const [ showConfirm, setShowConfirm ] = useState(false);
+    const contextLinks = [
+        {
+            name: translate('edit_lesson'),
+            icon: 'fa fa-pencil-alt',
+            action: handleEditLesson,
+            id: 2
+        },
+        {
+            name: translate('delete_lesson'),
+            icon: 'fa fa-trash-alt',
+            type: 'error',
+            action: handleDeleteLesson,
+            id: 3
+        }
+    ];
 
     return (
         <div className="adminCourses__list-item" style={{marginTop: 10}}>
-            <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + lesson.id} className="adminCourses__list-courses-link">
-                <i className="content_title-icon fa fa-paragraph" />
-                { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
-            </Link>
+            <ContextMenu links={contextLinks}>
+                <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + lesson.id} className="adminCourses__list-courses-link">
+                    <i className="content_title-icon fa fa-paragraph" />
+                    { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
+                </Link>
+            </ContextMenu>
+            {
+                showConfirm ?
+                    <Confirm message={translate('sure_to_delete_lesson')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteLesson(subjectID, courseID, moduleID, lesson.id)} />
+                    :
+                    null
+            }
         </div>
     );
+
+    function handleEditLesson() {
+        history.push(history.location.pathname + '/' + lesson.id);
+    }
+
+    function handleDeleteLesson() {
+        setShowConfirm(true);
+    }
 }
-export default AdminCoursesLesson;
+const mapDispatchToProps = dispatch => ({
+    deleteLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(deleteLesson(subjectID, courseID, moduleID, lessonID))
+});
+export default connect(null, mapDispatchToProps)(withRouter(AdminCoursesLesson));

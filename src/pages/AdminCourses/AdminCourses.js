@@ -23,10 +23,16 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminCourses({history, filters, pager, list, loading, searchQuery, params, updateSubject}) {
+function AdminCourses({history, filters, list, loading, searchQuery, params, updateSubject}) {
     if ( params ) {
         if ( params.subjectID && list && list.length && !list.find(item => item.id === params.subjectID) ) {
             history.push('/admin-courses');
+        }
+        if ( params.courseID && list && list.length && list.find(item => item.id === params.subjectID) && list.find(item => item.id === params.subjectID).coursesList && !list.find(item => item.id === params.subjectID).coursesList.find(item => item.id === params.courseID) ) {
+            history.push('/admin-courses/' + params.subjectID);
+        }
+        if ( params.moduleID && list && list.length && list.find(item => item.id === params.subjectID) && list.find(item => item.id === params.subjectID).coursesList && list.find(item => item.id === params.subjectID).coursesList.find(item => item.id === params.courseID) && list.find(item => item.id === params.subjectID).coursesList.find(item => item.id === params.courseID).modules && !list.find(item => item.id === params.subjectID).coursesList.find(item => item.id === params.courseID).modules.find(item => item.id === params.moduleID) ) {
+            history.push('/admin-courses/' + params.subjectID + '/' + params.courseID);
         }
     }
     const { translate, lang, getSubjectModel, getSubjectFields, identify, transliterize } = useContext(siteSettingsContext);
@@ -66,18 +72,25 @@ function AdminCourses({history, filters, pager, list, loading, searchQuery, para
                 { filters }
                 <div className="adminLibrary__list widget">
                     {
-                        list && list.length ?
-                            <>
-                                <div className="widget__title">
-                                    <Breadcrumbs list={getBreadcrumbs()} />
+                        list ?
+                            list.length ?
+                                <>
+                                    <div className="widget__title">
+                                        <Breadcrumbs list={getBreadcrumbs()} />
+                                    </div>
+                                    <div className="adminCourses__list">
+                                        {
+                                            filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
+                                        }
+                                    </div>
+                                </>
+                                :
+                                <div className="nothingFound">
+                                    <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
+                                        <i className="content_title-icon fa fa-plus" />
+                                        { translate('create_subject') }
+                                    </a>
                                 </div>
-                                <div className="adminCourses__list">
-                                    {
-                                        filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
-                                    }
-                                </div>
-                                { pager }
-                            </>
                             :
                             <Preloader/>
                     }
