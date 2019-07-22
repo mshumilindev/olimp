@@ -55,8 +55,14 @@
   ~ .widget {
     margin-top: $sectionTitleHeight !important;
   }
+  ~ .grid {
+    margin-top: $sectionTitleHeight !important;
+  }
   + .filters {
     ~ .widget {
+      margin-top: $sectionTitleHeight + $filtersHeight !important;
+    }
+    ~ .grid {
       margin-top: $sectionTitleHeight + $filtersHeight !important;
     }
   }

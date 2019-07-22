@@ -3,6 +3,7 @@ import firebase from "../../db/firestore";
 const db = firebase.firestore();
 const coursesCollection = db.collection('courses');
 const subjectsList = [];
+let lesson = null;
 
 export function fetchSubjects() {
     if ( !subjectsList.length ) {
@@ -244,38 +245,46 @@ export function deleteModule(subjectID, courseID, moduleID) {
     };
 }
 
-export function updateLesson(subjectID, courseID, moduleID, lesson) {
+export function updateLesson(subjectID, courseID, moduleID, newLesson) {
     const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lesson.id);
-    const lessonID = lesson.id;
+    const lessonID = newLesson.id;
 
-    delete lesson.id;
+    delete newLesson.id;
 
     return dispatch => {
         dispatch(coursesBegin());
         return lessonRef.set({
-            ...lesson
+            ...newLesson
         }).then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
-            const foundModule = foundCourse.modules.find(item => item.id === moduleID);
-            let foundLesson = null;
+            if ( subjectsList.length ) {
+                const foundSubject = subjectsList.find(item => item.id === subjectID);
+                const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
+                const foundModule = foundCourse.modules.find(item => item.id === moduleID);
+                let foundLesson = null;
 
-            if ( foundModule.lessons ) {
-                foundLesson = foundModule.lessons.find(item => item.id === lessonID);
+                if ( foundModule.lessons ) {
+                    foundLesson = foundModule.lessons.find(item => item.id === lessonID);
+                }
+
+                if ( foundLesson ) {
+                    foundModule.lessons.splice(foundModule.lessons.indexOf(foundLesson), 1);
+                }
+
+                if ( foundModule.lessons ) {
+                    foundModule.lessons.push({
+                        ...newLesson,
+                        id: lessonID
+                    });
+                }
+                dispatch(coursesSuccess(subjectsList));
             }
-
-            if ( foundLesson ) {
-                foundModule.lessons.splice(foundModule.lessons.indexOf(foundLesson), 1);
-            }
-
-            if ( foundModule.lessons ) {
-                foundModule.lessons.push({
-                    ...lesson,
+            else {
+                lesson = {
+                    ...newLesson,
                     id: lessonID
-                });
+                };
+                dispatch(lessonSuccess(lesson));
             }
-
-            dispatch(coursesSuccess(subjectsList));
         });
     };
 }
@@ -296,6 +305,20 @@ export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
     };
 }
 
+export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
+    const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
+
+    return dispatch => {
+        dispatch(lessonBegin());
+        return lessonRef.get().then(snapshot => {
+            lesson = {
+                ...snapshot.data(),
+                id: snapshot.id
+            };
+            dispatch(lessonSuccess(lesson));
+        });
+    };
+}
 
 export const coursesBegin = () => {
     return {
@@ -309,5 +332,19 @@ export const coursesSuccess = subjectsList => {
     }
 };
 
+export const lessonBegin = () => {
+    return {
+        type: LESSON_BEGIN
+    }
+};
+export const lessonSuccess = lesson => {
+    return {
+        type: LESSON_SUCCESS,
+        payload: { lesson }
+    }
+};
+
 export const COURSES_BEGIN = 'COURSES_BEGIN';
 export const COURSES_SUCCESS = 'COURSES_SUCCESS';
+export const LESSON_BEGIN = 'LESSON_BEGIN';
+export const LESSON_SUCCESS = 'LESSON_SUCCESS';

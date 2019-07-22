@@ -24,6 +24,13 @@
     background: $errorColor;
     color: $white;
   }
+  &__success {
+    background: $successColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
   &:hover {
     opacity: .75;
   }

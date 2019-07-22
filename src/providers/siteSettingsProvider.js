@@ -57,8 +57,8 @@ export default class SiteSettingsProvider extends React.Component{
             getLessonModel: () => {
                 return this.getLessonModel();
             },
-            getLessonFields: (lesson) => {
-                return this.getLessonFields(lesson);
+            getLessonFields: (lesson, hasBtn) => {
+                return this.getLessonFields(lesson, hasBtn);
             }
         };
     }
@@ -361,16 +361,16 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
-    getLessonFields(lesson) {
+    getLessonFields(lesson, hasBtn = true) {
         const { translate } = this.state;
 
-        return [
+        const lessonFields = [
             {
                 type: 'text',
                 name: 'lessonName_ua',
                 id: 'lessonName_ua',
                 placeholder: translate('title') + ' ' + translate('in_ua'),
-                value: lesson.name.ua,
+                value: lesson ? lesson.name.ua : '',
                 required: true,
                 updated: false
             },
@@ -379,7 +379,7 @@ export default class SiteSettingsProvider extends React.Component{
                 name: 'lessonName_ru',
                 id: 'lessonName_ru',
                 placeholder: translate('title') + ' ' + translate('in_ru'),
-                value: lesson.name.ru,
+                value: lesson ? lesson.name.ru : '',
                 updated: false
             },
             {
@@ -387,15 +387,18 @@ export default class SiteSettingsProvider extends React.Component{
                 name: 'lessonName_en',
                 id: 'lessonName_en',
                 placeholder: translate('title') + ' ' + translate('in_en'),
-                value: lesson.name.en,
+                value: lesson ? lesson.name.en : '',
                 updated: false
-            },
-            {
+            }
+        ];
+        if ( hasBtn ) {
+            lessonFields.push({
                 type: 'submit',
                 name: lesson.id ? translate('update') : translate('create'),
                 id: 'lessonSubmit',
-            }
-        ]
+            });
+        }
+        return lessonFields;
     }
 
     getUserModel(role) {

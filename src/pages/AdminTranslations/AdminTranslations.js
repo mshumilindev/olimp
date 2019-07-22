@@ -21,7 +21,7 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
                     </h2>
                     <div className="section__title-actions">
                         <span>
-                            <a href="/" className="btn btn_primary" onClick={e => handleUpdateTranslations(e)}>
+                            <a href="/" className="btn btn__success" onClick={e => handleUpdateTranslations(e)}>
                                 <i className="content_title-icon fa fa-save"/>
                                 { translate('save') }
                             </a>
