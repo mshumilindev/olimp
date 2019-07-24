@@ -3,6 +3,7 @@ import {fetchLesson, updateLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../../components/UI/preloader";
+import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
@@ -23,6 +24,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
     const prevLesson = usePrevious(lesson);
+    const [ content, setContent ] = useState(null);
 
     if ( !lesson ) {
         fetchLesson(subjectID, courseID, moduleID, lessonID);
@@ -30,6 +32,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
     else {
         if ( !lessonInfoFields ) {
             setLessonInfoFields(JSON.stringify(getLessonFields(lesson, false)));
+        }
+        if ( !content ) {
+            if ( lesson.content ) {
+                setContent(lesson.content);
+            }
+            else {
+                setContent([]);
+            }
         }
     }
 
@@ -62,6 +72,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
+                            <ContentEditor content={content} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
                         </div>
                     </div>
                     <div className="grid_col col-4">
@@ -119,7 +130,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                     ua: updatedLessonFields.find(field => field.id === 'lessonName_ua').value,
                     ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
                     en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
-                }
+                },
+                content: content
             };
             updateLesson(subjectID, courseID, moduleID, newLesson);
         }
