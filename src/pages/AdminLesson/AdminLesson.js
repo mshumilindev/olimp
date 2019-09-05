@@ -25,8 +25,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
     const { subjectID, courseID, moduleID, lessonID } = params;
     const prevLesson = usePrevious(lesson);
     const [ content, setContent ] = useState(null);
+    const [ questions, setQuestions ] = useState(null);
 
     if ( !lesson ) {
+        fetchLesson(subjectID, courseID, moduleID, lessonID);
+    }
+    else if ( lesson.id !== lessonID ) {
         fetchLesson(subjectID, courseID, moduleID, lessonID);
     }
     else {
@@ -40,6 +44,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
             else {
                 setContent([]);
             }
+            if ( lesson.questions ) {
+                setQuestions(lesson.questions);
+            }
+            else {
+                setQuestions([]);
+            }
         }
     }
 
@@ -51,7 +61,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
     }, [prevLesson, lesson, getLessonFields]);
 
     return (
-        lesson ?
+        lesson && lesson.id === lessonID ?
             <div className="adminLesson section">
                 <div className="section__title-holder">
                     <h2 className="section__title">
@@ -72,7 +82,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
-                            <ContentEditor content={content} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                            <ContentEditor content={content} types={['text', 'media', 'divider']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                        </div>
+                        <div className="widget">
+                            <div className="widget__title">
+                                <i className="content_title-icon fa fa-question"/>
+                                { translate('control_questions') }
+                            </div>
+                            <ContentEditor content={questions} types={['text', 'media', 'answers', 'divider']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
                         </div>
                     </div>
                     <div className="grid_col col-4">
@@ -121,6 +138,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
 
     function saveLesson(e) {
         e.preventDefault();
+        console.log('true');
 
         if ( lessonUpdated ) {
             const updatedLessonFields = JSON.parse(lessonInfoFields);
@@ -131,7 +149,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                     ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
                     en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
                 },
-                content: content
+                content: content,
+                questions: questions
             };
             updateLesson(subjectID, courseID, moduleID, newLesson);
         }

@@ -73,6 +73,6 @@ function UpdateLesson({history, params, subjectID, courseID, moduleID, lesson, l
     }
 }
 const mapDispatchToProps = dispatch => ({
-    updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson))
+    updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson, true))
 });
 export default connect(null, mapDispatchToProps)(withRouter(UpdateLesson));

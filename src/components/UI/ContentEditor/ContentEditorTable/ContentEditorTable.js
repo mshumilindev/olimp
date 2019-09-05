@@ -9,7 +9,7 @@ import FroalaEditor from 'react-froala-wysiwyg';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorText({ block, setBlock, removeBlock }) {
+export default function ContentEditorTable({ block, setBlock, removeBlock }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
     block.value = block.value || {
@@ -27,9 +27,9 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
         <div className="contentEditor__block-text">
             <FroalaEditor config={editorConfig} model={block.value[lang]} onModelChange={handleChange} />
             <div className="contentEditor__block-actions">
-                {/*<span className="contentEditor__block-actions-sort">*/}
-                {/*    <i className="content_title-icon fa fa-sort"/>*/}
-                {/*</span>*/}
+                <span className="contentEditor__block-actions-sort">
+                    <i className="content_title-icon fa fa-sort"/>
+                </span>
                 <a href="#" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>

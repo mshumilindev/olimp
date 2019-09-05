@@ -9,23 +9,13 @@ import FroalaEditor from 'react-froala-wysiwyg';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorText({ block, setBlock, removeBlock }) {
+export default function ContentEditorDivider({ block, setBlock, removeBlock }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    block.value = block.value || {
-        ua: '',
-        ru: '',
-        en: ''
-    };
-    const editorConfig = {
-        placeholderText: translate('start_typing'),
-        language: lang,
-        toolbarButtons: ['undo', 'redo', '|', 'paragraphFormat', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'align']
-    };
 
     return (
-        <div className="contentEditor__block-text">
-            <FroalaEditor config={editorConfig} model={block.value[lang]} onModelChange={handleChange} />
+        <div className="contentEditor__block-divider">
+            <hr/>
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
@@ -47,15 +37,5 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
         e.preventDefault();
 
         setShowRemoveBlock(true);
-    }
-
-    function handleChange(value) {
-        const newValue = block.value;
-        newValue[lang] = value;
-
-        setBlock({
-            ...block,
-            value: newValue
-        })
     }
 }

@@ -2,9 +2,15 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import './contentEditor.scss';
 import {Preloader} from "../preloader";
+import generator from 'generate-password';
+import Modal from '../Modal/Modal';
 
-const Modal = React.lazy(() => import('../Modal/Modal'));
 const ContentEditorText = React.lazy(() => import('./ContentEditorText/ContentEditorText'));
+const ContentEditorMedia = React.lazy(() => import('./ContentEditorMedia/ContentEditorMedia'));
+const ContentEditorQuestion = React.lazy(() => import('./ContentEditorQuestion/ContentEditorQuestion'));
+const ContentEditorDivider = React.lazy(() => import('./ContentEditorDivider/ContentEditorDivider'));
+// const ContentEditorTable = React.lazy(() => import('./ContentEditorTable/ContentEditorTable'));
+// const ContentEditorGrid = React.lazy(() => import('./ContentEditorGrid/ContentEditorGrid'));
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {
@@ -17,33 +23,50 @@ function usePrevious(value) {
     return ref.current;
 }
 
-export default function ContentEditor({content, setUpdated, setLessonContent, loading}) {
+export default function ContentEditor({content, setUpdated, setLessonContent, loading, types}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ currentContent, setCurrentContent ] = useState(JSON.stringify(content));
     const prevContent = usePrevious(currentContent);
-    const contentEditorActions = [
+    const defaultEditorActions = [
         {
             type: 'text',
-            icon: 'fa fa-font'
+            icon: 'fa fa-font',
+            title: 'text',
         },
         {
             type: 'media',
-            icon: 'fa fa-images'
+            icon: 'fa fa-images',
+            title: 'media'
+        },
+        // {
+        //     type: 'table',
+        //     icon: 'fa fa-table'
+        // },
+        // {
+        //     type: 'grid',
+        //     icon: 'fa fa-stream'
+        // }
+        {
+            type: 'answers',
+            icon: 'fa fa-question',
+            title: 'answers'
         },
         {
-            type: 'table',
-            icon: 'fa fa-table'
-        },
-        {
-            type: 'grid',
-            icon: 'fa fa-stream'
-        },
-        {
-            type: 'masonry',
-            icon: 'fa fa-th'
+            type: 'divider',
+            icon: 'fa fa-divide',
+            title: 'divider'
         }
     ];
+    const contentEditorActions = [];
+
+    if ( types.length ) {
+        types.forEach(defaultType => {
+            if ( defaultEditorActions.find(item => item.type === defaultType) ) {
+                contentEditorActions.push(defaultEditorActions.find(item => item.type === defaultType));
+            }
+        });
+    }
 
     useEffect(() => {
         if ( prevContent && prevContent !== currentContent ) {
@@ -58,12 +81,22 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                     <div className="contentEditor__blocks">
                         {
                             JSON.parse(currentContent).map(block => {
-                                return (
-                                    block.type === 'text' ?
-                                        <ContentEditorText key={block.id} block={block} setBlock={setBlock}/>
-                                        :
-                                        null
-                                )
+                                switch (block.type) {
+                                    case ('text') :
+                                        return <ContentEditorText key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('media') :
+                                        return <ContentEditorMedia key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    // case ('table') :
+                                    //     return <ContentEditorTable key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    // case ('grid') :
+                                    //     return <ContentEditorGrid key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('answers') :
+                                        return <ContentEditorQuestion key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('divider') :
+                                        return <ContentEditorDivider key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    default:
+                                        return null;
+                                }
                             })
                         }
                         {
@@ -85,14 +118,22 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                         <h2 className="contentEditor__actions-heading">{ translate('choose_block_type') }</h2>
                         <div className="contentEditor__actions">
                             {
-                                contentEditorActions.map(action => {
-                                    return (
-                                        <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={action.type}>
-                                            <i className={action.icon} />
-                                            { translate(action.type) }
-                                        </a>
-                                    );
-                                })
+                                contentEditorActions.length ?
+                                    contentEditorActions.map(action => {
+                                        return (
+                                            <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={action.type}>
+                                                <i className={action.icon} />
+                                                {
+                                                    action.title ?
+                                                        translate(action.title)
+                                                        :
+                                                        null
+                                                }
+                                            </a>
+                                        );
+                                    })
+                                    :
+                                    null
                             }
                         </div>
                     </Modal>
@@ -123,12 +164,24 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
 
         newContent.push({
             type: blockType,
-            id: newContent.length,
+            id: generator.generate({
+                length: 16,
+                strict: true
+            }),
             value: ''
         });
 
         setShowAddModal(false);
         setCurrentContent(JSON.stringify(newContent));
+    }
+
+    function removeBlock(block) {
+        const newCurrentContent = JSON.parse(currentContent);
+        const blockToRemove = newCurrentContent.find(item => item.id === block.id);
+
+        newCurrentContent.splice(newCurrentContent.indexOf(blockToRemove), 1);
+        setCurrentContent(JSON.stringify(newCurrentContent));
+        setLessonContent(newCurrentContent);
     }
 
     function setBlock(block) {

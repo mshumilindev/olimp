@@ -349,6 +349,7 @@
     right: 0;
     bottom: 0;
     cursor: pointer;
+    width: 100%;
   }
   &__file-trigger {
     padding-top: 100%;
@@ -415,7 +416,7 @@
   &__loading {
     position: absolute;
     left: 0;
-    top: 0;
+    top: -6px;
     right: 0;
     bottom: 0;
     z-index: 1;
