@@ -31,10 +31,6 @@ export default function Header() {
                 <div className="header__actions-item header__language">
                     <LanguageSelect />
                 </div>
-                <div className="header__actions-item header__notifications">
-                    <i className="header__icon fa fa-bell" />
-                    <span className="header__icon-descr">{ translate('notifications') }</span>
-                </div>
                 <div className="header__divider" />
                 <div className="header__actions-item header__logout" onClick={logout}>
                     <i className="header__icon fas fa-sign-out-alt" />

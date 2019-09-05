@@ -87,6 +87,7 @@
     position: relative;
     z-index: 1;
     text-overflow: ellipsis;
+    -webkit-appearance: none;
     &.readonly {
       cursor: not-allowed;
     }

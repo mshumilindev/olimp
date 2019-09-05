@@ -5,10 +5,11 @@ import {Preloader} from "../preloader";
 import generator from 'generate-password';
 import Modal from '../Modal/Modal';
 
-const ContentEditorText = React.lazy(() => import('./ContentEditorText/ContentEditorText'));
-const ContentEditorMedia = React.lazy(() => import('./ContentEditorMedia/ContentEditorMedia'));
-const ContentEditorQuestion = React.lazy(() => import('./ContentEditorQuestion/ContentEditorQuestion'));
-const ContentEditorDivider = React.lazy(() => import('./ContentEditorDivider/ContentEditorDivider'));
+import ContentEditorText from './ContentEditorText/ContentEditorText';
+import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
+import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
+import ContentEditorDivider from './ContentEditorDivider/ContentEditorDivider';
+import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
 // const ContentEditorTable = React.lazy(() => import('./ContentEditorTable/ContentEditorTable'));
 // const ContentEditorGrid = React.lazy(() => import('./ContentEditorGrid/ContentEditorGrid'));
 
@@ -23,7 +24,7 @@ function usePrevious(value) {
     return ref.current;
 }
 
-export default function ContentEditor({content, setUpdated, setLessonContent, loading, types}) {
+export default function ContentEditor({content, setUpdated, setLessonContent, loading, types, contentType}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ currentContent, setCurrentContent ] = useState(JSON.stringify(content));
@@ -56,6 +57,11 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             type: 'divider',
             icon: 'fa fa-divide',
             title: 'divider'
+        },
+        {
+            type: 'page',
+            icon: 'fa fa-file',
+            title: 'page'
         }
     ];
     const contentEditorActions = [];
@@ -77,6 +83,12 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
     return (
         <div className="contentEditor">
             {
+                contentType === 'questions' && JSON.parse(currentContent).length ?
+                    <div className="contentEditor__heading">{ translate('max_score') }: { content.maxScore ? content.maxScore : 0 }</div>
+                    :
+                    null
+            }
+            {
                 JSON.parse(currentContent).length ?
                     <div className="contentEditor__blocks">
                         {
@@ -94,6 +106,8 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                                         return <ContentEditorQuestion key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('divider') :
                                         return <ContentEditorDivider key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('page') :
+                                        return <ContentEditorPage key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     default:
                                         return null;
                                 }
@@ -181,7 +195,7 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
 
         newCurrentContent.splice(newCurrentContent.indexOf(blockToRemove), 1);
         setCurrentContent(JSON.stringify(newCurrentContent));
-        setLessonContent(newCurrentContent);
+        setLessonContent(calcMaxScore(newCurrentContent));
     }
 
     function setBlock(block) {
@@ -189,6 +203,18 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
 
         newCurrentContent.find(item => item.id === block.id).value = block.value;
         setCurrentContent(JSON.stringify(newCurrentContent));
-        setLessonContent(newCurrentContent);
+        setLessonContent(calcMaxScore(newCurrentContent));
+    }
+
+    function calcMaxScore(newCurrentContent) {
+        let maxScore = 0;
+
+        newCurrentContent.forEach(item => {
+            if ( item.type === 'answers' ) {
+                maxScore += parseInt(item.value.score);
+            }
+        });
+        newCurrentContent.maxScore = maxScore;
+        return newCurrentContent;
     }
 }

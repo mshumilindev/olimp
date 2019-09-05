@@ -2,6 +2,11 @@
 @import '../../../assets/scss/utils/fonts';
 
 .contentEditor {
+  &__heading {
+    text-align: right;
+    font-family: $RobotoCondensed;
+    color: $greyColor;
+  }
   &__noContent {
     text-align: center;
     color: $mediumGreyColor;
@@ -257,6 +262,18 @@
       hr {
         height: 1px;
         background: $mediumGreyColor;
+        border: none;
+        margin: 40px 0;
+      }
+      [class$="-actions"] {
+        padding: 0;
+        transform: translateY(-50%);
+      }
+    }
+    &-page {
+      hr {
+        height: 2px;
+        background: $baseColor;
         border: none;
         margin: 40px 0;
       }

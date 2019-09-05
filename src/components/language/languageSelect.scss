@@ -25,12 +25,16 @@
     border-radius: 100%;
     overflow: hidden;
     flex: 0 0 auto;
-    margin-right: 5px;
   }
   &_text {
     font-size: 14px;
     text-transform: uppercase;
     font-family: $RobotoCondensed;
     letter-spacing: .5px;
+  }
+  .dropdown_block {
+    [class$="_icon"] {
+      margin-right: 5px;
+    }
   }
 }

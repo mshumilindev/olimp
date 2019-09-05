@@ -109,6 +109,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'tel':
             case 'name':
             case 'search':
+            case 'number':
             case 'url':
                 return (
                     <div className="form__field-holder">

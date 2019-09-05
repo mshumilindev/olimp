@@ -2,7 +2,7 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const staticInfoCollection = db.collection('staticInfo');
-const newStaticInfoList = localStorage.getItem('staticInfo') ? JSON.parse(localStorage.getItem('staticInfo')).data : [];
+const newStaticInfoList = [];
 
 export const FETCH_STATIC_INFO_BEGIN = 'FETCH_STATIC_INFO_BEGIN';
 export const FETCH_STATIC_INFO_SUCCESS = 'FETCH_STATIC_INFO_SUCCESS';
@@ -12,8 +12,10 @@ export function fetchStaticInfo() {
         return dispatch => {
             dispatch(fetchStaticInfoBegin());
             return staticInfoCollection.get().then((data) => {
-                data.docs.map(doc => newStaticInfoList.push(doc.data()));
-                localStorage.setItem('staticInfo', JSON.stringify({data: newStaticInfoList}));
+                data.docs.map(doc => newStaticInfoList.push({
+                    ...doc.data(),
+                    id: doc.id
+                }));
 
                 dispatch(fetchStaticInfoSuccess(newStaticInfoList));
             });

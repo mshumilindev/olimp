@@ -30,7 +30,7 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
                 {/*</span>*/}
-                <a href="#" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
+                <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>
             </div>

@@ -40,10 +40,10 @@ export default function ContentEditorMedia({ block, setBlock, removeBlock }) {
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
                 {/*</span>*/}
-                <a href="#" onClick={e => onShowSettings(e)} className={classNames('contentEditor__block-actions-settings', {active: showSettings})}>
+                <a href="/" onClick={e => onShowSettings(e)} className={classNames('contentEditor__block-actions-settings', {active: showSettings})}>
                     <i className="content_title-icon fa fa-cog"/>
                 </a>
-                <a href="#" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
+                <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>
             </div>
@@ -52,9 +52,9 @@ export default function ContentEditorMedia({ block, setBlock, removeBlock }) {
                     <div className="contentEditor__block-settings-holder">
                         <div className="contentEditor__block-settings">
                             <h2 className="contentEditor__block-settings-title">{ translate('dimensions') }</h2>
-                            <a href="#" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '16x9'})} onClick={(e) => onSetMediaSize(e, '16x9')}>16 x 9</a>
-                            <a href="#" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '4x3'})} onClick={(e) => onSetMediaSize(e, '4x3')}>4 x 3</a>
-                            <a href="#" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '1x1'})} onClick={(e) => onSetMediaSize(e, '1x1')}>1 x 1</a>
+                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '16x9'})} onClick={(e) => onSetMediaSize(e, '16x9')}>16 x 9</a>
+                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '4x3'})} onClick={(e) => onSetMediaSize(e, '4x3')}>4 x 3</a>
+                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '1x1'})} onClick={(e) => onSetMediaSize(e, '1x1')}>1 x 1</a>
                         </div>
                     </div>
                     :

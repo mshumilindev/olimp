@@ -2,12 +2,12 @@ import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorDivider({ block, setBlock, removeBlock }) {
+export default function ContentEditorPage({ block, setBlock, removeBlock }) {
     const { translate } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
 
     return (
-        <div className="contentEditor__block-divider">
+        <div className="contentEditor__block-page">
             <hr/>
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}

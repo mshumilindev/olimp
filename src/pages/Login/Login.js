@@ -11,7 +11,8 @@ const db = firebase.firestore();
 
 const errors = {
     userNotFound: 'user_not_found',
-    wrongPassword: 'wrong_password'
+    wrongPassword: 'wrong_password',
+    inactiveUser: 'inactive_user'
 };
 
 export default class Login extends React.Component {
@@ -114,22 +115,31 @@ export default class Login extends React.Component {
                     });
                 }
                 else {
-                    this.setState(() => {
-                        return {
-                            formError: null
-                        }
-                    });
-                    localStorage.setItem('user', JSON.stringify({
-                        name: snapshot.docs[0].data().name,
-                        role: snapshot.docs[0].data().role,
-                        class: snapshot.docs[0].data().class,
-                        avatar: snapshot.docs[0].data().avatar,
-                        email: snapshot.docs[0].data().email,
-                        tel: snapshot.docs[0].data().tel,
-                        skype: snapshot.docs[0].data().skype,
-                        id: snapshot.docs[0].id
-                    }));
-                    window.location.reload();
+                    if ( snapshot.docs[0].data().status !== 'active' ) {
+                        this.setState(() => {
+                            return {
+                                formError: errors.inactiveUser
+                            }
+                        });
+                    }
+                    else {
+                        this.setState(() => {
+                            return {
+                                formError: null
+                            }
+                        });
+                        localStorage.setItem('user', JSON.stringify({
+                            name: snapshot.docs[0].data().name,
+                            role: snapshot.docs[0].data().role,
+                            class: snapshot.docs[0].data().class,
+                            avatar: snapshot.docs[0].data().avatar,
+                            email: snapshot.docs[0].data().email,
+                            tel: snapshot.docs[0].data().tel,
+                            skype: snapshot.docs[0].data().skype,
+                            id: snapshot.docs[0].id
+                        }));
+                        window.location.reload();
+                    }
                 }
             }
             this.setState(() => {

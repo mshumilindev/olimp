@@ -45,6 +45,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                 setContent([]);
             }
             if ( lesson.questions ) {
+                lesson.questions.maxScore = lesson.maxScore;
                 setQuestions(lesson.questions);
             }
             else {
@@ -82,14 +83,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
-                            <ContentEditor content={content} types={['text', 'media', 'divider']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                            <ContentEditor contentType="content" content={content} types={['text', 'media', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
                         </div>
                         <div className="widget">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-question"/>
                                 { translate('control_questions') }
                             </div>
-                            <ContentEditor content={questions} types={['text', 'media', 'answers', 'divider']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
+                            <ContentEditor contentType="questions" content={questions} types={['text', 'media', 'answers', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
                         </div>
                     </div>
                     <div className="grid_col col-4">
@@ -138,7 +139,6 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
 
     function saveLesson(e) {
         e.preventDefault();
-        console.log('true');
 
         if ( lessonUpdated ) {
             const updatedLessonFields = JSON.parse(lessonInfoFields);
@@ -152,6 +152,10 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                 content: content,
                 questions: questions
             };
+            delete newLesson.maxScore;
+            if ( newLesson.questions.maxScore ) {
+                newLesson.maxScore = newLesson.questions.maxScore;
+            }
             updateLesson(subjectID, courseID, moduleID, newLesson);
         }
     }

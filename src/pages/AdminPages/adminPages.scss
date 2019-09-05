@@ -1,0 +1,41 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.adminPages {
+  &__list {
+    &-item {
+      display: block;
+      color: $baseColor;
+      &:hover {
+        color: $anchorColor;
+      }
+    }
+    &-featured {
+      padding-top: 56.25%;
+      position: relative;
+      background-color: $lightColor;
+      background-size: cover;
+      background-position: 50% 50%;
+      margin-bottom: 10px;
+      i {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        color: $mediumGreyColor;
+      }
+    }
+    &-title {
+      font-weight: normal;
+      letter-spacing: .5px;
+      font-family: $RobotoCondensed;
+      line-height: 1.25;
+      text-align: center;
+    }
+  }
+}

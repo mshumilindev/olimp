@@ -15,7 +15,7 @@ export default function ContentEditorQuestionItem({item, index, handleChange, re
 
     return (
         <div className="contentEditor__block-question-answer">
-            <a href="#" className="contentEditor__block-question-answer-remove" tabIndex="-1" onClick={e => removeAnswer(e, index)}>
+            <a href="/" className="contentEditor__block-question-answer-remove" tabIndex="-1" onClick={e => removeAnswer(e, index)}>
                 <i className="content_title-icon fa fa-minus-circle"/>
             </a>
             <div className="contentEditor__block-question-answer-num">{ index + 1 })</div>

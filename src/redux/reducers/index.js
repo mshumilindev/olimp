@@ -5,6 +5,7 @@ import usersReducer from './usersReducer';
 import translationsReducer from './translationsReducer';
 import libraryReducer from './libraryReducer';
 import coursesReducer from './coursesReducer';
+import staticInfoReducer from './staticInfoReducers';
 
 export default combineReducers({
     configReducer: configReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
     usersReducer: usersReducer,
     translationsReducer: translationsReducer,
     libraryReducer: libraryReducer,
-    coursesReducer: coursesReducer
+    coursesReducer: coursesReducer,
+    staticInfoReducer: staticInfoReducer
 });

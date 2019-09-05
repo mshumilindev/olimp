@@ -27,7 +27,7 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
             placeholder: translate('correct_answers')
         },
         {
-            type: 'text',
+            type: 'number',
             id: 'score',
             value: block.value.score,
             placeholder: translate('score_for_correct_answer')
@@ -41,7 +41,7 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
                     block.value.answers.map((item, index) => <ContentEditorQuestionItem item={item} key={index} index={index} handleChange={handleAnswersChange} removeAnswer={onRemoveAnswer} />)
                 }
                 <div className="contentEditor__block-question-answer">
-                    <a href="#" className="contentEditor__block-question-add" onClick={e => onAddAnswer(e)}>
+                    <a href="/" className="contentEditor__block-question-add" onClick={e => onAddAnswer(e)}>
                         <i className="content_title-icon fa fa-plus-circle"/>
                         { translate('add_answer') }
                     </a>
@@ -54,7 +54,7 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
                 {/*</span>*/}
-                <a href="#" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
+                <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>
             </div>

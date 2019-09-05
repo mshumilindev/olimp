@@ -8,7 +8,7 @@ const level = '1a'; // === THIS IS PLACEHOLDER, NEEDS TO BE DYNAMIC
 // === FETCH SCHEDULE
 export const FETCH_SCHEDULE_BEGIN = 'FETCH_SCHEDULE_BEGIN';
 export const FETCH_SCHEDULE_SUCCESS = 'FETCH_SCHEDULE_SUCCESS';
-const newSchedule = localStorage.getItem('schedule') ? JSON.parse(localStorage.getItem('schedule')).data : [];
+const newSchedule = [];
 const scheduleCollection = db.collection('levels/' + level + '/schedule');
 
 export function fetchSchedule() {
@@ -17,7 +17,6 @@ export function fetchSchedule() {
             dispatch(fetchScheduleBegin());
             return scheduleCollection.get().then((data) => {
                 data.docs.map(doc => newSchedule.push(doc.data()));
-                localStorage.setItem('schedule', JSON.stringify({data: newSchedule}));
 
                 dispatch(fetchScheduleSuccess(newSchedule));
             });
@@ -46,7 +45,7 @@ export const fetchScheduleSuccess = scheduleList => {
 export const FETCH_LEVEL_COURSES_BEGIN = 'FETCH_LEVEL_COURSES_BEGIN';
 export const FETCH_LEVEL_COURSES_SUCCESS = 'FETCH_LEVEL_COURSES_SUCCESS';
 
-const newLevelCourses = localStorage.getItem('levelCourses') ? JSON.parse(localStorage.getItem('levelCourses')).data : [];
+const newLevelCourses = [];
 const levelCoursesCollection = db.collection('levels/' + level + '/courses');
 
 export function fetchLevelCourses() {
@@ -55,7 +54,6 @@ export function fetchLevelCourses() {
             dispatch(fetchLevelCoursesBegin());
             return levelCoursesCollection.get().then((data) => {
                 data.docs.map(doc => newLevelCourses.push({[doc.id]: doc.data().course}));
-                localStorage.setItem('levelCourses', JSON.stringify({data: newLevelCourses}));
 
                 dispatch(fetchLevelCoursesSuccess(newLevelCourses));
             });
@@ -81,7 +79,7 @@ export const fetchLevelCoursesSuccess = levelCoursesList => {
 };
 
 // === COURSES ACTIONS
-const coursesCollection = localStorage.getItem('courses') ? JSON.parse(localStorage.getItem('courses')).data : [];
+const coursesCollection = [];
 
 // === FETCH COURSES
 export const FETCH_COURSES_BEGIN = 'FETCH_COURSES_BEGIN';
@@ -109,7 +107,6 @@ export function saveCourse(course) {
         dispatch(saveCourseBegin());
         if (!coursesCollection.some(item => item.id === course.id)) {
             coursesCollection.push(course);
-            localStorage.setItem('courses', JSON.stringify({data: coursesCollection}));
         }
         dispatch(saveCourseSuccess(coursesCollection))
     }
@@ -131,7 +128,7 @@ export const saveCourseSuccess = coursesList => {
 export const FETCH_CALENDAR_BEGIN = 'FETCH_CALENDAR_BEGIN';
 export const FETCH_CALENDAR_SUCCESS = 'FETCH_CALENDAR_SUCCESS';
 
-const newCalendar = localStorage.getItem('calendar') ? JSON.parse(localStorage.getItem('calendar')) : {};
+const newCalendar = {};
 const calendarCollection = db.collection('calendar');
 
 export function fetchCalendar() {
@@ -140,7 +137,6 @@ export function fetchCalendar() {
             dispatch(fetchCalendarBegin());
             return calendarCollection.get().then(data => {
                 data.docs.map(doc => newCalendar[doc.id] = doc.data());
-                localStorage.setItem('calendar', JSON.stringify(newCalendar));
 
                 dispatch(fetchCalendarSuccess(newCalendar));
             });
