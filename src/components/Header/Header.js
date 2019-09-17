@@ -19,7 +19,12 @@ export default function Header() {
                             null
                     }
                 </div>
-                { user.name }
+                <div className="header__user-name">
+                    { user.name }
+                    <div className="header__user-role">
+                        { translate(user.role) }
+                    </div>
+                </div>
                 {
                     user.class ?
                         ', ' + user.class

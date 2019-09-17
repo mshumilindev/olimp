@@ -362,6 +362,9 @@
     &.round {
       border-radius: 100%;
     }
+    &.landscape {
+      padding-top: 56.25%;
+    }
   }
   &__file-icon {
     position: absolute;

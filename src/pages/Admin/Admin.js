@@ -36,12 +36,12 @@ export default function Admin({children, location, params}) {
             icon: 'fa fa-book',
             name: 'courses'
         },
-        // {
-        //     id: 6,
-        //     url: '/admin-classes',
-        //     icon: 'fa fa-graduation-cap',
-        //     name: 'classes'
-        // },
+        {
+            id: 6,
+            url: '/admin-classes',
+            icon: 'fa fa-graduation-cap',
+            name: 'classes'
+        },
         // {
         //     id: 7,
         //     url: '/admin-library',
@@ -54,12 +54,12 @@ export default function Admin({children, location, params}) {
         //     icon: 'fa fa-language',
         //     name: 'translations'
         // },
-        // {
-        //     id: 9,
-        //     url: '/admin-pages',
-        //     icon: 'fa fa-copy',
-        //     name: 'pages'
-        // },
+        {
+            id: 9,
+            url: '/admin-pages',
+            icon: 'fa fa-copy',
+            name: 'pages'
+        },
         // {
         //     id: 10,
         //     url: '/admin-templates',

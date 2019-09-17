@@ -1,18 +1,16 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext } from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
-import {updateTranslation} from "../../redux/actions/translationsActions";
+import {fetchClasses} from "../../redux/actions/classesActions";
 
 const AdminClassesList = React.lazy(() => import('../../components/AdminClassesList/AdminClassesList'));
 
-function AdminClasses({}) {
+function AdminClasses({classesList, loading}) {
     const { translate } = useContext(siteSettingsContext);
-    const $block = useRef(null);
-    // const [ isLoaded, setIsLoaded ] = useState(false);
 
     return (
-        <div className="adminTranslations" ref={$block}>
+        <div className="adminTranslations">
             <section className="section">
                 <div className="section__title-holder">
                     <h2 className="section__title">
@@ -28,7 +26,7 @@ function AdminClasses({}) {
                         </span>
                     </div>
                 </div>
-                <AdminClassesList/>
+                <AdminClassesList list={classesList} loading={loading}/>
             </section>
         </div>
     );
@@ -38,10 +36,10 @@ function AdminClasses({}) {
     }
 }
 const mapStateToProps = state => ({
-    translationsList: state.translationsReducer.translationsList,
-    loading: state.translationsReducer.loading
+    classesList: state.classesReducer.classesList,
+    loading: state.classesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    updateTranslation: (lang, key, value) => dispatch(updateTranslation(lang, key, value))
+    fetchClasses: dispatch(fetchClasses())
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminClasses, true, true));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminClasses, true));

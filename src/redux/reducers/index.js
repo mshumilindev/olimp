@@ -6,6 +6,7 @@ import translationsReducer from './translationsReducer';
 import libraryReducer from './libraryReducer';
 import coursesReducer from './coursesReducer';
 import staticInfoReducer from './staticInfoReducers';
+import classesReducer from './classesReducer';
 
 export default combineReducers({
     configReducer: configReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
     translationsReducer: translationsReducer,
     libraryReducer: libraryReducer,
     coursesReducer: coursesReducer,
-    staticInfoReducer: staticInfoReducer
+    staticInfoReducer: staticInfoReducer,
+    classesReducer: classesReducer
 });

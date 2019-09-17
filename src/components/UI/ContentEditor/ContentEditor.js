@@ -207,6 +207,9 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
     }
 
     function calcMaxScore(newCurrentContent) {
+        if ( contentType !== 'questions' ) {
+            return newCurrentContent;
+        }
         let maxScore = 0;
 
         newCurrentContent.forEach(item => {

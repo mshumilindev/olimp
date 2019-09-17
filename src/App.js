@@ -16,6 +16,7 @@ const AdminCourses = React.lazy(() => import('./pages/AdminCourses/AdminCourses'
 const AdminLesson = React.lazy(() => import('./pages/AdminLesson/AdminLesson'));
 const AdminClasses = React.lazy(() => import('./pages/AdminClasses/AdminClasses'));
 const AdminPages = React.lazy(() => import('./pages/AdminPages/AdminPages'));
+const AdminPage = React.lazy(() => import('./pages/AdminPage/AdminPage'));
 
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound/PageNotFound'));
 
@@ -38,7 +39,8 @@ export default function App() {
                             <Route exact path="/admin-courses/:subjectID/:courseID/:moduleID" render={props => <AdminCourses {...props.match} />} />
                             <Route exact path="/admin-courses/:subjectID/:courseID/:moduleID/:lessonID" render={props => <AdminLesson {...props.match} />} />
                             <Route path='/admin-classes' component={AdminClasses} />
-                            <Route path='/admin-pages' component={AdminPages} />
+                            <Route exact path='/admin-pages' component={AdminPages} />
+                            <Route exact path='/admin-pages/:pageSlug' render={props => <AdminPage {...props.match} />} />
                             <Route path='/admin-translations' component={AdminTranslations} />
                             <Route path='/admin-library' component={AdminLibrary} />
 

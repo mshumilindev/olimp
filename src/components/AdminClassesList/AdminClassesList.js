@@ -2,19 +2,25 @@ import React, { useContext } from 'react';
 import './adminClassesList.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../UI/preloader";
+import AdminClassesListItem from './AdminClassesListItem';
 
-function AdminClassesList({list}) {
+function AdminClassesList({list, loading}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
-        <div className="adminClasses__list widget">
+        <div className="widget">
             {
                 list && list.length ?
-                    <>
-                        This is classes
-                    </>
+                    <div className="adminClasses__list grid">
+                        {
+                            list.map(item => <AdminClassesListItem item={item} key={item.id} />)
+                        }
+                    </div>
                     :
-                    <Preloader/>
+                    loading ?
+                        <Preloader/>
+                        :
+                        null
             }
         </div>
     );

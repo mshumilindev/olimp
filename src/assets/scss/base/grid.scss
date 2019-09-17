@@ -3,6 +3,7 @@ $gridIndent: 20px;
 .grid {
   display: flex;
   margin: -$gridIndent;
+  flex-wrap: wrap;
   &_col {
     padding: $gridIndent;
     box-sizing: border-box;

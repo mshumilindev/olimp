@@ -18,6 +18,18 @@
     font-family: $RobotoCondensed;
     font-size: 20px;
   }
+  &__user-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 40px;
+  }
+  &__user-role {
+    color: $greyColor;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: .5px;
+  }
   &__actions {
     display: flex;
   }
@@ -67,8 +79,8 @@
   &__user-avatar {
     margin-right: 10px;
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     background-color: $mediumGreyColor;
     border-radius: 100%;
     background-size: cover;
