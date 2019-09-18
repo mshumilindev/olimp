@@ -1,5 +1,6 @@
 @import '../../../assets/scss/utils/colors';
 @import '../../../assets/scss/utils/sizes';
+@import '../../../assets/scss/utils/fonts';
 
 .modal {
   position: fixed;
@@ -36,6 +37,7 @@
     padding: $pageIndent / 2;
     box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
     position: relative;
+    overflow: hidden;
   }
   &__close {
     position: absolute;
@@ -51,5 +53,13 @@
       color: $linkHoverColor;
       transform: rotate(90deg);
     }
+  }
+  &__heading {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: normal;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-family: $RobotoCondensed;
   }
 }

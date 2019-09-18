@@ -1,0 +1,69 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.adminClass {
+  &__schedule {
+    overflow: hidden;
+  }
+  &__schedule-item {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid $lightGreyColor;
+    &:first-child {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+  &__schedule-item-add {
+    display: flex;
+    justify-content: center;
+    background: $lightColor;
+    padding: 10px;
+    color: $mediumGreyColor;
+    cursor: pointer;
+    transition: background .25s ease-in-out;
+    &:hover {
+      background: $lightBlueColor;
+      color: $anchorColor;
+    }
+  }
+  &__schedule-item-day {
+    font-family: $RobotoCondensed;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  &__schedule-btn {
+    display: flex;
+    justify-content: center;
+  }
+  &__schedule-courses {
+    margin: -20px 0 20px;
+    overflow: hidden;
+  }
+  &__schedule-courses-item {
+    display: flex;
+    font-family: $RobotoCondensed;
+    margin-top: 20px;
+    cursor: pointer;
+    &:hover {
+      color: $linkHoverColor;
+    }
+    i {
+      margin-top: -1px;
+    }
+  }
+  &__schedule-courses-item-subject {
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
+  &__schedule-courses-item-course {
+    font-weight: bold;
+  }
+  .form {
+    min-height: 100px;
+  }
+}

@@ -3,14 +3,16 @@ import firebase from "../../db/firestore";
 const db = firebase.firestore();
 const coursesCollection = db.collection('courses');
 const subjectsList = [];
+const allCoursesList = [];
 let lesson = null;
 
 export function fetchSubjects() {
-    if ( !subjectsList.length ) {
-        return dispatch => {
+    return dispatch => {
+        if ( !subjectsList.length ) {
             dispatch(coursesBegin());
 
             return coursesCollection.get().then((snapshot) => {
+                subjectsList.splice(0, subjectsList.length);
                 snapshot.docs.forEach(doc => {
                     subjectsList.push({
                         ...doc.data(),
@@ -20,11 +22,47 @@ export function fetchSubjects() {
                 dispatch(coursesSuccess(subjectsList));
             });
         }
-    }
-    else {
-        return dispatch => {
-            dispatch(coursesSuccess(subjectsList))
+        else {
+            dispatch(coursesSuccess(subjectsList));
         }
+    }
+}
+
+export function fetchAllCourses() {
+    return dispatch => {
+        dispatch(allCoursesBegin());
+
+        return coursesCollection.get().then((snapshot) => {
+            allCoursesList.splice(0, allCoursesList.length);
+            let i = 0;
+            snapshot.docs.forEach(doc => {
+                const coursesListRef = db.collection('courses').doc(doc.id).collection('coursesList');
+
+                if ( !allCoursesList.some(item => item.id === doc.id) ) {
+                    allCoursesList.push({
+                        ...doc.data(),
+                        id: doc.id,
+                        coursesList: []
+                    });
+                }
+
+                coursesListRef.get().then(courseSnapshot => {
+                    courseSnapshot.forEach(courseDoc => {
+                        if ( !allCoursesList.find(item => item.id === doc.id).coursesList.some(item => item.id === courseDoc.id) ) {
+                            allCoursesList.find(item => item.id === doc.id).coursesList.push({
+                                ...courseDoc.data(),
+                                id: courseDoc.id
+                            });
+                        }
+                    });
+                    i++;
+
+                    if ( i === snapshot.docs.length ) {
+                        dispatch(allCoursesSuccess(allCoursesList));
+                    }
+                });
+            });
+        });
     }
 }
 
@@ -484,6 +522,18 @@ export const coursesSuccess = subjectsList => {
     }
 };
 
+export const allCoursesBegin = () => {
+    return {
+        type: ALL_COURSES_BEGIN
+    }
+};
+export const allCoursesSuccess = allCoursesList => {
+    return {
+        type: ALL_COURSES_SUCCESS,
+        payload: { allCoursesList }
+    }
+};
+
 export const lessonBegin = () => {
     return {
         type: LESSON_BEGIN
@@ -498,5 +548,7 @@ export const lessonSuccess = lesson => {
 
 export const COURSES_BEGIN = 'COURSES_BEGIN';
 export const COURSES_SUCCESS = 'COURSES_SUCCESS';
+export const ALL_COURSES_BEGIN = 'ALL_COURSES_BEGIN';
+export const ALL_COURSES_SUCCESS = 'ALL_COURSES_SUCCESS';
 export const LESSON_BEGIN = 'LESSON_BEGIN';
 export const LESSON_SUCCESS = 'LESSON_SUCCESS';

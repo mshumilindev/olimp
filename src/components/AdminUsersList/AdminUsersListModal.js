@@ -3,6 +3,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import generator from 'generate-password';
 import { updateUser } from "../../redux/actions/usersActions";
 import {connect} from "react-redux";
+import {fetchClasses} from "../../redux/actions/classesActions";
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
@@ -13,7 +14,7 @@ class AdminUsersListModal extends React.Component {
 
         this.state = {
             showModal: false,
-            userFields: this.getUserFields(props.user, context),
+            userFields: this.getUserFields(props.user, context, props.classesList),
             formUpdated: false
         };
 
@@ -44,10 +45,14 @@ class AdminUsersListModal extends React.Component {
         );
     }
 
-    getUserFields(user, context) {
+    getUserFields(user, context, classesList) {
         const { translate, getUserFormFields } = context;
 
         const formFields = getUserFormFields(user, this.generatePassword);
+
+        if ( user.role === 'student' ) {
+            formFields.splice(2, 0, this.insertClass(context, classesList, user));
+        }
 
         formFields.push(
             {
@@ -87,7 +92,7 @@ class AdminUsersListModal extends React.Component {
             };
 
             if ( !state.showModal ) {
-                newState.userFields = this.getUserFields(this.props.user, this.context);
+                newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList);
             }
 
             return {
@@ -101,7 +106,7 @@ class AdminUsersListModal extends React.Component {
         this.setState(() => {
             const newState = {};
 
-            newState.userFields = this.getUserFields(this.props.user, this.context);
+            newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList);
 
             return {
                 ...newState,
@@ -121,8 +126,8 @@ class AdminUsersListModal extends React.Component {
 
     setFieldValue(fieldID, value) {
         const { userFields } = this.state;
-        const { user, usersList } = this.props;
-        const { translate } = this.context;
+        const { user, usersList, classesList } = this.props;
+        const { translate, lang } = this.context;
 
         let field = null;
 
@@ -165,8 +170,32 @@ class AdminUsersListModal extends React.Component {
             }
         }
 
-        field.value = value;
+        if ( field.storedValue !== undefined ) {
+            field.storedValue = value;
+
+            if ( fieldID === 'class' ) {
+                const selectedClass = classesList.find(item => item.id === value);
+                field.value = selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : value;
+            }
+            else {
+                field.value = value;
+            }
+        }
+        else {
+            field.value = value;
+        }
         field.updated = true;
+
+        if ( fieldID === 'role' ) {
+            if ( value === 'student' ) {
+                userFields.splice(2, 0, this.insertClass(this.context, classesList, user));
+            }
+            else {
+                if ( userFields.some(item => item.id === 'class') ) {
+                    userFields.splice(2, 1);
+                }
+            }
+        }
 
         this.setState(() => {
             return {
@@ -174,6 +203,49 @@ class AdminUsersListModal extends React.Component {
                 formUpdated: true
             }
         });
+    }
+
+    insertClass(context, classesList, user) {
+        const { lang } = context;
+        const opts = [];
+        const selectedClass = classesList.find(item => item.id === user.class);
+
+        classesList.sort((a, b) => {
+            const aTitle = a.title[lang] || a.title['ua'];
+            const bTitle = b.title[lang] || b.title['ua'];
+
+            if ( aTitle < bTitle ) {
+                return -1;
+            }
+            else if ( aTitle > bTitle ) {
+                return 1;
+            }
+            return 0;
+        }).sort((a, b) => {
+            const aTitle = parseInt(a.title[lang]) || parseInt(a.title['ua']);
+            const bTitle = parseInt(b.title[lang]) || parseInt(b.title['ua']);
+
+            return aTitle - bTitle;
+        }).forEach(item => {
+            opts.push({
+                id: item.id,
+                title: item.title[lang] ? item.title[lang] : item.title['ua']
+            });
+        });
+
+        return {
+            type: 'select',
+            id: 'class',
+            name: 'class',
+            placeholder: 'class',
+            hasErrors: false,
+            value: user && selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : '',
+            storedValue: user && selectedClass ? selectedClass.id : '',
+            updated: false,
+            options: [
+                ...opts
+            ]
+        };
     }
 
     generatePassword(fieldID) {
@@ -199,6 +271,9 @@ class AdminUsersListModal extends React.Component {
             userID = this.generateID();
         }
 
+        this.setState({
+            showModal: false
+        });
         updateUser(userID, updatedFields);
     }
 
@@ -222,9 +297,23 @@ class AdminUsersListModal extends React.Component {
                     }
                 });
             }
+            else if ( field.tabs ) {
+                field.tabs.forEach(tab => {
+                    tab.content.forEach(child => {
+                        if ( child.updated ) {
+                            Object.assign(updatedFields, {[child.id]: child.value});
+                        }
+                    });
+                });
+            }
             else {
                 if ( field.updated ) {
-                    Object.assign(updatedFields, {[field.id]: field.value});
+                    if ( field.id === 'class' ) {
+                        Object.assign(updatedFields, {[field.id]: field.storedValue});
+                    }
+                    else {
+                        Object.assign(updatedFields, {[field.id]: field.value});
+                    }
                 }
             }
         });
@@ -240,8 +329,12 @@ class AdminUsersListModal extends React.Component {
 }
 AdminUsersListModal.contextType = siteSettingsContext;
 
-const mapDispatchToProps = dispatch => ({
-    updateUser: (id, data) => dispatch(updateUser(id, data))
+const mapStateToProps = state => ({
+    classesList: state.classesReducer.classesList,
+    loading: state.classesReducer.loading
 });
-
-export default connect(null, mapDispatchToProps)(AdminUsersListModal);
+const mapDispatchToProps = dispatch => ({
+    updateUser: (id, data) => dispatch(updateUser(id, data)),
+    fetchClasses: dispatch(fetchClasses())
+});
+export default connect(mapStateToProps, mapDispatchToProps)(AdminUsersListModal);

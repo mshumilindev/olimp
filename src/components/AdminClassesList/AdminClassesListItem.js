@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import siteSettingsContext from "../../context/siteSettingsContext";
+import {removeClass} from "../../redux/actions/classesActions";
+import {connect} from "react-redux";
 
-function AdminClassesListItem({item}) {
+const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
+
+function AdminClassesListItem({item, removeClass}) {
     const { translate, lang } = useContext(siteSettingsContext);
-
-    console.log(item);
+    const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
 
     return (
-        <div className="adminClasses__list-item grid_col col-3">
+        <div className="adminClasses__list-item grid_col col-3 large-col-2">
             <Link to={'/admin-classes/' + item.id} className="adminClasses__list-link">
                 <h2 className="adminClasses__list-item-title">
                     {
@@ -22,18 +25,32 @@ function AdminClassesListItem({item}) {
                         }
                     </div>
                 </div>
-                <span href="/" className="adminClasses__list-item-remove" onClick={e => removeClass(e)}>
+                <span className="adminClasses__list-item-remove" onClick={e => handleRemoveClass(e)}>
                     <i className="fa fa-trash-alt"/>
                 </span>
             </Link>
+            {
+                showConfirmRemove ?
+                    <Confirm message={translate('sure_to_remove_class')} confirmAction={onConfirmRemove} cancelAction={() => setShowConfirmRemove(false)}/>
+                    :
+                    null
+            }
         </div>
     );
 
-    function removeClass(e) {
+    function handleRemoveClass(e) {
         e.preventDefault();
 
-        console.log('remove class');
+        setShowConfirmRemove(true);
+    }
+
+    function onConfirmRemove() {
+        setShowConfirmRemove(false);
+        removeClass(item.id);
     }
 }
 
-export default AdminClassesListItem;
+const mapDispatchToProps = dispatch => ({
+    removeClass: classID => dispatch(removeClass(classID))
+});
+export default connect(null, mapDispatchToProps)(AdminClassesListItem);

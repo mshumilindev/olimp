@@ -32,8 +32,8 @@ const filterByOptions = [
     }
 ];
 
-function AdminUsers({usersList, searchQuery, sortBy, showPerPage, filterBy, filters}) {
-    return <AdminUsersList showPerPage={showPerPage} list={filterUsersList()} searchQuery={searchQuery} sortBy={sortBy} filterBy={filterBy} filters={filters} />;
+function AdminUsers({usersList, searchQuery, sortBy, showPerPage, filterBy, filters, loading}) {
+    return <AdminUsersList showPerPage={showPerPage} list={filterUsersList()} searchQuery={searchQuery} sortBy={sortBy} filterBy={filterBy} filters={filters} loading={loading} />;
 
     function filterUsersList() {
         return usersList && filterBy.length ? usersList

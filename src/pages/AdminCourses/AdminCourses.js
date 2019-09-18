@@ -143,7 +143,20 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
     }
 
     function filterList() {
-        return list.filter(item => searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true);
+        return list.filter(item => searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true).sort((a, b) => {
+            const aName = a.name[lang] ? a.name[lang] : a.name['ua'];
+            const bName = b.name[lang] ? b.name[lang] : b.name['ua'];
+
+            if ( aName < bName ) {
+                return -1;
+            }
+            else if ( aName > bName ) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        });
     }
 
     function showCreateSubjectModal(e) {

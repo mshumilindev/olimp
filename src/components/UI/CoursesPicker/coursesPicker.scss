@@ -1,0 +1,83 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/fonts';
+
+.coursesPicker {
+  &__add {
+
+  }
+  &__add-btn {
+    color: $mediumGreyColor;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    background: $lightColor;
+    padding: 10px;
+    transition: background .25s ease-in-out;
+    &:hover {
+      background: $lightBlueColor;
+      color: $anchorColor;
+    }
+  }
+  &__selectedList {
+    margin-bottom: 20px;
+  }
+  &__selectedList-item {
+    display: flex;
+    padding: 20px;
+    font-family: $RobotoCondensed;
+    align-self: center;
+    &:nth-child(2n) {
+      background: $lightColor;
+    }
+  }
+  &__selectedList-item-subject {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
+  &__selectedList-item-course {
+    width: 100%;
+    font-weight: bold;
+  }
+  &__selectedList-item-remove {
+    cursor: pointer;
+    padding: 5px;
+    margin: -5px;
+    &:hover {
+      color: $errorColor;
+    }
+  }
+  &__list {
+    overflow: auto;
+    margin: -20px 0 20px;
+    max-height: 500px;
+  }
+  &__list-item {
+    margin-top: 20px;
+    transition: color .25s ease-in-out;
+    font-family: $RobotoCondensed;
+  }
+  &__list-btn {
+    display: flex;
+    justify-content: center;
+  }
+  &__list-coursesList {
+    overflow: hidden;
+    padding-left: 30px;
+  }
+  &__list-coursesList-item {
+    margin-top: 10px;
+    cursor: pointer;
+    &:hover,
+    &.selected {
+      color: $linkHoverColor;
+    }
+  }
+  &__list-coursesList-nothingFound {
+    color: $mediumGreyColor;
+    padding-top: 10px;
+    padding-left: 30px;
+  }
+}

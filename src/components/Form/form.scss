@@ -142,6 +142,25 @@
       color: $mediumGreyColor;
     }
   }
+  &__textarea {
+    height: 100px;
+    resize: none;
+    padding: 10px;
+    line-height: 1.5;
+    + .form__field-placeholder {
+      top: 0;
+      transform: translateY(1px);
+      &.isFilled {
+        transform: translateY(-50%);
+      }
+    }
+    &:focus,
+    &.isUpdated {
+      + .form__field-placeholder {
+        transform: translateY(-50%);
+      }
+    }
+  }
   &__field-icon {
     position: absolute;
     top: 50%;

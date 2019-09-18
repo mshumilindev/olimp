@@ -42,11 +42,9 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         }
     ];
 
-    useEffect(() => {
-        if ( checkIfIsOpen() && !subject.coursesList ) {
-            fetchCoursesList(subject.id);
-        }
-    });
+    if ( checkIfIsOpen() && !subject.coursesList ) {
+        fetchCoursesList(subject.id);
+    }
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>

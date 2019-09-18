@@ -408,7 +408,10 @@ export default class SiteSettingsProvider extends React.Component{
             password: '',
             role: role ? role : '',
             status: 'suspended',
-            isNew: true
+            isNew: true,
+            email: '',
+            tel: '',
+            skype: ''
         };
 
         switch (role) {
@@ -450,6 +453,7 @@ export default class SiteSettingsProvider extends React.Component{
                         hasErrors: false,
                         required: true,
                         value: user ? user.role : '',
+                        storedValue: user ? user.role : '',
                         updated: false,
                         readonly: user ? !user.isNew : false,
                         options: [

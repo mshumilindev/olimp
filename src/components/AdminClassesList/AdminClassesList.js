@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../UI/preloader";
 import AdminClassesListItem from './AdminClassesListItem';
 
-function AdminClassesList({list, loading}) {
+function AdminClassesList({list, loading, searchQuery, startCreateClass}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
@@ -17,10 +17,26 @@ function AdminClassesList({list, loading}) {
                         }
                     </div>
                     :
-                    loading ?
-                        <Preloader/>
+                    !loading ?
+                        searchQuery ?
+                            <div className="nothingFound">
+                                { translate('nothing_found') }
+                            </div>
+                            :
+                            <div className="nothingFound">
+                                <a href="/" className="btn btn_primary" onClick={e => startCreateClass(e)}>
+                                    <i className="content_title-icon fa fa-plus"/>
+                                    { translate('create_class') }
+                                </a>
+                            </div>
                         :
                         null
+            }
+            {
+                loading ?
+                    <Preloader/>
+                    :
+                    null
             }
         </div>
     );

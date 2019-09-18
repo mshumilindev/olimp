@@ -2,6 +2,32 @@
 @import '../../assets/scss/utils/colors';
 
 .adminClasses {
+  .widget {
+    min-height: 100px;
+    position: relative;
+  }
+  .preloader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:before {
+      content: '';
+      background: $white;
+      z-index: -1;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      opacity: .75;
+    }
+  }
   &__list {
     &-item {
       height: 400px;
@@ -17,7 +43,7 @@
         background: $anchorColor;
         color: $white;
         [class$="-item-title"] {
-          margin-top: -110px;
+          margin-top: -120px;
         }
         .adminClasses__list-item-info {
           transform: translateY(0);
@@ -41,14 +67,16 @@
       transform: translate(-50%, -50%);
     }
     &-item-info {
+      border-top: 1px solid $white;
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       text-align: center;
       color: $white;
-      margin: 20px;
-      transform: translateY(calc(100% + 40px));
+      margin: 0 20px 20px;
+      padding-top: 20px;
+      transform: translateY(calc(100% + 20px));
       transition: transform .15s ease-in-out;
       line-height: 1.2;
       max-height: 210px;

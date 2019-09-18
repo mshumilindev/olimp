@@ -193,7 +193,18 @@ export function updatePage(pageID, page) {
                 }
                 blocks.sort((a, b) => a.order - b.order);
                 page.content = blocks;
-                dispatch(pageSuccess(page));
+                return staticInfoCollection.get().then((data) => {
+                    newStaticInfoList.splice(0, newStaticInfoList.length);
+                    data.docs.map(doc => {
+                        newStaticInfoList.push({
+                            ...doc.data(),
+                            id: doc.id
+                        })
+                    });
+
+                    dispatch(staticInfoSuccess(newStaticInfoList));
+                    dispatch(pageSuccess(page));
+                });
             });
         });
     };

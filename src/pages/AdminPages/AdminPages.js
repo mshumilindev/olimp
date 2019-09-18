@@ -246,10 +246,13 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
         }
 
         return newPages.sort((a, b) => {
-            if ( a.name[lang] < b.name[lang] ) {
+            const aTitle = a.name[lang] || a.name['ua'];
+            const bTitle = b.name[lang] || b.name['ua'];
+
+            if ( aTitle < bTitle ) {
                 return -1;
             }
-            else if ( a.name[lang] > b.name[lang] ) {
+            else if ( aTitle > bTitle ) {
                 return 1;
             }
             return 0;

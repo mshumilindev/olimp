@@ -2,18 +2,16 @@ import React, { useContext, useState, useEffect } from 'react';
 import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {fetchPage, removePage, updatePage} from "../../redux/actions/staticInfoActions";
+import {fetchPage, updatePage} from "../../redux/actions/staticInfoActions";
 import {Preloader} from "../../components/UI/preloader";
-import Confirm from "../../components/UI/Confirm/Confirm";
 import ContentEditor from "../../components/UI/ContentEditor/ContentEditor";
 import Form from '../../components/Form/Form';
 
-function AdminPage({fetchPage, params, pageData, removePage, updatePage, loading}) {
+function AdminPage({fetchPage, params, pageData, updatePage, loading}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ page, setPage ] = useState(null);
     const [ initialPage, setInitialPage ] = useState(null);
     const [ pageUpdated, setPageUpdated ] = useState(false);
-    const [ showRemovePage, setShowRemovePage ] = useState(false);
     const [ pageInfoFields, setPageInfoFields ] = useState(null);
 
     if ( !pageData || pageData.slug !== params.pageSlug ) {
@@ -85,16 +83,18 @@ function AdminPage({fetchPage, params, pageData, removePage, updatePage, loading
                             </h2>
                             <div className="section__title-actions">
                                 <span>
-                                    <a href="/" className="btn btn__error" onClick={e => {e.preventDefault(); setShowRemovePage(true)}}>
-                                        <i className="content_title-icon fa fa-trash-alt"/>
-                                        { translate('delete') }
-                                    </a>
                                     <a href="/" className="btn btn__success" onClick={e => onUpdatePage(e)} disabled={!pageUpdated}>
                                         <i className="content_title-icon fa fa-save"/>
                                         { translate('save') }
                                     </a>
                                 </span>
                             </div>
+                            {
+                                loading ?
+                                    <Preloader size={60}/>
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="grid">
                             <div className="grid_col col-8">
@@ -119,12 +119,6 @@ function AdminPage({fetchPage, params, pageData, removePage, updatePage, loading
                     </section>
                     :
                     <Preloader/>
-            }
-            {
-                showRemovePage ?
-                    <Confirm message={translate('sure_to_remove_page')} confirmAction={handleRemovePage} cancelAction={() => setShowRemovePage(false)} />
-                    :
-                    null
             }
         </div>
     );
@@ -203,10 +197,6 @@ function AdminPage({fetchPage, params, pageData, removePage, updatePage, loading
             ]);
         }
     }
-
-    function handleRemovePage() {
-        removePage(page.id);
-    }
 }
 const mapStateToProps = state => ({
     pageData: state.staticInfoReducer.page,
@@ -214,7 +204,6 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     fetchPage: slug => dispatch(fetchPage(slug)),
-    removePage: (pageID) => dispatch(removePage(pageID)),
     updatePage: (pageID, info) => dispatch(updatePage(pageID, info))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminPage));

@@ -142,6 +142,38 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     </div>
                 );
 
+            case 'textarea':
+                return (
+                    <div className="form__field-holder">
+                        <textarea className={classNames('form__field form__textarea', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated, readonly: field.readonly})} onChange={(e) => handleFieldChange(field.id, e.target.value)} title={name} autoComplete="new-password" readOnly={field.readonly} value={field.value}/>
+                        {
+                            field.icon ?
+                                <i className={classNames('form__field-icon ' + field.icon, { isFilled: field.value })} />
+                                :
+                                field.placeholder ?
+                                    <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
+                                    :
+                                    null
+                        }
+                        {
+                            field.btn ?
+                                <span className="form__field-btn" onClick={() => field.btn.action(field.id)} title={field.btn.title}>
+                                    <i className={field.btn.icon} />
+                                </span>
+                                :
+                                null
+                        }
+                        {
+                            field.errorMessage ?
+                                <div className="form__field-error">
+                                    { field.errorMessage }
+                                </div>
+                                :
+                                null
+                        }
+                    </div>
+                );
+
             case 'itemList':
                 return (
                     <div className="form__field-holder form__itemList-holder">

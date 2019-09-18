@@ -24,12 +24,12 @@ export default function Admin({children, location, params}) {
         //     icon: 'fa fa-comments',
         //     name: 'messages'
         // },
-        // {
-        //     id: 4,
-        //     url: '/admin-users',
-        //     icon: 'fa fa-users',
-        //     name: 'users'
-        // },
+        {
+            id: 4,
+            url: '/admin-users',
+            icon: 'fa fa-users',
+            name: 'users'
+        },
         {
             id: 5,
             url: '/admin-courses',
@@ -42,32 +42,26 @@ export default function Admin({children, location, params}) {
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
-        // {
-        //     id: 7,
-        //     url: '/admin-library',
-        //     icon: 'fa fa-bookmark',
-        //     name: 'library'
-        // },
-        // {
-        //     id: 8,
-        //     url: '/admin-translations',
-        //     icon: 'fa fa-language',
-        //     name: 'translations'
-        // },
         {
-            id: 9,
+            id: 7,
             url: '/admin-pages',
             icon: 'fa fa-copy',
             name: 'pages'
         },
+        {
+            id: 8,
+            url: '/admin-library',
+            icon: 'fa fa-bookmark',
+            name: 'library'
+        },
+        {
+            id: 9,
+            url: '/admin-translations',
+            icon: 'fa fa-language',
+            name: 'translations'
+        },
         // {
         //     id: 10,
-        //     url: '/admin-templates',
-        //     icon: 'fa fa-file',
-        //     name: 'templates'
-        // },
-        // {
-        //     id: 11,
         //     url: '/admin-settings',
         //     icon: 'fa fa-cogs',
         //     name: 'settings'

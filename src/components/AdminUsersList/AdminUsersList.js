@@ -8,6 +8,7 @@ import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
 import { Link } from 'react-router-dom';
 import withPager from "../../utils/withPager";
+import {fetchClasses} from "../../redux/actions/classesActions";
 
 class AdminUsersList extends React.Component {
     constructor(props, context) {
@@ -89,14 +90,21 @@ class AdminUsersList extends React.Component {
                                     { translate('nothing_found') }
                                 </div>
                     }
+                    {
+                        list && list.length && loading ?
+                            <Preloader/>
+                            :
+                            null
+                    }
                 </div>
             </section>
         );
     }
 
     _renderUsers(user) {
-        const { loading, list } = this.props;
-        const { translate } = this.context;
+        const { loading, list, classesList } = this.props;
+        const { translate, lang } = this.context;
+        const selectedClass = classesList.find(item => item.id === user.class);
 
         return (
             <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.id}>
@@ -120,7 +128,7 @@ class AdminUsersList extends React.Component {
                     <span>{ translate(user.role) }</span>
                 </td>
                 <td className="table__body-cell">
-                    <span>{ user.class ? user.class : null }</span>
+                    <span>{ user.class && selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : null }</span>
                 </td>
                 <td className="table__body-cell">
                     <div className="table__actions">
@@ -152,8 +160,13 @@ class AdminUsersList extends React.Component {
 }
 AdminUsersList.contextType = siteSettingsContext;
 
+const mapStateToProps = state => ({
+    classesList: state.classesReducer.classesList,
+    loading: state.classesReducer.loading
+});
 const mapDispatchToProps = dispatch => ({
-    deleteUser: (id) => dispatch(deleteUser(id))
+    deleteUser: (id) => dispatch(deleteUser(id)),
+    fetchClasses: dispatch(fetchClasses())
 });
 
-export default connect(null, mapDispatchToProps)(withPager(AdminUsersList));
+export default connect(mapStateToProps, mapDispatchToProps)(withPager(AdminUsersList));
