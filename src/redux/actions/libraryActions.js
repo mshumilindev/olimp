@@ -16,6 +16,7 @@ export function fetchLibrary() {
             dispatch(fetchLibraryBegin());
 
             return libraryCollection.get().then((data) => {
+                libraryList.splice(0, libraryList.length);
                 data.docs.forEach(doc => {
                     libraryList.push({
                         ...doc.data(),

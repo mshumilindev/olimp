@@ -88,6 +88,11 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
         const currentSubject = coursesList.find(subject => subject.id === lesson.subject);
         const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
 
+        if ( !currentCourse ) {
+            quickRemoveLesson(lesson);
+            return null;
+        }
+
         return (
             <div key={index + lesson.course} className="coursesPicker__selectedList-item" onClick={() => quickRemoveLesson(lesson)}>
                 <div className="coursesPicker__selectedList-item-subject">

@@ -53,6 +53,8 @@ function UpdateCourse({history, params, subjectID, course, loading, setShowUpdat
         };
         newCourse.id = course ? course.id : identify(transliterize(newCourse.name['ua']));
         newCourse.index = course ? course.index : moment().unix();
+        newCourse.teacher = newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === 'teacher').value;
+        newCourse.textbook = newCourseFields.find(item => item.id === 'textbook_block').children.find(item => item.id === 'textbook').value;
 
         updateCourse(subjectID, newCourse);
     }
@@ -64,8 +66,18 @@ function UpdateCourse({history, params, subjectID, course, loading, setShowUpdat
     function setFieldValue(fieldID, value) {
         const newCourseFields = JSON.parse(courseFields);
 
-        newCourseFields.find(item => item.id === fieldID).value = value;
-        newCourseFields.find(item => item.id === fieldID).updated = true;
+        if ( fieldID === 'teacher' ) {
+            newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === fieldID).value = value;
+            newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === fieldID).updated = true;
+        }
+        else if ( fieldID === 'textbook' ) {
+            newCourseFields.find(item => item.id === 'textbook_block').children.find(item => item.id === fieldID).value = value;
+            newCourseFields.find(item => item.id === 'textbook_block').children.find(item => item.id === fieldID).updated = true;
+        }
+        else {
+            newCourseFields.find(item => item.id === fieldID).value = value;
+            newCourseFields.find(item => item.id === fieldID).updated = true;
+        }
 
         setFormUpdated(true);
 

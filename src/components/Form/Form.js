@@ -6,6 +6,9 @@ import CustomSelect from '../UI/CustomSelect/CustomSelect';
 import { Preloader } from '../UI/preloader';
 import TextTooltip from '../UI/TextTooltip/TextTooltip';
 import Tabs from '../UI/Tabs/Tabs';
+import Resizer from 'react-image-file-resizer';
+import UserPicker from "../UI/UserPicker/UserPicker";
+import LibraryPicker from "../UI/LibraryPicker/LibraryPicker";
 
 export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
     const $form = useRef(null);
@@ -142,6 +145,20 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     </div>
                 );
 
+            case 'userPicker':
+                return (
+                    <div className="form__field-holder">
+                        <UserPicker type={field.id} noSearch selectedList={field.value ? [field.value] : []} addUsers={(type, list) => handleFieldChange(field.id, list[0])} placeholder={field.placeholder} />
+                    </div>
+                );
+
+            case 'libraryPicker':
+                return (
+                    <div className="form__field-holder">
+                        <LibraryPicker selectedList={field.value ? [field.value] : []} placeholder={field.placeholder} addBooks={(type, list) => handleFieldChange(field.id, list[0])} />
+                    </div>
+                );
+
             case 'textarea':
                 return (
                     <div className="form__field-holder">
@@ -264,7 +281,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 <i className={field.icon ? field.icon + ' form__file-icon' : 'form__file-icon'} />
                                 <span className="form__file-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
                             </span>
-                            <input type="file" ref={$file} className="form__file" accept="image/gif, image/jpeg, image/png" onChange={() => getImageValue(field.id, $file.current)} id={'file-' + field.id}/>
+                            <input type="file" ref={$file} className="form__file" accept="image/gif, image/jpeg, image/png" onChange={() => getImageValue(field.id, $file.current, field.saveSize)} id={'file-' + field.id}/>
                         </TextTooltip>
                         {
                             field.remove && field.value ?
@@ -332,17 +349,51 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         return ![...$requiredFields].some(field => !field.value.trim() || field.classList.contains('hasErrors'));
     }
 
-    function getImageValue(fieldID, $input) {
-        const reader = new FileReader();
+    function getImageValue(fieldID, $input, fieldSize) {
         const file = $input.files[0];
+        const maxWidthHeight = 1000;
 
-        reader.readAsDataURL(file);
+        if ( fieldSize ) {
+            Resizer.imageFileResizer(
+                file,
+                fieldSize,
+                fieldSize,
+                'JPEG',
+                100,
+                0,
+                uri => {
+                    handleFieldChange(fieldID, uri);
+                },
+                'base64'
+            )
+        }
+        else {
+            const maxSize = 1000;
+            if ( file.size / 1024 > maxSize ) {
+                Resizer.imageFileResizer(
+                    file,
+                    maxWidthHeight,
+                    maxWidthHeight,
+                    'JPEG',
+                    80,
+                    0,
+                    uri => {
+                        handleFieldChange(fieldID, uri);
+                    },
+                    'base64'
+                )
+            }
+            else {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
 
-        return new Promise(() => {
-            reader.onload = () => {
-                handleFieldChange(fieldID, reader.result);
-            };
-        });
+                return new Promise(() => {
+                    reader.onload = () => {
+                        handleFieldChange(fieldID, reader.result);
+                    };
+                });
+            }
+        }
     }
 
     function itemListChange(fieldID, value) {

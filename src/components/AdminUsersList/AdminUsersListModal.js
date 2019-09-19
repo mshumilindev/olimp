@@ -4,6 +4,7 @@ import generator from 'generate-password';
 import { updateUser } from "../../redux/actions/usersActions";
 import {connect} from "react-redux";
 import {fetchClasses} from "../../redux/actions/classesActions";
+import {fetchAllCourses} from "../../redux/actions/coursesActions";
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
@@ -14,7 +15,7 @@ class AdminUsersListModal extends React.Component {
 
         this.state = {
             showModal: false,
-            userFields: this.getUserFields(props.user, context, props.classesList),
+            userFields: this.getUserFields(props.user, context, props.classesList, props.allCoursesList, []),
             formUpdated: false
         };
 
@@ -45,13 +46,16 @@ class AdminUsersListModal extends React.Component {
         );
     }
 
-    getUserFields(user, context, classesList) {
+    getUserFields(user, context, classesList, allCoursesList, userFields) {
         const { translate, getUserFormFields } = context;
 
         const formFields = getUserFormFields(user, this.generatePassword);
 
         if ( user.role === 'student' ) {
-            formFields.splice(2, 0, this.insertClass(context, classesList, user));
+            formFields.splice(2, 0, this.insertClass(context, classesList, user, userFields));
+        }
+        if ( user.role === 'teacher' ) {
+            formFields.splice(2, 0, this.insertCourse(context, allCoursesList, user, userFields))
         }
 
         formFields.push(
@@ -92,7 +96,7 @@ class AdminUsersListModal extends React.Component {
             };
 
             if ( !state.showModal ) {
-                newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList);
+                newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
             }
 
             return {
@@ -106,7 +110,7 @@ class AdminUsersListModal extends React.Component {
         this.setState(() => {
             const newState = {};
 
-            newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList);
+            newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
 
             return {
                 ...newState,
@@ -126,7 +130,7 @@ class AdminUsersListModal extends React.Component {
 
     setFieldValue(fieldID, value) {
         const { userFields } = this.state;
-        const { user, usersList, classesList } = this.props;
+        const { user, usersList, classesList, allCoursesList } = this.props;
         const { translate, lang } = this.context;
 
         let field = null;
@@ -188,7 +192,10 @@ class AdminUsersListModal extends React.Component {
 
         if ( fieldID === 'role' ) {
             if ( value === 'student' ) {
-                userFields.splice(2, 0, this.insertClass(this.context, classesList, user));
+                userFields.splice(2, 0, this.insertClass(this.context, classesList, user, userFields));
+            }
+            else if ( value === 'teacher' ) {
+                userFields.splice(2, 0, this.insertCourse(this.context, allCoursesList, user, userFields));
             }
             else {
                 if ( userFields.some(item => item.id === 'class') ) {
@@ -205,10 +212,17 @@ class AdminUsersListModal extends React.Component {
         });
     }
 
-    insertClass(context, classesList, user) {
+    insertClass(context, classesList, user, userFields) {
         const { lang } = context;
         const opts = [];
         const selectedClass = classesList.find(item => item.id === user.class);
+
+        if ( userFields.some(item => item.id === 'courses') ) {
+            userFields.splice(2, 1);
+        }
+        if ( userFields.some(item => item.id === 'class') ) {
+            userFields.splice(2, 1);
+        }
 
         classesList.sort((a, b) => {
             const aTitle = a.title[lang] || a.title['ua'];
@@ -246,6 +260,37 @@ class AdminUsersListModal extends React.Component {
                 ...opts
             ]
         };
+    }
+
+    insertCourse(context, allCoursesList, user, userFields) {
+        const { translate, lang } = context;
+        const selectedCourses = [];
+
+        if ( userFields.some(item => item.id === 'class') ) {
+            userFields.splice(2, 1);
+        }
+        if ( userFields.some(item => item.id === 'courses') ) {
+            userFields.splice(2, 1);
+        }
+
+        allCoursesList.forEach(subject => {
+            if ( subject.coursesList ) {
+                subject.coursesList.forEach(course => {
+                    if ( course.teacher === user.id ) {
+                        selectedCourses.push(course.name[lang] ? course.name[lang] : course.name['ua'])
+                    }
+                });
+            }
+        });
+
+        return {
+            type: 'text',
+            id: 'courses',
+            name: 'courses',
+            value: selectedCourses.join(', ') ? selectedCourses.join(', ') : '',
+            placeholder: translate('courses'),
+            readonly: true
+        }
     }
 
     generatePassword(fieldID) {
@@ -331,10 +376,12 @@ AdminUsersListModal.contextType = siteSettingsContext;
 
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,
+    allCoursesList: state.coursesReducer.coursesList,
     loading: state.classesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
     updateUser: (id, data) => dispatch(updateUser(id, data)),
-    fetchClasses: dispatch(fetchClasses())
+    fetchClasses: dispatch(fetchClasses()),
+    fetchAllCourses: dispatch(fetchAllCourses())
 });
 export default connect(mapStateToProps, mapDispatchToProps)(AdminUsersListModal);

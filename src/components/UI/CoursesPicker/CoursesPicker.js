@@ -134,6 +134,11 @@ function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses}
         const currentSubject = coursesList.find(item => item.id === course.subject);
         const currentCourse = currentSubject.coursesList.find(item => item.id === course.course);
 
+        if ( !currentCourse ) {
+            quickRemoveCourse(course);
+            return null;
+        }
+
         return (
             <div className="coursesPicker__selectedList-item" key={course.course}>
                 <div className="coursesPicker__selectedList-item-subject">

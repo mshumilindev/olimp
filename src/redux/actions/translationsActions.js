@@ -2,7 +2,7 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const translationsCollection = db.collection('translations');
-const translationsList = [];
+const translationsList = localStorage.getItem('translationsList') ? JSON.parse(localStorage.getItem('translationsList')) : [];
 
 export const FETCH_TRANSLATIONS_BEGIN = 'FETCH_TRANSLATIONS_BEGIN';
 export const FETCH_TRANSLATIONS_SUCCESS = 'FETCH_TRANSLATIONS_SUCCESS';
@@ -28,6 +28,7 @@ export function fetchTranslations() {
                         }
                     });
                 });
+                localStorage.setItem('translationsList', JSON.stringify(translationsList));
                 dispatch(fetchTranslationsSuccess(translationsList));
             });
         }

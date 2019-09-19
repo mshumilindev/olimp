@@ -41,6 +41,35 @@ $courseItemIndent: $pageIndent / 2;
       transform: rotate(-15deg);
     }
   }
+  &__list-item-teacher {
+    padding-left: 28px;
+    margin-top: 10px;
+    font-family: $RobotoCondensed;
+    display: flex;
+    align-items: center;
+  }
+  &__list-item-teacher-name {
+    display: flex;
+  }
+  &__list-item-teacher-role {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
+  &__list-item-textbook {
+    padding-left: 28px;
+    margin-top: 10px;
+    font-family: $RobotoCondensed;
+  }
+  &__list-item-textbook-label {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
   &__list-link {
     color: $baseColor;
     @extend %s-content-link;
@@ -71,7 +100,7 @@ $courseItemIndent: $pageIndent / 2;
     }
   }
   &__list-item-nothingFound {
-    color: $mediumGreyColor;
+    color: $greyColor;
     @extend %s-content-link;
     .content_title-icon {
       top: 0;

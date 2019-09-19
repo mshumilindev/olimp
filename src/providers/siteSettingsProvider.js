@@ -261,7 +261,10 @@ export default class SiteSettingsProvider extends React.Component{
                 ru: '',
                 en: ''
             },
-            id: ''
+            id: '',
+            index: '',
+            teacher: '',
+            textbook: ''
         }
     }
 
@@ -293,6 +296,36 @@ export default class SiteSettingsProvider extends React.Component{
                 placeholder: translate('title') + ' ' + translate('in_en'),
                 value: course.name.en,
                 updated: false
+            },
+            {
+                type: 'block',
+                heading: translate('teacher'),
+                id: 'teacher_block',
+                children: [
+                    {
+                        type: 'userPicker',
+                        name: 'userPicker',
+                        placeholder: translate('select_teacher'),
+                        id: 'teacher',
+                        value: course.teacher,
+                        updated: false
+                    }
+                ]
+            },
+            {
+                type: 'block',
+                heading: translate('textbook'),
+                id: 'textbook_block',
+                children: [
+                    {
+                        type: 'libraryPicker',
+                        name: 'libraryPicker',
+                        placeholder: translate('select_textbook'),
+                        id: 'textbook',
+                        value: course.textbook,
+                        updated: false
+                    }
+                ]
             },
             {
                 type: 'submit',
@@ -439,6 +472,7 @@ export default class SiteSettingsProvider extends React.Component{
                 icon: 'fas fa-camera-retro',
                 shape: 'round',
                 size: 150,
+                saveSize: 200,
                 remove: true
             },
             {

@@ -458,4 +458,10 @@
       opacity: .75;
     }
   }
+  .userPicker,
+  .libraryPicker {
+    .nothingFound {
+      display: none;
+    }
+  }
 }

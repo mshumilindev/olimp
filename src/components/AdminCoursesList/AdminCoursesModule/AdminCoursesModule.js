@@ -73,7 +73,7 @@ function AdminCoursesModule({subjectID, courseID, module, params, loading, fetch
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
-                                    { translate('nothing_found') }
+                                    { translate('no_lessons') }
                                 </div>
                         }
                     </div>

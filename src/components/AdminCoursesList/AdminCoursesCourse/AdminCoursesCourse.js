@@ -7,11 +7,12 @@ import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
 import classNames from "classnames";
 import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
 import UpdateModule from "../AdminCoursesActions/UpdateModule";
+import {fetchLibrary} from "../../../redux/actions/libraryActions";
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse}) {
+function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
@@ -65,15 +66,70 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
                 </Link>
             </ContextMenu>
             {
+                checkIfIsOpen() ?
+                    course.teacher ?
+                        <div className="adminCourses__list-item-teacher">
+                            {
+                                usersList.length ?
+                                    <div className="adminCourses__list-item-teacher-name">
+                                        <i className="fa fa-user" style={{marginRight: 15}} />
+                                        <span className="adminCourses__list-item-teacher-role">
+                                            { translate(getUser(course.teacher).role) }
+                                        </span>
+                                        { getUser(course.teacher).name }
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                        :
+                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10, marginLeft: 28}}>
+                            <i className="content_title-icon fa fa-user" />
+                            { translate('no_teacher') }
+                        </div>
+                    :
+                    null
+            }
+            {
+                checkIfIsOpen() ?
+                    course.textbook ?
+                        <div className="adminCourses__list-item-textbook">
+                            <i className="fa fa-bookmark" style={{marginRight: 16}} />
+                            <span className="adminCourses__list-item-textbook-label">
+                                {
+                                    translate('textbook')
+                                }
+                            </span>
+                            {
+                                libraryList.length ?
+                                    libraryList.find(item => item.id === course.textbook).name
+                                    :
+                                    null
+                            }
+                        </div>
+                        :
+                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10, marginLeft: 28}}>
+                            <i className="content_title-icon fa fa-bookmark" />
+                            { translate('no_textbook') }
+                        </div>
+                    :
+                    null
+            }
+            {
                 params && params.courseID === course.id ?
-                    <div className="adminCourses__list-courses" style={{marginTop: -10}}>
+                    <div className="adminCourses__list-courses" style={{marginTop: -10, marginBottom: 20}}>
+                        <div className="adminCourses__list-item" style={{marginTop: 10, paddingLeft: 0}}>
+                            <div className="adminCourses__list-courses-link" style={{paddingLeft: 0}}>
+                                { translate('modules') }
+                            </div>
+                        </div>
                         {
                             course.modules && course.modules.length ?
                                 sortModules().map(item => <AdminCoursesModule subjectID={subjectID} courseID={course.id} module={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
                                     <i className="content_title-icon fa fa-unlink" />
-                                    { translate('nothing_found') }
+                                    { translate('no_modules') }
                                 </div>
                         }
                     </div>
@@ -100,6 +156,10 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
             }
         </div>
     );
+
+    function getUser(user) {
+        return usersList.find(item => item.id === user);
+    }
 
     function checkIfIsOpen() {
         return params && params.courseID === course.id;
@@ -129,8 +189,13 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
         });
     }
 }
+const mapStateToProps = state => ({
+    usersList: state.usersReducer.usersList,
+    libraryList: state.libraryReducer.libraryList,
+});
 const mapDispatchToProps = dispatch => ({
+    fetchLibrary: dispatch(fetchLibrary()),
     fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
     deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID))
 });
-export default connect(null, mapDispatchToProps)(AdminCoursesCourse);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminCoursesCourse);

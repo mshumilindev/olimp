@@ -3,10 +3,11 @@ import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {updateTranslation} from "../../redux/actions/translationsActions";
+import {setUpdates} from "../../redux/actions/updatesActions";
 
 const AdminTranslationsList = React.lazy(() => import('../../components/AdminTranslationsList/AdminTranslationsList'));
 
-function AdminTranslations({translationsList, searchQuery, showPerPage, filters, updateTranslation, loading}) {
+function AdminTranslations({translationsList, searchQuery, showPerPage, filters, updateTranslation, loading, setUpdates}) {
     const { translate } = useContext(siteSettingsContext);
     const $block = useRef(null);
     const [ isLoaded, setIsLoaded ] = useState(false);
@@ -60,6 +61,7 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
 
                     updateTranslation(lang, key, field.value);
                     setIsLoaded(false);
+                    setUpdates('translations')
                 });
             }
         }
@@ -70,6 +72,7 @@ const mapStateToProps = state => ({
     loading: state.translationsReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    updateTranslation: (lang, key, value) => dispatch(updateTranslation(lang, key, value))
+    updateTranslation: (lang, key, value) => dispatch(updateTranslation(lang, key, value)),
+    setUpdates: type => dispatch(setUpdates(type))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminTranslations, true, true));

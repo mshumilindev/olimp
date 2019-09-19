@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable}) {
+function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable, noSearch, placeholder}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showUserListModal, setShowUserListModal ] = useState(false);
     const [ initialSelectedUsers, setInitialSelectedUsers ] = useState(JSON.stringify(selectedList));
@@ -25,7 +25,20 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                 selectedList.length ?
                     <div className="userPicker__selectedList">
                         {
-                            selectedList.map(item => renderSelectedUser(item))
+                            selectedList.sort((a, b) => {
+                                const aName = usersList.find(user => user.id === a).name;
+                                const bName = usersList.find(user => user.id === b).name;
+
+                                if ( aName < bName ) {
+                                    return -1;
+                                }
+                                if ( aName > bName ) {
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
+                            }).map(item => renderSelectedUser(item))
                         }
                     </div>
                     :
@@ -43,6 +56,14 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                                     :
                                     <i className="fa fa-plus" />
                             }
+                            {
+                                placeholder ?
+                                    <span className="userPicker__placeholder">
+                                        { placeholder }
+                                    </span>
+                                    :
+                                    null
+                            }
                         </span>
                     </div>
                     :
@@ -51,9 +72,14 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
             {
                 showUserListModal ?
                     <Modal onHideModal={handleHideModal} heading={translate('new') + ' ' + translate(type)}>
-                        <div className="userPicker__filters">
-                            { filters }
-                        </div>
+                        {
+                            noSearch ?
+                                null
+                                :
+                                <div className="userPicker__filters">
+                                    { filters }
+                                </div>
+                        }
                         <div className="userPicker__list">
                             {
                                 usersList && filterUsers().length ?
