@@ -1,11 +1,14 @@
 import React, { useContext } from 'react';
 import './nav.scss';
 import { Link } from 'react-router-dom';
-import logo from "../../assets/img/logo.png";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
+import {fetchSiteSettings} from "../../redux/actions/siteSettingsActions";
+import {connect} from "react-redux";
+import withFilters from "../../utils/withFilters";
+import {Preloader} from "../UI/preloader";
 
-export default function Nav({nav, prefix, showLogo, hideItems}) {
+function Nav({nav, prefix, showLogo, hideItems, logo}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
 
     return (
@@ -14,7 +17,12 @@ export default function Nav({nav, prefix, showLogo, hideItems}) {
                 {
                     showLogo ?
                         <li className={prefix + 'nav_logo-item'}>
-                            <img src={ logo } alt={ siteName } className={prefix + 'nav_logo'} />
+                            {
+                                logo ?
+                                    <img src={ logo.url } alt={ siteName } className={prefix + 'nav_logo'} />
+                                    :
+                                    <Preloader size={52}/>
+                            }
                         </li>
                         :
                         null
@@ -40,3 +48,10 @@ export default function Nav({nav, prefix, showLogo, hideItems}) {
         return false;
     }
 }
+const mapStateToProps = state => ({
+    logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null
+});
+const mapDispatchToProps = dispatch => ({
+    fetchSiteSettings: dispatch(fetchSiteSettings())
+});
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(Nav, true));

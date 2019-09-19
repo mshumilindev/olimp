@@ -96,6 +96,7 @@ function AdminClass({fetchClass, params, classData, updateClass, loading}) {
                             JSON.parse(currentClass) ?
                                 <>
                                     <i className={'content_title-icon fa fa-graduation-cap'} />
+                                    <span className="section__title-separator">{ translate('classes') }</span>
                                     { JSON.parse(currentClass).title[lang] ? JSON.parse(currentClass).title[lang] : JSON.parse(currentClass).title.ua }
                                 </>
                                 :

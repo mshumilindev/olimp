@@ -12,12 +12,12 @@ export default function Admin({children, location, params}) {
         //     icon: 'fa fa-home',
         //     name: 'admin'
         // },
-        // {
-        //     id: 2,
-        //     url: '/admin-profile',
-        //     icon: 'fa fa-user',
-        //     name: 'profile'
-        // },
+        {
+            id: 2,
+            url: '/admin-profile',
+            icon: 'fa fa-user',
+            name: 'profile'
+        },
         // {
         //     id: 3,
         //     url: '/admin-messages',
@@ -60,12 +60,12 @@ export default function Admin({children, location, params}) {
             icon: 'fa fa-language',
             name: 'translations'
         },
-        // {
-        //     id: 10,
-        //     url: '/admin-settings',
-        //     icon: 'fa fa-cogs',
-        //     name: 'settings'
-        // }
+        {
+            id: 10,
+            url: '/admin-settings',
+            icon: 'fa fa-cogs',
+            name: 'settings'
+        }
     ];
 
     const { siteName, translate } = useContext(SiteSettingsContext);

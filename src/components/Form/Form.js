@@ -90,6 +90,14 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 :
                                 null
                         }
+                        {
+                            field.btnRemove ?
+                                <span className="form__block-btnRemove" onClick={field.btnRemove}>
+                                    <i className="fa fa-trash-alt"/>
+                                </span>
+                                :
+                                null
+                        }
                         { field.children.map(childField => _renderField(childField)) }
                     </div>
                 );
@@ -273,15 +281,31 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
 
             case 'image':
                 const $file = React.createRef(null);
+                let imageClasses = 'form__file-trigger';
+
+                if ( field.shape ) {
+                    imageClasses += (' ' + field.shape);
+                }
+                if ( field.backSize ) {
+                    imageClasses += (' ' + field.backSize);
+                }
+                if ( field.ext ) {
+                    imageClasses += (' ' + field.ext);
+                }
 
                 return (
-                    <div className={classNames('form__file-holder', {isUpdated: field.updated})} style={{width: field.size}}>
+                    <div className={classNames('form__file-holder', {isUpdated: field.updated})} style={{width: field.size, maxWidth: field.maxSize ? field.maxSize : '100%'}}>
                         <TextTooltip text={translate(field.label)} position="left">
-                            <span className={field.shape ? field.shape + ' form__file-trigger' : 'form__file-trigger'}>
+                            <span className={imageClasses}>
                                 <i className={field.icon ? field.icon + ' form__file-icon' : 'form__file-icon'} />
-                                <span className="form__file-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
+                                {
+                                    field.value ?
+                                        <span className="form__file-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
+                                        :
+                                        null
+                                }
                             </span>
-                            <input type="file" ref={$file} className="form__file" accept="image/gif, image/jpeg, image/png" onChange={() => getImageValue(field.id, $file.current, field.saveSize)} id={'file-' + field.id}/>
+                            <input type="file" ref={$file} className="form__file" accept="image/gif, image/jpeg, image/png" onChange={() => getImageValue(field.id, $file.current, field.saveSize, field.ext)} id={'file-' + field.id}/>
                         </TextTooltip>
                         {
                             field.remove && field.value ?
@@ -295,6 +319,21 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 :
                                 null
                         }
+                    </div>
+                );
+
+            case 'button':
+                return (
+                    <div className="form__btn-holder">
+                        <span className="form__btn btn btn_primary" title={name} onClick={field.action}>
+                            {
+                                field.icon ?
+                                    <i className={'content_title-icon ' + field.icon}/>
+                                    :
+                                    null
+                            }
+                            { name }
+                        </span>
                     </div>
                 );
 
@@ -349,33 +388,18 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         return ![...$requiredFields].some(field => !field.value.trim() || field.classList.contains('hasErrors'));
     }
 
-    function getImageValue(fieldID, $input, fieldSize) {
+    function getImageValue(fieldID, $input, fieldSize, fieldExt) {
         const file = $input.files[0];
         const maxWidthHeight = 1000;
 
-        if ( fieldSize ) {
-            Resizer.imageFileResizer(
-                file,
-                fieldSize,
-                fieldSize,
-                'JPEG',
-                100,
-                0,
-                uri => {
-                    handleFieldChange(fieldID, uri);
-                },
-                'base64'
-            )
-        }
-        else {
-            const maxSize = 1000;
-            if ( file.size / 1024 > maxSize ) {
+        if ( file ) {
+            if ( fieldSize ) {
                 Resizer.imageFileResizer(
                     file,
-                    maxWidthHeight,
-                    maxWidthHeight,
-                    'JPEG',
-                    80,
+                    fieldSize,
+                    fieldSize,
+                    fieldExt ? fieldExt : 'JPEG',
+                    100,
                     0,
                     uri => {
                         handleFieldChange(fieldID, uri);
@@ -384,14 +408,31 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                 )
             }
             else {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                const maxSize = 1000;
+                if ( file.size / 1024 > maxSize ) {
+                    Resizer.imageFileResizer(
+                        file,
+                        maxWidthHeight,
+                        maxWidthHeight,
+                        fieldExt ? fieldExt : 'JPEG',
+                        80,
+                        0,
+                        uri => {
+                            handleFieldChange(fieldID, uri);
+                        },
+                        'base64'
+                    )
+                }
+                else {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
 
-                return new Promise(() => {
-                    reader.onload = () => {
-                        handleFieldChange(fieldID, reader.result);
-                    };
-                });
+                    return new Promise(() => {
+                        reader.onload = () => {
+                            handleFieldChange(fieldID, reader.result);
+                        };
+                    });
+                }
             }
         }
     }

@@ -67,6 +67,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                 <div className="section__title-holder">
                     <h2 className="section__title">
                         <i className="content_title-icon fa fa-paragraph" />
+                        <span className="section__title-separator">{ translate('courses') }</span>
                         { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
                     </h2>
                     <div className="section__title-actions">

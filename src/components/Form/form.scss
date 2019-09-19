@@ -41,6 +41,18 @@
     text-transform: uppercase;
     padding: 2px;
   }
+  &__block-btnRemove {
+    padding: 5px;
+    background: $white;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(0, -50%);
+    cursor: pointer;
+    &:hover {
+      color: $errorColor;
+    }
+  }
   &__actions {
     display: flex;
     justify-content: space-between;
@@ -185,6 +197,7 @@
     color: $errorColor;
     padding: 10px 10px 0;
     font-size: 14px;
+    font-family: $RobotoCondensed;
   }
   &__field-btn {
     position: absolute;
@@ -370,6 +383,7 @@
     bottom: 0;
     cursor: pointer;
     width: 100%;
+    z-index: 1;
   }
   &__file-trigger {
     padding-top: 100%;
@@ -383,6 +397,18 @@
     }
     &.landscape {
       padding-top: 56.25%;
+    }
+    &.contain {
+      [class$="__file-image"] {
+        background-size: contain;
+        margin: 20px;
+      }
+    }
+    &.PNG {
+      [class$="__file-image"] {
+        background-color: $white;
+        box-shadow: 0 0 20px 50px rgba(255,255,255,1);
+      }
     }
   }
   &__file-icon {
@@ -405,6 +431,8 @@
     bottom: 0;
     background-size: cover;
     background-position: 50% 50%;
+    background-repeat: no-repeat;
+    z-index: 1;
   }
   &__file-remove-holder {
     position: absolute;

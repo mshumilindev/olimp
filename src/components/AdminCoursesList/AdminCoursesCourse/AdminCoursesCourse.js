@@ -92,7 +92,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
             }
             {
                 checkIfIsOpen() ?
-                    course.textbook ?
+                    course.textbook && libraryList.find(item => item.id === course.textbook) ?
                         <div className="adminCourses__list-item-textbook">
                             <i className="fa fa-bookmark" style={{marginRight: 16}} />
                             <span className="adminCourses__list-item-textbook-label">

@@ -1,7 +1,17 @@
-import { FETCH_USERS_BEGIN, FETCH_USERS_SUCCESS, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, DELETE_USER_BEGIN, DELETE_USER_SUCCESS } from '../actions/usersActions';
+import {
+    FETCH_USERS_BEGIN,
+    FETCH_USERS_SUCCESS,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    DELETE_USER_BEGIN,
+    DELETE_USER_SUCCESS,
+    FETCH_PROFILE_BEGIN,
+    FETCH_PROFILE_SUCCESS
+} from '../actions/usersActions';
 
 const initialState = {
     usersList: [],
+    profile: null,
     loading: false
 };
 
@@ -42,6 +52,19 @@ export default function usersReducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false
+            };
+
+        case FETCH_PROFILE_BEGIN:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case FETCH_PROFILE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                profile: action.payload.profile
             };
 
         default:

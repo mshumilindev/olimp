@@ -122,7 +122,7 @@ class AdminUsersList extends React.Component {
                     }
                 </td>
                 <td className="table__body-cell">
-                    <span><Link to={'/user/' + user.login}>{ user.name }</Link></span>
+                    <span><Link to={user.id !== JSON.parse(localStorage.getItem('user')).id ? '/admin-users/' + user.login : '/admin-profile'}>{ user.name }</Link></span>
                 </td>
                 <td className="table__body-cell">
                     <span>{ translate(user.role) }</span>

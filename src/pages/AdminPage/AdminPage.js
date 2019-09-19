@@ -79,6 +79,7 @@ function AdminPage({fetchPage, params, pageData, updatePage, loading}) {
                         <div className="section__title-holder">
                             <h2 className="section__title">
                                 <i className={'content_title-icon fa fa-file'} />
+                                <span className="section__title-separator">{ translate('pages') }</span>
                                 { page.name[lang] ? page.name[lang] : page.name.ua }
                             </h2>
                             <div className="section__title-actions">

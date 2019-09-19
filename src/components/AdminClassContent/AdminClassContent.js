@@ -81,14 +81,14 @@ function AdminClassContent({content, loading, setContent, usersList}) {
         return (
             <div className="adminClass__schedule">
                 {
-                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={JSON.parse(courses)}content={content} handleAddSchedule={handleAddSchedule}/>)
+                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={JSON.parse(courses)} content={content} handleAddSchedule={handleAddSchedule}/>)
                 }
             </div>
         )
     }
 
     function filterStudents() {
-        const newUsersList = usersList.filter(user => user.role === 'student' && user.class && user.class === parsedContent.id);
+        const newUsersList = usersList.filter(user => user.role === 'student' && user.class && user.class === parsedContent.id && user.status === 'active');
         const idList = [];
 
         if ( newUsersList.length ) {

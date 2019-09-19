@@ -1,19 +1,19 @@
-import { FETCH_CONTACT_BEGIN, FETCH_CONTACT_SUCCESS } from '../actions/contactActions';
+import { CONTACT_BEGIN, CONTACT_SUCCESS } from '../actions/contactActions';
 
 const initialState = {
-    contactList: [],
+    contactList: null,
     loading: false
 };
 
 export default function handleContact(state = initialState, action) {
     switch ( action.type ) {
-        case FETCH_CONTACT_BEGIN:
+        case CONTACT_BEGIN:
             return {
                 ...state,
                 loading: true
             };
 
-        case FETCH_CONTACT_SUCCESS:
+        case CONTACT_SUCCESS:
             return {
                 ...state,
                 loading: false,

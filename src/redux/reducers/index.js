@@ -7,6 +7,8 @@ import libraryReducer from './libraryReducer';
 import coursesReducer from './coursesReducer';
 import staticInfoReducer from './staticInfoReducers';
 import classesReducer from './classesReducer';
+import contactReducer from './contactReducers';
+import siteSettingsReducer from './siteSettingsReducer';
 
 export default combineReducers({
     configReducer: configReducer,
@@ -16,5 +18,7 @@ export default combineReducers({
     libraryReducer: libraryReducer,
     coursesReducer: coursesReducer,
     staticInfoReducer: staticInfoReducer,
-    classesReducer: classesReducer
+    classesReducer: classesReducer,
+    contactReducer: contactReducer,
+    siteSettingsReducer: siteSettingsReducer
 });

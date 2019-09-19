@@ -7,7 +7,7 @@ import {fetchLibrary} from "../../../redux/actions/libraryActions";
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function LibraryPicker({multiple, libraryList, addBooks, selectedList, noneditable, placeholder}) {
+function LibraryPicker({multiple, libraryList, addBooks, selectedList, placeholder}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
     const [ initialSelectedBooks, setInitialSelectedBooks ] = useState(JSON.stringify(selectedList));
@@ -108,12 +108,19 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, noneditab
     function _renderSelectedBook(bookID) {
         const book = libraryList.find(item => item.id === bookID);
 
+        if ( !libraryList.find(item => item.id === bookID) ) {
+            return null;
+        }
+
         return (
             <div className={'libraryPicker__list-item selectedBookItem'} key={bookID}>
                 <div className="libraryPicker__list-item-name">
                     <i className="content_title-icon fa fa-bookmark" />
                     { book.name }
                 </div>
+                <span className="libraryPicker__list-item-remove" onClick={quickRemoveBook}>
+                    <i className="fa fa-trash-alt"/>
+                </span>
             </div>
         )
     }
@@ -140,6 +147,10 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, noneditab
                 </div>
             </div>
         )
+    }
+
+    function quickRemoveBook() {
+        addBooks('textbook', ['']);
     }
 
     function chooseBook(bookID) {

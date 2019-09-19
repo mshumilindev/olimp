@@ -2,38 +2,116 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const contactCollection = db.collection('contact');
-const newContact = localStorage.getItem('contact') ? JSON.parse(localStorage.getItem('contact')).data : [];
-
-export const FETCH_CONTACT_BEGIN = 'FETCH_CONTACT_BEGIN';
-export const FETCH_CONTACT_SUCCESS = 'FETCH_CONTACT_SUCCESS';
+const contactList = localStorage.getItem('contact') ? JSON.parse(localStorage.getItem('contact')).data : [];
 
 export function fetchContact() {
-    if ( !newContact.length ) {
+    if ( !contactList.length ) {
         return dispatch => {
-            dispatch(fetchContactBegin());
+            dispatch(contactBegin());
             return contactCollection.get().then((data) => {
-                data.docs.map(doc => newContact.push(doc.data()));
-                localStorage.setItem('contact', JSON.stringify({data: newContact}));
+                contactList.splice(0, contactList.length);
+                data.docs.map(doc => contactList.push({
+                    ...doc.data(),
+                    id: doc.id
+                }));
+                localStorage.setItem('contact', JSON.stringify({data: contactList}));
 
-                dispatch(fetchContactSuccess(newContact));
+                dispatch(contactSuccess(contactList));
             });
         }
     }
     else {
         return dispatch => {
-            dispatch(fetchContactSuccess(newContact))
+            dispatch(contactSuccess(contactList))
         }
     }
 }
 
-export const fetchContactBegin =() => {
+export function updateContact(newContacts) {
+    const sortedList = newContacts.sort((a, b) => a.order - b.order);
+
+    return dispatch => {
+        dispatch(contactBegin());
+
+        let i = 0;
+        let x = 0;
+
+        const removeContactItem = snapshot => {
+            if ( snapshot.docs.length ) {
+                const docRef = db.collection('contact').doc(snapshot.docs[i].id);
+
+                docRef.delete().then(() => {
+                    i++;
+
+                    if ( i < snapshot.docs.length ) {
+                        return removeContactItem(snapshot);
+                    }
+                    else {
+                        return saveContactItem();
+                    }
+                });
+            }
+            else {
+                return saveContactItem();
+            }
+        };
+
+        const saveContactItem = () => {
+            if ( sortedList.length ) {
+                const currentItem = sortedList[x];
+                const docRef = db.collection('contact').doc(currentItem.id);
+
+                delete currentItem.id;
+
+                docRef.set({
+                    ...currentItem,
+                    order: x
+                }).then(() => {
+                    x++;
+
+                    if ( x < sortedList.length ) {
+                        return saveContactItem();
+                    }
+                    else {
+                        return redoList();
+                    }
+                });
+            }
+            else {
+                return redoList();
+            }
+        };
+
+        const redoList = () => {
+            return contactCollection.get().then((data) => {
+                contactList.splice(0, contactList.length);
+                data.docs.map(doc => contactList.push({
+                    ...doc.data(),
+                    id: doc.id
+                }));
+                localStorage.setItem('contact', JSON.stringify({data: contactList}));
+
+                dispatch(contactSuccess(contactList));
+            });
+        };
+
+        return contactCollection.get().then(snapshot => {
+            return removeContactItem(snapshot);
+        });
+    }
+}
+
+export const CONTACT_BEGIN = 'CONTACT_BEGIN';
+export const CONTACT_SUCCESS = 'CONTACT_SUCCESS';
+
+export const contactBegin =() => {
     return {
-        type: FETCH_CONTACT_BEGIN
+        type: CONTACT_BEGIN
     }
 };
-export const fetchContactSuccess = contactList => {
+export const contactSuccess = contactList => {
     return {
-        type: FETCH_CONTACT_SUCCESS,
+        type: CONTACT_SUCCESS,
         payload: { contactList }
     }
 };

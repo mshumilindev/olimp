@@ -44,6 +44,34 @@ export const fetchUsersSuccess = usersList => {
     }
 };
 
+export const FETCH_PROFILE_BEGIN = 'FETCH_PROFILE_BEGIN';
+export const FETCH_PROFILE_SUCCESS = 'FETCH_PROFILE_SUCCESS';
+
+export function fetchProfile(profileID) {
+    const profileRef = db.collection('users').doc(profileID);
+
+    return dispatch => {
+        dispatch(fetchProfileBegin());
+        return profileRef.get().then(snapshot => {
+            const profile = snapshot.data();
+
+            dispatch(fetchProfileSuccess(profile));
+        });
+    }
+}
+
+export const fetchProfileBegin = () => {
+    return {
+        type: FETCH_PROFILE_BEGIN
+    }
+};
+export const fetchProfileSuccess = profile => {
+    return {
+        type: FETCH_PROFILE_SUCCESS,
+        payload: { profile }
+    }
+};
+
 export const UPDATE_USER_BEGIN = 'UPDATE_USER_BEGIN';
 export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
 
