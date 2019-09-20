@@ -42,73 +42,73 @@ $gridIndent: 20px;
     &.col-11 {
       width: 91.66666%;
     }
-    @media screen and (min-width: 1200px) {
-      &.medium-col-1 {
+    @media screen and (min-width: $minTablet) {
+      &.tablet-col-1 {
         width: 8.33333%;
       }
-      &.medium-col-2 {
+      &.tablet-col-2 {
         width: 16.66666%;
       }
-      &.medium-col-3 {
+      &.tablet-col-3 {
         width: 25%;
       }
-      &.medium-col-4 {
+      &.tablet-col-4 {
         width: 33.33333%;
       }
-      &.medium-col-5 {
+      &.tablet-col-5 {
         width: 41.66666%;
       }
-      &.medium-col-6 {
+      &.tablet-col-6 {
         width: 50%;
       }
-      &.medium-col-7 {
+      &.tablet-col-7 {
         width: 58.33333%;
       }
-      &.medium-col-8 {
+      &.tablet-col-8 {
         width: 66.66666%;
       }
-      &.medium-col-9 {
+      &.tablet-col-9 {
         width: 75%;
       }
-      &.medium-col-10 {
+      &.tablet-col-10 {
         width: 83.33333%;
       }
-      &.medium-col-11 {
+      &.tablet-col-11 {
         width: 91.66666%;
       }
     }
-    @media screen and (min-width: 1600px) {
-      &.large-col-1 {
+    @media screen and (min-width: $minDesktop) {
+      &.desktop-col-1 {
         width: 8.33333%;
       }
-      &.large-col-2 {
+      &.desktop-col-2 {
         width: 16.66666%;
       }
-      &.large-col-3 {
+      &.desktop-col-3 {
         width: 25%;
       }
-      &.large-col-4 {
+      &.desktop-col-4 {
         width: 33.33333%;
       }
-      &.large-col-5 {
+      &.desktop-col-5 {
         width: 41.66666%;
       }
-      &.large-col-6 {
+      &.desktop-col-6 {
         width: 50%;
       }
-      &.large-col-7 {
+      &.desktop-col-7 {
         width: 58.33333%;
       }
-      &.large-col-8 {
+      &.desktop-col-8 {
         width: 66.66666%;
       }
-      &.large-col-9 {
+      &.desktop-col-9 {
         width: 75%;
       }
-      &.large-col-10 {
+      &.desktop-col-10 {
         width: 83.33333%;
       }
-      &.large-col-11 {
+      &.desktop-col-11 {
         width: 91.66666%;
       }
     }

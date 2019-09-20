@@ -11,7 +11,7 @@ function AdminClassesListItem({item, removeClass}) {
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
 
     return (
-        <div className="adminClasses__list-item grid_col col-3 large-col-2">
+        <div className="adminClasses__list-item grid_col col-6 tablet-col-4 desktop-col-3">
             <Link to={'/admin-classes/' + item.id} className="adminClasses__list-link">
                 <h2 className="adminClasses__list-item-title">
                     {

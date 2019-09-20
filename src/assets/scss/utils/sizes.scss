@@ -3,3 +3,14 @@ $pageIndent: 40px;
 $headerHeight: 112px;
 $sectionTitleHeight: 85px;
 $filtersHeight: 80px;
+
+// === Breakpoints
+$maxSmallMobile: 375px;
+$maxMobile: 769px;
+$maxTablet: 1025px;
+$maxLaptop: 1280px;
+
+$minMobile: 376px;
+$minTablet: 770px;
+$minLaptop: 1026px;
+$minDesktop: 1281px;

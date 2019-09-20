@@ -133,7 +133,7 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
                                         {
                                             filterPages(list).map(item => {
                                                 return (
-                                                    <div className="grid_col col-3 large-col-2" key={item.id}>
+                                                    <div className="grid_col col-3 desktop-col-2" key={item.id}>
                                                         <div className="adminPages__list-item">
                                                             <Link to={'/admin-pages/' + item.slug} className="adminPages__list-link">
                                                                 <div className="adminPages__list-featured" style={{backgroundImage: 'url(' + item.featured + ')'}}>
