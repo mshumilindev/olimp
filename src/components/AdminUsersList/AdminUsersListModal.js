@@ -3,8 +3,6 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import generator from 'generate-password';
 import { updateUser } from "../../redux/actions/usersActions";
 import {connect} from "react-redux";
-import {fetchClasses} from "../../redux/actions/classesActions";
-import {fetchAllCourses} from "../../redux/actions/coursesActions";
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));

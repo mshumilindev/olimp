@@ -8,7 +8,7 @@ import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
 import { Link } from 'react-router-dom';
 import withPager from "../../utils/withPager";
-import {fetchClasses} from "../../redux/actions/classesActions";
+import {fetchAllCourses} from "../../redux/actions/coursesActions";
 
 class AdminUsersList extends React.Component {
     constructor(props, context) {
@@ -34,8 +34,12 @@ class AdminUsersList extends React.Component {
                 width: 200
             },
             {
-                title: 'class',
+                title: 'courses',
                 width: 200
+            },
+            {
+                title: 'class',
+                width: 100
             },
             {
                 width: 150
@@ -108,9 +112,25 @@ class AdminUsersList extends React.Component {
     }
 
     _renderUsers(user) {
-        const { loading, list, classesList } = this.props;
+        const { loading, list, classesList, allCoursesList } = this.props;
         const { translate, lang } = this.context;
         const selectedClass = classesList ? classesList.find(item => item.id === user.class) : null;
+        const selectedCourses = [];
+
+        if ( allCoursesList ) {
+            allCoursesList.forEach(subject => {
+                if ( subject.coursesList ) {
+                    subject.coursesList.forEach(course => {
+                        if ( course.teacher === user.id ) {
+                            selectedCourses.push({
+                                link: subject.id + '/' + course.id,
+                                courseName: course.name[lang] ? course.name[lang] : course.name['ua']
+                            })
+                        }
+                    });
+                }
+            });
+        }
 
         return (
             <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.id}>
@@ -133,8 +153,31 @@ class AdminUsersList extends React.Component {
                 <td className="table__body-cell">
                     <span>{ translate(user.role) }</span>
                 </td>
+                <td className="table__body-cell" style={{lineHeight: '20px'}}>
+                    {
+                        selectedCourses.length ? selectedCourses.map((course, index) => {
+                            return (
+                                <span key={course.courseName}>
+                                    <Link to={'/admin-courses/' + course.link}>{ course.courseName }</Link>
+                                    {
+                                        index < selectedCourses.length - 1 ?
+                                            <>,</>
+                                            :
+                                            null
+                                    }
+                                    <br/>
+                                </span>
+                            );
+                        }) : null
+                    }
+                </td>
                 <td className="table__body-cell">
-                    <span>{ user.class && selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : null }</span>
+                    {
+                        user.class && selectedClass ?
+                            <Link to={'/admin-classes/' + selectedClass.id}>{ selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] }</Link>
+                            :
+                            null
+                    }
                 </td>
                 <td className="table__body-cell">
                     <div className="table__actions">
@@ -168,11 +211,12 @@ AdminUsersList.contextType = siteSettingsContext;
 
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,
+    allCoursesList: state.coursesReducer.coursesList,
     loading: state.classesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
     deleteUser: (id) => dispatch(deleteUser(id)),
-    fetchClasses: dispatch(fetchClasses())
+    fetchAllCourses: dispatch(fetchAllCourses())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withPager(AdminUsersList));

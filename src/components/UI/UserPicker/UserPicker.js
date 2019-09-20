@@ -4,6 +4,7 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import withFilters from "../../../utils/withFilters";
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
@@ -134,7 +135,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                     }
                 </div>
                 <div className="userPicker__list-item-name">
-                    { user.name }
+                    <Link to={'/admin-users/' + user.login}>{ user.name }</Link>
                 </div>
                 {
                     multiple ?
