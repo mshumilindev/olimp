@@ -4,6 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {updateTranslation} from "../../redux/actions/translationsActions";
 import {setUpdates} from "../../redux/actions/updatesActions";
+import {Preloader} from "../../components/UI/preloader";
 
 const AdminTranslationsList = React.lazy(() => import('../../components/AdminTranslationsList/AdminTranslationsList'));
 
@@ -28,6 +29,12 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
                             </a>
                         </span>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <AdminTranslationsList isLoaded={isLoaded} setIsLoaded={setIsLoaded} showPerPage={showPerPage} list={filterTranslations()} searchQuery={searchQuery} loading={loading}/>

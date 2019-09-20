@@ -63,6 +63,12 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
                             { translate('save') }
                         </a>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 <div className="grid">
                     <div className="grid_col col-6">

@@ -68,6 +68,12 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                             { translate('create_subject') }
                         </a>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <div className="adminLibrary__list widget">

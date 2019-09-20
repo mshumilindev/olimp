@@ -107,6 +107,12 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
                             </a>
                         </span>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <div className="adminPages__list widget">

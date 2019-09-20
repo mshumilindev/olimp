@@ -59,6 +59,12 @@ class AdminUsersList extends React.Component {
                     <div className="section__title-actions">
                         <AdminUsersListModal user={this.state.userModel} usersList={list} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <div className="adminUsersList widget">
@@ -104,7 +110,7 @@ class AdminUsersList extends React.Component {
     _renderUsers(user) {
         const { loading, list, classesList } = this.props;
         const { translate, lang } = this.context;
-        const selectedClass = classesList.find(item => item.id === user.class);
+        const selectedClass = classesList ? classesList.find(item => item.id === user.class) : null;
 
         return (
             <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.id}>

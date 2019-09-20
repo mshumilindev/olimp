@@ -38,7 +38,7 @@ function Nav({nav, prefix, showLogo, hideItems, logo}) {
         if ( !hideItems || !hideItems.some(hiddenItem => item.name === hiddenItem) ) {
             return (
                 <li key={item.id} className={prefix + 'nav_item'}>
-                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {'active': pathName.includes(item.url)})}>
+                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {active: pathName.includes(item.url) && (pathName.substr(item.url.length, pathName.length).split('')[0] === '/' || pathName.substr(item.url.length, pathName.length).split('')[0] === undefined)})}>
                         <i className={prefix + 'nav_icon ' + item.icon} />
                         <span className={prefix + 'nav_text'}>{ translate(item.name) }</span>
                     </Link>

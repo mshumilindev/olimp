@@ -36,7 +36,8 @@ export default function App() {
 
                             <Route path='/admin' component={AdminPanel} />
                             <Route exact path='/admin-profile' component={AdminProfile} />
-                            <Route path='/admin-users' component={AdminUsers} />
+                            <Route exact path='/admin-users' component={AdminUsers} />
+                            <Route exact path='/admin-users/:userLogin'  render={props => <AdminProfile {...props.match} />} />
                             <Route exact path='/admin-courses' component={AdminCourses} />
                             <Route exact path="/admin-courses/:subjectID" render={props => <AdminCourses {...props.match} />} />
                             <Route exact path="/admin-courses/:subjectID/:courseID" render={props => <AdminCourses {...props.match} />} />

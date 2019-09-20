@@ -231,7 +231,4 @@ const mapStateToProps = state => ({
     coursesList: state.coursesReducer.coursesList,
     loading: state.coursesReducer.loading
 });
-const mapDispatchToProps = dispatch => ({
-    fetchAllCourses: dispatch(fetchAllCourses())
-});
-export default connect(mapStateToProps, mapDispatchToProps)(CoursesPicker);
+export default connect(mapStateToProps)(CoursesPicker);

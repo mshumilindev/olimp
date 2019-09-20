@@ -51,10 +51,10 @@ class AdminUsersListModal extends React.Component {
 
         const formFields = getUserFormFields(user, this.generatePassword);
 
-        if ( user.role === 'student' ) {
+        if ( user.role === 'student' && classesList ) {
             formFields.splice(2, 0, this.insertClass(context, classesList, user, userFields));
         }
-        if ( user.role === 'teacher' ) {
+        if ( user.role === 'teacher' && allCoursesList ) {
             formFields.splice(2, 0, this.insertCourse(context, allCoursesList, user, userFields))
         }
 
@@ -380,8 +380,6 @@ const mapStateToProps = state => ({
     loading: state.classesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    updateUser: (id, data) => dispatch(updateUser(id, data)),
-    fetchClasses: dispatch(fetchClasses()),
-    fetchAllCourses: dispatch(fetchAllCourses())
+    updateUser: (id, data) => dispatch(updateUser(id, data))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(AdminUsersListModal);

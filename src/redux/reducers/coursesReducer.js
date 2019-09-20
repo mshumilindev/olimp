@@ -9,7 +9,7 @@ import {
 
 const initialState = {
     subjectsList: [],
-    coursesList: [],
+    coursesList: null,
     lesson: null,
     loading: false
 };

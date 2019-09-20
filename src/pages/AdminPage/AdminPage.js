@@ -73,54 +73,59 @@ function AdminPage({fetchPage, params, pageData, updatePage, loading}) {
 
     return (
         <div className="adminPage">
-            {
-                page ?
-                    <section className="section">
-                        <div className="section__title-holder">
-                            <h2 className="section__title">
-                                <i className={'content_title-icon fa fa-file'} />
-                                <span className="section__title-separator">{ translate('pages') }</span>
-                                { page.name[lang] ? page.name[lang] : page.name.ua }
-                            </h2>
-                            <div className="section__title-actions">
-                                <span>
-                                    <a href="/" className="btn btn__success" onClick={e => onUpdatePage(e)} disabled={!pageUpdated}>
-                                        <i className="content_title-icon fa fa-save"/>
-                                        { translate('save') }
-                                    </a>
-                                </span>
+            <section className="section">
+                <div className="section__title-holder">
+                    <h2 className="section__title">
+                        <i className={'content_title-icon fa fa-file'} />
+                        <span className="section__title-separator">{ translate('pages') }</span>
+                        { page ? page.name[lang] ? page.name[lang] : page.name.ua : '' }
+                    </h2>
+                    <div className="section__title-actions">
+                        <span>
+                            <a href="/" className="btn btn__success" onClick={e => onUpdatePage(e)} disabled={!pageUpdated}>
+                                <i className="content_title-icon fa fa-save"/>
+                                { translate('save') }
+                            </a>
+                        </span>
+                    </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
+                </div>
+                <div className="grid">
+                    <div className="grid_col col-8">
+                        <div className="widget">
+                            <div className="widget__title">
+                                <i className="content_title-icon fa fa-file-alt"/>
+                                { translate('content') }
                             </div>
                             {
-                                loading ?
-                                    <Preloader size={60}/>
+                                page ?
+                                    <ContentEditor contentType="content" content={page.content} types={['text', 'media', 'divider', 'page']} setLessonContent={(newContent) => setContent(newContent)} loading={loading} setUpdated={() => true} />
                                     :
-                                    null
+                                    <Preloader/>
                             }
                         </div>
-                        <div className="grid">
-                            <div className="grid_col col-8">
-                                <div className="widget">
-                                    <div className="widget__title">
-                                        <i className="content_title-icon fa fa-file-alt"/>
-                                        { translate('content') }
-                                    </div>
-                                    <ContentEditor contentType="content" content={page.content} types={['text', 'media', 'divider', 'page']} setLessonContent={(newContent) => setContent(newContent)} loading={loading} setUpdated={() => true} />
-                                </div>
+                    </div>
+                    <div className="grid_col col-4">
+                        <div className="widget">
+                            <div className="widget__title">
+                                <i className="content_title-icon fa fa-info"/>
+                                { translate('info') }
                             </div>
-                            <div className="grid_col col-4">
-                                <div className="widget">
-                                    <div className="widget__title">
-                                        <i className="content_title-icon fa fa-info"/>
-                                        { translate('info') }
-                                    </div>
+                            {
+                                page ?
                                     <Form fields={pageInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
-                                </div>
-                            </div>
+                                    :
+                                    <Preloader/>
+                            }
                         </div>
-                    </section>
-                    :
-                    <Preloader/>
-            }
+                    </div>
+                </div>
+            </section>
         </div>
     );
 

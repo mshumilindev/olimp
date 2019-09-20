@@ -1,25 +1,50 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { connect } from "react-redux";
-import { fetchProfile } from '../../redux/actions/usersActions';
+import {fetchProfile, updateUser} from '../../redux/actions/usersActions';
 import userContext from "../../context/userContext";
 import {Preloader} from "../../components/UI/preloader";
+import Form from '../../components/Form/Form';
+import generator from "generate-password";
 
-function AdminProfile({profile, fetchProfile, params, loading}) {
-    const { translate } = useContext(siteSettingsContext);
+function AdminProfile({profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
+    const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ profileUpdated, setProfileUpdated ] = useState(false);
+    const [ formFields, setFormFields ] = useState(null);
+    const [ currentUser, setCurrentUser ] = useState(JSON.stringify(null));
+    const [ initialCurrentUser, setInitialCurrentUser ] = useState(JSON.stringify(null));
 
-    if ( !profile ) {
-        if ( params && params.userID ) {
-            fetchProfile(params.userID);
+    useEffect(() => {
+        if ( params && params.userLogin ) {
+            fetchProfile(params.userLogin);
         }
         else {
-            fetchProfile(user.id);
+            fetchProfile(user.login);
         }
-    }
+    }, [params]);
 
-    console.log(profile);
+    useEffect(() => {
+        if ( profile && classesList && allCoursesList ) {
+            setCurrentUser(JSON.stringify(profile));
+            setInitialCurrentUser(JSON.stringify(profile));
+        }
+    }, [params, classesList, allCoursesList, profile]);
+
+    useEffect(() => {
+        if ( classesList && allCoursesList && JSON.parse(initialCurrentUser) ) {
+            setFormFields(getUserFields());
+        }
+    }, [params, classesList, allCoursesList, initialCurrentUser]);
+
+    useEffect(() => {
+        if ( currentUser !== initialCurrentUser ) {
+            setProfileUpdated(true);
+        }
+        else {
+            setProfileUpdated(false);
+        }
+    }, [currentUser, initialCurrentUser]);
 
     return (
         <div className="adminProfile">
@@ -28,10 +53,10 @@ function AdminProfile({profile, fetchProfile, params, loading}) {
                     <h2 className="section__title">
                         <i className="content_title-icon fa fa-user" />
                         {
-                            profile ?
+                            JSON.parse(currentUser) ?
                                 <>
                                     <span className="section__title-separator">{ translate('profile') }</span>
-                                    { profile.name }
+                                    { JSON.parse(currentUser).name }
                                 </>
                                 :
                                 translate('profile')
@@ -50,23 +75,194 @@ function AdminProfile({profile, fetchProfile, params, loading}) {
                             null
                     }
                 </div>
+                <div className="grid">
+                    <div className="grid_col col-6">
+                        <div className="widget">
+                            <div className="widget__title">
+                                <i className="content_title-icon fa fa-info"/>
+                                { translate('info') }
+                            </div>
+                            {
+                                !JSON.parse(currentUser) && loading ?
+                                    <Preloader/>
+                                    :
+                                    <Form fields={formFields} loading={loading} setFieldValue={setFieldValue} />
+                            }
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     );
+
+    function setFieldValue(fieldID, value) {
+        const parsedUser = JSON.parse(currentUser);
+
+        parsedUser[fieldID] = value;
+        setCurrentUser(JSON.stringify(parsedUser));
+        setFormFields(getUserFields(parsedUser));
+    }
 
     function updateProfile(e) {
         e.preventDefault();
 
         if ( profileUpdated ) {
-            console.log('update profile');
+            const updatedFields = getUpdatedFields();
+            const userID = profile.id;
+
+            delete profile.id;
+
+            updateUser(userID, {
+                ...profile,
+                ...updatedFields
+            });
+            profile.id = userID;
+            setFormFields(getUserFields(updatedFields));
+            setProfileUpdated(false);
+            setCurrentUser(JSON.stringify(updatedFields));
+            setInitialCurrentUser(JSON.stringify(updatedFields));
         }
+    }
+
+    function getUpdatedFields() {
+        const updatedFields = {};
+
+        formFields.forEach(field => {
+            if ( field.children ) {
+                field.children.forEach(child => {
+                    if ( child.updated ) {
+                        Object.assign(updatedFields, {[child.id]: child.value});
+                    }
+                });
+            }
+            else if ( field.tabs ) {
+                field.tabs.forEach(tab => {
+                    tab.content.forEach(child => {
+                        if ( child.updated ) {
+                            Object.assign(updatedFields, {[child.id]: child.value});
+                        }
+                    });
+                });
+            }
+            else {
+                if ( field.updated ) {
+                    if ( field.id === 'class' ) {
+                        Object.assign(updatedFields, {[field.id]: field.storedValue});
+                    }
+                    else {
+                        Object.assign(updatedFields, {[field.id]: field.value});
+                    }
+                }
+            }
+        });
+        Object.assign(updatedFields, {
+            ...JSON.parse(currentUser),
+            ...updatedFields
+        });
+
+        delete updatedFields.isNew;
+
+        return updatedFields;
+    }
+
+    function getUserFields(newProfile) {
+        const useProfile = newProfile || JSON.parse(currentUser);
+        const formFields = getUserFormFields(useProfile, generatePassword);
+
+        if ( useProfile.role === 'student' && classesList ) {
+            formFields.splice(2, 0, insertClass());
+        }
+        if ( useProfile.role === 'teacher' && allCoursesList ) {
+            formFields.splice(2, 0, insertCourse())
+        }
+
+        return formFields;
+    }
+
+    function insertClass() {
+        const opts = [];
+        const selectedClass = classesList.find(item => item.id === JSON.parse(currentUser).class);
+
+        classesList.sort((a, b) => {
+            const aTitle = a.title[lang] || a.title['ua'];
+            const bTitle = b.title[lang] || b.title['ua'];
+
+            if ( aTitle < bTitle ) {
+                return -1;
+            }
+            else if ( aTitle > bTitle ) {
+                return 1;
+            }
+            return 0;
+        }).sort((a, b) => {
+            const aTitle = parseInt(a.title[lang]) || parseInt(a.title['ua']);
+            const bTitle = parseInt(b.title[lang]) || parseInt(b.title['ua']);
+
+            return aTitle - bTitle;
+        }).forEach(item => {
+            opts.push({
+                id: item.id,
+                title: item.title[lang] ? item.title[lang] : item.title['ua']
+            });
+        });
+
+        return {
+            type: 'select',
+            id: 'class',
+            name: 'class',
+            placeholder: 'class',
+            hasErrors: false,
+            value: JSON.parse(currentUser) && selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : '',
+            storedValue: JSON.parse(currentUser) && selectedClass ? selectedClass.id : '',
+            updated: false,
+            options: [
+                ...opts
+            ]
+        };
+    }
+
+    function insertCourse() {
+        const selectedCourses = [];
+
+        allCoursesList.forEach(subject => {
+            if ( subject.coursesList ) {
+                subject.coursesList.forEach(course => {
+                    if ( course.teacher === JSON.parse(currentUser).id ) {
+                        selectedCourses.push(course.name[lang] ? course.name[lang] : course.name['ua'])
+                    }
+                });
+            }
+        });
+
+        return {
+            type: 'text',
+            id: 'courses',
+            name: 'courses',
+            value: selectedCourses.join(', ') ? selectedCourses.join(', ') : '',
+            placeholder: translate('courses'),
+            readonly: true
+        }
+    }
+
+    function generatePassword(fieldID) {
+        const newPassword = generator.generate({
+            length: 16,
+            symbols: true,
+            strict: true
+        });
+
+        setFieldValue(fieldID, newPassword);
     }
 }
 const mapStateToProps = state => ({
     profile: state.usersReducer.profile,
-    loading: state.usersReducer.loading
+    loading: state.usersReducer.loading,
+    classesList: state.classesReducer.classesList,
+    allCoursesList: state.coursesReducer.coursesList,
+    usersList: state.usersReducer.usersList
 });
 const mapDispatchToProps = dispatch => ({
-    fetchProfile: profileID => dispatch(fetchProfile(profileID))
+    updateUser: (id, data) => dispatch(updateUser(id, data)),
+    fetchProfile: profileLogin => dispatch(fetchProfile(profileLogin))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(AdminProfile);

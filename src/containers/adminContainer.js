@@ -3,6 +3,8 @@ import Admin from '../pages/Admin/Admin';
 import {fetchLevelCourses, fetchSchedule, fetchCourses, fetchCalendar} from "../redux/actions/scheduleActions";
 import { fetchUsers } from '../redux/actions/usersActions';
 import { fetchTranslations } from '../redux/actions/translationsActions';
+import {fetchAllCourses} from "../redux/actions/coursesActions";
+import {fetchClasses} from "../redux/actions/classesActions";
 
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
@@ -19,7 +21,9 @@ const mapDispatchToProps = dispatch => ({
     fetchCourses: dispatch(fetchCourses()),
     fetchCalendar: dispatch(fetchCalendar()),
     fetchUsers: dispatch(fetchUsers()),
-    fetchTranslations: dispatch(fetchTranslations())
+    fetchTranslations: dispatch(fetchTranslations()),
+    fetchAllCourses: dispatch(fetchAllCourses()),
+    fetchClasses: dispatch(fetchClasses())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin)

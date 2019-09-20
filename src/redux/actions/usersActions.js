@@ -47,13 +47,16 @@ export const fetchUsersSuccess = usersList => {
 export const FETCH_PROFILE_BEGIN = 'FETCH_PROFILE_BEGIN';
 export const FETCH_PROFILE_SUCCESS = 'FETCH_PROFILE_SUCCESS';
 
-export function fetchProfile(profileID) {
-    const profileRef = db.collection('users').doc(profileID);
+export function fetchProfile(profileLogin) {
+    const profileRef = db.collection('users').where('login', '==', profileLogin);
 
     return dispatch => {
         dispatch(fetchProfileBegin());
         return profileRef.get().then(snapshot => {
-            const profile = snapshot.data();
+            const profile = {
+                ...snapshot.docs[0].data(),
+                id: snapshot.docs[0].id
+            };
 
             dispatch(fetchProfileSuccess(profile));
         });

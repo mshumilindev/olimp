@@ -10,7 +10,7 @@ export default class SiteSettingsProvider extends React.Component{
     constructor() {
         super();
         this.state = {
-            siteName: 'КОЛЕГІУМ "ОЛІМП"', // === Need to get it from db and save to localStorage
+            siteName: localStorage.getItem('siteSettings') ? JSON.parse(localStorage.getItem('siteSettings')).data.data.siteName[localStorage.getItem('lang') ? localStorage.getItem('lang') : 'ua'] : 'Колегіум "Олімп"',
             translations: [],
             lang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'ua',
             level: '1a',

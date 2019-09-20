@@ -76,6 +76,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                             { translate('save') }
                         </a>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 <div className="grid">
                     <div className="grid_col col-8">

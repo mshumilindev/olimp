@@ -68,6 +68,12 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
                             { translate('upload') }
                         </a>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <div className="adminLibrary__list widget">

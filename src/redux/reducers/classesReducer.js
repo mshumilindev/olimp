@@ -1,7 +1,7 @@
 import { CLASSES_BEGIN, CLASSES_SUCCESS, CLASS_BEGIN, CLASS_SUCCESS } from '../actions/classesActions';
 
 const initialState = {
-    classesList: [],
+    classesList: null,
     loading: false
 };
 

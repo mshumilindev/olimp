@@ -4,6 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {fetchClasses, createClass} from "../../redux/actions/classesActions";
 import generator from "generate-password";
+import {Preloader} from "../../components/UI/preloader";
 
 const AdminClassesList = React.lazy(() => import('../../components/AdminClassesList/AdminClassesList'));
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
@@ -107,6 +108,12 @@ function AdminClasses({classesList, loading, searchQuery, filters, createClass})
                             </a>
                         </span>
                     </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
                 </div>
                 { filters }
                 <AdminClassesList list={filterClasses(classesList)} loading={loading} searchQuery={searchQuery} startCreateClass={startCreateClass}/>
@@ -224,25 +231,24 @@ function AdminClasses({classesList, loading, searchQuery, filters, createClass})
             if ( editedSearchQuery.trim() ) {
                 newClasses = classesList.filter(item => item.title['ua'].toLowerCase().includes(editedSearchQuery) || item.title['ru'].toLowerCase().includes(editedSearchQuery) || item.title['en'].toLowerCase().includes(editedSearchQuery));
             }
+            return newClasses.sort((a, b) => {
+                const aTitle = a.title[lang] || a.title['ua'];
+                const bTitle = b.title[lang] || b.title['ua'];
+
+                if ( aTitle < bTitle ) {
+                    return -1;
+                }
+                else if ( aTitle > bTitle ) {
+                    return 1;
+                }
+                return 0;
+            }).sort((a, b) => {
+                const aTitle = parseInt(a.title[lang]) || parseInt(a.title['ua']);
+                const bTitle = parseInt(b.title[lang]) || parseInt(b.title['ua']);
+
+                return aTitle - bTitle;
+            });
         }
-
-        return newClasses.sort((a, b) => {
-            const aTitle = a.title[lang] || a.title['ua'];
-            const bTitle = b.title[lang] || b.title['ua'];
-
-            if ( aTitle < bTitle ) {
-                return -1;
-            }
-            else if ( aTitle > bTitle ) {
-                return 1;
-            }
-            return 0;
-        }).sort((a, b) => {
-            const aTitle = parseInt(a.title[lang]) || parseInt(a.title['ua']);
-            const bTitle = parseInt(b.title[lang]) || parseInt(b.title['ua']);
-
-            return aTitle - bTitle;
-        });
     }
 }
 const mapStateToProps = state => ({
@@ -250,7 +256,6 @@ const mapStateToProps = state => ({
     loading: state.classesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    fetchClasses: dispatch(fetchClasses()),
     createClass: (classID, classData) => dispatch(createClass(classID, classData))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminClasses, true));

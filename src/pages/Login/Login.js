@@ -129,14 +129,15 @@ export default class Login extends React.Component {
                             }
                         });
                         localStorage.setItem('user', JSON.stringify({
-                            name: snapshot.docs[0].data().name,
-                            role: snapshot.docs[0].data().role,
-                            class: snapshot.docs[0].data().class,
                             avatar: snapshot.docs[0].data().avatar,
                             email: snapshot.docs[0].data().email,
-                            tel: snapshot.docs[0].data().tel,
+                            id: snapshot.docs[0].id,
+                            name: snapshot.docs[0].data().name,
+                            role: snapshot.docs[0].data().role,
                             skype: snapshot.docs[0].data().skype,
-                            id: snapshot.docs[0].id
+                            tel: snapshot.docs[0].data().tel,
+                            login: snapshot.docs[0].data().login,
+                            class: snapshot.docs[0].data().class
                         }));
                         window.location.reload();
                     }

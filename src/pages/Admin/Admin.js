@@ -6,12 +6,12 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 
 export default function Admin({children, location, params}) {
     const adminNav = [
-        // {
-        //     id: 0,
-        //     url: '/admin',
-        //     icon: 'fa fa-home',
-        //     name: 'admin'
-        // },
+        {
+            id: 0,
+            url: '/admin',
+            icon: 'fa fa-home',
+            name: 'admin'
+        },
         {
             id: 2,
             url: '/admin-profile',
@@ -72,7 +72,9 @@ export default function Admin({children, location, params}) {
     let firstLevelPath = location.pathname;
 
     firstLevelPath = firstLevelPath.substr(1, firstLevelPath.length);
-    firstLevelPath = firstLevelPath.substr(0, firstLevelPath.indexOf('/'));
+    if ( firstLevelPath.includes('/') ) {
+        firstLevelPath = firstLevelPath.substr(0, firstLevelPath.indexOf('/'));
+    }
     firstLevelPath = '/' + firstLevelPath;
 
     const currentPage = adminNav && adminNav.length ? adminNav.find(item => item.url === firstLevelPath) ? adminNav.find(item => item.url === firstLevelPath).name : 'admin' : '';
