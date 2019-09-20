@@ -4,6 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import AdminPanelTeachers from '../../components/AdminPanel/AdminPanelTeachers';
 import AdminPanelStudents from '../../components/AdminPanel/AdminPanelStudents';
 import AdminPanelCourses from '../../components/AdminPanel/AdminPanelCourses';
+import AdminPanelNotifications from '../../components/AdminPanel/AdminPanelNotifications';
 import './adminPanel.scss';
 
 function AdminPanel({loading}) {
@@ -26,9 +27,7 @@ function AdminPanel({loading}) {
                 </div>
                 <div className="grid">
                     <div className="grid_col col-12">
-                        <div className="widget">
-                            Объявления
-                        </div>
+                        <AdminPanelNotifications/>
                     </div>
                     <div className="grid_col col-6">
                         <AdminPanelTeachers heading={translate('staff')} showCourses />

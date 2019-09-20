@@ -10,13 +10,17 @@ import { Link } from 'react-router-dom';
 import withPager from "../../utils/withPager";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
 
+const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
+
 class AdminUsersList extends React.Component {
     constructor(props, context) {
         super(props);
 
         this.state = {
             showModal: false,
-            userModel: context.getUserModel()
+            userModel: context.getUserModel(),
+            showConfirmRemove: false,
+            userToDelete: null
         };
         this.cols = [
             {
@@ -47,6 +51,8 @@ class AdminUsersList extends React.Component {
         ];
 
         this.deleteUser = this.deleteUser.bind(this);
+        this.hideShowConfirm = this.hideShowConfirm.bind(this);
+        this.onConfirmRemove = this.onConfirmRemove.bind(this);
     }
 
     render() {
@@ -108,6 +114,12 @@ class AdminUsersList extends React.Component {
                             null
                     }
                 </div>
+                {
+                    this.state.showConfirmRemove ?
+                        <Confirm message={translate('sure_to_delete_user')} confirmAction={this.onConfirmRemove} cancelAction={this.hideShowConfirm}/>
+                        :
+                        null
+                }
             </section>
         );
     }
@@ -196,11 +208,25 @@ class AdminUsersList extends React.Component {
     deleteUser(e, userID) {
         e.preventDefault();
 
-        const { translate } = this.context;
+        this.setState({
+            showConfirmRemove: true,
+            userToDelete: userID
+        });
+    }
 
-        if ( window.confirm(translate('sure_to_delete_user')) ) {
-            this.props.deleteUser(userID);
-        }
+    onConfirmRemove() {
+        this.props.deleteUser(this.state.userToDelete);
+        this.setState({
+            showConfirmRemove: false,
+            userToDelete: null
+        });
+    }
+
+    hideShowConfirm() {
+        this.setState({
+            showConfirmRemove: false,
+            userToDelete: null
+        });
     }
 }
 AdminUsersList.contextType = siteSettingsContext;

@@ -11,6 +11,8 @@ import Form from '../../components/Form/Form';
 import generator from "generate-password";
 import AdminLibraryList from "../../components/AdminLibraryList/AdminLibraryList";
 
+const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
+
 function usePrevious(value) {
     const ref = useRef(null);
 
@@ -31,6 +33,8 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
     });
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, translate('upload'));
     const prevList = usePrevious(list);
+    const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
+    const [ docToDelete, setDocToDelete ] = useState(null);
 
     useEffect(() => {
         if ( JSON.stringify(prevList) !== JSON.stringify(list) ) {
@@ -97,6 +101,12 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
                     }
                 </div>
             </div>
+            {
+                showConfirmRemove ?
+                    <Confirm message={translate('sure_to_delete_doc')} confirmAction={onConfirmRemove} cancelAction={() => setShowConfirmRemove(false)}/>
+                    :
+                    null
+            }
         </div>
     );
 
@@ -104,12 +114,17 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
         return list.filter(item => searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
 
+    function onConfirmRemove() {
+        deleteDoc(docToDelete.id, docToDelete.ref);
+        setDocToDelete(null);
+        setShowConfirmRemove(false);
+    }
+
     function onDeleteDoc(e, doc) {
         e.preventDefault();
 
-        if ( window.confirm(translate('sure_to_delete_doc')) ) {
-            deleteDoc(doc.id, doc.ref);
-        }
+        setDocToDelete(doc);
+        setShowConfirmRemove(true);
     }
 
     function onUploadFile(e) {

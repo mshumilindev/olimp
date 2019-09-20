@@ -1,0 +1,122 @@
+.notifications {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid $lightGreyColor;
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  &__typeHeading {
+    font-family: $RobotoCondensed;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    &-remove {
+      font-weight: normal;
+    }
+  }
+  &__item {
+
+  }
+  &__item-body {
+    background: $lightColor;
+    margin-bottom: 20px;
+  }
+  &__add {
+
+  }
+  &__add-btn {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $lightColor;
+    font-family: $RobotoCondensed;
+    color: $mediumGreyColor;
+    cursor: pointer;
+    transition: background .15s ease-in-out;
+    &:hover {
+      background: $lightBlueColor;
+      color: $anchorColor;
+    }
+  }
+  .nothingFound {
+    color: $mediumGreyColor;
+  }
+}
+.notification {
+  padding: 30px 40px 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  a {
+    color: $white;
+  }
+  &.message {
+    background: $lightBlueColor;
+    color: $anchorColor;
+    [class$="__icon"] {
+      background: $anchorColor;
+      color: $lightBlueColor;
+    }
+    a {
+      background: $anchorColor;
+    }
+  }
+  &.warning {
+    background: $warningTextColor;
+    color: $warningColor;
+    [class$="__icon"] {
+      background: $warningColor;
+      color: $warningTextColor;
+    }
+    a {
+      background: $warningColor;
+    }
+  }
+  &.error {
+    background: $redColor;
+    color: $errorColor;
+    [class$="__icon"] {
+      background: $errorColor;
+      color: $redColor;
+    }
+    a {
+      background: $errorColor;
+    }
+  }
+  &__icon {
+    font-size: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__content {
+    padding-left: 80px;
+    width: 100%;
+  }
+  &__heading {
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+    letter-spacing: 1px;
+  }
+  &__text {
+    margin-bottom: 20px;
+    line-height: 1.5;
+    text-align: justify;
+  }
+  &__link {
+    text-align: center;
+  }
+}

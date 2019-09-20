@@ -26,10 +26,22 @@
     right: 0;
     bottom: 0;
     display: flex;
+    flex: 1;
+  }
+  &__box-wrapper {
+    width: 100%;
+    display: flex;
+    min-height: min-content;
     justify-content: center;
-    align-items: center;
+    overflow: auto;
+  }
+  &__box-holder {
+    width: 100%;
+    text-align: center;
   }
   &__box {
+    display: inline-block;
+    vertical-align: top;
     background: $white;
     width: 90%;
     max-width: 450px;
@@ -38,6 +50,8 @@
     box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
     position: relative;
     overflow: hidden;
+    margin: 40px 20px;
+    text-align: left;
   }
   &__close {
     position: absolute;

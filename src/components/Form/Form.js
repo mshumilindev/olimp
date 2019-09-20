@@ -228,7 +228,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 </div>
                                 :
                                 <div className={classNames('form__select-holder', {hasErrors: field.required && hasErrors && !field.value})}>
-                                    <CustomSelect options={field.options} hasReset={field.hasReset} id={field.id} updated={field.updated} name={translate(field.name)} value={translate(field.value)} selectChanged={setFieldValue} placeholder={translate(field.placeholder)}/>
+                                    <CustomSelect options={field.options} hasReset={field.hasReset} id={field.id} updated={field.updated} name={translate(field.name)} value={translate(field.value)} selectChanged={setFieldValue} placeholder={translate(field.placeholder)} required={field.required} hasErrors={field.hasErrors}/>
                                 </div>
                         }
                     </div>

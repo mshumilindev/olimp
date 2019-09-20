@@ -9,6 +9,7 @@ import staticInfoReducer from './staticInfoReducers';
 import classesReducer from './classesReducer';
 import contactReducer from './contactReducers';
 import siteSettingsReducer from './siteSettingsReducer';
+import notificationsReducer from './notificationsReducer';
 
 export default combineReducers({
     configReducer: configReducer,
@@ -20,5 +21,6 @@ export default combineReducers({
     staticInfoReducer: staticInfoReducer,
     classesReducer: classesReducer,
     contactReducer: contactReducer,
-    siteSettingsReducer: siteSettingsReducer
+    siteSettingsReducer: siteSettingsReducer,
+    notificationsReducer: notificationsReducer
 });

@@ -13,15 +13,19 @@ export default function Modal({children, onHideModal, heading}) {
         <div className="modal">
             <div className="modal__overlay"/>
             <div className="modal__inner">
-                <div className="modal__box">
-                    <i className={'modal__close fa fa-times'} onClick={onHideModal} />
-                    {
-                        heading ?
-                            <h2 className="modal__heading">{ heading }</h2>
-                            :
-                            null
-                    }
-                    { children }
+                <div className="modal__box-wrapper">
+                    <div className="modal__box-holder">
+                        <div className="modal__box">
+                            <i className={'modal__close fa fa-times'} onClick={onHideModal} />
+                            {
+                                heading ?
+                                    <h2 className="modal__heading">{ heading }</h2>
+                                    :
+                                    null
+                            }
+                            { children }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,12 +1,14 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import './header.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import userContext from "../../context/userContext";
 import LanguageSelect from '../language/languageSelect';
+import Confirm from '../UI/Confirm/Confirm';
 
 export default function Header() {
     const { translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
+    const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
 
     return (
         <header className="header">
@@ -37,19 +39,22 @@ export default function Header() {
                     <LanguageSelect />
                 </div>
                 <div className="header__divider" />
-                <div className="header__actions-item header__logout" onClick={logout}>
+                <div className="header__actions-item header__logout" onClick={() => setShowConfirmLogout(true)}>
                     <i className="header__icon fas fa-sign-out-alt" />
                     <span className="header__icon-descr">{ translate('logout') }</span>
                 </div>
             </div>
+            {
+                showConfirmLogout ?
+                    <Confirm message={translate('sure_to_logout')} confirmAction={onConfirmLogout} cancelAction={() => setShowConfirmLogout(false)}/>
+                    :
+                    null
+            }
         </header>
     );
 
-    function logout() {
-        // === Confirmation prompt needs to be made into styled component
-        if ( window.confirm(translate('sure_to_logout')) ) {
-            localStorage.removeItem('user');
-            window.location.replace('/');
-        }
+    function onConfirmLogout() {
+        localStorage.removeItem('user');
+        window.location.replace('/');
     }
 }
