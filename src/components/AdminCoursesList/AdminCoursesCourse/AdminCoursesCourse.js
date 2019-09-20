@@ -67,7 +67,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
             </ContextMenu>
             {
                 checkIfIsOpen() ?
-                    course.teacher ?
+                    course.teacher && getUser(course.teacher).status === 'active' ?
                         <div className="adminCourses__list-item-teacher">
                             {
                                 usersList.length ?
@@ -76,7 +76,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
                                         <span className="adminCourses__list-item-teacher-role">
                                             { translate(getUser(course.teacher).role) }
                                         </span>
-                                        { getUser(course.teacher).name }
+                                        <Link to={'/admin-users/' + getUser(course.teacher).login}>{ getUser(course.teacher).name }</Link>
                                     </div>
                                     :
                                     null

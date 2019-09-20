@@ -56,7 +56,7 @@
     margin-top: $sectionTitleHeight !important;
   }
   ~ .grid {
-    margin-top: $sectionTitleHeight !important;
+    margin-top: $sectionTitleHeight - 20px !important;
   }
   + .filters {
     ~ .widget {
@@ -66,4 +66,7 @@
       margin-top: $sectionTitleHeight + $filtersHeight !important;
     }
   }
+}
+.color-warning {
+  color: $warningColor;
 }

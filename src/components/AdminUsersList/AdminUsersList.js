@@ -86,7 +86,8 @@ class AdminUsersList extends React.Component {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            { list.map(user => this._renderUsers(user)) }
+                                            { list.filter(user => user.status === 'active').map(user => this._renderUsers(user)) }
+                                            { list.filter(user => user.status === 'suspended').map(user => this._renderUsers(user)) }
                                         </tbody>
                                     </table>
                                 </div>
@@ -158,13 +159,8 @@ class AdminUsersList extends React.Component {
                         selectedCourses.length ? selectedCourses.map((course, index) => {
                             return (
                                 <span key={course.courseName}>
+                                    &bull;&nbsp;
                                     <Link to={'/admin-courses/' + course.link}>{ course.courseName }</Link>
-                                    {
-                                        index < selectedCourses.length - 1 ?
-                                            <>,</>
-                                            :
-                                            null
-                                    }
                                     <br/>
                                 </span>
                             );

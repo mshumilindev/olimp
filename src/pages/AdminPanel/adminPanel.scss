@@ -1,0 +1,73 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.adminDashboard {
+  &__teachersList {
+    overflow: hidden;
+    &-item {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 20px;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    &-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: $lightGreyColor;
+      background-size: cover;
+      border-radius: 100%;
+      background-position: 50% 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $mediumGreyColor;
+      font-size: 14px;
+      margin-right: 10px;
+      &.noBG {
+        background: none;
+        color: $baseColor;
+      }
+    }
+    &-info {
+      font-family: $RobotoCondensed;
+      padding-top: 5px;
+    }
+    &-name {
+      font-weight: bold;
+      a {
+        color: $baseColor;
+        &:hover {
+          color: $linkHoverColor;
+        }
+      }
+    }
+    &-courses {
+      padding-top: 5px;
+      line-height: 24px;
+      i {
+        margin-right: 5px;
+        font-size: 12px;
+        margin-top: -3px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      a {
+        color: $baseColor;
+        &:hover {
+          color: $linkHoverColor;
+        }
+      }
+      .no-courses {
+        color: $greyColor;
+      }
+    }
+    .nothingFound {
+      color: $mediumGreyColor;
+      &:not(:first-child) {
+        display: none;
+      }
+    }
+  }
+}

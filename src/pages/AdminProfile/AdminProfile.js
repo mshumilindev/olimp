@@ -180,7 +180,7 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
         const formFields = getUserFormFields(useProfile, generatePassword);
 
         if ( useProfile.role === 'student' && classesList ) {
-            formFields.splice(2, 0, insertClass());
+            formFields.splice(2, 0, insertClass(newProfile));
         }
         if ( useProfile.role === 'teacher' && allCoursesList ) {
             formFields.splice(2, 0, insertCourse())
@@ -189,9 +189,10 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
         return formFields;
     }
 
-    function insertClass() {
+    function insertClass(newProfile) {
         const opts = [];
-        const selectedClass = classesList.find(item => item.id === JSON.parse(currentUser).class);
+        const profileClass = newProfile ? newProfile.class : JSON.parse(currentUser).class;
+        const selectedClass = classesList.find(item => item.id === profileClass);
 
         classesList.sort((a, b) => {
             const aTitle = a.title[lang] || a.title['ua'];

@@ -10,7 +10,7 @@ export default function Admin({children, location, params}) {
             id: 0,
             url: '/admin',
             icon: 'fa fa-home',
-            name: 'admin'
+            name: 'dashboard'
         },
         {
             id: 2,
