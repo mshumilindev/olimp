@@ -116,6 +116,16 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                 ...profile,
                 ...updatedFields
             });
+            if ( !params ) {
+                const userToSave = {
+                    ...profile,
+                    ...updatedFields
+                };
+
+                delete userToSave.password;
+
+                localStorage.setItem('user', JSON.stringify(userToSave));
+            }
             profile.id = userID;
             setFormFields(getUserFields(updatedFields));
             setProfileUpdated(false);
