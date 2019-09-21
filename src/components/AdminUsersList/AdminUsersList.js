@@ -58,6 +58,7 @@ class AdminUsersList extends React.Component {
     render() {
         const { loading, filters, pager, list } = this.props;
         const { translate } = this.context;
+        const currentUser = JSON.parse(localStorage.getItem('user'));
 
         return (
             <section className="section">
@@ -92,7 +93,8 @@ class AdminUsersList extends React.Component {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            { list.filter(user => user.status === 'active').map(user => this._renderUsers(user)) }
+                                            { this._renderUsers(list.find(user => user.id === currentUser.id), true) }
+                                            { list.filter(user => user.id !== currentUser.id && user.status === 'active').map(user => this._renderUsers(user)) }
                                             { list.filter(user => user.status === 'suspended').map(user => this._renderUsers(user)) }
                                         </tbody>
                                     </table>
@@ -124,7 +126,7 @@ class AdminUsersList extends React.Component {
         );
     }
 
-    _renderUsers(user) {
+    _renderUsers(user, isCurrentUser) {
         const { loading, list, classesList, allCoursesList } = this.props;
         const { translate, lang } = this.context;
         const selectedClass = classesList ? classesList.find(item => item.id === user.class) : null;
@@ -146,7 +148,7 @@ class AdminUsersList extends React.Component {
         }
 
         return (
-            <tr className={classNames('table__body-row', { disabled: user.status !== 'active' })} key={user.id}>
+            <tr className={classNames('table__body-row', { disabled: user.status !== 'active', prominent: isCurrentUser })} key={user.id}>
                 <td className="table__body-cell">
                     <div className={'status status__' + user.status} title={translate(user.status)}/>
                 </td>

@@ -65,6 +65,12 @@
         background: $lightBlueColor;
       }
       @extend %s-row;
+      &.prominent {
+        background: $lightGreenColor;
+        [class$="-cell"] {
+          border-bottom: 2px solid $greenColor;
+        }
+      }
     }
     &-cell {
       @extend %s-cell;
