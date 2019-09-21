@@ -1,0 +1,20 @@
+.block {
+  margin-bottom: 40px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__heading {
+    font-family: $RobotoCondensed;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 0 -10px 20px;
+    border-bottom: 1px solid $mediumGreyColor;
+    padding: 0 10px 20px;
+    color: $purpleColor;
+    &:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+}

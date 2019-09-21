@@ -3,7 +3,6 @@ import './nav.scss';
 import { Link } from 'react-router-dom';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
-import {fetchSiteSettings} from "../../redux/actions/siteSettingsActions";
 import {connect} from "react-redux";
 import withFilters from "../../utils/withFilters";
 import {Preloader} from "../UI/preloader";
@@ -51,7 +50,4 @@ function Nav({nav, prefix, showLogo, hideItems, logo}) {
 const mapStateToProps = state => ({
     logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null
 });
-const mapDispatchToProps = dispatch => ({
-    fetchSiteSettings: dispatch(fetchSiteSettings())
-});
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(Nav, true));
+export default connect(mapStateToProps)(withFilters(Nav, true));

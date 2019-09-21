@@ -72,9 +72,14 @@ class AdminUsersList extends React.Component {
                         <i className={'content_title-icon fa fa-users'} />
                         { translate('users') }
                     </h2>
-                    <div className="section__title-actions">
-                        <AdminUsersListModal user={this.state.userModel} usersList={list} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
-                    </div>
+                    {
+                        currentUser.role === 'admin' ?
+                            <div className="section__title-actions">
+                                <AdminUsersListModal user={this.state.userModel} usersList={list} loading={loading} modalTrigger={<a href="/" className="btn btn_primary"><i className={'content_title-icon fa fa-plus'} />{ translate('add_new') }</a>} />
+                            </div>
+                            :
+                            null
+                    }
                     {
                         loading ?
                             <Preloader size={60}/>

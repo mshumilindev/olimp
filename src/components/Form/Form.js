@@ -9,9 +9,11 @@ import Tabs from '../UI/Tabs/Tabs';
 import Resizer from 'react-image-file-resizer';
 import UserPicker from "../UI/UserPicker/UserPicker";
 import LibraryPicker from "../UI/LibraryPicker/LibraryPicker";
+import userContext from "../../context/userContext";
 
 export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
     const $form = useRef(null);
+    const { user } = useContext(userContext);
     const [ hasErrors, setHasErrors ] = useState(false);
     const { translate } = useContext(SiteSettingsContext);
 
@@ -48,7 +50,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             {
                 loading ?
                     <div className="form__loading">
-                        <Preloader/>
+                        <Preloader color={user.role === 'student' ? '#7f00a3' : null} />
                     </div>
                     :
                     null

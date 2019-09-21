@@ -27,8 +27,8 @@ export default class SiteSettingsProvider extends React.Component{
                 return this.transliterize(value);
             },
             // === Need to optimize model and formfields functions, replace it with a single function
-            getUserFormFields: (user, passwordAction) => {
-                return this.getUserFormFields(user, passwordAction);
+            getUserFormFields: (user, passwordAction, isStudent) => {
+                return this.getUserFormFields(user, passwordAction, isStudent);
             },
             getUserModel: (role, id) => {
                 return this.getUserModel(role, id);
@@ -458,7 +458,7 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
-    getUserFormFields(user, passwordAction) {
+    getUserFormFields(user, passwordAction, isStudent) {
         const { translate } = this.state;
 
         // === Need to move this to json file
@@ -543,7 +543,8 @@ export default class SiteSettingsProvider extends React.Component{
                                 errorMessage: null,
                                 required: true,
                                 value: user ? user.login : '',
-                                updated: false
+                                updated: false,
+                                readonly: isStudent
                             },
                             {
                                 type: 'text',
@@ -554,11 +555,12 @@ export default class SiteSettingsProvider extends React.Component{
                                 required: true,
                                 value: user ? user.password : '',
                                 updated: false,
-                                btn: {
+                                readonly: isStudent,
+                                btn: !isStudent ? {
                                     icon: 'fas fa-random',
                                     action: passwordAction ? passwordAction : null,
                                     title: translate('generate')
-                                }
+                                } : null
                             },
                             {
                                 type: 'block',

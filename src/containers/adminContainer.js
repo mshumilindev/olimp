@@ -5,6 +5,7 @@ import { fetchUsers } from '../redux/actions/usersActions';
 import { fetchTranslations } from '../redux/actions/translationsActions';
 import {fetchAllCourses} from "../redux/actions/coursesActions";
 import {fetchClasses} from "../redux/actions/classesActions";
+import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
 
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
@@ -23,7 +24,8 @@ const mapDispatchToProps = dispatch => ({
     fetchUsers: dispatch(fetchUsers()),
     fetchTranslations: dispatch(fetchTranslations()),
     fetchAllCourses: dispatch(fetchAllCourses()),
-    fetchClasses: dispatch(fetchClasses())
+    fetchClasses: dispatch(fetchClasses()),
+    fetchSiteSettings: dispatch(fetchSiteSettings())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin)

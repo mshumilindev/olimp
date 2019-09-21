@@ -57,7 +57,7 @@ body {
 a {
   color: $anchorColor;
   text-decoration: none;
-  transition: all .25s ease-in-out;
+  transition: all .15s ease-in-out;
   &:hover {
     color: $linkHoverColor;
   }

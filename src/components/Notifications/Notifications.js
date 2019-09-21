@@ -1,5 +1,5 @@
 import React, {useContext } from 'react';
-import {fetchNotifications, updateNotification} from "../../redux/actions/notificationsActions";
+import {fetchNotifications} from "../../redux/actions/notificationsActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../UI/preloader";

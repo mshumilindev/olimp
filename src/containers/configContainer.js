@@ -1,22 +1,31 @@
 import { connect } from 'react-redux';
-import { fetchNav } from '../redux/actions/configActions';
 import {fetchLevelCourses, fetchSchedule, fetchCourses, fetchCalendar} from "../redux/actions/scheduleActions";
 import Layout from '../pages/layout';
+import {fetchUsers} from "../redux/actions/usersActions";
+import {fetchTranslations} from "../redux/actions/translationsActions";
+import {fetchAllCourses} from "../redux/actions/coursesActions";
+import {fetchClasses} from "../redux/actions/classesActions";
+import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
 
 const mapStateToProps = state => ({
-    nav: state.configReducer.nav,
     loading: state.configReducer.loading,
     scheduleList: state.scheduleReducer.scheduleList,
     levelCoursesList: state.scheduleReducer.levelCoursesList,
-    coursesList: state.scheduleReducer.coursesList
+    coursesList: state.scheduleReducer.coursesList,
+    usersList: state.usersReducer.usersList,
+    translationsList: state.usersReducer.translationsList
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchNav: dispatch(fetchNav()),
     fetchSchedule: dispatch(fetchSchedule()),
     fetchLevelCourses: dispatch(fetchLevelCourses()),
     fetchCourses: dispatch(fetchCourses()),
-    fetchCalendar: dispatch(fetchCalendar())
+    fetchCalendar: dispatch(fetchCalendar()),
+    fetchUsers: dispatch(fetchUsers()),
+    fetchTranslations: dispatch(fetchTranslations()),
+    fetchAllCourses: dispatch(fetchAllCourses()),
+    fetchClasses: dispatch(fetchClasses()),
+    fetchSiteSettings: dispatch(fetchSiteSettings())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Layout)

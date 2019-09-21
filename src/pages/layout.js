@@ -1,15 +1,48 @@
 import React, { useContext } from 'react';
 import DocumentTitle from "react-document-title";
-import Header from "../components/Header/Header";
-import Nav from "../components/Nav/Nav";
+import StudentHeader from "../components/Header/StudentHeader";
+import StudentNav from "../components/Nav/StudentNav";
 import SiteSettingsContext from "../context/siteSettingsContext";
-import Loader from '../assets/img/loader.svg';
+import userContext from "../context/userContext";
+import {Preloader} from "../components/UI/preloader";
 
-export default function Layout({children, nav, location}) {
+export default function Layout({children, location}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
-    const sortedNav = getSortedNav(nav);
+    const { user } = useContext(userContext);
+    const studentNav = [
+        {
+            id: 0,
+            url: '/',
+            icon: 'fa fa-home',
+            name: 'dashboard'
+        },
+        {
+            id: 1,
+            url: '/profile',
+            icon: 'fa fa-user',
+            name: 'profile'
+        },
+        {
+            id: 2,
+            url: '/schedule',
+            icon: 'fa fa-calendar-alt',
+            name: 'schedule'
+        },
+        {
+            id: 3,
+            url: '/class',
+            icon: 'fa fa-graduation-cap',
+            name: 'class'
+        },
+        {
+            id: 4,
+            url: '/contact',
+            icon: 'fa fa-mobile-alt',
+            name: 'contact'
+        }
+    ];
 
-    const currentPage = sortedNav && sortedNav.length ? sortedNav.find(item => item.url === location.pathname).name : '';
+    const currentPage = studentNav && studentNav.length ? studentNav.find(item => item.url === location.pathname).name : '';
 
     const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
 
@@ -17,22 +50,16 @@ export default function Layout({children, nav, location}) {
         <DocumentTitle title={ docTitle }>
             {
                 translate('current_schedule') === 'current_schedule' ?
-                    <div className="loader">
-                        <img src={Loader} alt="Loading..."/>
-                    </div>
+                    <Preloader color={'#7f00a3'}/>
                     :
-                    <div className="page">
-                        <Header/>
-                        <Nav nav={sortedNav} prefix="main--" showLogo />
-                        <div className="grid">
+                    <div className={'page ' + user.role}>
+                        <StudentHeader/>
+                        <StudentNav nav={studentNav} />
+                        <div className="content">
                             { children }
                         </div>
                     </div>
             }
         </DocumentTitle>
     );
-
-    function getSortedNav(arr) {
-        return arr.sort((a, b) => a.id - b.id);
-    }
 }

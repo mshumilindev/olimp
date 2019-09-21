@@ -5,8 +5,11 @@ import Loader from "./assets/img/loader.svg";
 import Page from './pages/page';
 
 const Login  = React.lazy( () => import('./pages/Login/Login'));
-const Schedule = React.lazy(() => import('./pages/schedule/schedule'));
-const Dashboard = React.lazy(() => import('./pages/dashboard/dashboard'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
+const StudentProfile = React.lazy(() => import ('./pages/StudentProfile/StudentProfile'));
+const StudentSchedule = React.lazy(() => import ('./pages/StudentSchedule/StudentSchedule'));
+const StudentContact = React.lazy(() => import ('./pages/StudentContact/StudentContact'));
+const StudentClass = React.lazy(() => import('./pages/StudentClass/StudentClass'));
 
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
@@ -31,8 +34,11 @@ export default function App() {
                     <Page>
                         <Suspense fallback={ _renderLoader() }>
                             <Route exact path='/' component={Dashboard} />
-                            <Route path='/schedule' component={Schedule} />
                             <Route path='/login' component={Login} />
+                            <Route path='/profile' component={StudentProfile} />
+                            <Route path='/schedule' component={StudentSchedule} />
+                            <Route path='/contact' component={StudentContact} />
+                            <Route path='/class' component={StudentClass} />
 
                             <Route path='/admin' component={AdminPanel} />
                             <Route exact path='/admin-profile' component={AdminProfile} />

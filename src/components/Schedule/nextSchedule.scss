@@ -1,0 +1,69 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.nextSchedule {
+  &.allSchedule {
+    [class$="__list"] {
+      display: block;
+      margin: 0;
+    }
+    [class$="__list-item"] {
+      width: 100%;
+      padding: 20px 0 0;
+      margin-top: 20px;
+      border-top: 1px solid $lightGreyColor;
+      &:first-child {
+        padding-top: 0;
+        margin-top: 0;
+        border-top: 0;
+      }
+    }
+  }
+  &__list {
+    display: flex;
+    margin: 0 -20px;
+  }
+  &__list-item {
+    width: 50%;
+    padding: 0 20px;
+  }
+  &__list-title {
+    font-family: $RobotoCondensed;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  &__list-courses {
+    overflow: hidden;
+    font-family: $RobotoCondensed;
+  }
+  &__list-courses-item {
+    display: flex;
+    align-items: center;
+  }
+  &__list-courses-icon {
+    width: 40px;
+    height: 40px;
+    background-color: $lightColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  &__list-courses-item-subject {
+    color: $greyColor;
+  }
+  &__list-courses-item-course {
+    font-weight: bold;
+    &:before {
+      content: '/';
+      margin: 0 5px;
+      color: $greyColor;
+      font-weight: normal;
+    }
+  }
+  &__list-courses-notFound {
+    color: $greyColor;
+  }
+}

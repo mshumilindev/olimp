@@ -1,0 +1,49 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+
+.studentHeader {
+  display: flex;
+  position: fixed;
+  background: $white;
+  left: 0;
+  top: 0;
+  right: 0;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px $pageIndent;
+  height: $studentHeaderHeight;
+  z-index: 10;
+  &__logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: $studentHeaderHeight - 10;
+    img {
+      max-height: 100%;
+    }
+  }
+  .preloader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    &:before {
+      content: '';
+      background: $white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      opacity: .75;
+    }
+  }
+}

@@ -1,5 +1,8 @@
 .section {
   margin-bottom: $pageIndent;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
   &__title-holder {
     display: flex;
     justify-content: space-between;

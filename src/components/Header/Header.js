@@ -4,9 +4,11 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 import userContext from "../../context/userContext";
 import LanguageSelect from '../language/languageSelect';
 import Confirm from '../UI/Confirm/Confirm';
+import {connect} from "react-redux";
+import { fetchClasses } from "../../redux/actions/classesActions";
 
-export default function Header() {
-    const { translate } = useContext(SiteSettingsContext);
+function Header({classesList, type}) {
+    const { translate, lang } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
 
@@ -25,14 +27,21 @@ export default function Header() {
                     { user.name }
                     <div className="header__user-role">
                         { translate(user.role) }
+                        {
+                            user.class && classesList ?
+                                <div className="header__user-class">
+                                    {
+                                        classesList.find(item => item.id === user.class).title[lang] ?
+                                            classesList.find(item => item.id === user.class).title[lang]
+                                            :
+                                            classesList.find(item => item.id === user.class).title['ua']
+                                    }
+                                </div>
+                                :
+                                null
+                        }
                     </div>
                 </div>
-                {
-                    user.class ?
-                        ', ' + user.class
-                        :
-                        null
-                }
             </div>
             <div className="header__actions">
                 <div className="header__actions-item header__language">
@@ -58,3 +67,11 @@ export default function Header() {
         window.location.replace('/');
     }
 }
+const mapStateToProps = state => ({
+    classesList: state.classesReducer.classesList
+});
+const mapDispatchToProps = dispatch => ({
+    fetchClasses: dispatch(fetchClasses())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

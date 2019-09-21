@@ -1,0 +1,74 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.studentClass {
+  &__students {
+    font-family: $RobotoCondensed;
+  }
+  &__students-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    &:nth-child(2n + 1) {
+      background: $lightColor;
+    }
+  }
+  &__students-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: $lightGreyColor;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    color: $mediumGreyColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  &__students-name {
+    font-weight: bold;
+  }
+  &__courses {
+    font-family: $RobotoCondensed;
+  }
+  &__courses-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    &:nth-child(2n + 1) {
+      background: $lightColor;
+    }
+  }
+  &__courses-icon {
+    width: 40px;
+    height: 40px;
+    background-color: $lightGreyColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  &__courses-link {
+    > * {
+      transition: color .15s ease-in-out;
+    }
+    &:hover {
+     [class$="__courses-course"] {
+        color: $linkHoverColor;
+      }
+    }
+  }
+  &__courses-subject {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
+  &__courses-course {
+    font-weight: bold;
+  }
+}
