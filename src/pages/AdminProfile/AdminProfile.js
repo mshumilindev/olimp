@@ -5,7 +5,9 @@ import {fetchProfile, updateUser} from '../../redux/actions/usersActions';
 import userContext from "../../context/userContext";
 import {Preloader} from "../../components/UI/preloader";
 import Form from '../../components/Form/Form';
+import Profile from '../../components/Profile/Profile';
 import generator from "generate-password";
+import './adminProfile.scss';
 
 function AdminProfile({profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
@@ -76,7 +78,7 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                     }
                 </div>
                 <div className="grid">
-                    <div className="grid_col col-6">
+                    <div className="grid_col col-6 desktop-col-4 adminProfile__profile">
                         <div className="widget">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-info"/>
@@ -86,7 +88,10 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                                 !JSON.parse(currentUser) && loading ?
                                     <Preloader/>
                                     :
-                                    <Form fields={formFields} loading={loading} setFieldValue={setFieldValue} />
+                                    user.role === 'teacher' && params ?
+                                        <Profile user={JSON.parse(currentUser)} allCoursesList={allCoursesList} classesList={classesList}/>
+                                        :
+                                        <Form fields={formFields} loading={loading} setFieldValue={setFieldValue} />
                             }
                         </div>
                     </div>

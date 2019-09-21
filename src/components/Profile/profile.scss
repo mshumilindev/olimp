@@ -1,0 +1,128 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.profile {
+  position: relative;
+  &__heading {
+    font-family: $RobotoCondensed;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  &__avatar-holder {
+    width: 150px;
+    max-width: 100%;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  &__avatar {
+    width: 100%;
+    padding-top: 100%;
+    background-color: $lightColor;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border-radius: 100%;
+    color: $mediumGreyColor;
+    font-size: 40px;
+    position: relative;
+    i {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  &__status {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    &.active {
+      background: $successColor;
+    }
+    &.suspended {
+      background: $greyColor;
+    }
+  }
+  &__info {
+
+  }
+  &__name {
+    text-align: center;
+    font-size: 20px;
+    font-family: $RobotoCondensed;
+    margin-bottom: 5px;
+  }
+  &__role {
+    text-transform: uppercase;
+    color: $greyColor;
+    font-family: $RobotoCondensed;
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  &__class {
+    color: $baseColor;
+    font-weight: bold;
+    &:before {
+      margin: 0 5px;
+      content: '/';
+      font-weight: normal;
+      color: $greyColor;
+    }
+  }
+  &__courses {
+    font-family: $RobotoCondensed;
+    overflow: hidden;
+  }
+  &__courses-item {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    i {
+      margin-right: 10px;
+      text-align: center;
+      width: 40px;
+      height: 40px;
+      background: $lightColor;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+    }
+  }
+  &__contact {
+    font-family: $RobotoCondensed;
+    overflow: hidden;
+    margin-top: -10px;
+  }
+  &__contact-item {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    i {
+      margin-right: 10px;
+      text-align: center;
+      width: 40px;
+      height: 40px;
+      background: $lightColor;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+    }
+  }
+  .nothingFound {
+    text-align: left;
+    color: $mediumGreyColor;
+    padding: 0;
+    font-weight: normal;
+  }
+}

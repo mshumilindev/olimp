@@ -67,7 +67,7 @@ function UpdateCourse({history, params, subjectID, course, loading, setShowUpdat
         const newCourseFields = JSON.parse(courseFields);
 
         if ( fieldID === 'teacher' ) {
-            newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === fieldID).value = value;
+            newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === fieldID).value = value || '';
             newCourseFields.find(item => item.id === 'teacher_block').children.find(item => item.id === fieldID).updated = true;
         }
         else if ( fieldID === 'textbook' ) {

@@ -186,6 +186,7 @@ class AdminUsersListModal extends React.Component {
         else {
             field.value = value;
         }
+
         field.updated = true;
 
         if ( fieldID === 'role' ) {
@@ -343,8 +344,17 @@ class AdminUsersListModal extends React.Component {
             else if ( field.tabs ) {
                 field.tabs.forEach(tab => {
                     tab.content.forEach(child => {
-                        if ( child.updated ) {
-                            Object.assign(updatedFields, {[child.id]: child.value});
+                        if ( child.type === 'block' ) {
+                            child.children.forEach(blockChild => {
+                                if ( blockChild.updated ) {
+                                    Object.assign(updatedFields, {[blockChild.id]: blockChild.value});
+                                }
+                            });
+                        }
+                        else {
+                            if ( child.updated ) {
+                                Object.assign(updatedFields, {[child.id]: child.value});
+                            }
                         }
                     });
                 });

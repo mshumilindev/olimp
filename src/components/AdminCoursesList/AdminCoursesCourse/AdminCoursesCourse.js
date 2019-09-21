@@ -8,12 +8,14 @@ import classNames from "classnames";
 import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
 import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
+import userContext from "../../../context/userContext";
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
 function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList}) {
     const { lang, translate } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -51,7 +53,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
-            <ContextMenu links={contextLinks}>
+            <ContextMenu links={contextLinks} dontShow={user.role !== 'admin'}>
                 <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
                     {
                         checkIfIsOpen() ?

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './contextmenu.scss';
 import classNames from 'classnames';
 
-export default function ContextMenu({children, links}) {
+export default function ContextMenu({children, links, dontShow}) {
     const [ left, setLeft ] = useState(0);
     const [ showContextMenu, toggleContextMenu ] = useState(false);
     const $trigger = useRef(null);
@@ -56,6 +56,9 @@ export default function ContextMenu({children, links}) {
     }
 
     function onContextMenu(e) {
+        if ( dontShow ) {
+            return true;
+        }
         e.preventDefault();
 
         toggleContextMenu(true);

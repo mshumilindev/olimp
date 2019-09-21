@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses}) {
+function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses, noControls}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showSubjectsListModal, setShowSubjectListModal ] = useState(false);
     const [ initialSelectedList, setInitialSelectedList ] = useState(selectedCourses);
@@ -35,7 +35,7 @@ function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses}
                         null
             }
             {
-                coursesList && coursesList.length ?
+                coursesList && coursesList.length && !noControls ?
                     <div className="coursesPicker__add">
                         <span className="coursesPicker__add-btn" onClick={() => setShowSubjectListModal(true)}>
                             {
@@ -151,9 +151,14 @@ function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses}
                         currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua']
                     }
                 </div>
-                <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveCourse(course)}>
-                    <i className="fa fa-trash-alt" />
-                </span>
+                {
+                    !noControls ?
+                        <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveCourse(course)}>
+                            <i className="fa fa-trash-alt" />
+                        </span>
+                        :
+                        null
+                }
             </div>
         )
     }

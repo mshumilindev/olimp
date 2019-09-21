@@ -7,12 +7,14 @@ import {connect} from "react-redux";
 import classNames from 'classnames';
 import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
+import userContext from "../../../context/userContext";
 
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 
 function AdminCoursesSubject({loading, subject, params, fetchCoursesList, deleteSubject}) {
     const { lang, translate } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ showUpdateSubject, setShowUpdateSubject ] = useState(false);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -48,7 +50,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
-            <ContextMenu links={contextLinks}>
+            <ContextMenu links={contextLinks} dontShow={user.role !== 'admin'}>
                 <Link to={'/admin-courses' + (params && params.subjectID === subject.id && !params.courseID ? '' : '/' + subject.id)} className="adminCourses__list-link">
                     {
                         checkIfIsOpen() ?
@@ -114,7 +116,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return subject.coursesList.sort((a, b) => a.index - b.index);
+        return subject.coursesList.filter(course => user.role === 'admin' || course.teacher === user.id).sort((a, b) => a.index - b.index);
     }
 }
 const mapDispatchToProps = dispatch => ({

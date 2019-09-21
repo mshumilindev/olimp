@@ -4,6 +4,7 @@ import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
 import classNames from 'classnames';
+import userContext from "../../context/userContext";
 
 const Modal = React.lazy(() => import('../UI/Modal/Modal'));
 
@@ -11,6 +12,7 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ selectedLessons, setSelectedLessons ] = useState(JSON.stringify([]));
+    const { user } = useContext(userContext);
 
     if ( day.lessons.length ) {
         day.lessons.forEach(item => {
@@ -29,7 +31,7 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
             </div>
             <div className="coursesPicker__selectedList">
                 {
-                    day.lessons.length && coursesList.length ?
+                    coursesList && day.lessons.length && coursesList.length ?
                         day.lessons.sort((a, b) => {
                             if ( a.subject < b.subject ) {
                                 return -1;
@@ -45,14 +47,19 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
                         null
                 }
             </div>
-            <div className="adminClass__schedule-item-add" onClick={() => setShowAddModal(true)}>
-                <i className="fa fa-plus" />
-            </div>
+            {
+                user.role === 'admin' ?
+                    <div className="adminClass__schedule-item-add" onClick={() => setShowAddModal(true)}>
+                        <i className="fa fa-plus" />
+                    </div>
+                    :
+                    null
+            }
             {
                 showAddModal ?
                     <Modal onHideModal={handleHideModal} heading={translate('add') + ' ' + translate('course')}>
                         {
-                            coursesList.length ?
+                            coursesList && coursesList.length ?
                                 <div className="adminClass__schedule-courses">
                                     {
                                         selectedCourses.sort((a, b) => {
@@ -94,7 +101,7 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
         }
 
         return (
-            <div key={index + lesson.course} className="coursesPicker__selectedList-item" onClick={() => quickRemoveLesson(lesson)}>
+            <div key={index + lesson.course} className="coursesPicker__selectedList-item">
                 <div className="coursesPicker__selectedList-item-subject">
                     {
                         currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua']
@@ -105,9 +112,14 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
                         currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua']
                     }
                 </div>
-                <span className="coursesPicker__selectedList-item-remove">
-                    <i className="fa fa-trash-alt"/>
-                </span>
+                {
+                    user.role === 'admin' ?
+                        <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveLesson(lesson)}>
+                            <i className="fa fa-trash-alt"/>
+                        </span>
+                        :
+                        null
+                }
             </div>
         )
     }

@@ -66,9 +66,9 @@
       }
       @extend %s-row;
       &.prominent {
-        background: $lightGreenColor;
+        background: $lightBlueColor;
         [class$="-cell"] {
-          border-bottom: 2px solid $greenColor;
+          border-bottom: 1px solid $anchorColor;
         }
       }
     }

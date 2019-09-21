@@ -17,6 +17,9 @@ function Page(props) {
         if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
             history.push('/admin');
         }
+        else if ( user.role === 'teacher' && !location.pathname.includes('admin') ) {
+            history.push('/admin');
+        }
         else if ( user.role === 'student' && location.pathname.includes('admin') ) {
             history.push('/');
         }
@@ -43,7 +46,10 @@ function Page(props) {
                         user.role === 'admin' ?
                             <AdminContainer location={location} children={children}/>
                             :
-                            null
+                            user.role === 'teacher' ?
+                                <AdminContainer location={location} children={children} isTeacher/>
+                                :
+                                null
                     :
                     children
             }

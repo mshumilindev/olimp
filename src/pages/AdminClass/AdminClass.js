@@ -7,9 +7,11 @@ import {Preloader} from "../../components/UI/preloader";
 import Form from '../../components/Form/Form';
 import './adminClass.scss';
 import AdminClassContent from '../../components/AdminClassContent/AdminClassContent';
+import userContext from "../../context/userContext";
 
 function AdminClass({fetchClass, params, classData, updateClass, loading}) {
     const { translate, lang } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ classInfoFields, setClassInfoFields ] = useState(null);
     const [ classDescrFields, setClassDescrFields ] = useState(null);
     const [ classUpdated, setClassUpdated ] = useState(false);
@@ -103,14 +105,19 @@ function AdminClass({fetchClass, params, classData, updateClass, loading}) {
                                 null
                         }
                     </h2>
-                    <div className="section__title-actions">
-                        <span>
-                            <a href="/" className="btn btn__success" onClick={e => onUpdateClass(e)} disabled={!classUpdated}>
-                                <i className="content_title-icon fa fa-save"/>
-                                { translate('save') }
-                            </a>
-                        </span>
-                    </div>
+                    {
+                        user.role === 'admin' ?
+                            <div className="section__title-actions">
+                                <span>
+                                    <a href="/" className="btn btn__success" onClick={e => onUpdateClass(e)} disabled={!classUpdated}>
+                                        <i className="content_title-icon fa fa-save"/>
+                                        { translate('save') }
+                                    </a>
+                                </span>
+                            </div>
+                            :
+                            null
+                    }
                     {
                         loading ?
                             <Preloader size={60}/>
@@ -130,7 +137,10 @@ function AdminClass({fetchClass, params, classData, updateClass, loading}) {
                             </div>
                             {
                                 JSON.parse(currentClass) ?
-                                    <Form fields={JSON.parse(classInfoFields)} setFieldValue={setInfoFields} loading={loading} />
+                                    user.role === 'admin' ?
+                                        <Form fields={JSON.parse(classInfoFields)} setFieldValue={setInfoFields} loading={loading} />
+                                        :
+                                        JSON.parse(currentClass).title[lang] ? JSON.parse(currentClass).title[lang] : JSON.parse(currentClass).title['ua']
                                     :
                                     loading ?
                                         <Preloader/>
@@ -145,7 +155,10 @@ function AdminClass({fetchClass, params, classData, updateClass, loading}) {
                             </div>
                             {
                                 JSON.parse(currentClass) ?
-                                    <Form fields={JSON.parse(classDescrFields)} setFieldValue={setDescrFields} loading={loading} />
+                                    user.role === 'admin' ?
+                                        <Form fields={JSON.parse(classDescrFields)} setFieldValue={setDescrFields} loading={loading} />
+                                        :
+                                        JSON.parse(currentClass).info[lang] ? JSON.parse(currentClass).info[lang] : JSON.parse(currentClass).info['ua']
                                     :
                                     loading ?
                                         <Preloader/>

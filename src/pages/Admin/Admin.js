@@ -4,7 +4,7 @@ import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 
-export default function Admin({children, location, params}) {
+export default function Admin({children, location, params, isTeacher}) {
     const adminNav = [
         {
             id: 0,
@@ -68,6 +68,45 @@ export default function Admin({children, location, params}) {
         }
     ];
 
+    const teacherNav = [
+        {
+            id: 0,
+            url: '/admin',
+            icon: 'fa fa-home',
+            name: 'dashboard'
+        },
+        {
+            id: 2,
+            url: '/admin-profile',
+            icon: 'fa fa-user',
+            name: 'profile'
+        },
+        {
+            id: 4,
+            url: '/admin-users',
+            icon: 'fa fa-users',
+            name: 'users'
+        },
+        {
+            id: 5,
+            url: '/admin-courses',
+            icon: 'fa fa-book',
+            name: 'courses'
+        },
+        {
+            id: 6,
+            url: '/admin-classes',
+            icon: 'fa fa-graduation-cap',
+            name: 'classes'
+        },
+        {
+            id: 8,
+            url: '/admin-library',
+            icon: 'fa fa-bookmark',
+            name: 'library'
+        }
+    ];
+
     const { siteName, translate } = useContext(SiteSettingsContext);
     let firstLevelPath = location.pathname;
 
@@ -86,7 +125,7 @@ export default function Admin({children, location, params}) {
             <div className="admin">
                 <div className="page">
                     <Header/>
-                    <Nav type={'admin'} showLogo nav={adminNav} prefix="main--"/>
+                    <Nav type={'admin'} showLogo nav={isTeacher ? teacherNav : adminNav} prefix="main--"/>
                     { children }
                 </div>
             </div>

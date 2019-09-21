@@ -5,12 +5,14 @@ import UserPicker from '../UI/UserPicker/UserPicker';
 import CoursesPicker from '../UI/CoursesPicker/CoursesPicker';
 import {connect} from "react-redux";
 import AdminClassScheduleDay from './AdminClassScheduleDay';
+import userContext from "../../context/userContext";
 
 function AdminClassContent({content, loading, setContent, usersList}) {
     const { translate } = useContext(siteSettingsContext);
     const [ students, setStudents ] = useState(null);
     const [ courses, setCourses ] = useState(JSON.stringify([]));
     const [ schedule, setSchedule ] = useState(JSON.stringify([]));
+    const { user } = useContext(userContext);
 
     const parsedContent = JSON.parse(content);
 
@@ -34,7 +36,7 @@ function AdminClassContent({content, loading, setContent, usersList}) {
                     { translate('courses') }
                 </div>
                 {
-                    <CoursesPicker selectedCourses={courses} handleAddCourses={handleAddCourses}/>
+                    <CoursesPicker selectedCourses={courses} handleAddCourses={handleAddCourses} noControls={user.role !== 'admin'}/>
                 }
             </div>
             <div className="widget">

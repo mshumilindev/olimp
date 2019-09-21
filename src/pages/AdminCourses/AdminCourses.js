@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
+import userContext from "../../context/userContext";
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
@@ -23,7 +24,9 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminCourses({history, filters, list, loading, searchQuery, params, updateSubject}) {
+function AdminCourses({history, filters, list, loading, searchQuery, params, updateSubject, allCoursesList}) {
+    const { user } = useContext(userContext);
+
     if ( params ) {
         if ( params.subjectID && list && list.length && !list.find(item => item.id === params.subjectID) ) {
             history.push('/admin-courses');
@@ -62,12 +65,17 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                         <i className="content_title-icon fa fa-book" />
                         { translate('courses') }
                     </h2>
-                    <div className="section__title-actions">
-                        <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
-                            <i className="content_title-icon fa fa-plus" />
-                            { translate('create_subject') }
-                        </a>
-                    </div>
+                    {
+                        user.role === 'admin' ?
+                            <div className="section__title-actions">
+                                <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
+                                    <i className="content_title-icon fa fa-plus" />
+                                    { translate('create_subject') }
+                                </a>
+                            </div>
+                            :
+                            null
+                    }
                     {
                         loading ?
                             <Preloader size={60}/>
@@ -78,7 +86,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                 { filters }
                 <div className="adminLibrary__list widget">
                     {
-                        list ?
+                        allCoursesList && list ?
                             list.length ?
                                 <>
                                     <div className="widget__title">
@@ -149,7 +157,23 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
     }
 
     function filterList() {
-        return list.filter(item => searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true).sort((a, b) => {
+        return list.filter(item => {
+            let sameTeacher = user.role === 'admin';
+
+            if ( user.role === 'teacher' ) {
+                allCoursesList.forEach(subjectItem => {
+                    if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
+                        subjectItem.coursesList.forEach(courseItem => {
+                            if ( courseItem.teacher === user.id ) {
+                                sameTeacher = true;
+                            }
+                        });
+                    }
+                });
+            }
+
+            return sameTeacher && (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
+        }).sort((a, b) => {
             const aName = a.name[lang] ? a.name[lang] : a.name['ua'];
             const bName = b.name[lang] ? b.name[lang] : b.name['ua'];
 
@@ -210,7 +234,8 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
 
 const mapStateToProps = state => ({
     list: state.coursesReducer.subjectsList,
-    loading: state.coursesReducer.loading
+    loading: state.coursesReducer.loading,
+    allCoursesList: state.coursesReducer.coursesList
 });
 const mapDispatchToProps = dispatch => ({
     fetchSubjects: dispatch(fetchSubjects()),

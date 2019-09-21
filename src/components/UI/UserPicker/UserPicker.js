@@ -138,7 +138,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                     <Link to={'/admin-users/' + user.login}>{ user.name }</Link>
                 </div>
                 {
-                    multiple ?
+                    !noneditable ?
                         <span className="userPicker__list-item-remove" onClick={() => quickRemoveUser(userID)}>
                             <i className="fa fa-trash-alt"/>
                         </span>

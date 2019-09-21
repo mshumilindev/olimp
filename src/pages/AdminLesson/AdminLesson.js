@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../../components/UI/preloader";
 import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
+import userContext from "../../context/userContext";
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
@@ -18,8 +19,9 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
+function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCoursesList}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
@@ -61,6 +63,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
         }
     }, [prevLesson, lesson, getLessonFields]);
 
+    checkIfEditable();
+
     return (
         lesson && lesson.id === lessonID ?
             <div className="adminLesson section">
@@ -70,12 +74,17 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                         <span className="section__title-separator">{ translate('courses') }</span>
                         { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
                     </h2>
-                    <div className="section__title-actions">
-                        <a href="/" className="btn btn__success" disabled={!lessonUpdated} onClick={saveLesson}>
-                            <i className="content_title-icon fa fa-save" />
-                            { translate('save') }
-                        </a>
-                    </div>
+                    {
+                        checkIfEditable() ?
+                            <div className="section__title-actions">
+                                <a href="/" className="btn btn__success" disabled={!lessonUpdated} onClick={saveLesson}>
+                                    <i className="content_title-icon fa fa-save" />
+                                    { translate('save') }
+                                </a>
+                            </div>
+                            :
+                            null
+                    }
                     {
                         loading ?
                             <Preloader size={60}/>
@@ -106,7 +115,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
                                 <i className="content_title-icon fa fa-info"/>
                                 { translate('info') }
                             </div>
-                            <Form fields={JSON.parse(lessonInfoFields)} setFieldValue={setInfoFieldValue} loading={loading} />
+                            {
+                                checkIfEditable() ?
+                                    <Form fields={JSON.parse(lessonInfoFields)} setFieldValue={setInfoFieldValue} loading={loading} />
+                                    :
+                                    lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']
+                            }
                         </div>
                     </div>
                 </div>
@@ -114,6 +128,31 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
             :
             <Preloader/>
     );
+
+    function checkIfEditable() {
+        let isEditable = false;
+
+        if ( user.role === 'admin' ) {
+            isEditable = true;
+        }
+        else {
+            if ( allCoursesList ) {
+                allCoursesList.forEach(subjectItem => {
+                    if ( subjectItem.coursesList.length ) {
+                        subjectItem.coursesList.forEach(courseItem => {
+                            if (courseItem.id === courseID ) {
+                                if ( courseItem.teacher === user.id ) {
+                                    isEditable = true;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        return isEditable;
+    }
 
     function setInfoFieldValue(fieldID, value) {
         const newLessonInfoFields = JSON.parse(lessonInfoFields);
@@ -169,7 +208,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading}) {
 }
 const mapStateToProps = state => ({
     lesson: state.coursesReducer.lesson,
-    loading: state.coursesReducer.loading
+    loading: state.coursesReducer.loading,
+    allCoursesList: state.coursesReducer.coursesList
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),

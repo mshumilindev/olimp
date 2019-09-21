@@ -71,6 +71,11 @@
         font-size: 20px;
         text-align: center;
       }
+      [class$="__list-item-remove"] {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
     }
   }
   &__list-item-avatar {

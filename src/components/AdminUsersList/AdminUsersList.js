@@ -16,6 +16,8 @@ class AdminUsersList extends React.Component {
     constructor(props, context) {
         super(props);
 
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+
         this.state = {
             showModal: false,
             userModel: context.getUserModel(),
@@ -44,11 +46,14 @@ class AdminUsersList extends React.Component {
             {
                 title: 'class',
                 width: 100
-            },
-            {
-                width: 150
             }
         ];
+
+        if ( currentUser.role === 'admin' ) {
+            this.cols.push({
+                width: 150
+            });
+        }
 
         this.deleteUser = this.deleteUser.bind(this);
         this.hideShowConfirm = this.hideShowConfirm.bind(this);
@@ -131,6 +136,7 @@ class AdminUsersList extends React.Component {
         const { translate, lang } = this.context;
         const selectedClass = classesList ? classesList.find(item => item.id === user.class) : null;
         const selectedCourses = [];
+        const currentUser = JSON.parse(localStorage.getItem('user'));
 
         if ( allCoursesList ) {
             allCoursesList.forEach(subject => {
@@ -170,10 +176,10 @@ class AdminUsersList extends React.Component {
                 </td>
                 <td className="table__body-cell" style={{lineHeight: '20px'}}>
                     {
-                        selectedCourses.length ? selectedCourses.map((course, index) => {
+                        selectedCourses.length ? selectedCourses.map(course => {
                             return (
                                 <span key={course.courseName}>
-                                    &bull;&nbsp;
+                                <i className="fa fa-graduation-cap" style={{marginRight: 5, fontSize: 12, marginTop: -3, display: 'inline-block', verticalAlign: 'middle'}} />
                                     <Link to={'/admin-courses/' + course.link}>{ course.courseName }</Link>
                                     <br/>
                                 </span>
@@ -184,25 +190,33 @@ class AdminUsersList extends React.Component {
                 <td className="table__body-cell">
                     {
                         user.class && selectedClass ?
-                            <Link to={'/admin-classes/' + selectedClass.id}>{ selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] }</Link>
+                            <>
+                                <i className="fa fa-graduation-cap" style={{marginRight: 5, fontSize: 12, marginTop: -3, display: 'inline-block', verticalAlign: 'middle'}} />
+                                <Link to={'/admin-classes/' + selectedClass.id}>{ selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] }</Link>
+                            </>
                             :
                             null
                     }
                 </td>
-                <td className="table__body-cell">
-                    <div className="table__actions">
-                        <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
-                        {
-                            user.id !== JSON.parse(localStorage.getItem('user')).id ?
-                                <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
-                                    <i className={'content_title-icon fa fa-user-times'} />
-                                    { translate('delete') }
-                                </a>
-                                :
-                                null
-                        }
-                    </div>
-                </td>
+                {
+                    currentUser.role === 'admin' ?
+                        <td className="table__body-cell">
+                            <div className="table__actions">
+                                <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
+                                {
+                                    user.id !== JSON.parse(localStorage.getItem('user')).id ?
+                                        <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
+                                            <i className={'content_title-icon fa fa-user-times'} />
+                                            { translate('delete') }
+                                        </a>
+                                        :
+                                        null
+                                }
+                            </div>
+                        </td>
+                        :
+                        null
+                }
             </tr>
         )
     }
