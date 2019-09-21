@@ -1,7 +1,7 @@
 /* global onTranslationsUpdate */
 
-import firebase from "../../db/firestore";
 import React from "react";
+import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const translationsRef = db.collection('updates').doc('translations');

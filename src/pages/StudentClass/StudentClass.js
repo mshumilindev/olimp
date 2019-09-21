@@ -89,8 +89,6 @@ function StudentClass({classesList, allCoursesList, usersList}) {
         const currentSubject = allCoursesList.find(item => item.id === course.subject);
         const currentCourse = currentSubject.coursesList.find(item => item.id === course.course);
 
-        console.log(currentSubject, currentCourse);
-
         return (
             <div className="studentClass__courses-item" key={course.course}>
                 <div className="studentClass__courses-icon">

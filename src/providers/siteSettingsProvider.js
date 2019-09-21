@@ -67,6 +67,7 @@ export default class SiteSettingsProvider extends React.Component{
         if ( !localStorage.getItem('lang') ) {
             localStorage.setItem('lang', 'ua');
         }
+        this.getUpdates();
         this.getTranslations();
     }
 
@@ -84,6 +85,36 @@ export default class SiteSettingsProvider extends React.Component{
                 }
             </SiteSettingsContext.Provider>
         )
+    }
+
+    getUpdates() {
+        const updatesCollection = db.collection('updates');
+        const savedUpdates = localStorage.getItem('updates') ? JSON.parse(localStorage.getItem('updates')) : null;
+
+        updatesCollection.get().then(snapshot => {
+            const translationsUpdates = snapshot.docs.find(doc => doc.id === 'translations');
+
+            if ( savedUpdates ) {
+                if ( translationsUpdates.exists && (!savedUpdates.translations || translationsUpdates.data().date > savedUpdates.translations) ) {
+                    localStorage.removeItem('translationsua');
+                    localStorage.removeItem('translationsru');
+                    localStorage.removeItem('translationsen');
+                    localStorage.removeItem('translationsList');
+                    localStorage.setItem('updates', JSON.stringify({
+                        ...savedUpdates,
+                        translations: translationsUpdates.data().date
+                    }));
+                    this.getTranslations();
+                }
+            }
+            else {
+                if ( translationsUpdates.exists ) {
+                    localStorage.setItem('updates', JSON.stringify({
+                        translations: translationsUpdates.data().date
+                    }));
+                }
+            }
+        });
     }
 
     setLang(lang) {
