@@ -1,6 +1,7 @@
 .block {
   margin-bottom: 40px;
-  &:last-child {
+  &:last-child,
+  &.grid_col {
     margin-bottom: 0;
   }
   &__heading {

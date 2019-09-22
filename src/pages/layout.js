@@ -42,7 +42,7 @@ export default function Layout({children, location}) {
         }
     ];
 
-    const currentPage = studentNav && studentNav.length ? studentNav.find(item => item.url === location.pathname).name : '';
+    const currentPage = studentNav && studentNav.length ? studentNav.find(item => item.url === location.pathname) && studentNav.find(item => item.url === location.pathname).name : '';
 
     const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
 

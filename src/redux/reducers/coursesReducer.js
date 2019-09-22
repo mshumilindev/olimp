@@ -4,12 +4,15 @@ import {
     LESSON_BEGIN,
     LESSON_SUCCESS,
     ALL_COURSES_BEGIN,
-    ALL_COURSES_SUCCESS
+    ALL_COURSES_SUCCESS,
+    MODULES_LESSONS_BEGIN,
+    MODULES_LESSONS_SUCCESS
 } from '../actions/coursesActions';
 
 const initialState = {
     subjectsList: [],
     coursesList: null,
+    modulesLessons: null,
     lesson: null,
     loading: false
 };
@@ -53,6 +56,19 @@ export default function usersReducer(state = initialState, action) {
                 ...state,
                 loading: false,
                 lesson: action.payload.lesson
+            };
+
+        case MODULES_LESSONS_BEGIN:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case MODULES_LESSONS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                modulesLessons: action.payload.modulesLessons
             };
 
         default:

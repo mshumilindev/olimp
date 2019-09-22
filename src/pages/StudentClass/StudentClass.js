@@ -95,7 +95,7 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                     <i className="fa fa-book" />
                 </div>
                 <div className="studentClass__courses-title">
-                    <Link to={'/course/' + currentSubject.id + '/' + currentCourse.id} className="studentClass__courses-link">
+                    <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id} className="studentClass__courses-link">
                         <span className="studentClass__courses-subject">
                             {
                                 currentSubject.name[lang] ?

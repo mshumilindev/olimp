@@ -31,8 +31,6 @@ function StudentContact({contactList, loading}) {
     );
 
     function _renderContact(item) {
-        console.log(item);
-
         return (
             <div className="studentContact__list-item" key={item.id}>
                 <div className="studentContact__list-item-name">

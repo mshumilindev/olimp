@@ -64,12 +64,17 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                                 translate('profile')
                         }
                     </h2>
-                    <div className="section__title-actions">
-                        <a href="/" className="btn btn__success" disabled={!profileUpdated} onClick={e => updateProfile(e)}>
-                            <i className="content_title-icon fa fa-save" />
-                            { translate('save') }
-                        </a>
-                    </div>
+                    {
+                        user.role !== 'admin' && params ?
+                            null
+                            :
+                            <div className="section__title-actions">
+                                <a href="/" className="btn btn__success" disabled={!profileUpdated} onClick={e => updateProfile(e)}>
+                                    <i className="content_title-icon fa fa-save" />
+                                    { translate('save') }
+                                </a>
+                            </div>
+                    }
                     {
                         loading ?
                             <Preloader size={60}/>

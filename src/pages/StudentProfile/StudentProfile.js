@@ -55,19 +55,24 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
                     <i className="content_title-icon fa fa-user" />
                     { translate('profile') }
                 </h2>
-                <div className="content__title-actions">
-                    <a href="/" className="btn btn__success" disabled={!profileUpdated} onClick={e => updateProfile(e)}>
-                        <i className="content_title-icon fa fa-save" />
-                        { translate('save') }
-                    </a>
-                </div>
+                {
+                    !params ?
+                        <div className="content__title-actions">
+                            <a href="/" className="btn btn__success" disabled={!profileUpdated} onClick={e => updateProfile(e)}>
+                                <i className="content_title-icon fa fa-save" />
+                                { translate('save') }
+                            </a>
+                        </div>
+                        :
+                        null
+                }
             </div>
             <div className="studentProfile__content">
                 {
                     !JSON.parse(currentUser) && loading ?
                         <Preloader color={'#7f00a3'}/>
                         :
-                        user.role === 'teacher' && params ?
+                        user.role !== 'admin' && params ?
                             <Profile user={JSON.parse(currentUser)} allCoursesList={allCoursesList} classesList={classesList}/>
                             :
                             <Form fields={formFields} loading={loading} setFieldValue={setFieldValue} />

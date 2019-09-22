@@ -23,4 +23,14 @@
       cursor: default;
     }
   }
+  &.student {
+    line-height: 1;
+    .pager__item {
+      &:hover,
+      &.active {
+        background: $purpleColor;
+        color: $white;
+      }
+    }
+  }
 }

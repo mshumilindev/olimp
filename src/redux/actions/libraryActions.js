@@ -50,6 +50,36 @@ export function fetchLibrary() {
     }
 }
 
+export const FETCH_TEXTBOOK_BEGIN = 'FETCH_TEXTBOOK_BEGIN';
+export const FETCH_TEXTBOOK_SUCCESS = 'FETCH_TEXTBOOK_SUCCESS';
+
+export function fetchTextbook(textbookID) {
+    const textbookRef = db.collection('library').doc(textbookID);
+
+    return dispatch => {
+        dispatch(fetchTextbookBegin());
+
+        return textbookRef.get().then(snapshot => {
+            dispatch(fetchTextbookSuccess({
+                ...snapshot.data(),
+                id: snapshot.id
+            }));
+        });
+    }
+}
+
+export const fetchTextbookBegin = () => {
+    return {
+        type: FETCH_TEXTBOOK_BEGIN
+    }
+};
+export const fetchTextbookSuccess = textbook => {
+    return {
+        type: FETCH_TEXTBOOK_SUCCESS,
+        payload: { textbook }
+    }
+};
+
 export const fetchLibraryBegin = () => {
     return {
         type: FETCH_LIBRARY_BEGIN

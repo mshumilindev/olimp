@@ -66,6 +66,68 @@ export function fetchAllCourses() {
     }
 }
 
+export function fetchModulesLessons(subjectID, courseID) {
+    const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
+    const modulesLessons = [];
+    let modulesI = 0;
+
+    return dispatch => {
+        dispatch(modulesLessonBegin());
+
+        modulesLessons.splice(0, modulesLessons.length);
+
+        const getLessons = snapshot => {
+            const module = snapshot.docs[modulesI];
+            const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id).collection('lessons');
+
+            modulesLessons.push({
+                ...module.data(),
+                id: module.id,
+                lessons: []
+            });
+
+            lessonsRef.get().then(lessons => {
+                if ( !lessons.empty ) {
+                    if ( lessons.docs.length ) {
+                        lessons.docs.forEach(lesson => {
+                            modulesLessons.find(item => item.id === module.id).lessons.push({
+                                ...lesson.data(),
+                                id: lesson.id
+                            });
+                        });
+                        modulesI++;
+
+                        if ( modulesI < snapshot.docs.length ) {
+                            getLessons(snapshot);
+                        }
+                        else {
+                            dispatch(modulesLessonSuccess(modulesLessons));
+                        }
+                    }
+                }
+                else {
+                    modulesI++;
+                    if ( modulesI < snapshot.docs.length ) {
+                        getLessons(snapshot);
+                    }
+                    else {
+                        dispatch(modulesLessonSuccess(modulesLessons));
+                    }
+                }
+            });
+        };
+
+        return modulesRef.get().then(snapshot => {
+            if ( snapshot.docs.length ) {
+                getLessons(snapshot);
+            }
+            else {
+                dispatch(modulesLessonSuccess(modulesLessons));
+            }
+        });
+    }
+}
+
 export function fetchCoursesList(subjectID) {
     const courseListRef = db.collection('courses').doc(subjectID).collection('coursesList');
 
@@ -546,9 +608,23 @@ export const lessonSuccess = lesson => {
     }
 };
 
+export const modulesLessonBegin = () => {
+    return {
+        type: MODULES_LESSONS_BEGIN
+    }
+};
+export const modulesLessonSuccess = modulesLessons => {
+    return {
+        type: MODULES_LESSONS_SUCCESS,
+        payload: { modulesLessons }
+    }
+};
+
 export const COURSES_BEGIN = 'COURSES_BEGIN';
 export const COURSES_SUCCESS = 'COURSES_SUCCESS';
 export const ALL_COURSES_BEGIN = 'ALL_COURSES_BEGIN';
 export const ALL_COURSES_SUCCESS = 'ALL_COURSES_SUCCESS';
 export const LESSON_BEGIN = 'LESSON_BEGIN';
 export const LESSON_SUCCESS = 'LESSON_SUCCESS';
+export const MODULES_LESSONS_BEGIN = 'MODULES_LESSONS_BEGIN';
+export const MODULES_LESSONS_SUCCESS = 'MODULES_LESSONS_SUCCESS';

@@ -1,0 +1,107 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.studentCourse {
+  font-family: $RobotoCondensed;
+  &__teacher {
+    display: flex;
+    align-items: center;
+  }
+  &__teacher-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: $lightColor;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $mediumGreyColor;
+    margin-right: 10px;
+  }
+  &__teacher-name {
+    font-weight: bold;
+  }
+  &__textbook {
+    position: relative;
+    .preloader {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      justify-content: flex-start;
+      align-items: center;
+      svg {
+        margin-left: 5px;
+      }
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        bottom: 0;
+        z-index: -1;
+        background: $lightColor;
+        border-radius: 100%;
+      }
+    }
+  }
+  &__textbook-item {
+    display: flex;
+    align-items: center;
+  }
+  &__textbook-icon {
+    width: 40px;
+    height: 40px;
+    background-color: $lightColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  &__textbook-notFound {
+    display: flex;
+    align-items: center;
+    color: $mediumGreyColor;
+  }
+  &__modules {
+
+  }
+  &__modules-item {
+    margin-bottom: 40px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  &__modules-notFound {
+    color: $mediumGreyColor;
+  }
+  &__module-name {
+    text-transform: uppercase;
+  }
+  &__module-lessons-item {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+  }
+  &__module-lessons-icon {
+    width: 40px;
+    height: 40px;
+    background-color: $lightColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  &__module-lessons-notFound {
+    margin-top: 10px;
+    color: $mediumGreyColor;
+  }
+}

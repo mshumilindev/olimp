@@ -64,7 +64,7 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
                 <div className="nextSchedule__list-courses-icon">
                     <i className="fa fa-graduation-cap" />
                 </div>
-                <Link to={'/course/' + currentSubject.id + '/' + currentCourse.id}>
+                <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id}>
                     <span className="nextSchedule__list-courses-item-subject">
                         { currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] }
                     </span>
