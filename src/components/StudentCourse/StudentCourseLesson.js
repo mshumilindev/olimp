@@ -104,11 +104,13 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList}) {
     }
 
     function changePage(index) {
-        window.scrollTo({
-            top: 0,
-            left: 0
-        });
-        setContentPage(index);
+        if ( index !== contentPage ) {
+            window.scrollTo({
+                top: 0,
+                left: 0
+            });
+            setContentPage(index);
+        }
     }
 
     function _renderBlock(block) {
