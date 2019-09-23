@@ -71,6 +71,7 @@
   &__class {
     color: $baseColor;
     font-weight: bold;
+    display: flex;
     &:before {
       margin: 0 5px;
       content: '/';
