@@ -238,7 +238,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
 
             case 'checkbox':
                 return (
-                    <div className="form__field-holder">
+                    <div className={'form__field-holder form__checkbox-holder'}>
                         {
                             field.readonly ?
                                 <span className={classNames('form__checkbox', {checked: field.value === field.checked})}/>
@@ -253,9 +253,50 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     </div>
                 );
 
+            case 'checkboxes':
+                return (
+                    <div className={classNames('form__field-holder form__radio-holder checkboxes', { hasIcons: field.options[0].icon, alt: field.variant === 'alt' })}>
+                        <div className="form__radio-heading">
+                            { translate(field.name) }:
+                        </div>
+                        {
+                            field.options.map(opt => {
+                                return (
+                                    <div className="form__radio-item" key={opt.name}>
+                                        <input type="checkbox" className="form__checkbox" id={field.name + '-' + opt.name} name={field.name} checked={field.value.indexOf(opt.name) !== -1 } onChange={() => handleFieldChange(field.id, opt.name)}/>
+                                        {
+                                            opt.icon ?
+                                                <label htmlFor={field.name + '-' + opt.name}>
+                                                    <TextTooltip text={translate(opt.name)}>
+                                                        <i className={opt.icon} />
+                                                    </TextTooltip>
+                                                </label>
+                                                :
+                                                <>
+                                                    <label htmlFor={field.name + '-' + opt.name}>
+                                                        {
+                                                            field.variant === 'alt' ?
+                                                                field.value.indexOf(opt.name) !== -1 ?
+                                                                    <i className="content_title-icon far fa-check-square"/>
+                                                                    :
+                                                                    <i className="content_title-icon far fa-square"/>
+                                                                :
+                                                                null
+                                                        }
+                                                        { translate(opt.name) }
+                                                    </label>
+                                                </>
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                );
+
             case 'radio':
                 return (
-                    <div className={classNames('form__field-holder form__radio-holder', { hasIcons: field.options[0].icon })}>
+                    <div className={classNames('form__field-holder form__radio-holder', { hasIcons: field.options[0].icon, alt: field.variant === 'alt' })}>
                         <div className="form__radio-heading">
                             { translate(field.name) }:
                         </div>
@@ -272,7 +313,20 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                                     </TextTooltip>
                                                 </label>
                                                 :
-                                                <label htmlFor={field.name + '-' + opt.name}>{ translate(opt.name) }</label>
+                                                <>
+                                                    <label htmlFor={field.name + '-' + opt.name}>
+                                                        {
+                                                            field.variant === 'alt' ?
+                                                                field.value === opt.name ?
+                                                                    <i className="content_title-icon far fa-dot-circle"/>
+                                                                    :
+                                                                    <i className="content_title-icon far fa-circle"/>
+                                                                :
+                                                                null
+                                                        }
+                                                        { translate(opt.name) }
+                                                    </label>
+                                                </>
                                         }
                                     </div>
                                 )

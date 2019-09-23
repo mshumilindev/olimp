@@ -1,0 +1,60 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+
+.footer {
+  background: $baseColor;
+  color: $white;
+  margin: 0 -$pageIndent;
+  padding: $pageIndent;
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    .grid {
+      width: 100%;
+    }
+  }
+  &__list {
+    overflow: hidden;
+  }
+  &__heading {
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: $RobotoCondensed;
+  }
+  &__list-item {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  &__list-icon {
+    margin-right: 10px;
+  }
+  &__logo {
+    width: calc(#{$studentNavWidth});
+    margin-right: $pageIndent * 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    img {
+      max-height: 50px;
+    }
+  }
+  .studentContact__list {
+    display: block;
+    &__item {
+      width: 100%;
+    }
+  }
+  i {
+    background: none !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  .preloader {
+    width: 100%;
+  }
+}

@@ -10,7 +10,9 @@ const StudentProfile = React.lazy(() => import ('./pages/StudentProfile/StudentP
 const StudentSchedule = React.lazy(() => import ('./pages/StudentSchedule/StudentSchedule'));
 const StudentContact = React.lazy(() => import ('./pages/StudentContact/StudentContact'));
 const StudentClass = React.lazy(() => import('./pages/StudentClass/StudentClass'));
+const StudentCourses = React.lazy(() => import('./pages/StudentCourses/StudentCourses'));
 const StudentCourse = React.lazy(() => import('./pages/StudentCourse/StudentCourse'));
+const StudentPage = React.lazy(() => import('./pages/StudentPage/StudentPage'));
 
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
@@ -41,8 +43,10 @@ export default function App() {
                             <Route path='/contact' component={StudentContact} />
                             <Route path='/class' component={StudentClass} />
                             <Route exact path='/user/:userLogin' render={props => <StudentProfile {...props.match} />} />
+                            <Route exact path='/courses' render={props => <StudentCourses {...props.match} />} />
                             <Route exact path='/courses/:subjectID/:courseID' render={props => <StudentCourse {...props.match} />} />
                             <Route exact path='/courses/:subjectID/:courseID/:moduleID/:lessonID' render={props => <StudentCourse {...props.match} />} />
+                            <Route exact path='/page/:pageSlug' render={props => <StudentPage {...props.match} />} />
 
                             <Route path='/admin' component={AdminPanel} />
                             <Route exact path='/admin-profile' component={AdminProfile} />

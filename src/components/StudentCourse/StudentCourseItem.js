@@ -5,9 +5,12 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import {downloadDoc} from "../../redux/actions/libraryActions";
 import {fetchModulesLessons} from "../../redux/actions/coursesActions";
+import userContext from "../../context/userContext";
+import classNames from 'classnames';
 
 function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchTextbook, textbook, downloadDoc, libraryLoading, fetchModulesLessons}) {
     const { translate, lang } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
     let currentTeacher = null;
 
@@ -128,8 +131,13 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
     function _renderLesson(moduleID, lesson) {
         return (
             <div className="studentCourse__module-lessons-item" key={lesson.id}>
-                <div className="studentCourse__module-lessons-icon">
-                    <i className="fa fa-paragraph" />
+                <div className={classNames('studentCourse__module-lessons-icon', { hasScore: checkIfHasScore(moduleID, lesson.id) })}>
+                    {
+                        checkIfHasScore(moduleID, lesson.id) ?
+                            <i className="fa fa-check" />
+                            :
+                            <i className="fa fa-paragraph" />
+                    }
                 </div>
                 <Link to={'/courses/' + params.subjectID + '/' + params.courseID + '/' + moduleID + '/' + lesson.id}>
                     <span className="studentCourse__module-lesson-name">
@@ -141,6 +149,14 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                         }
                     </span>
                 </Link>
+                {
+                    checkIfHasScore(moduleID, lesson.id) ?
+                        <div className="studentCourse__score">
+                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) } / { lesson.maxScore }</span>
+                        </div>
+                        :
+                        null
+                }
             </div>
         )
     }
@@ -202,6 +218,16 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                 </div>
             </>
         )
+    }
+
+    function checkIfHasScore(moduleID, lessonID) {
+        let hasScore = null;
+
+        if ( user && user.scores && user.scores[params.subjectID] && user.scores[params.subjectID][params.courseID] && user.scores[params.subjectID][params.courseID][moduleID] && user.scores[params.subjectID][params.courseID][moduleID][lessonID] ) {
+            hasScore = user.scores[params.subjectID][params.courseID][moduleID][lessonID].gotScore;
+        }
+
+        return hasScore;
     }
 
     function downloadTextbook(e) {

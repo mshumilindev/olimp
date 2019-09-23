@@ -10,6 +10,14 @@ function Page(props) {
     const { user } = useContext(userContext);
     const {location, children, history} = props;
 
+    let prevLocation = {};
+    history.listen(location => {
+        const pathChanged = prevLocation.pathname !== location.pathname;
+        const hashChanged = prevLocation.hash !== location.hash;
+        if ( pathChanged || hashChanged ) window.scrollTo(0, 0);
+        prevLocation = location;
+    });
+
     if ( !localStorage.getItem('user') ) {
         location.pathname = '/login';
     }

@@ -40,16 +40,21 @@
   &__list-courses-item {
     display: flex;
     align-items: center;
+    margin-top: 10px;
+    &:first-child {
+      margin-top: 0;
+    }
   }
   &__list-courses-icon {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background-color: $lightColor;
     border-radius: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 10px;
+    font-size: 12px;
   }
   &__list-courses-item-subject {
     color: $greyColor;

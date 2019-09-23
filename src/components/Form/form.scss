@@ -312,6 +312,38 @@
     display: flex;
     align-items: center;
     padding: 0 10px;
+    &.alt,
+    &.checkboxes {
+      display: block;
+      padding: 0;
+      font-family: $RobotoCondensed;
+      letter-spacing: .5px;
+      [class$="__radio-heading"] {
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-size: initial;
+      }
+      [class$="__radio-item"] {
+        margin-top: 10px;
+        &:after {
+          display: none;
+        }
+      }
+      label {
+        padding: 0;
+        font-size: initial;
+        &:hover {
+          color: $linkHoverColor;
+        }
+      }
+      input[type="checkbox"] {
+        &:checked {
+          + label {
+            color: $linkHoverColor;
+          }
+        }
+      }
+    }
   }
   &__radio-heading {
     font-size: 14px;

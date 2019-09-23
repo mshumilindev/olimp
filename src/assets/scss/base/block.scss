@@ -17,5 +17,17 @@
       display: block;
       clear: both;
     }
+    &.teacher {
+      color: $baseColor;
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+  &__heading-subheading {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
   }
 }

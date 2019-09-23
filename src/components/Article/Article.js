@@ -1,17 +1,31 @@
 import React, { useState, useContext } from 'react';
 import classNames from "classnames";
 import siteSettingsContext from "../../context/siteSettingsContext";
+import ArticleAnswer from './ArticleAnswer';
+import {Preloader} from "../UI/preloader";
 
-export default function Article({content}) {
+export default function Article({content, type, finishQuestions, loading}) {
     const { lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
+    const [ answers, setAnswers ] = useState({
+        gotScore: 0,
+        blocks: []
+    });
 
     return (
         <article className="article">
             { pagifyContent()[contentPage].map(block => _renderBlock(block)) }
             {
-                pagifyContent().length > 1 ?
+                pagifyContent().length > 1 && type === 'content' ?
                     _renderPager(pagifyContent().length)
+                    :
+                    null
+            }
+            {
+                loading ?
+                    <div className="article__preloader">
+                        <Preloader/>
+                    </div>
                     :
                     null
             }
@@ -65,6 +79,12 @@ export default function Article({content}) {
                         :
                         null
                 }
+                {
+                    block.type === 'answers' ?
+                        <ArticleAnswer block={block} setContentPage={setContentPage} setAnswer={setAnswer} />
+                        :
+                        null
+                }
             </div>
         )
     }
@@ -90,7 +110,7 @@ export default function Article({content}) {
 
             sortedContent.forEach((block, blockIndex) => {
                 if ( blockIndex >= pageI ) {
-                    if ( block.type === 'page' ) {
+                    if ( block.type === 'page' && !isPage ) {
                         isPage = true;
                         pageI = blockIndex + 1;
                     }
@@ -104,5 +124,21 @@ export default function Article({content}) {
         });
 
         return pages;
+    }
+
+    function setAnswer(block, score) {
+        answers.gotScore += score;
+        answers.blocks.push({
+            id: block,
+            score: score
+        });
+        if ( contentPage + 1 === pagifyContent().length ) {
+            finishQuestions(answers);
+        }
+        else {
+            setContentPage(contentPage + 1);
+
+            setAnswers(answers);
+        }
     }
 }

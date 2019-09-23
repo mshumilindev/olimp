@@ -1,5 +1,6 @@
 .article {
   line-height: 1.5;
+  position: relative;
   &__block {
     margin-bottom: 20px;
     &.type-text {
@@ -24,6 +25,9 @@
       }
       p {
         margin-bottom: 20px;
+        br {
+          display: none;
+        }
       }
       pre {
         margin-bottom: 20px;
@@ -66,5 +70,32 @@
     border: none;
     border-top: 1px solid $mediumGreyColor;
     margin: 40px 0;
+  }
+  &__answers-confirm {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  &__preloader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      background: $white;
+      opacity: .75;
+    }
   }
 }

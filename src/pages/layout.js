@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import DocumentTitle from "react-document-title";
 import StudentHeader from "../components/Header/StudentHeader";
 import StudentNav from "../components/Nav/StudentNav";
+import Footer from '../components/Footer/Footer';
 import SiteSettingsContext from "../context/siteSettingsContext";
 import userContext from "../context/userContext";
 import {Preloader} from "../components/UI/preloader";
@@ -30,12 +31,18 @@ export default function Layout({children, location}) {
         },
         {
             id: 3,
+            url: '/courses',
+            icon: 'fa fa-book',
+            name: 'courses'
+        },
+        {
+            id: 4,
             url: '/class',
             icon: 'fa fa-graduation-cap',
             name: 'class'
         },
         {
-            id: 4,
+            id: 5,
             url: '/contact',
             icon: 'fa fa-mobile-alt',
             name: 'contact'
@@ -52,13 +59,16 @@ export default function Layout({children, location}) {
                 translate('current_schedule') === 'current_schedule' ?
                     <Preloader color={'#7f00a3'}/>
                     :
-                    <div className={'page ' + user.role}>
-                        <StudentHeader/>
-                        <StudentNav nav={studentNav} />
-                        <div className="content">
-                            { children }
+                    <>
+                        <div className={'page ' + user.role}>
+                            <StudentHeader/>
+                            <StudentNav nav={studentNav} />
+                            <div className="content mapContainer">
+                                { children }
+                            </div>
+                            <Footer/>
                         </div>
-                    </div>
+                    </>
             }
         </DocumentTitle>
     );

@@ -137,7 +137,8 @@ export default class Login extends React.Component {
                             skype: snapshot.docs[0].data().skype,
                             tel: snapshot.docs[0].data().tel,
                             login: snapshot.docs[0].data().login,
-                            class: snapshot.docs[0].data().class
+                            class: snapshot.docs[0].data().class,
+                            scores: snapshot.docs[0].data().scores
                         }));
                         window.location.reload();
                     }

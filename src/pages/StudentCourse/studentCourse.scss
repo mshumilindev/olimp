@@ -91,14 +91,29 @@
     align-items: center;
   }
   &__module-lessons-icon {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background-color: $lightColor;
     border-radius: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 10px;
+    font-size: 12px;
+    &.hasScore {
+      background-color: $successColor;
+      color: $white;
+    }
+  }
+  &__score {
+    &:before {
+      content: '—';
+      margin: 0 10px;
+    }
+    span {
+      color: $successColor;
+      font-weight: bold;
+    }
   }
   &__module-lessons-notFound {
     margin-top: 10px;

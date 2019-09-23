@@ -1,0 +1,33 @@
+@import '../../assets/scss/utils/colors';
+
+.studentPage {
+  &__featured {
+    padding-top: 28.125%;
+    background-size: cover;
+    margin-bottom: 40px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
+  &__preloader {
+    position: absolute;
+    left: 0;
+    top: 85px;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      background: $white;
+      opacity: .75;
+    }
+  }
+}

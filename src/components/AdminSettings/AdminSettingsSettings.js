@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
+import MapContainer from '../../components/Map/Map';
 
 function AdminSettingsSettings({siteSettings, updateModel}) {
     const [ siteSettingsFields, setSiteSettingsFields ] = useState([]);
@@ -45,6 +46,12 @@ function AdminSettingsSettings({siteSettings, updateModel}) {
                         value: JSON.parse(siteSettings).siteName.en
                     }
                 ]
+            },
+            {
+                type: 'text',
+                id: 'address',
+                value: JSON.parse(siteSettings).address.value,
+                placeholder: translate('address')
             }
         ];
 
@@ -53,7 +60,10 @@ function AdminSettingsSettings({siteSettings, updateModel}) {
     }
 
     return (
-        <Form fields={siteSettingsFields} setFieldValue={updateModel} />
+        <>
+            <Form fields={siteSettingsFields} setFieldValue={updateModel} />
+            <MapContainer address={JSON.parse(siteSettings).address.value} />
+        </>
     )
 }
 

@@ -35,33 +35,39 @@ export function fetchAllCourses() {
         return coursesCollection.get().then((snapshot) => {
             allCoursesList.splice(0, allCoursesList.length);
             let i = 0;
-            snapshot.docs.forEach(doc => {
-                const coursesListRef = db.collection('courses').doc(doc.id).collection('coursesList');
 
-                if ( !allCoursesList.some(item => item.id === doc.id) ) {
-                    allCoursesList.push({
-                        ...doc.data(),
-                        id: doc.id,
-                        coursesList: []
-                    });
-                }
+            if ( snapshot.docs.length ) {
+                snapshot.docs.forEach(doc => {
+                    const coursesListRef = db.collection('courses').doc(doc.id).collection('coursesList');
 
-                coursesListRef.get().then(courseSnapshot => {
-                    courseSnapshot.forEach(courseDoc => {
-                        if ( !allCoursesList.find(item => item.id === doc.id).coursesList.some(item => item.id === courseDoc.id) ) {
-                            allCoursesList.find(item => item.id === doc.id).coursesList.push({
-                                ...courseDoc.data(),
-                                id: courseDoc.id
-                            });
+                    if ( !allCoursesList.some(item => item.id === doc.id) ) {
+                        allCoursesList.push({
+                            ...doc.data(),
+                            id: doc.id,
+                            coursesList: []
+                        });
+                    }
+
+                    coursesListRef.get().then(courseSnapshot => {
+                        courseSnapshot.forEach(courseDoc => {
+                            if ( !allCoursesList.find(item => item.id === doc.id).coursesList.some(item => item.id === courseDoc.id) ) {
+                                allCoursesList.find(item => item.id === doc.id).coursesList.push({
+                                    ...courseDoc.data(),
+                                    id: courseDoc.id
+                                });
+                            }
+                        });
+                        i++;
+
+                        if ( i === snapshot.docs.length ) {
+                            dispatch(allCoursesSuccess(allCoursesList));
                         }
                     });
-                    i++;
-
-                    if ( i === snapshot.docs.length ) {
-                        dispatch(allCoursesSuccess(allCoursesList));
-                    }
                 });
-            });
+            }
+            else {
+                dispatch(allCoursesSuccess(allCoursesList));
+            }
         });
     }
 }
@@ -350,8 +356,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
     const contentRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id).collection('content');
     const questionsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id).collection('questions');
     const lessonID = newLesson.id;
-    const content = newLesson.content;
-    const questions = newLesson.questions;
+    const content = JSON.stringify(newLesson.content);
+    const questions = JSON.stringify(newLesson.questions);
     let toDeleteI = 0;
     let toCreateI = 0;
     let toDeleteX = 0;
@@ -368,7 +374,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteDoc(snapshot);
                 }
                 else {
-                    if ( content && content.length ) {
+                    if ( JSON.parse(content) && JSON.parse(content).length ) {
                         createDoc();
                     }
                     else {
@@ -386,7 +392,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteDoc(snapshot);
                 }
                 else {
-                    if ( content && content.length ) {
+                    if ( JSON.parse(content) && JSON.parse(content).length ) {
                         createDoc();
                     }
                     else {
@@ -397,7 +403,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
         };
 
         const createDoc = () => {
-            const block = content[toCreateI];
+            const block = JSON.parse(content)[toCreateI];
             const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('content').doc(block.id);
 
             delete block.id;
@@ -407,7 +413,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                 order: toCreateI
             }).then(() => {
                 toCreateI ++;
-                if ( toCreateI < content.length ) {
+                if ( toCreateI < JSON.parse(content).length ) {
                     createDoc();
                 }
                 else {
@@ -423,7 +429,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteQuestion(snapshot);
                 }
                 else {
-                    if ( questions && questions.length ) {
+                    if ( JSON.parse(questions) && JSON.parse(questions).length ) {
                         createQuestion();
                     }
                     else {
@@ -431,6 +437,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                             ...newLesson,
                             id: lessonID
                         };
+                        lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
+                        lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
                         dispatch(lessonSuccess(lesson));
                     }
                 }
@@ -445,7 +453,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteQuestion(snapshot);
                 }
                 else {
-                    if ( questions && questions.length ) {
+                    if ( JSON.parse(questions) && JSON.parse(questions).length ) {
                         createQuestion();
                     }
                     else {
@@ -453,6 +461,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                             ...newLesson,
                             id: lessonID
                         };
+                        lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
+                        lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
                         dispatch(lessonSuccess(lesson));
                     }
                 }
@@ -460,7 +470,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
         };
 
         const createQuestion = () => {
-            const block = questions[toCreateX];
+            const block = JSON.parse(questions)[toCreateX];
             const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('questions').doc(block.id);
 
             delete block.id;
@@ -470,7 +480,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                 order: toCreateX
             }).then(() => {
                 toCreateX ++;
-                if ( toCreateX < questions.length ) {
+                if ( toCreateX < JSON.parse(questions).length ) {
                     createQuestion();
                 }
                 else {
@@ -478,6 +488,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                         ...newLesson,
                         id: lessonID
                     };
+                    lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
+                    lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
                     dispatch(lessonSuccess(lesson));
                 }
             });

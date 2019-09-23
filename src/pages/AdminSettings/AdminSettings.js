@@ -88,15 +88,9 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
                                             { translate('nothing_found') }
                                         </div>
                             }
-                            {
-                                siteSettingsList && loading ?
-                                    <Preloader/>
-                                    :
-                                    null
-                            }
                         </div>
                     </div>
-                    <div className="grid_col col-6">
+                    <div className="grid_col col-6 mapContainer">
                         <div className="widget">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-mobile-alt"/>
@@ -190,6 +184,9 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
         }
         else if ( fieldID === 'logo' ) {
             newSiteSettings.logo.url = value;
+        }
+        else if ( fieldID === 'address' ) {
+            newSiteSettings.address.value = value;
         }
 
         if ( fieldID.includes('_nameUA') || fieldID.includes('_nameRU') || fieldID.includes('_nameEN') || fieldID.includes('_tel') ) {

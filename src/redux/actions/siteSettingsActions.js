@@ -27,6 +27,7 @@ export function fetchSiteSettings() {
 export function updateSiteSettings(newSiteSettings) {
     const logoRef = db.collection('config').doc('logo');
     const siteNameRef = db.collection('config').doc('siteName');
+    const addressRef = db.collection('config').doc('address');
 
     return dispatch => {
         dispatch(siteSettingsBegin());
@@ -36,12 +37,16 @@ export function updateSiteSettings(newSiteSettings) {
             siteNameRef.set({
                 ...newSiteSettings.siteName
             }).then(() => {
-                return siteSettingsCollection.get().then((data) => {
-                    siteSettingsList.data = {};
-                    data.docs.map(doc => siteSettingsList.data[doc.id] = doc.data());
-                    localStorage.setItem('siteSettings', JSON.stringify({data: siteSettingsList}));
+                addressRef.set({
+                    ...newSiteSettings.address
+                }).then(() => {
+                    return siteSettingsCollection.get().then((data) => {
+                        siteSettingsList.data = {};
+                        data.docs.map(doc => siteSettingsList.data[doc.id] = doc.data());
+                        localStorage.setItem('siteSettings', JSON.stringify({data: siteSettingsList}));
 
-                    dispatch(siteSettingsSuccess(siteSettingsList.data));
+                        dispatch(siteSettingsSuccess(siteSettingsList.data));
+                    });
                 });
             });
         });

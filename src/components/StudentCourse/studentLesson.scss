@@ -1,3 +1,31 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
 .studentLesson {
-  
+  &__score {
+    font-family: $RobotoCondensed;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: $purpleColor;
+    width: 85px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+  }
+  &__score-item {
+    margin-top: 5px;
+    text-transform: uppercase;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__score-num {
+    margin-top: 5px;
+    font-size: 20px;
+    font-weight: bold;
+  }
 }
