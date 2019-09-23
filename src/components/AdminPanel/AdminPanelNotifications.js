@@ -6,7 +6,7 @@ import AdminPanelNotificationsItem from './AdminPanelNotificationsItem';
 import siteSettingsContext from "../../context/siteSettingsContext";
 
 function AdminPanelNotifications({loading, notificationsList, updateNotification}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+    const { translate } = useContext(siteSettingsContext);
     const [ notifications, setNotifications ] = useState(JSON.parse(null));
 
     useEffect(() => {

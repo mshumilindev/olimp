@@ -10,7 +10,7 @@ export function fetchStaticInfo() {
             dispatch(staticInfoBegin());
             return staticInfoCollection.get().then((data) => {
                 data.docs.map(doc => {
-                    newStaticInfoList.push({
+                    return newStaticInfoList.push({
                         ...doc.data(),
                         id: doc.id
                     })
@@ -95,7 +95,7 @@ export function createPage(pageID, page) {
             return staticInfoCollection.get().then((data) => {
                 newStaticInfoList.splice(0, newStaticInfoList.length);
                 data.docs.map(doc => {
-                    newStaticInfoList.push({
+                    return newStaticInfoList.push({
                         ...doc.data(),
                         id: doc.id
                     })
@@ -196,7 +196,7 @@ export function updatePage(pageID, page) {
                 return staticInfoCollection.get().then((data) => {
                     newStaticInfoList.splice(0, newStaticInfoList.length);
                     data.docs.map(doc => {
-                        newStaticInfoList.push({
+                        return newStaticInfoList.push({
                             ...doc.data(),
                             id: doc.id
                         })

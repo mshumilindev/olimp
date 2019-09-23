@@ -232,6 +232,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
             else {
                 return user;
             }
+            return user;
         }).sort((a, b) => {
             if ( a.name < b.name ) {
                 return -1;

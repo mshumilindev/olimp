@@ -1,6 +1,5 @@
 /* global onTranslationsUpdate */
 
-import React from "react";
 import firebase from "../../db/firestore";
 
 const db = firebase.firestore();

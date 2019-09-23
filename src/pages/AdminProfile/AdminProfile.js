@@ -8,6 +8,7 @@ import Form from '../../components/Form/Form';
 import Profile from '../../components/Profile/Profile';
 import generator from "generate-password";
 import './adminProfile.scss';
+import StudentCoursesItem from "../../components/StudentCourses/StudentCoursesItem";
 
 function AdminProfile({profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
@@ -16,6 +17,13 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
     const [ formFields, setFormFields ] = useState(null);
     const [ currentUser, setCurrentUser ] = useState(JSON.stringify(null));
     const [ initialCurrentUser, setInitialCurrentUser ] = useState(JSON.stringify(null));
+    const [ currentClass, setCurrentClass ] = useState(null);
+
+    useEffect(() => {
+        if ( classesList && allCoursesList && JSON.parse(currentUser) ) {
+            setCurrentClass(classesList.find(item => item.id === JSON.parse(currentUser).class));
+        }
+    }, [classesList, allCoursesList, currentUser]);
 
     useEffect(() => {
         if ( params && params.userLogin ) {
@@ -100,10 +108,61 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                             }
                         </div>
                     </div>
+                    {
+                        JSON.parse(currentUser) && JSON.parse(currentUser).scores ?
+                            <div className="grid_col col-6">
+                                <div className="widget">
+                                    <div className="widget__title">
+                                        <i className="content_title-icon fa fa-check"/>
+                                        { translate('scores') }
+                                    </div>
+                                    {
+                                        currentClass ?
+                                            <>
+                                                { filterCourses().map(item => _renderCourse(item)) }
+                                            </>
+                                            :
+                                            <Preloader/>
+                                    }
+                                </div>
+                            </div>
+                            :
+                            null
+                    }
                 </div>
             </section>
         </div>
     );
+
+    function _renderCourse(item) {
+        return (
+            <div className="block studentCourses__list-item" key={item.course.id}>
+                <h2 className="block__heading teacher">
+                    <span className="block__heading-subheading">
+                        { item.subject.name[lang] ? item.subject.name[lang] : item.subject.name['ua'] }
+                    </span>
+                    { item.course.name[lang] ? item.course.name[lang] : item.course.name['ua'] }
+                </h2>
+                <StudentCoursesItem subjectID={item.subject.id} courseID={item.course.id} currentUser={currentUser} />
+            </div>
+        )
+    }
+
+    function filterCourses() {
+        const selectedCourses = [];
+
+        currentClass.courses.forEach(item => {
+            const selectedSubject = allCoursesList.find(subject => subject.id === item.subject);
+            const selectedCourse = selectedSubject.coursesList.find(course => course.id === item.course);
+
+            selectedCourses.push({
+                subject: selectedSubject,
+                course: selectedCourse
+            });
+        });
+
+        return selectedCourses;
+    }
 
     function setFieldValue(fieldID, value) {
         const parsedUser = JSON.parse(currentUser);

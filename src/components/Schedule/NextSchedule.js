@@ -24,14 +24,17 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                 { translate('current_schedule') }
             </div>
             {
-                loadingClasses || loadingCourses || !currentClass || !allCoursesList ?
-                    <Preloader color={'#7f00a3'}/>
+                loadingClasses || loadingCourses ?
+                    <Preloader/>
                     :
-                    <div className="nextSchedule__list">
-                        {
-                            filterDays().map(day => _renderDay(day))
-                        }
-                    </div>
+                    !currentClass || !allCoursesList ?
+                        <div className="nothingFound">{ translate('nothing_found') }</div>
+                        :
+                        <div className="nextSchedule__list">
+                            {
+                                filterDays().map(day => _renderDay(day))
+                            }
+                        </div>
             }
         </div>
     );

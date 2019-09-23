@@ -20,14 +20,19 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
     return (
         <div className="block nextSchedule allSchedule">
             {
-                loadingClasses || loadingCourses || !currentClass || !allCoursesList ?
+                loadingClasses || loadingCourses ?
                     <Preloader/>
                     :
-                    <div className="nextSchedule__list">
-                        {
-                            currentClass.schedule.map(day => _renderDay(day))
-                        }
-                    </div>
+                    !currentClass || !allCoursesList ?
+                        <div className="nothingFound">
+                            { translate('nothing_found') }
+                        </div>
+                        :
+                        <div className="nextSchedule__list">
+                            {
+                                currentClass.schedule.map(day => _renderDay(day))
+                            }
+                        </div>
             }
         </div>
     );

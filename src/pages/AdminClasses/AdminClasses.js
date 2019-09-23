@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
-import {fetchClasses, createClass} from "../../redux/actions/classesActions";
+import {createClass} from "../../redux/actions/classesActions";
 import generator from "generate-password";
 import {Preloader} from "../../components/UI/preloader";
 

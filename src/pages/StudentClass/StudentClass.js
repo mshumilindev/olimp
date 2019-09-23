@@ -26,13 +26,19 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                         { translate('class') }
                     </span>
                     {
-                        currentClass ?
-                            currentClass.title[lang] ?
-                                currentClass.title[lang]
-                                :
-                                currentClass.title['ua']
-                            :
+                        !classesList ?
                             <Preloader size={20} color="#fff"/>
+                            :
+                            !classesList.length ?
+                                null
+                                :
+                                currentClass ?
+                                    currentClass.title[lang] ?
+                                        currentClass.title[lang]
+                                        :
+                                        currentClass.title['ua']
+                                    :
+                                    <Preloader size={20} color="#fff"/>
                     }
                 </h2>
             </div>

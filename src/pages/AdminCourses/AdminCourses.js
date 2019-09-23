@@ -106,7 +106,15 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                                     </a>
                                 </div>
                             :
-                            <Preloader/>
+                            loading ?
+                                <Preloader/>
+                                :
+                                <div className="nothingFound">
+                                    <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
+                                        <i className="content_title-icon fa fa-plus" />
+                                        { translate('create_subject') }
+                                    </a>
+                                </div>
                     }
                 </div>
             </div>

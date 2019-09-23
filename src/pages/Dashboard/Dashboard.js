@@ -19,12 +19,6 @@ function Dashboard() {
             <section className="section">
                 <NextSchedule/>
             </section>
-            {/*<section className="section">*/}
-            {/*    Modules*/}
-            {/*</section>*/}
-            {/*<section className="section">*/}
-            {/*    Grades*/}
-            {/*</section>*/}
         </>
     )
 }

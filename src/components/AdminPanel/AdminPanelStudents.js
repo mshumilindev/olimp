@@ -5,7 +5,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 
 function AdminPanelStudents({loading, usersList, classesList}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+    const { translate } = useContext(siteSettingsContext);
 
     return (
         <div className="widget">
