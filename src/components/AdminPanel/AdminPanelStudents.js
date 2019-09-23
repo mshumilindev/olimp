@@ -67,7 +67,7 @@ function AdminPanelStudents({loading, usersList, classesList}) {
     }
 
     function filterUsers() {
-        return usersList.filter(user => user.role === 'student' && user.class && user.class.length && user.status === 'active').sort((a, b) => {
+        return usersList.filter(user => (user.role === 'student' && !user.class) || (user.role === 'student' && user.class.length && user.status === 'active')).sort((a, b) => {
             if ( a.name < b.name ) {
                 return -1;
             }
