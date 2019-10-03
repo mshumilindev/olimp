@@ -84,6 +84,7 @@
   @media screen and (max-width: $maxTablet) {
     height: $studentHeaderHeightMobile;
     justify-content: space-between;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.25);
     &__logo {
       height: $studentHeaderHeightMobile;
     }

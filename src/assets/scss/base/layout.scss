@@ -145,7 +145,6 @@
     z-index: 1;
     min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}) + #{$pageIndent});
     margin: 0;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
     padding-top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2} + #{$pageIndent});
     &__inner {
       background: $white;
