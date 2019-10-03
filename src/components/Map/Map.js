@@ -33,8 +33,13 @@ function MapContainer({address, small}) {
 
         setWidth(mapContainer.getBoundingClientRect().width);
 
-        if ( small ) {
-            setHeight(mapContainer.getBoundingClientRect().width * 28.125 / 100);
+        if ( window.outerWidth > 769 ) {
+            if ( small ) {
+                setHeight(mapContainer.getBoundingClientRect().width * 28.125 / 100);
+            }
+            else {
+                setHeight(mapContainer.getBoundingClientRect().width * 56.25 / 100);
+            }
         }
         else {
             setHeight(mapContainer.getBoundingClientRect().width * 56.25 / 100);
