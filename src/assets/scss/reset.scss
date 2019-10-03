@@ -51,6 +51,9 @@ body {
   color: $baseColor;
   &.overflow {
     overflow: hidden;
+    .page {
+      overflow: hidden;
+    }
   }
 }
 a {

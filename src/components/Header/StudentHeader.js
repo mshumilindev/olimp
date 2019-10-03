@@ -17,6 +17,7 @@ function StudentHeader({logo, siteName, history}) {
     useEffect(() => {
         if ( showMobileMenu ) {
             handleToggleMenu();
+            window.scrollTo({top: 0});
         }
     }, [history.location.key]);
 
@@ -63,6 +64,7 @@ function StudentHeader({logo, siteName, history}) {
 
         toggleMobileMenu(!showMobileMenu);
         document.querySelector('.page').classList.toggle('navVisible');
+        document.querySelector('body').classList.toggle('overflow');
     }
 
     function onConfirmLogout() {
