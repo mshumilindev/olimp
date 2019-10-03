@@ -61,7 +61,7 @@
   }
   @media screen and (max-width: $maxTablet) {
     margin: 0;
-    transition: margin-left .25s ease-in-out;
+    transition: all .25s ease-in-out;
     &__logo {
       display: none;
     }

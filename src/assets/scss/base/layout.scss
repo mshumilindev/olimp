@@ -61,9 +61,11 @@
       }
       .content {
         margin-left: $studentNavWidth;
+        filter: blur(2px);
       }
       .footer {
         margin-left: $studentNavWidth;
+        filter: blur(2px);
       }
       .studentNav {
         left: 0;
@@ -183,7 +185,7 @@
     transform: translateX(0);
     max-width: 100%;
     background: inherit;
-    transition: margin-left .25s ease-in-out;
+    transition: all .25s ease-in-out;
     position: relative;
     z-index: 1;
     margin: 0;
