@@ -120,7 +120,7 @@
     text-align: center;
   }
   @media screen and (max-width: $maxMobile) {
-    margin: -#{$pageIndentMobile} -#{$pageIndentMobile} #{$pageIndentMobile};
+    margin: -#{$pageIndentMobile} -#{$pageIndentMobile} #{$pageIndentMobile} !important;
     &__icon {
       width: 50px;
       font-size: 20px;
