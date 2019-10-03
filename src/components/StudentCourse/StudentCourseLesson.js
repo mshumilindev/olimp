@@ -167,8 +167,8 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
         updateUser(JSON.parse(currentUser).id, updatedUser);
 
         delete updatedUser.password;
-        setCurrentUser(JSON.stringify(updatedUser));
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        window.location.reload();
     }
 
     function hasAnswers() {

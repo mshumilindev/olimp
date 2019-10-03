@@ -83,6 +83,13 @@ function ArticleAnswer({block, setAnswer}) {
                 score = block.value.score;
             }
         }
+        else {
+            const chosenValues = fields[0].value;
+
+            if ( correctAnswers.sort().toString() === chosenValues.sort().toString() ) {
+                score = block.value.score;
+            }
+        }
 
         if ( fields && fields[0].value.toString() ) {
             setAnswer(block.id, parseInt(score));

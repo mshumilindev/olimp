@@ -48,13 +48,26 @@
   }
   @media screen and (max-width: $maxMobile) {
     &__box {
-      height: 100vh;
-      max-width: 100vw;
-      width: 100vw;
-      border-radius: 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
       box-sizing: border-box;
-      align-items: center;
+      border-radius: 0;
       display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .dropdown_block {
+      left: auto;
+      right: -5px;
+      transform: none;
+      &:before {
+        left: auto;
+        right: 10px;
+        transform: none;
+      }
     }
   }
 }
