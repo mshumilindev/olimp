@@ -1,0 +1,54 @@
+[debug] [2019-10-03T22:46:52.076Z] ----------------------------------------------------------------------
+[debug] [2019-10-03T22:46:52.094Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mykola\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-10-03T22:46:52.096Z] CLI Version:   7.3.1
+[debug] [2019-10-03T22:46:52.096Z] Platform:      win32
+[debug] [2019-10-03T22:46:52.097Z] Node Version:  v10.15.3
+[debug] [2019-10-03T22:46:52.104Z] Time:          Fri Oct 04 2019 01:46:52 GMT+0300 (GMT+03:00)
+[debug] [2019-10-03T22:46:52.105Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-10-03T22:46:52.139Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-10-03T22:46:52.140Z] > authorizing via signed-in user
+[debug] [2019-10-03T22:46:52.140Z] [iam] checking project olimp-9ec94 for permissions ["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2019-10-03T22:46:52.145Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/olimp-9ec94:testIamPermissions  
+
+[debug] [2019-10-03T22:46:53.178Z] <<< HTTP RESPONSE 200
+[debug] [2019-10-03T22:46:53.186Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/olimp-9ec94  
+ 
+[debug] [2019-10-03T22:46:53.524Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'olimp-9ec94'...
+[info] 
+[info] i  deploying database, storage, hosting
+[info] i  database: checking rules syntax...
+[debug] [2019-10-03T22:46:53.613Z] >>> HTTP REQUEST PUT https://olimp-9ec94.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}
+[debug] [2019-10-03T22:46:54.269Z] <<< HTTP RESPONSE 200
+[info] +  database: rules syntax for database olimp-9ec94 is valid
+[debug] [2019-10-03T22:46:54.274Z] >>> HTTP REQUEST GET https://appengine.googleapis.com/v1/apps/olimp-9ec94  
+ 
+[debug] [2019-10-03T22:46:55.574Z] <<< HTTP RESPONSE 200
+[info] i  storage: checking storage.rules for compilation errors...
+[debug] [2019-10-03T22:46:55.577Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/olimp-9ec94:test  
+
+[debug] [2019-10-03T22:46:56.621Z] <<< HTTP RESPONSE 200
+[info] +  storage: rules file storage.rules compiled successfully
+[debug] [2019-10-03T22:46:56.643Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/olimp-9ec94/versions  
+
+[debug] [2019-10-03T22:46:58.401Z] <<< HTTP RESPONSE 200
+[info] i  storage: uploading rules storage.rules...
+[debug] [2019-10-03T22:46:58.405Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/olimp-9ec94/rulesets  
+
+[debug] [2019-10-03T22:46:59.503Z] <<< HTTP RESPONSE 200
+[debug] [2019-10-03T22:46:59.504Z] [rules] created ruleset projects/olimp-9ec94/rulesets/61b07ccc-f19f-43f0-a081-a462aff1da84
+[info] i  hosting[olimp-9ec94]: beginning deploy...
+[info] i  hosting[olimp-9ec94]: found 662 files in build
+[debug] [2019-10-03T22:47:00.058Z] [hosting] hash cache [YnVpbGQ] load error: lines is not defined
+[debug] [2019-10-03T22:47:04.557Z] [hosting] hash cache [YnVpbGQ] stored for 662 files
+[debug] [2019-10-03T22:47:04.558Z] [hosting][hash queue][FINAL]
+[debug] [2019-10-03T22:47:04.558Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/olimp-9ec94/versions/86ce27b2dd97a2de:populateFiles  
+ <request body omitted>

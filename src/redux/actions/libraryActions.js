@@ -212,16 +212,13 @@ export function downloadDoc(ref) {
     return dispatch => {
         dispatch(downloadDocBegin());
         storageRef.child('library/' + ref).getDownloadURL().then((url) => {
-            const element = document.createElement('a');
-            element.setAttribute('href', url);
-            element.setAttribute('target', '_blank');
+            const a = window.document.createElement("a");
+            a.target = '_blank';
+            a.href = url;
 
-            element.style.display = 'none';
-            document.body.appendChild(element);
-
-            element.click();
-
-            document.body.removeChild(element);
+            const e = window.document.createEvent("MouseEvents");
+            e.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
             dispatch(downloadDocSuccess());
         });
     }

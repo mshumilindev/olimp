@@ -34,6 +34,9 @@
       }
     }
   }
+  @media screen and (max-width: $maxMobile) {
+    background: $white;
+  }
 }
 .loader {
   display: flex;
@@ -157,7 +160,7 @@
     }
   }
   @media screen and (max-width: $maxMobile) {
-    padding: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2} + #{$pageIndentMobile}) $pageIndentMobile $pageIndentMobile;
+    padding: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2}) 0 0;
     &__title-holder {
       padding: 0 20px;
       margin: -20px -20px 20px;
