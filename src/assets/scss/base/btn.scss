@@ -42,4 +42,8 @@
     filter: grayscale(100%);
     opacity: .5;
   }
+  @media screen and (max-width: $maxMobile) {
+    min-width: 80px;
+    font-size: 12px;
+  }
 }

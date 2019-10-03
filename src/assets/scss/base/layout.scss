@@ -3,11 +3,32 @@
   background: $lightColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
   &.student {
-    padding: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}) $pageIndent $pageIndent;
-    min-height: calc(100vh - calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent * 2}));
+    padding: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}) $pageIndent 0;
+    min-height: calc(100vh - calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+  }
+  @media screen and (max-width: $maxTablet) {
+    &.student {
+      padding: 0;
+      min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}));
+      overflow: hidden;
+    }
+    &.navVisible {
+      .content {
+        margin-left: $studentNavWidth;
+      }
+      .footer {
+        margin-left: $studentNavWidth;
+      }
+    }
+  }
+  @media screen and (max-width: $maxMobile) {
+    &.student {
+      min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}));
+      overflow: hidden;
+    }
   }
 }
 .loader {
@@ -114,5 +135,53 @@
   }
   .notification {
     margin-bottom: 40px;
+  }
+  @media screen and (max-width: $maxTablet) {
+    transform: translateX(0);
+    max-width: 100%;
+    background: inherit;
+    transition: margin-left .25s ease-in-out;
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}) + #{$pageIndent});
+    margin: 0;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+    padding-top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2} + #{$pageIndent});
+    &__inner {
+      background: $white;
+      padding: $pageIndent;
+      margin: 0 auto;
+    }
+  }
+  @media screen and (max-width: $maxMobile) {
+    padding: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2} + #{$pageIndentMobile}) $pageIndentMobile $pageIndentMobile;
+    &__title-holder {
+      padding: 0 20px;
+      margin: -20px -20px 20px;
+      height: 60px;
+    }
+    &__title {
+      font-size: 16px;
+    }
+    &__inner {
+      margin-bottom: 0;
+      padding: $pageIndentMobile;
+    }
+  }
+}
+.laptop-hide {
+  opacity: 1;
+  visibility: visible;
+  @media screen and (min-width: $minLaptop) {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.laptop-show {
+  opacity: 0;
+  visibility: hidden;
+  @media screen and (min-width: $minLaptop) {
+    opacity: 1;
+    visibility: visible;
   }
 }

@@ -51,18 +51,20 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                             currentClass.info[lang] || currentClass.info['ua'] ?
                                 <div className="block studentClass__description">
                                     <h2 className="block__heading">{ translate('description') }</h2>
-                                    {
-                                        currentClass.info[lang] ?
-                                            currentClass.info[lang]
-                                            :
-                                            currentClass.info['ua']
-                                    }
+                                    <div className="studentClass__description-text">
+                                        {
+                                            currentClass.info[lang] ?
+                                                currentClass.info[lang]
+                                                :
+                                                currentClass.info['ua']
+                                        }
+                                    </div>
                                 </div>
                                 :
                                 null
                         }
                         <div className="grid">
-                            <div className="grid_col col-6">
+                            <div className="grid_col col-12 tablet-col-6">
                                 <div className="block studentClass__courses">
                                     <h2 className="block__heading">{ translate('courses') }</h2>
                                     { currentClass.courses.sort((a, b) => {
@@ -78,7 +80,7 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                                     }).map(course => _renderCourse(course)) }
                                 </div>
                             </div>
-                            <div className="grid_col col-6">
+                            <div className="grid_col col-12 tablet-col-6">
                                 <div className="block studentClass__students">
                                     <h2 className="block__heading">{ translate('students') }</h2>
                                     { _renderUser(user) }

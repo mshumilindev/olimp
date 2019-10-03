@@ -1,5 +1,6 @@
 @import '../../assets/scss/utils/colors';
 @import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
 
 .nextSchedule {
   &.allSchedule {
@@ -70,5 +71,22 @@
   }
   &__list-courses-notFound {
     color: $greyColor;
+  }
+  @media screen and (max-width: $maxMobile) {
+    &__list {
+      display: block;
+      margin: 0;
+    }
+    &__list-item {
+      width: 100%;
+      padding: 20px 0 0;
+      margin-top: 20px;
+      border-top: 1px solid $lightGreyColor;
+      &:first-child {
+        padding-top: 0;
+        margin-top: 0;
+        border-top: 0;
+      }
+    }
   }
 }

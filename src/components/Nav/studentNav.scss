@@ -92,4 +92,12 @@
       }
     }
   }
+  @media screen and (max-width: $maxTablet) {
+    left: 0;
+    top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2});
+    bottom: 0;
+  }
+  @media screen and (max-width: $maxMobile) {
+    top: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});
+  }
 }

@@ -2,6 +2,9 @@
 @import '../../assets/scss/utils/fonts';
 
 .studentClass {
+  &__description-text {
+    line-height: 1.5;
+  }
   &__students {
     font-family: $RobotoCondensed;
   }

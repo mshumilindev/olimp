@@ -24,10 +24,10 @@ function Footer({staticInfoList, contactList, logo, siteName}) {
                                 </Link>
                             </div>
                             <div className="grid">
-                                <div className="grid_col col-6">
+                                <div className="grid_col col-12 tablet-col-6">
                                     <Contact contactList={contactList.sort((a, b) => a.order - b.order)}/>
                                 </div>
-                                <div className="grid_col col-6">
+                                <div className="grid_col col-12 tablet-col-6">
                                     {
                                         staticInfoList.length ?
                                             _renderStaticInfo()

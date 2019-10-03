@@ -44,7 +44,6 @@
     display: flex;
   }
   &__actions-item {
-    margin-left: 20px;
     position: relative;
   }
   &__icon {
@@ -79,7 +78,7 @@
     width: 1px;
     height: 20px;
     background: $baseColor;
-    margin-left: 20px;
+    margin: 0 20px;
     opacity: .25;
   }
   &__user {

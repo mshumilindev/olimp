@@ -1,19 +1,32 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import './studentHeader.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import LanguageSelect from '../language/languageSelect';
 import Confirm from '../UI/Confirm/Confirm';
 import {connect} from "react-redux";
 import { fetchClasses } from "../../redux/actions/classesActions";
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import {Preloader} from "../UI/preloader";
+import classNames from 'classnames';
 
-function StudentHeader({logo, siteName}) {
+function StudentHeader({logo, siteName, history}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
+    const [ showMobileMenu, toggleMobileMenu ] = useState(false);
+
+    useEffect(() => {
+        if ( showMobileMenu ) {
+            handleToggleMenu();
+        }
+    }, [history.location.key]);
 
     return (
         <header className="studentHeader">
+            <a href="/" className={classNames('studentHeader__burger laptop-hide', {active: showMobileMenu})} onClick={e => handleToggleMenu(e)}>
+                <span/>
+                <span/>
+                <span/>
+            </a>
             {
                 logo ?
                     <h1 className="studentHeader__logo">
@@ -43,6 +56,15 @@ function StudentHeader({logo, siteName}) {
         </header>
     );
 
+    function handleToggleMenu(e) {
+        if ( e ) {
+            e.preventDefault();
+        }
+
+        toggleMobileMenu(!showMobileMenu);
+        document.querySelector('.page').classList.toggle('navVisible');
+    }
+
     function onConfirmLogout() {
         localStorage.removeItem('user');
         window.location.replace('/');
@@ -57,4 +79,4 @@ const mapDispatchToProps = dispatch => ({
     fetchClasses: dispatch(fetchClasses())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudentHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(StudentHeader));

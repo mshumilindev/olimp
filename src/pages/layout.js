@@ -64,7 +64,9 @@ export default function Layout({children, location}) {
                             <StudentHeader/>
                             <StudentNav nav={studentNav} />
                             <div className="content mapContainer">
-                                { children }
+                                <div className="content__inner">
+                                    { children }
+                                </div>
                             </div>
                             <Footer/>
                         </div>

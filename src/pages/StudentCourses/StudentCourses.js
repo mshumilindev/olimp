@@ -62,15 +62,17 @@ function StudentCourses({classesList, allCoursesList}) {
     function filterCourses() {
         const selectedCourses = [];
 
-        currentClass.courses.forEach(item => {
-            const selectedSubject = allCoursesList.find(subject => subject.id === item.subject);
-            const selectedCourse = selectedSubject.coursesList.find(course => course.id === item.course);
+        if ( currentClass ) {
+            currentClass.courses.forEach(item => {
+                const selectedSubject = allCoursesList.find(subject => subject.id === item.subject);
+                const selectedCourse = selectedSubject.coursesList.find(course => course.id === item.course);
 
-            selectedCourses.push({
-                subject: selectedSubject,
-                course: selectedCourse
+                selectedCourses.push({
+                    subject: selectedSubject,
+                    course: selectedCourse
+                });
             });
-        });
+        }
 
         return selectedCourses;
     }

@@ -32,6 +32,7 @@
   }
   &__selectedList-item-subject {
     color: $greyColor;
+    flex: 0 0 auto;
     &:after {
       content: '/';
       margin: 0 5px;

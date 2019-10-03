@@ -1,5 +1,6 @@
 @import '../../assets/scss/utils/colors';
 @import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
 
 .studentContact {
   &__list {
@@ -35,5 +36,10 @@
   .map {
     padding-top: 0;
     margin-bottom: 40px;
+  }
+  @media screen and (max-width: $maxMobile) {
+    &__list-item {
+      width: 100%;
+    }
   }
 }

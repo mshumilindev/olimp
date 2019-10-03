@@ -374,7 +374,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteDoc(snapshot);
                 }
                 else {
-                    if ( JSON.parse(content) && JSON.parse(content).length ) {
+                    if ( content && JSON.parse(content) && JSON.parse(content).length ) {
                         createDoc();
                     }
                     else {
@@ -429,7 +429,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                     deleteQuestion(snapshot);
                 }
                 else {
-                    if ( JSON.parse(questions) && JSON.parse(questions).length ) {
+                    if ( questions && JSON.parse(questions) && JSON.parse(questions).length ) {
                         createQuestion();
                     }
                     else {
@@ -437,8 +437,12 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                             ...newLesson,
                             id: lessonID
                         };
-                        lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
-                        lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
+                        if ( content ) {
+                            lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
+                        }
+                        if ( questions ) {
+                            lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
+                        }
                         dispatch(lessonSuccess(lesson));
                     }
                 }
