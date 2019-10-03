@@ -97,6 +97,7 @@
     top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2});
     bottom: 0;
     transition: left .25s ease-in-out;
+    z-index: 2;
   }
   @media screen and (max-width: $maxMobile) {
     top: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});
