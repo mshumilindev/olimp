@@ -68,5 +68,6 @@
   }
   @media screen and (max-width: $maxMobile) {
     min-width: 320px;
+    padding: $pageIndentMobile;
   }
 }
