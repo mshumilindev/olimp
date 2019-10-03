@@ -93,9 +93,10 @@
     }
   }
   @media screen and (max-width: $maxTablet) {
-    left: 0;
+    left: -$studentNavWidth;
     top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2});
     bottom: 0;
+    transition: left .25s ease-in-out;
   }
   @media screen and (max-width: $maxMobile) {
     top: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});

@@ -12,8 +12,15 @@
   @media screen and (max-width: $maxTablet) {
     &.student {
       padding: 0;
-      min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}));
-      overflow: hidden;
+      min-height: 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
     &.navVisible {
       .content {
@@ -22,12 +29,9 @@
       .footer {
         margin-left: $studentNavWidth;
       }
-    }
-  }
-  @media screen and (max-width: $maxMobile) {
-    &.student {
-      min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}));
-      overflow: hidden;
+      .studentNav {
+        left: 0;
+      }
     }
   }
 }
@@ -143,9 +147,9 @@
     transition: margin-left .25s ease-in-out;
     position: relative;
     z-index: 1;
-    min-height: calc(100vh - calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2}) + #{$pageIndent});
     margin: 0;
     padding-top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2} + #{$pageIndent});
+    flex: 1;
     &__inner {
       background: $white;
       padding: $pageIndent;
