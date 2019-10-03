@@ -2,6 +2,25 @@
   padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
   background: $lightColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
+  @media screen and (max-width: $maxMobile) {
+    &:after {
+      content: 'Контент недоступний для мобільних пристроїв';
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      background: $baseColor;
+      color: $white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  }
   &.student {
     padding: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}) $pageIndent 0;
     min-height: calc(100vh - calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}));
