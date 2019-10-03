@@ -47,6 +47,9 @@
     top: 20px;
   }
   @media screen and (max-width: $maxMobile) {
+    height: auto;
+    padding: 0;
+    display: block;
     &__box {
       position: fixed;
       left: 0;
