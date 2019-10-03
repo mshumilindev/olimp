@@ -21,8 +21,24 @@
       overflow: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+      &:after {
+        content: '';
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: $baseColor;
+        opacity: 0;
+        transition: all .25s ease-in-out;
+      }
     }
     &.navVisible {
+      &:after {
+        z-index: 1;
+        left: $studentNavWidth;
+        opacity: .85;
+      }
       .content {
         margin-left: $studentNavWidth;
       }
