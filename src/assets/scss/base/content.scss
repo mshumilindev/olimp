@@ -44,6 +44,7 @@
   @media screen and (max-width: $maxTablet) {
     transform: translateX(0);
     width: 100%;
+    min-width: 100%;
     background: inherit;
     transition: all .25s ease-in-out;
     position: relative;
@@ -63,6 +64,9 @@
       padding: 0 20px;
       margin: -20px -20px 20px;
       height: 60px;
+      position: sticky;
+      top: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});
+      z-index: 10;
     }
     &__title {
       font-size: 16px;

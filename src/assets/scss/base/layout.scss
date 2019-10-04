@@ -7,7 +7,8 @@
     justify-content: space-between;
     align-items: flex-start;
     max-width: 1280px;
-    margin: 0 auto 80px;
+    margin: 0 auto;
+    padding-bottom: 80px;
     width: 100%;
   }
   @media screen and (max-width: $maxMobile) {
@@ -27,6 +28,11 @@
       padding: 20px;
       text-align: center;
       line-height: 1.5;
+    }
+    &__inner {
+      flex-direction: column;
+      height: 100%;
+      padding-bottom: 0;
     }
   }
   &.student {
@@ -58,12 +64,13 @@
         background: $baseColor;
         opacity: 0;
         transition: all .25s ease-in-out;
-        z-index: -1;
+        visibility: hidden;
+        z-index: 1;
       }
     }
     &.navVisible {
       &:after {
-        z-index: 1;
+        visibility: visible;
         left: $studentNavWidth;
         opacity: .85;
       }

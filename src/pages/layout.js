@@ -69,8 +69,19 @@ export default function Layout({children, location}) {
                                         { children }
                                     </div>
                                 </div>
+                                {
+                                    window.outerWidth < 769 ?
+                                        <Footer/>
+                                        :
+                                        null
+                                }
                             </div>
-                            <Footer/>
+                            {
+                                window.outerWidth >= 769 ?
+                                    <Footer/>
+                                    :
+                                    null
+                            }
                         </div>
                     </>
             }

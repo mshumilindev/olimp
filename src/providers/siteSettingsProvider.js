@@ -503,7 +503,7 @@ export default class SiteSettingsProvider extends React.Component{
                 icon: 'fas fa-camera-retro',
                 shape: 'round',
                 size: 150,
-                saveSize: 200,
+                saveSize: 400,
                 remove: true
             },
             {
