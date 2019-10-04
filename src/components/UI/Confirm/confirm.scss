@@ -41,8 +41,8 @@ $confirmIndent: 20px;
     text-transform: uppercase;
     background: $baseColor;
     color: $white;
-    margin: #{-$confirmIndent - 1} #{-$confirmIndent} 40px;
-    padding: $confirmIndent;
+    margin: #{-$confirmIndent - 5} #{-$confirmIndent - 5} 40px;
+    padding: $confirmIndent + 5 $confirmIndent + 5 $confirmIndent;
   }
   &__text {
     font-size: 18px;
