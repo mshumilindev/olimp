@@ -18,6 +18,7 @@
     width: 100%;
     flex: 0 0 auto;
     position: relative;
+    overflow: hidden;
   }
   .preloader {
     position: absolute;
@@ -72,5 +73,20 @@
         transform: none;
       }
     }
+    .loginError {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      margin: 0;
+    }
+  }
+  .loginError {
+    background: $lightRedColor;
+    color: $errorColor;
+    padding: 20px 60px;
+    text-align: center;
+    margin: -$pageIndent #{-$pageIndent} $pageIndent;
+    line-height: 20px;
   }
 }

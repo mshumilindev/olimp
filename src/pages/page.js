@@ -5,6 +5,9 @@ import {Provider} from "react-redux";
 import {mainStore} from "../redux/stores/mainStore";
 import userContext from "../context/userContext";
 import { withRouter } from 'react-router-dom';
+import firebase from "../db/firestore";
+
+const db = firebase.firestore();
 
 function Page(props) {
     const { user } = useContext(userContext);
@@ -31,6 +34,15 @@ function Page(props) {
         else if ( user.role === 'student' && location.pathname.includes('admin') ) {
             history.push('/');
         }
+
+        const profileRef = db.collection('users').where('login', '==', user.login);
+
+        profileRef.get().then(snapshot => {
+            if ( !snapshot.docs.length || snapshot.docs[0].data().status === 'suspended' ) {
+                localStorage.removeItem('user');
+                history.push('/suspended');
+            }
+        });
     }
 
     useEffect(() => {
@@ -38,11 +50,21 @@ function Page(props) {
             if ( !localStorage.getItem('user') && !location.pathname.includes('/login') ) {
                 history.push('/login');
             }
+            else {
+                const profileRef = db.collection('users').where('login', '==', user.login);
+
+                profileRef.get().then(snapshot => {
+                    if ( !snapshot.docs.length || snapshot.docs[0].data().status === 'suspended' ) {
+                        localStorage.removeItem('user');
+                        history.push('/suspended');
+                    }
+                });
+            }
         });
         return () => {
             unlisten();
         }
-    });
+    }, [history.location.key]);
 
     return (
         <Provider store={mainStore}>

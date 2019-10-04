@@ -38,6 +38,7 @@ export default function App() {
                         <Suspense fallback={ _renderLoader() }>
                             <Route exact path='/' component={Dashboard} />
                             <Route path='/login' component={Login} />
+                            <Route path='/suspended' component={Login} />
                             <Route path='/profile' component={StudentProfile} />
                             <Route path='/schedule' component={StudentSchedule} />
                             <Route path='/contact' component={StudentContact} />

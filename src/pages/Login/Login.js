@@ -61,6 +61,12 @@ export default class Login extends React.Component {
             <DocumentTitle title={ docTitle }>
                 <div className="login">
                     <div className="login__box">
+                        {
+                            window.location.pathname === '/suspended' ?
+                                <div className="loginError">{ translate('account_suspended_or_removed') }</div>
+                                :
+                                null
+                        }
                         <LanguageSelect />
                         <Form formError={this.state.formError} heading={translate('login')} fields={this.state.formFields} formAction={this.state.formAction} setFieldValue={this.setFieldValue}/>
                         {
