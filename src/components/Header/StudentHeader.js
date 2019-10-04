@@ -13,11 +13,21 @@ function StudentHeader({logo, siteName, history}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
     const [ showMobileMenu, toggleMobileMenu ] = useState(false);
+    let touchStart = null;
+
+    useEffect(() => {
+        document.addEventListener('click', e => onHideMenu(e));
+        document.addEventListener('touchstart', e => onTouchStart(e));
+        document.addEventListener('touchend', e => onTouchEnd(e));
+    }, []);
 
     useEffect(() => {
         if ( showMobileMenu ) {
             handleToggleMenu();
             window.scrollTo({top: 0});
+            document.removeEventListener('click', onHideMenu);
+            document.removeEventListener('touchstart', onTouchStart);
+            document.removeEventListener('touchend', onTouchEnd);
         }
     }, [history.location.key]);
 
@@ -57,19 +67,58 @@ function StudentHeader({logo, siteName, history}) {
         </header>
     );
 
-    function handleToggleMenu(e) {
+    function handleToggleMenu(e, direction) {
         if ( e ) {
             e.preventDefault();
         }
 
-        toggleMobileMenu(!showMobileMenu);
-        document.querySelector('.page').classList.toggle('navVisible');
-        document.querySelector('body').classList.toggle('overflow');
+        if ( direction !== undefined ) {
+            toggleMobileMenu(direction);
+
+            if ( direction ) {
+                document.querySelector('.page').classList.add('navVisible');
+                document.querySelector('body').classList.add('overflow');
+            }
+            else {
+                document.querySelector('.page').classList.remove('navVisible');
+                document.querySelector('body').classList.remove('overflow');
+            }
+        }
+        else {
+            toggleMobileMenu(!showMobileMenu);
+            document.querySelector('.page').classList.toggle('navVisible');
+            document.querySelector('body').classList.toggle('overflow');
+        }
     }
 
     function onConfirmLogout() {
         localStorage.removeItem('user');
         window.location.replace('/');
+    }
+
+    function onHideMenu(e) {
+        if ( !e.target.closest('.studentHeader__burger') && !e.target.closest('.studentNav') ) {
+            toggleMobileMenu(false);
+            document.querySelector('.page').classList.remove('navVisible');
+            document.querySelector('body').classList.remove('overflow');
+        }
+    }
+
+    function onTouchStart(e) {
+        touchStart = e.touches[0].clientX;
+    }
+
+    function onTouchEnd(e) {
+        const touch = e.changedTouches[0].clientX;
+
+        if ( touch - touchStart >= window.outerWidth / 4 ) {
+            handleToggleMenu(null, true);
+        }
+        else if ( touchStart - touch >= window.outerWidth / 4 ) {
+            handleToggleMenu(null, false);
+        }
+
+        touchStart = null;
     }
 }
 const mapStateToProps = state => ({

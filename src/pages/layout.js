@@ -61,8 +61,8 @@ export default function Layout({children, location}) {
                     :
                     <>
                         <div className={'page ' + user.role}>
-                            <StudentHeader/>
                             <div className="page__inner">
+                                <StudentHeader/>
                                 <StudentNav nav={studentNav} />
                                 <div className="content mapContainer">
                                     <div className="content__inner">

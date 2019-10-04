@@ -92,7 +92,12 @@
   }
   @media screen and (max-width: $maxMobile) {
     padding: $studentHeaderIndent $pageIndentMobile;
-    height: $studentHeaderHeightTiny;
+    height: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});
+    min-height: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2});
+    position: sticky;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
     &__logo {
       height: $studentHeaderHeightTiny + 10px;
     }
