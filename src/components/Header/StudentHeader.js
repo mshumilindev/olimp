@@ -86,7 +86,9 @@ function StudentHeader({logo, siteName, history}) {
         }
         else {
             toggleMobileMenu(!showMobileMenu);
-            document.querySelector('.page').classList.toggle('navVisible');
+            if ( document.querySelector('.page') ) {
+                document.querySelector('.page').classList.toggle('navVisible');
+            }
             document.querySelector('body').classList.toggle('overflow');
         }
     }
@@ -99,7 +101,9 @@ function StudentHeader({logo, siteName, history}) {
     function onHideMenu(e) {
         if ( !e.target.closest('.studentHeader__burger') && !e.target.closest('.studentNav') ) {
             toggleMobileMenu(false);
-            document.querySelector('.page').classList.remove('navVisible');
+            if ( document.querySelector('.page') ) {
+                document.querySelector('.page').classList.remove('navVisible');
+            }
             document.querySelector('body').classList.remove('overflow');
         }
     }
