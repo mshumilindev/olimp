@@ -35,14 +35,14 @@ $confirmIndent: 20px;
     text-align: center;
     line-height: 1.5;
     font-family: $RobotoCondensed;
-    overflow: hidden;
   }
   &__heading {
     text-transform: uppercase;
     background: $baseColor;
     color: $white;
-    margin: #{-$confirmIndent - 5} #{-$confirmIndent - 5} 40px;
-    padding: $confirmIndent + 5 $confirmIndent + 5 $confirmIndent;
+    margin: #{-$confirmIndent - 1} #{-$confirmIndent} 40px;
+    padding: $confirmIndent;
+    border-radius: 4px 4px 0 0;
   }
   &__text {
     font-size: 18px;
