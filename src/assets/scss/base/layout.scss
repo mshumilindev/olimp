@@ -2,6 +2,14 @@
   padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
   background: $lightColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1280px;
+    margin: 0 auto 80px;
+    width: 100%;
+  }
   @media screen and (max-width: $maxMobile) {
     &:after {
       content: 'Контент недоступний для мобільних пристроїв';
@@ -145,75 +153,6 @@
   color: $warningColor;
 }
 
-.content {
-  max-width: $contentWidth;
-  margin: 0 auto #{$pageIndent * 2};
-  width: 100%;
-  background: $white;
-  padding: 40px;
-  box-sizing: border-box;
-  transform: translateX(calc(#{$studentNavWidth} - #{$pageIndent * 2}));
-  &__title-holder {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    margin: -40px -40px 40px;
-    background: $baseColor;
-    color: $white;
-    height: 85px;
-    box-sizing: border-box;
-    position: relative;
-  }
-  &__title {
-    font-family: $RobotoCondensed;
-    font-weight: normal;
-    text-transform: uppercase;
-    font-size: 20px;
-    display: flex;
-  }
-  &__title-subtitle {
-    color: $greyColor;
-    &:after {
-      content: '/';
-      margin: 0 5px;
-    }
-  }
-  .notification {
-    margin-bottom: 40px;
-  }
-  @media screen and (max-width: $maxTablet) {
-    transform: translateX(0);
-    max-width: 100%;
-    background: inherit;
-    transition: all .25s ease-in-out;
-    position: relative;
-    z-index: 1;
-    margin: 0;
-    padding-top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2} + #{$pageIndent});
-    flex: 1;
-    &__inner {
-      background: $white;
-      padding: $pageIndent;
-      margin: 0 auto;
-    }
-  }
-  @media screen and (max-width: $maxMobile) {
-    padding: calc(#{$studentHeaderHeightTiny} + #{$studentHeaderIndent * 2}) 0 0;
-    &__title-holder {
-      padding: 0 20px;
-      margin: -20px -20px 20px;
-      height: 60px;
-    }
-    &__title {
-      font-size: 16px;
-    }
-    &__inner {
-      margin-bottom: 0;
-      padding: $pageIndentMobile;
-    }
-  }
-}
 .laptop-hide {
   opacity: 1;
   visibility: visible;

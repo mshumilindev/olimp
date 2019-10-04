@@ -1,0 +1,17 @@
+@import '../../assets/scss/utils/sizes';
+
+.studentCourses {
+  &__list {
+    opacity: 1;
+    filter: blur(0);
+    transition: all .15s ease-in-out;
+  }
+  @media screen and (max-width: $maxSmallDesktop) {
+    &.blurred {
+      .studentCourses__list {
+        opacity: .25;
+        filter: blur(2px);
+      }
+    }
+  }
+}

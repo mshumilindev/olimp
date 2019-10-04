@@ -3,14 +3,14 @@
 @import '../../assets/scss/utils/fonts';
 
 .studentNav {
-  position: fixed;
+  position: sticky;
   top: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent});
   z-index: 1;
   width: $studentNavWidth;
   background: $white;
   padding: 20px 20px 40px;
   box-sizing: border-box;
-  left: calc(50% - #{$contentWidth / 2} - #{$studentNavWidth} + #{$pageIndent * 2});
+  left: 0;
   &__list {
     font-family: $RobotoCondensed;
     text-transform: uppercase;
@@ -93,6 +93,7 @@
     }
   }
   @media screen and (max-width: $maxTablet) {
+    position: fixed;
     left: -$studentNavWidth;
     top: calc(#{$studentHeaderHeightMobile} + #{$studentHeaderIndent * 2});
     bottom: 0;

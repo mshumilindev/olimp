@@ -70,10 +70,10 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                     <Preloader/>
                     :
                     <div className="grid">
-                        <div className="grid_col col-6 block">
+                        <div className="grid_col col-12 tablet-col-6 block">
                             { _renderTeacher() }
                         </div>
-                        <div className="grid_col col-6 block">
+                        <div className="grid_col col-12 tablet-col-6 block">
                             { _renderTextbook() }
                         </div>
                         <div className="grid_col col-12 block">

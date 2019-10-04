@@ -5,11 +5,14 @@ import StudentCoursesItem from '../../components/StudentCourses/StudentCoursesIt
 import {Preloader} from "../../components/UI/preloader";
 import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import './studentCourses.scss';
 
 function StudentCourses({classesList, allCoursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentClass, setCurrentClass ] = useState(null);
+    const [ showIndex, setShowIndex ] = useState(false);
 
     useEffect(() => {
         if ( classesList && allCoursesList ) {
@@ -18,7 +21,7 @@ function StudentCourses({classesList, allCoursesList}) {
     }, [classesList, allCoursesList]);
 
     return (
-        <div className="studentCourses">
+        <div className={classNames('studentCourses', {blurred: showIndex})}>
             <div className="content__title-holder">
                 <h2 className="content__title">
                     <i className="content_title-icon fa fa-book" />
@@ -40,12 +43,18 @@ function StudentCourses({classesList, allCoursesList}) {
                         <Preloader/>
                 }
             </div>
+            {
+                classesList && allCoursesList && classesList.length && allCoursesList.length && filterCourses().length > 1 ?
+                    _renderIndex()
+                    :
+                    null
+            }
         </div>
     );
 
     function _renderCourse(item) {
         return (
-            <div className="block studentCourses__list-item" key={item.course.id}>
+            <div className="block studentCourses__list-item" key={item.course.id} id={item.course.id}>
                 <h2 className="block__heading">
                     <Link to={'/courses/' + item.subject.id + '/' + item.course.id}>
                         <span className="block__heading-subheading">
@@ -57,6 +66,40 @@ function StudentCourses({classesList, allCoursesList}) {
                 <StudentCoursesItem subjectID={item.subject.id} courseID={item.course.id} />
             </div>
         )
+    }
+
+    function _renderIndex() {
+        return (
+            <div className={classNames('alphabetIndex', {show: showIndex})}>
+                <span className="alphabetIndex__btn" onClick={() => setShowIndex(!showIndex)}>
+                    {
+                        !showIndex ?
+                            <i className="fas fa-ellipsis-h" />
+                            :
+                            <i className="fa fa-times" />
+                    }
+                </span>
+                <div className="alphabetIndex__list">
+                    {
+                        filterCourses().map((item) => {
+                            return (
+                                <div className="alphabetIndex__item" key={item.course.id} onClick={() => scrollTo(item.course.id)}>
+                                    { item.course.name[lang] ? item.course.name[lang] : item.course.name['ua'] }
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+        )
+    }
+
+    function scrollTo(id) {
+        const block = document.getElementById(id);
+        const header = document.querySelector('.studentHeader');
+
+        window.scrollTo({top: window.scrollY + block.getBoundingClientRect().top - header.offsetHeight - 40, behavior: 'smooth'});
+        setShowIndex(false);
     }
 
     function filterCourses() {
