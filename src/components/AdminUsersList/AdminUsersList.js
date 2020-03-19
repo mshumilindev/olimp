@@ -137,6 +137,9 @@ class AdminUsersList extends React.Component {
     }
 
     _renderUsers(user, isCurrentUser) {
+        if ( !user ) {
+            return null;
+        }
         const { loading, list, classesList, allCoursesList } = this.props;
         const { translate, lang } = this.context;
         const selectedClass = classesList ? classesList.find(item => item.id === user.class) : null;

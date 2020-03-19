@@ -65,6 +65,8 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
+      width: 70%;
+      text-align: center;
     }
     &-item-info {
       border-top: 1px solid $white;
@@ -81,6 +83,10 @@
       line-height: 1.2;
       max-height: 210px;
       overflow: hidden;
+    }
+    &-item-info-inner {
+      white-space: pre-line;
+      text-align: left;
     }
     &-item-remove {
       position: absolute;
