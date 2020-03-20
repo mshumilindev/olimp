@@ -8,7 +8,7 @@
         cursor: pointer;
         padding-right: 34px;
         text-overflow: ellipsis;
-        &:focus {
+        &.isActive {
             ~ [class$="__drop"] {
                 max-height: 200px;
                 overflow: auto;
