@@ -33,8 +33,8 @@ export default class SiteSettingsProvider extends React.Component{
             getUserModel: (role, id) => {
                 return this.getUserModel(role, id);
             },
-            getDocFormFields: (name, tags, action) => {
-                return this.getDocFormFields(name, tags, action);
+            getDocFormFields: (name, tags, teacher, action) => {
+                return this.getDocFormFields(name, tags, teacher, action);
             },
             getSubjectModel: () => {
                 return this.getSubjectModel();
@@ -639,7 +639,7 @@ export default class SiteSettingsProvider extends React.Component{
         return formFields;
     }
 
-    getDocFormFields(name, tags, action) {
+    getDocFormFields(name, tags, teacher, action) {
         const { translate } = this.state;
 
         // === Need to move this to json file
@@ -660,6 +660,22 @@ export default class SiteSettingsProvider extends React.Component{
                 placeholder: translate('tags'),
                 value: tags,
                 updated: false
+            },
+            {
+                type: 'block',
+                heading: translate('teacher'),
+                id: 'teacher_block',
+                children: [
+                    {
+                        type: 'userPicker',
+                        name: 'userPicker',
+                        placeholder: translate('select_teacher'),
+                        id: 'teacher',
+                        value: teacher,
+                        updated: false,
+                        noneditable: true
+                    }
+                ]
             },
             {
                 type: 'submit',

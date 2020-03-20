@@ -34,7 +34,7 @@ export default function Admin({children, location, params, isTeacher}) {
             id: 5,
             url: '/admin-courses',
             icon: 'fa fa-book',
-            name: 'courses'
+            name: 'subjects'
         },
         {
             id: 6,

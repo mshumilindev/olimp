@@ -16,6 +16,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     const { user } = useContext(userContext);
     const [ hasErrors, setHasErrors ] = useState(false);
     const { translate } = useContext(SiteSettingsContext);
+    const [ showPassword, setShowPassword ] = useState(false);
 
     return (
         <form className={classNames('form', {hasErrors: hasErrors || formError})} ref={$form} onSubmit={e => submitForm(e)}>
@@ -126,7 +127,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'url':
                 return (
                     <div className="form__field-holder">
-                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated, readonly: field.readonly})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type} title={name} value={field.value} autoComplete="new-password" readOnly={field.readonly} />
+                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated, readonly: field.readonly})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type === 'password' ? showPassword ? 'text' : field.type : field.type} title={name} value={field.value} autoComplete="new-password" readOnly={field.readonly} />
                         {
                             field.icon ?
                                 <i className={classNames('form__field-icon ' + field.icon, { isFilled: field.value })} />
@@ -135,6 +136,19 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                     <span className={classNames('form__field-placeholder', { isFilled: field.value })}>{ placeholder }</span>
                                     :
                                     null
+                        }
+                        {
+                            field.type === 'password' ?
+                                <span className="form__field-btn" onClick={() => setShowPassword(!showPassword)}>
+                                    {
+                                        showPassword ?
+                                            <i className='fa fa-eye'/>
+                                            :
+                                            <i className='fa fa-eye-slash'/>
+                                    }
+                                </span>
+                                :
+                                null
                         }
                         {
                             field.btn ?
@@ -158,7 +172,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'userPicker':
                 return (
                     <div className="form__field-holder">
-                        <UserPicker type={field.id} noSearch selectedList={field.value ? [field.value] : []} addUsers={(type, list) => handleFieldChange(field.id, list[0])} placeholder={field.placeholder} />
+                        <UserPicker type={field.id} noSearch selectedList={field.value ? [field.value] : []} addUsers={(type, list) => handleFieldChange(field.id, list[0])} placeholder={field.placeholder} noneditable={user.role === 'teacher' && field.noneditable} />
                     </div>
                 );
 
@@ -507,16 +521,17 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         // === Modifying tags
         intValue = intValue.split('#').join('');
 
+        intValue = intValue.length ? intValue.split(' ') : [];
 
-        intValue = intValue.split(' ');
-
-        if ( Array.isArray(intValue) ) {
-            intValue.forEach(item => {
-                newValue.push('#' + item);
-            });
-        }
-        else {
-            newValue.push('#' + intValue);
+        if ( intValue.length ) {
+            if ( Array.isArray(intValue) ) {
+                intValue.forEach(item => {
+                    newValue.push('#' + item);
+                });
+            }
+            else {
+                newValue.push('#' + intValue);
+            }
         }
 
         handleFieldChange(fieldID, newValue);

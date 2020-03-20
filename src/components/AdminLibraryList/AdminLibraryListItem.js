@@ -1,23 +1,46 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { Link } from "react-router-dom";
 import TagsList from "../UI/TagsList/TagsList";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from "../UI/Modal/Modal";
 import Form from "../Form/Form";
 import {updateDoc, downloadDoc} from "../../redux/actions/libraryActions";
 import {connect} from "react-redux";
+import classNames from "classnames";
 
-function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc}) {
+function usePrevious(value) {
+    const ref = useRef(null);
+
+    useEffect(() => {
+        ref.current = value;
+    }, [value]);
+
+    return ref.current;
+}
+
+function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc, users, isCurrent}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
+    const [ isUsed, setIsUsed ] = useState(false);
     const [ docItem, setDocItem ] = useState(JSON.stringify(item));
-    const [ initialDocItem ] = useState(JSON.stringify(item));
+    const [ initialDocItem, setInitialDocItem ] = useState(JSON.stringify(item));
     const [ formUpdated, setFormUpdated ] = useState(false);
+    const prevItem = usePrevious(item);
 
     // === Need to move this to context
-    const itemFields = getDocFormFields(JSON.parse(docItem).name, JSON.parse(docItem).tags, translate('update'));
+    const itemFields = getDocFormFields(JSON.parse(docItem).name, JSON.parse(docItem).tags, JSON.parse(docItem).teacher, translate('update'));
+
+    useEffect(() => {
+        if ( JSON.stringify(prevItem) !== JSON.stringify(item) ) {
+            setDocItem(JSON.stringify(item));
+            setInitialDocItem(JSON.stringify(item));
+            setShowModal(false);
+            setIsUsed(false);
+        }
+    }, [item]);
 
     return (
-        <tr className="table__body-row">
+        <tr className={classNames('table__body-row', {current: isCurrent, isUsed: isUsed})}>
             <td className="table__body-cell">
                 <div className="table__ellipsis">
                     <a href="/" title={JSON.parse(docItem).name} onClick={e => onDownloadFile(e)}>
@@ -28,6 +51,14 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
             </td>
             <td className="table__body-cell">
                 <TagsList tagsList={JSON.parse(docItem).tags} setTags={setTags} />
+            </td>
+            <td className="table__body-cell">
+                {
+                    JSON.parse(docItem).teacher ?
+                        <Link to={'/admin-users/' + getTeacher(JSON.parse(docItem).teacher).login}><i className="fa fa-user content_title-icon"/>{ getTeacher(JSON.parse(docItem).teacher).name }</Link>
+                        :
+                        null
+                }
             </td>
             <td className="table__body-cell">
                 <div className="table__actions">
@@ -54,6 +85,10 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
         </tr>
     );
 
+    function getTeacher(userID) {
+        return users.length ? users.find(userItem => userItem.id === userID) : '';
+    }
+
     function setFieldValue(fieldID, value) {
         const newField = JSON.parse(docItem);
 
@@ -68,16 +103,22 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
     function onSetShowModal(e) {
         e.preventDefault();
 
+        setIsUsed(true);
         setShowModal(true);
     }
 
     function onHideModal() {
         setShowModal(false);
+        setIsUsed(false);
         setDocItem(initialDocItem);
     }
 
     function handleUpdateFile() {
         const newFile = JSON.parse(docItem);
+
+        if ( !newFile.teacher ) {
+            newFile.teacher = '';
+        }
 
         delete newFile.id;
 
@@ -90,6 +131,7 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
         downloadDoc(JSON.parse(docItem).ref);
     }
 }
+
 const mapDispatchToProps = dispatch => ({
     updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
     downloadDoc: (ref) => dispatch(downloadDoc(ref))

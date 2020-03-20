@@ -1,15 +1,12 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import {connect} from "react-redux";
-import withFilters from "../../utils/withFilters";
-import { fetchLibrary, deleteDoc, uploadDoc } from '../../redux/actions/libraryActions';
+import {fetchLibrary, deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../../components/UI/preloader";
-import withPager from "../../utils/withPager";
-import withTags from '../../utils/withTags';
 import Modal from '../../components/UI/Modal/Modal';
 import Form from '../../components/Form/Form';
 import generator from "generate-password";
 import AdminLibraryList from "../../components/AdminLibraryList/AdminLibraryList";
+import userContext from "../../context/userContext";
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
@@ -23,22 +20,24 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, selectedTags, deleteDoc, uploadDoc}) {
+function AdminLibrary({loading, list, setTags, deleteDoc, uploadDoc, usersList}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const $fileRef = React.createRef();
     const [ showModal, setShowModal ] = useState(false);
     const [ newFile, setFile ] = useState({
         name: '',
-        tags: []
+        tags: [],
+        teacher: user.role ==='teacher' ? user.id : ''
     });
-    const uploadFields = getDocFormFields(newFile.name, newFile.tags, translate('upload'));
+    const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
     const prevList = usePrevious(list);
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
 
     useEffect(() => {
         if ( JSON.stringify(prevList) !== JSON.stringify(list) ) {
-            setFile({name: '', tags: []});
+            setFile({name: '', tags: [], teacher: user.role ==='teacher' ? user.id : ''});
             setShowModal(false);
 
             if ( $fileRef.current ) {
@@ -61,45 +60,7 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
                     null
             }
             <div className="section">
-                <div className="section__title-holder">
-                    <h2 className="section__title">
-                        <i className="content_title-icon fa fa-bookmark" />
-                        { translate('library') }
-                    </h2>
-                    <div className="section__title-actions">
-                        <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
-                            <i className="content_title-icon fa fa-cloud-upload-alt" />
-                            { translate('upload') }
-                        </a>
-                    </div>
-                    {
-                        loading ?
-                            <Preloader size={60}/>
-                            :
-                            null
-                    }
-                </div>
-                { filters }
-                <div className="adminLibrary__list widget">
-                    {
-                        list ?
-                            list.length ?
-                                <>
-                                    { selectedTags }
-                                    <AdminLibraryList list={filterList()} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags}/>
-                                    { pager }
-                                </>
-                                :
-                                <div className="nothingFound">
-                                    <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
-                                        <i className="content_title-icon fa fa-cloud-upload-alt" />
-                                        { translate('upload') }
-                                    </a>
-                                </div>
-                            :
-                            <Preloader/>
-                    }
-                </div>
+                <AdminLibraryList list={list.filter(item => user.role === 'teacher' ? item.teacher === user.id : true)} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags} users={usersList} onUploadFile={onUploadFile}/>
             </div>
             {
                 showConfirmRemove ?
@@ -109,10 +70,6 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
             }
         </div>
     );
-
-    function filterList() {
-        return list.filter(item => searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
-    }
 
     function onConfirmRemove() {
         deleteDoc(docToDelete.id, docToDelete.ref);
@@ -165,12 +122,13 @@ function AdminLibrary({loading, list, filters, searchQuery, pager, setTags, sele
     }
 }
 const mapStateToProps = state => ({
+    usersList: state.usersReducer.usersList,
     list: state.libraryReducer.libraryList,
     loading: state.libraryReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: dispatch(fetchLibrary()),
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
-    uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id))
+    uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withPager(withTags(AdminLibrary)), true, true));
+export default connect(mapStateToProps, mapDispatchToProps)(AdminLibrary);

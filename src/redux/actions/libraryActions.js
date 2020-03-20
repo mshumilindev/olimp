@@ -180,6 +180,7 @@ export function updateDoc(newFile, id) {
         return documentDoc.update({...newFile}).then(() => {
             libraryList.find(item => item.ref === newFile.ref).name = newFile.name;
             libraryList.find(item => item.ref === newFile.ref).tags = newFile.tags;
+            libraryList.find(item => item.ref === newFile.ref).teacher = newFile.teacher;
             dispatch(updateDocSuccess(libraryList.sort((a, b) => {
                 if ( a.name < b.name ) {
                     return -1;

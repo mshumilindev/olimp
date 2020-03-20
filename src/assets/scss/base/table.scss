@@ -71,6 +71,13 @@
           border-bottom: 1px solid $anchorColor;
         }
       }
+      &.current {
+        + :not(.current) {
+          [class$="-cell"] {
+            border-top: 1px solid $baseColor;
+          }
+        }
+      }
     }
     &-cell {
       @extend %s-cell;

@@ -5,7 +5,6 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 function Profile({user, allCoursesList, classesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
 
-    console.log('true');
     return (
         <div className="profile">
             {
