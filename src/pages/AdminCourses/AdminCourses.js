@@ -65,17 +65,17 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                         <i className="content_title-icon fa fa-book" />
                         { translate('courses') }
                     </h2>
-                    {
-                        user.role === 'admin' ?
+                    {/*{*/}
+                    {/*    user.role === 'admin' ?*/}
                             <div className="section__title-actions">
                                 <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
                                     <i className="content_title-icon fa fa-plus" />
                                     { translate('create_subject') }
                                 </a>
                             </div>
-                            :
-                            null
-                    }
+                    {/*        :*/}
+                    {/*        null*/}
+                    {/*}*/}
                     {
                         loading ?
                             <Preloader size={60}/>
@@ -166,21 +166,21 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
 
     function filterList() {
         return list.filter(item => {
-            let sameTeacher = user.role === 'admin';
+            // let sameTeacher = user.role === 'admin';
+            //
+            // if ( user.role === 'teacher' ) {
+            //     allCoursesList.forEach(subjectItem => {
+            //         if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
+            //             subjectItem.coursesList.forEach(courseItem => {
+            //                 if ( courseItem.teacher === user.id ) {
+            //                     sameTeacher = true;
+            //                 }
+            //             });
+            //         }
+            //     });
+            // }
 
-            if ( user.role === 'teacher' ) {
-                allCoursesList.forEach(subjectItem => {
-                    if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
-                        subjectItem.coursesList.forEach(courseItem => {
-                            if ( courseItem.teacher === user.id ) {
-                                sameTeacher = true;
-                            }
-                        });
-                    }
-                });
-            }
-
-            return sameTeacher && (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
+            return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
         }).sort((a, b) => {
             const aName = a.name[lang] ? a.name[lang] : a.name['ua'];
             const bName = b.name[lang] ? b.name[lang] : b.name['ua'];

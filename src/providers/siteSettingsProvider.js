@@ -301,6 +301,7 @@ export default class SiteSettingsProvider extends React.Component{
 
     getCourseFields(course) {
         const { translate } = this.state;
+        const currentUser = JSON.parse(localStorage.getItem('user'));
 
         return [
             {
@@ -338,8 +339,9 @@ export default class SiteSettingsProvider extends React.Component{
                         name: 'userPicker',
                         placeholder: translate('select_teacher'),
                         id: 'teacher',
-                        value: course.teacher,
-                        updated: false
+                        value: course.teacher ? course.teacher : currentUser.role === 'teacher' ? currentUser.id : '',
+                        updated: false,
+                        noneditable: true
                     }
                 ]
             },

@@ -62,7 +62,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
-            <ContextMenu links={user.role === 'admin' ? contextLinks : contextLinksTeacher}>
+            <ContextMenu links={contextLinks}>
                 <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
                     {
                         checkIfIsOpen() ?

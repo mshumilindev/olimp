@@ -50,7 +50,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
-            <ContextMenu links={contextLinks} dontShow={user.role !== 'admin'}>
+            <ContextMenu links={contextLinks}>
                 <Link to={'/admin-courses' + (params && params.subjectID === subject.id && !params.courseID ? '' : '/' + subject.id)} className="adminCourses__list-link">
                     {
                         checkIfIsOpen() ?
@@ -116,7 +116,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return subject.coursesList.filter(course => user.role === 'admin' || course.teacher === user.id).sort((a, b) => a.index - b.index);
+        return subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true).sort((a, b) => a.index - b.index);
     }
 }
 const mapDispatchToProps = dispatch => ({
