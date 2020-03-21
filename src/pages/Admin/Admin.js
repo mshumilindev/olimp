@@ -110,6 +110,12 @@ export default function Admin({children, location, params, isTeacher}) {
             url: '/admin-library',
             icon: 'fa fa-bookmark',
             name: 'library'
+        },
+        {
+            id: 11,
+            url: '/admin-info',
+            icon: 'fa fa-info',
+            name: 'info'
         }
     ];
 
