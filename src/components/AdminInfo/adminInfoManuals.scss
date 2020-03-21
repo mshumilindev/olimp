@@ -1,0 +1,96 @@
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/colors';
+
+.manuals {
+  line-height: 1.5;
+  padding: $pageIndent;
+  text-align: justify;
+  &__title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-transform: uppercase;
+    font-weight: 400;
+    text-align: center;
+    font-family: $RobotoCondensed;
+  }
+  &__section {
+    margin-bottom: 40px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  &__sectionTitle {
+    text-transform: uppercase;
+    font-family: $RobotoCondensed;
+  }
+  &__sectionTitle {
+    margin-bottom: 20px;
+    letter-spacing: .5px;
+    display: flex;
+    span {
+      margin-right: 5px;
+    }
+  }
+  &__block {
+    margin-bottom: 40px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  &__blockTitle {
+    margin-bottom: 20px;
+    font-weight: normal;
+    display: flex;
+    span {
+      font-weight: bold;
+      width: 40px;
+      flex: 0 0 auto;
+    }
+  }
+  &__item {
+    margin-bottom: 10px;
+    padding-left: 40px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &.list,
+    &.oList {
+      ul,
+      ol {
+        li {
+          margin-bottom: 10px;
+          display: flex;
+          &:last-child {
+            margin-bottom: 0;
+          }
+          span:not(:first-child) {
+            margin-left: 10px;
+          }
+          ul,
+          ol {
+            padding-left: 20px;
+          }
+        }
+      }
+    }
+    figure {
+      text-align: center;
+      border: 2px solid $lightGreyColor;
+      display: inline-block;
+      vertical-align: top;
+      margin-bottom: 20px;
+    }
+    img {
+      vertical-align: top;
+      max-width: 100%;
+    }
+    figcaption {
+      font-style: italic;
+      background: $lightGreyColor;
+      font-family: $RobotoCondensed;
+      color: $greyColor;
+      padding: 5px 0;
+    }
+  }
+}

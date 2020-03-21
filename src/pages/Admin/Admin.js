@@ -65,6 +65,12 @@ export default function Admin({children, location, params, isTeacher}) {
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'
+        },
+        {
+            id: 11,
+            url: '/admin-info',
+            icon: 'fa fa-info',
+            name: 'info'
         }
     ];
 
