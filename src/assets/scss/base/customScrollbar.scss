@@ -1,0 +1,23 @@
+.scrollbar {
+  &__content:hover {
+    ~ [class$="__track"] {
+      opacity: 1;
+    }
+  }
+  &__track {
+    background: $lightGreyColor;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px !important;
+    opacity: .75;
+    border-radius: 4px;
+    transition: all .15s ease-in-out;
+    > div {
+      border-radius: 4px;
+    }
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
