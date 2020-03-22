@@ -1,19 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import classNames from "classnames";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
+import ReactPlayer from 'react-player';
 
 export default function Article({content, type, finishQuestions, loading}) {
     const { lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
+    const articleRef = useRef(null);
     const [ answers, setAnswers ] = useState({
         gotScore: 0,
         blocks: []
     });
+    const [ size, setSize ] = useState({width: 0, height: 0});
+
+    useEffect(() => {
+        const width = articleRef.current.offsetWidth;
+
+        setSize({
+            width: width,
+            height: width * 56.25 / 100
+        });
+    }, []);
 
     return (
-        <article className="article">
+        <article className="article" ref={articleRef}>
             { pagifyContent()[contentPage].map(block => _renderBlock(block)) }
             {
                 pagifyContent().length > 1 && type === 'content' ?
@@ -66,6 +78,19 @@ export default function Article({content, type, finishQuestions, loading}) {
                                     <div className="article__image-caption">
                                         { block.value.caption[lang] ? block.value.caption[lang] : block.value.caption['ua'] }
                                     </div>
+                                    :
+                                    null
+                            }
+                        </>
+                        :
+                        null
+                }
+                {
+                    block.type === 'youtube' ?
+                        <>
+                            {
+                                block.value ?
+                                    <ReactPlayer url={block.value} width={size.width} height={size.height} />
                                     :
                                     null
                             }

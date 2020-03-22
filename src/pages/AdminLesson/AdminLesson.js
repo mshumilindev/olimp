@@ -99,14 +99,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
-                            <ContentEditor contentType="content" content={content} types={['text', 'media', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                            <ContentEditor contentType="content" content={content} types={['text', 'media', 'youtube', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
                         </div>
                         <div className="widget">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-question"/>
                                 { translate('control_questions') }
                             </div>
-                            <ContentEditor contentType="questions" content={questions} types={['text', 'media', 'answers', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
+                            <ContentEditor contentType="questions" content={questions} types={['text', 'media', 'youtube', 'answers', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
                         </div>
                     </div>
                     <div className="grid_col col-4">

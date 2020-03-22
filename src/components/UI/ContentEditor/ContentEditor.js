@@ -7,6 +7,7 @@ import Modal from '../Modal/Modal';
 
 import ContentEditorText from './ContentEditorText/ContentEditorText';
 import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
+import ContentEditorYoutube from './ContentEditorYoutube/ContentEditorYoutube';
 import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
 import ContentEditorDivider from './ContentEditorDivider/ContentEditorDivider';
 import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
@@ -39,6 +40,11 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             type: 'media',
             icon: 'fa fa-images',
             title: 'media'
+        },
+        {
+            type: 'youtube',
+            icon: 'fab fa-youtube',
+            title: 'youtube'
         },
         // {
         //     type: 'table',
@@ -98,6 +104,8 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                                         return <ContentEditorText key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('media') :
                                         return <ContentEditorMedia key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('youtube') :
+                                        return <ContentEditorYoutube key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('table') :
                                     //     return <ContentEditorTable key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('grid') :
