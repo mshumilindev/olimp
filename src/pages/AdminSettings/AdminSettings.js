@@ -9,8 +9,9 @@ import generator from "generate-password";
 import './adminSettings.scss';
 import AdminSettingsContact from '../../components/AdminSettings/AdminSettingsContact';
 import AdminSettingsSettings from '../../components/AdminSettings/AdminSettingsSettings';
+import {setUpdates} from "../../redux/actions/updatesActions";
 
-function AdminSettings({contactList, loading, updateContact, siteSettingsList, siteSettingsLoading, updateSiteSettings}) {
+function AdminSettings({contactList, loading, updateContact, siteSettingsList, siteSettingsLoading, updateSiteSettings, setUpdates}) {
     const { translate } = useContext(siteSettingsContext);
     const [ initialContacts, setInitialContacts ] = useState(null);
     const [ contacts, setContacts ] = useState(null);
@@ -126,6 +127,7 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
         if ( settingsUpdated ) {
             updateContact(JSON.parse(contacts));
             updateSiteSettings(JSON.parse(siteSettings));
+            setUpdates('siteSettings');
         }
     }
 
@@ -207,6 +209,7 @@ const mapDispatchToProps = dispatch => ({
     fetchContact: dispatch(fetchContact()),
     updateContact: contacts => dispatch(updateContact(contacts)),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    updateSiteSettings: siteSettings => dispatch(updateSiteSettings(siteSettings))
+    updateSiteSettings: siteSettings => dispatch(updateSiteSettings(siteSettings)),
+    setUpdates: type => dispatch(setUpdates(type))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withFilters(AdminSettings, true));

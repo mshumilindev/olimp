@@ -36,6 +36,7 @@
         window.CustomEvent = CustomEvent;
       })();
       const onTranslationsUpdate = new CustomEvent('onTranslationsUpdate');
+      const onSiteSettingsUpdate = new CustomEvent('onSiteSettingsUpdate');
 
       window.addEventListener('onTranslationsUpdate', function() {
         const dateToUpdate = new Date();
