@@ -45,8 +45,18 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
                 </div>
                 <div className="nextSchedule__list-courses">
                     {
-                        day.lessons.length ?
-                            day.lessons.map((lesson, index) => _renderCourse(lesson, index))
+                        currentClass.courses.length && day.lessons.length ?
+                            day.lessons.sort((a, b) => {
+                                if ( a.time < b.time ) {
+                                    return -1;
+                                }
+                                else if ( a.time > b.time ) {
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
+                            }).map((lesson, index) => _renderCourse(lesson, index))
                             :
                             <div className="nextSchedule__list-courses-item nextSchedule__list-courses-notFound">
                                 <div className="nextSchedule__list-courses-icon">
@@ -70,6 +80,9 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
                     <i className="fa fa-graduation-cap" />
                 </div>
                 <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id}>
+                    <span className="nextSchedule__list-courses-item-time">
+                        { lesson.time }
+                    </span>
                     <span className="nextSchedule__list-courses-item-subject">
                         { currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] }
                     </span>

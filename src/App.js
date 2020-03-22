@@ -4,7 +4,7 @@ import SiteSettingsProvider from './providers/siteSettingsProvider';
 import Loader from "./assets/img/loader.svg";
 import Page from './pages/page';
 
-const Login  = React.lazy( () => import('./pages/Login/Login'));
+const Login  = React.lazy(() => import('./pages/Login/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
 const StudentProfile = React.lazy(() => import ('./pages/StudentProfile/StudentProfile'));
 const StudentSchedule = React.lazy(() => import ('./pages/StudentSchedule/StudentSchedule'));

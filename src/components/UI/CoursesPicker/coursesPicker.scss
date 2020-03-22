@@ -30,6 +30,9 @@
       background: $lightColor;
     }
   }
+  &__selectedList-item-time {
+    margin-right: 10px;
+  }
   &__selectedList-item-subject {
     color: $greyColor;
     flex: 0 0 auto;

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import siteSettingsContext from '../../../context/siteSettingsContext';
 import AdminCoursesCourse from '../AdminCoursesCourse/AdminCoursesCourse';
@@ -48,8 +48,20 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         fetchCoursesList(subject.id);
     }
 
+    useEffect(() => {
+        if ( params && params.subjectID && subject.id === params.subjectID ) {
+            const moveTo = document.getElementById(subject.id);
+
+            setTimeout(() => {
+                window.scrollTo({
+                    top: moveTo.getBoundingClientRect().top - 40
+                });
+            }, 100);
+        }
+    }, []);
+
     return (
-        <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
+        <div id={subject.id} className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
             <ContextMenu links={contextLinks}>
                 <Link to={'/admin-courses' + (params && params.subjectID === subject.id && !params.courseID ? '' : '/' + subject.id)} className="adminCourses__list-link">
                     {

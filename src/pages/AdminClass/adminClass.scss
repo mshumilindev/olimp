@@ -47,12 +47,17 @@
     font-family: $RobotoCondensed;
     margin-top: 20px;
     cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
     &:hover {
       color: $linkHoverColor;
     }
     i {
       margin-top: -1px;
     }
+  }
+  &__schedule-courses-item-inner {
+    display: flex;
   }
   &__schedule-courses-item-subject {
     &:after {
@@ -65,5 +70,8 @@
   }
   .form {
     min-height: 100px;
+  }
+  .modal__box {
+    max-width: 550px;
   }
 }

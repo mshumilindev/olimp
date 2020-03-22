@@ -153,6 +153,14 @@
     &:-moz-placeholder {
       color: $mediumGreyColor;
     }
+    &[type="time"] {
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button,
+      &::-webkit-clear-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
   }
   &__textarea {
     height: 100px;
