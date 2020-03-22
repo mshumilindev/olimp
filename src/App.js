@@ -27,6 +27,7 @@ const AdminClass = React.lazy(() => import('./pages/AdminClass/AdminClass'));
 const AdminSettings = React.lazy(() => import('./pages/AdminSettings/AdminSettings'));
 const AdminProfile = React.lazy(() => import('./pages/AdminProfile/AdminProfile'));
 const AdminInfo = React.lazy(() => import('./pages/AdminInfo/AdminInfo'));
+const Chatroom = React.lazy(() => import('./pages/Chatroom/Chatroom'));
 
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound/PageNotFound'));
 
@@ -67,6 +68,8 @@ export default function App() {
                             <Route path='/admin-library' component={AdminLibrary} />
                             <Route path='/admin-settings' component={AdminSettings} />
                             <Route path='/admin-info' component={AdminInfo} />
+
+                            <Route path='/chat' component={Chatroom} />
 
                             <Route path="*" component={PageNotFound} />
                         </Suspense>

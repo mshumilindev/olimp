@@ -25,14 +25,16 @@ function Page(props) {
         location.pathname = '/login';
     }
     else {
-        if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
-            history.push('/admin');
-        }
-        else if ( user.role === 'teacher' && !location.pathname.includes('admin') ) {
-            history.push('/admin');
-        }
-        else if ( user.role === 'student' && location.pathname.includes('admin') ) {
-            history.push('/');
+        if ( !location.pathname.includes('chat') ) {
+            if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
+                history.push('/admin');
+            }
+            else if ( user.role === 'teacher' && !location.pathname.includes('admin') ) {
+                history.push('/admin');
+            }
+            else if ( user.role === 'student' && location.pathname.includes('admin') ) {
+                history.push('/');
+            }
         }
 
         const profileRef = db.collection('users').where('login', '==', user.login);
