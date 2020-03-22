@@ -18,12 +18,14 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
     const videoContainerRef = useRef(null);
 
     useEffect(() => {
-        const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft);
+        setTimeout(() => {
+            const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft);
 
-        setSize({
-            width: width,
-            height: width * 56.25 / 100
-        });
+            setSize({
+                width: width,
+                height: width * 56.25 / 100
+            });
+        }, 0);
     }, []);
 
     return (
@@ -34,7 +36,7 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
             <br/>
             {
                 block.value ?
-                    <ReactPlayer url={block.value} width={size.width} height={size.height} config={{youtube: { origin: window.location.origin}}} />
+                    <ReactPlayer url={block.value} width={size.width} height={size.height} />
                     :
                     null
             }
