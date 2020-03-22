@@ -36,13 +36,25 @@ function Page(props) {
         }
 
         const profileRef = db.collection('users').where('login', '==', user.login);
+        let profileCheckI = 0;
+        checkProfileStatus();
 
-        profileRef.get().then(snapshot => {
-            if ( !snapshot.docs.length || snapshot.docs[0].data().status === 'suspended' ) {
-                localStorage.removeItem('user');
-                history.push('/suspended');
-            }
-        });
+        function checkProfileStatus() {
+            profileCheckI ++;
+            profileRef.get().then(snapshot => {
+                if ( !snapshot.docs.length && profileCheckI < 10 ) {
+                    setTimeout(() => {
+                        checkProfileStatus();
+                    }, 1000);
+                }
+                else {
+                    if ( snapshot.docs[0].data().status === 'suspended' ) {
+                        localStorage.removeItem('user');
+                        history.push('/suspended');
+                    }
+                }
+            });
+        }
     }
 
     useEffect(() => {
