@@ -31,7 +31,7 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
     return (
         <div className="contentEditor__block-youtube" ref={videoContainerRef}>
             <form className="form">
-                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)}/>
+                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_youtube_url')}/>
             </form>
             <br/>
             {
