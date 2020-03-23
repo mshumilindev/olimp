@@ -5,6 +5,8 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../../components/UI/preloader";
 import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
 import userContext from "../../context/userContext";
+import Breadcrumbs from "../../components/UI/Breadcrumbs/Breadcrumbs";
+import './adminLesson.scss';
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
@@ -28,6 +30,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
     const prevLesson = usePrevious(lesson);
     const [ content, setContent ] = useState(null);
     const [ questions, setQuestions ] = useState(null);
+    const breadcrumbs = [
+        {
+            name: translate('subjects'),
+            url: '/admin-courses'
+        }
+    ];
 
     if ( !lesson ) {
         fetchLesson(subjectID, courseID, moduleID, lessonID);
@@ -71,8 +79,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                 <div className="section__title-holder">
                     <h2 className="section__title">
                         <i className="content_title-icon fa fa-paragraph" />
-                        <span className="section__title-separator">{ translate('courses') }</span>
-                        { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
+                        <Breadcrumbs list={getBreadcrumbs()} />
                     </h2>
                     {
                         checkIfEditable() ?
@@ -128,6 +135,47 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
             :
             <Preloader/>
     );
+
+    function getBreadcrumbs() {
+        if ( params ) {
+            let currentSubject = null;
+            let currentCourse = null;
+            let currentModule = null;
+
+            if ( params.subjectID ) {
+                currentSubject = allCoursesList.find(item => item.id === params.subjectID);
+                breadcrumbs.push({
+                    name: currentSubject ? currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] : '',
+                    url: '/admin-courses/' + params.subjectID
+                });
+            }
+            if ( params.courseID ) {
+                if ( currentSubject.coursesList ) {
+                    currentCourse = currentSubject.coursesList.find(item => item.id === params.courseID);
+                    breadcrumbs.push({
+                        name: currentCourse ? currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] : '',
+                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID
+                    });
+                }
+            }
+            if ( params.moduleID ) {
+                if ( currentCourse && currentCourse.modules ) {
+                    currentModule = currentCourse.modules.find(item => item.id === params.moduleID);
+                    breadcrumbs.push({
+                        name: currentModule ? currentModule.name[lang] ? currentModule.name[lang] : currentModule.name['ua'] : '',
+                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID
+                    });
+                }
+            }
+        }
+
+        breadcrumbs.push({
+            name: `<span class="breadcrumbs__modifier">${translate('lesson')}: </span>${lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']}`,
+            url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + params.lessonID
+        });
+
+        return breadcrumbs;
+    }
 
     function checkIfEditable() {
         let isEditable = false;

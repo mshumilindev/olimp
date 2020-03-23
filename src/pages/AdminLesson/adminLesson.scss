@@ -1,0 +1,22 @@
+.adminLesson {
+  .section__title {
+    display: flex;
+    align-items: center;
+  }
+  .breadcrumbs {
+    flex-wrap: wrap;
+    &__item {
+      &:not(:last-child) {
+        font-size: 14px;
+      }
+      &:last-child {
+        width: 100%;
+        flex: 0 0 auto;
+        margin-top: 5px;
+        &:before {
+          display: none;
+        }
+      }
+    }
+  }
+}
