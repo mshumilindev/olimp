@@ -79,4 +79,17 @@
     font-size: 20px;
     font-family: $RobotoCondensed;
   }
+  &__backToTop {
+    position: fixed;
+    right: $pageIndent;
+    bottom: $pageIndent;
+    z-index: 1;
+    color: $white;
+    font-size: 40px;
+    cursor: pointer;
+    transition: color .15s ease-in-out;
+    &:hover {
+      color: $linkHoverColor
+    }
+  }
 }

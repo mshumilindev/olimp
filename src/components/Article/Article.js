@@ -115,6 +115,17 @@ export default function Article({content, type, finishQuestions, loading}) {
                         null
                 }
                 {
+                    block.type === 'word' ?
+                        <iframe
+                            src={getWordURL(block.value)}
+                            style={{width: '100%', height: size.width * 141 / 100, border: '1px solid grey'}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                        :
+                        null
+                }
+                {
                     block.type === 'powerpoint' ?
                         <iframe
                             src={getPowerpointURL(block.value)}
@@ -139,6 +150,16 @@ export default function Article({content, type, finishQuestions, loading}) {
                 }
             </div>
         )
+    }
+
+    function getWordURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL += '?embedded=true&widget=false&headers=false&chrome=false';
+        }
+
+        return newURL;
     }
 
     function getPowerpointURL(url) {

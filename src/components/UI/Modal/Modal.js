@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './modal.scss';
 
 export default function Modal({children, onHideModal, heading, className}) {
+    const $wrapper = useRef(null);
+
     useEffect(() => {
         document.querySelector('body').classList.add('overflow');
         return () => {
@@ -13,7 +15,7 @@ export default function Modal({children, onHideModal, heading, className}) {
         <div className={className ? className + ' modal' : 'modal'}>
             <div className="modal__overlay"/>
             <div className="modal__inner">
-                <div className="modal__box-wrapper">
+                <div className="modal__box-wrapper" ref={$wrapper}>
                     <div className="modal__box-holder">
                         <div className="modal__box">
                             <div className="modal__box-inner">
@@ -27,9 +29,19 @@ export default function Modal({children, onHideModal, heading, className}) {
                                 { children }
                             </div>
                         </div>
+                        <div className="modal__backToTop" onClick={handleScroll}>
+                            <i className="fas fa-arrow-circle-up"/>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
+
+    function handleScroll() {
+        $wrapper.current.scroll({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
 }

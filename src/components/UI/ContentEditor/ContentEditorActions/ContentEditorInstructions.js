@@ -16,7 +16,7 @@ export default function ContentEditorInstructions({ instructions, heading }) {
                     <Modal heading={translate(heading)} className="contentEditor__instructions-modal" onHideModal={e => setShowInstructions(false)}>
                         <div className="contentEditor__instructions">
                             {
-                                instructions.map(item => _renderInstructionItem(item))
+                                instructions.map((item, index) => _renderInstructionItem(item, index))
                             }
                         </div>
                     </Modal>
@@ -32,13 +32,13 @@ export default function ContentEditorInstructions({ instructions, heading }) {
         setShowInstructions(true);
     }
 
-    function _renderInstructionItem(item) {
+    function _renderInstructionItem(item, index) {
         switch (item.type) {
             case 'text':
-                return <p dangerouslySetInnerHTML={{__html: item.value}}/>;
+                return <p dangerouslySetInnerHTML={{__html: item.value}} key={index}/>;
 
             case 'image':
-                return <div className="contentEditor__instructions-image"><img src={item.value} /></div>;
+                return <div className="contentEditor__instructions-image" key={index}><img src={item.value} /></div>;
         }
     }
 }

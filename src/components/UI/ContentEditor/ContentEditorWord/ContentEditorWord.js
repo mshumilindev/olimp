@@ -7,9 +7,12 @@ import 'froala-editor/js/plugins/paragraph_format.min.js';
 import 'froala-editor/js/languages/ru.js';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
-import ReactPlayer from 'react-player';
+import ContentEditorInstructions from "../ContentEditorActions/ContentEditorInstructions";
+import * as instructionsJSON from './instructions/instructions';
 
-export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
+const instructions = instructionsJSON.default;
+
+export default function ContentEditorWord({ block, setBlock, removeBlock }) {
     const { translate } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
     const [ size, setSize ] = useState({width: 0, height: 0});
@@ -19,30 +22,41 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
 
     useEffect(() => {
         setTimeout(() => {
-            const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft) - parseInt(getComputedStyle(videoContainerRef.current).paddingRight);
+            const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft);
 
             setSize({
                 width: width,
-                height: width * 56.25 / 100
+                height: width * 56.25 / 100 + 23
             });
         }, 0);
     }, []);
 
     return (
-        <div className="contentEditor__block-youtube" ref={videoContainerRef}>
+        <div className="contentEditor__block-word" ref={videoContainerRef}>
             <form className="form">
-                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_youtube_url')}/>
+                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_word_url')}/>
             </form>
+            <br/>
             {
-                block.value ?
-                    <ReactPlayer url={block.value} width={size.width} height={size.height} />
+                block.value && size.width > 0 ?
+                    <div className="contentEditor__block-word-holder">
+                        <iframe
+                            src={getWordURL(block.value)}
+                            style={{width: '100%', height: size.width * 141 / 100}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                    </div>
                     :
-                    null
+                    <div className="contentEditor__block-placeholder">
+                        { translate('word_will_be_here') }
+                    </div>
             }
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
                 {/*</span>*/}
+                <ContentEditorInstructions instructions={instructions} heading={'how_to_add_word'} />
                 <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>
@@ -55,6 +69,16 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
             }
         </div>
     );
+
+    function getWordURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL += '?embedded=true&widget=false&headers=false&chrome=false';
+        }
+
+        return newURL;
+    }
 
     function onRemoveBlock(e) {
         e.preventDefault();
