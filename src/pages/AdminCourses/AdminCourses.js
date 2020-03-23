@@ -141,9 +141,9 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         const newSubject = {};
 
         newSubject.name = {
-            en: newSubjectFields.find(item => item.id === 'subjectName_en').value,
-            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value,
-            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value
+            en: newSubjectFields.find(item => item.id === 'subjectName_en').value.replace(/\s*$/,''),
+            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value.replace(/\s*$/,''),
+            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value.replace(/\s*$/,'')
         };
         newSubject.id = identify(transliterize(newSubject.name['ua']));
 

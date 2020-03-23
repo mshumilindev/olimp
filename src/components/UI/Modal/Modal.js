@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './modal.scss';
 
-export default function Modal({children, onHideModal, heading}) {
+export default function Modal({children, onHideModal, heading, className}) {
     useEffect(() => {
         document.querySelector('body').classList.add('overflow');
         return () => {
@@ -10,20 +10,22 @@ export default function Modal({children, onHideModal, heading}) {
     });
 
     return (
-        <div className="modal">
+        <div className={className ? className + ' modal' : 'modal'}>
             <div className="modal__overlay"/>
             <div className="modal__inner">
                 <div className="modal__box-wrapper">
                     <div className="modal__box-holder">
                         <div className="modal__box">
-                            <i className={'modal__close fa fa-times'} onClick={onHideModal} />
-                            {
-                                heading ?
-                                    <h2 className="modal__heading">{ heading }</h2>
-                                    :
-                                    null
-                            }
-                            { children }
+                            <div className="modal__box-inner">
+                                <i className={'modal__close fa fa-times'} onClick={onHideModal} />
+                                {
+                                    heading ?
+                                        <h2 className="modal__heading">{ heading }</h2>
+                                        :
+                                        null
+                                }
+                                { children }
+                            </div>
                         </div>
                     </div>
                 </div>

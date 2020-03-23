@@ -1,5 +1,6 @@
 @import '../../../assets/scss/utils/colors';
 @import '../../../assets/scss/utils/fonts';
+@import '../../../assets/scss/utils/sizes';
 
 .contentEditor {
   &__heading {
@@ -157,6 +158,11 @@
           color: $anchorColor;
         }
       }
+      &-info {
+        &:hover {
+          color: $anchorColor;
+        }
+      }
       &-remove {
         &:hover {
           color: $errorColor;
@@ -307,5 +313,33 @@
   }
   .modal__box {
     max-width: 550px;
+  }
+  audio {
+    width: 100%;
+  }
+  &__instructions-modal {
+    .modal__box {
+      max-width: 800px;
+    }
+  }
+  &__instructions {
+    line-height: 1.25;
+    text-align: justify;
+    * {
+      margin-bottom: 10px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    &-image {
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid $mediumGreyColor;
+      padding: 10px;
+    }
+    img {
+      vertical-align: top;
+      max-width: 100%;
+    }
   }
 }
