@@ -49,18 +49,6 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         fetchCoursesList(subject.id);
     }
 
-    useEffect(() => {
-        if ( params && params.subjectID && subject.id === params.subjectID ) {
-            const moveTo = document.getElementById(subject.id);
-
-            setTimeout(() => {
-                window.scrollTo({
-                    top: moveTo.getBoundingClientRect().top - 40
-                });
-            }, 100);
-        }
-    }, []);
-
     return (
         <div id={subject.id} className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
             <ContextMenu links={contextLinks}>

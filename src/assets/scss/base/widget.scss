@@ -16,4 +16,19 @@
   &__icon {
     margin-right: $widgetIndent;
   }
+  &__descr {
+    border-bottom: 1px solid $mediumGreyColor;
+    padding-bottom: $widgetIndent;
+    font-family: $RobotoCondensed;
+    h3 {
+      margin-bottom: $widgetIndent / 2;
+      text-transform: uppercase;
+    }
+    p {
+      margin-bottom: $widgetIndent / 2;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }

@@ -93,6 +93,12 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                                     <div className="widget__title">
                                         <Breadcrumbs list={getBreadcrumbs()} />
                                     </div>
+                                    <div className="widget__descr">
+                                        <h3>Правила користування:</h3>
+                                        <p>Ліва кнопка миші - обрати предмет/модуль/урок</p>
+                                        <p>Права кнопка миші - відкрити контекстне меню</p>
+                                        <p><strong>Перед створенням нового основного предмету запевніться, що його ще не існує</strong></p>
+                                    </div>
                                     <div className="adminCourses__list">
                                         {
                                             filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
@@ -141,7 +147,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         };
         newSubject.id = identify(transliterize(newSubject.name['ua']));
 
-        if ( list.some(item => item.id === newSubject.id) ) {
+        if ( list.some(item => item.id.toLowerCase() === newSubject.id.toLowerCase()) ) {
             setFormError(translate('subject_already_exists'));
         }
         else {

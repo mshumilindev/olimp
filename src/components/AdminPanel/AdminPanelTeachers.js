@@ -4,6 +4,7 @@ import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { orderBy } from 'natural-orderby';
 
 function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCourses}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -94,7 +95,7 @@ function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCo
                     <div className="adminDashboard__teachersList-courses">
                         {
                             selectedCourses.length ?
-                                selectedCourses.map(course => {
+                                orderBy(selectedCourses, [v => v.courseName]).map(course => {
                                     return (
                                         <span key={course.courseName}>
                                             <i className="content_title-icon fa fa-graduation-cap" />
