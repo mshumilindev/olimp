@@ -165,23 +165,33 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
         return (
             <>
                 <h2 className="block__heading">{ translate('teacher') }</h2>
-                <div className="studentCourse__teacher">
-                    <div className="studentCourse__teacher-avatar" style={{backgroundImage: 'url(' + getTeacher().avatar + ')'}}>
-                        {
-                            !getTeacher().avatar ?
-                                <i className="fa fa-user"/>
-                                :
-                                null
-                        }
-                    </div>
-                    <div className="studentCourse__teacher-name">
-                        <Link to={'/user/' + getTeacher().login}>
-                            {
-                                getTeacher().name
-                            }
-                        </Link>
-                    </div>
-                </div>
+                {
+                    getTeacher() ?
+                        <div className="studentCourse__teacher">
+                            <div className="studentCourse__teacher-avatar" style={{backgroundImage: 'url(' + getTeacher().avatar + ')'}}>
+                                {
+                                    !getTeacher().avatar ?
+                                        <i className="fa fa-user"/>
+                                        :
+                                        null
+                                }
+                            </div>
+                            <div className="studentCourse__teacher-name">
+                                <Link to={'/user/' + getTeacher().login}>
+                                    {
+                                        getTeacher().name
+                                    }
+                                </Link>
+                            </div>
+                        </div>
+                        :
+                        <div className="studentCourse__textbook-notFound">
+                            <div className="studentCourse__textbook-icon">
+                                <i className="fa fa-unlink" />
+                            </div>
+                            { translate('no_teacher') }
+                        </div>
+                }
             </>
         );
     }

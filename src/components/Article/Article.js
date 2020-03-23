@@ -99,6 +99,22 @@ export default function Article({content, type, finishQuestions, loading}) {
                         null
                 }
                 {
+                    block.value.url ?
+                        <div className={'article__audio'}>
+                            {
+                                block.value.caption ?
+                                    <p>{ block.value.caption }</p>
+                                    :
+                                    null
+                            }
+                            <audio controls>
+                                <source src={getPlayLink(block.value.url)}/>
+                            </audio>
+                        </div>
+                        :
+                        null
+                }
+                {
                     block.type === 'divider' ?
                         <hr/>
                         :
@@ -112,6 +128,23 @@ export default function Article({content, type, finishQuestions, loading}) {
                 }
             </div>
         )
+    }
+
+    function getPlayLink(url) {
+        let newURL = url;
+
+        if ( newURL.indexOf('https://drive.google.com/file/d/') !== -1 ) {
+            newURL = newURL.replace('https://drive.google.com/file/d/', '');
+        }
+        if ( newURL.indexOf('/view?usp=sharing') !== -1 ) {
+            newURL = newURL.replace('/view?usp=sharing', '');
+        }
+
+        if ( newURL.length ) {
+            newURL = 'https://docs.google.com/uc?export=download&id=' + newURL;
+        }
+
+        return newURL;
     }
 
     function changePage(index) {

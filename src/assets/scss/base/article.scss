@@ -98,4 +98,17 @@
       opacity: .75;
     }
   }
+  &__audio {
+    p {
+      margin-bottom: 10px;
+      color: $greyColor;
+      text-transform: uppercase;
+      font-family: $RobotoCondensed;
+      letter-spacing: .5px;
+    }
+    audio {
+      width: 100%;
+      vertical-align: top;
+    }
+  }
 }
