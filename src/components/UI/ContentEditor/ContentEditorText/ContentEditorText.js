@@ -22,6 +22,7 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
         height: 200,
         language: 'uk',
         plugins: [
+            'autoresize',
             'advlist autolink lists link image charmap print preview anchor',
             'searchreplace visualblocks code fullscreen',
             'insertdatetime media table paste code help wordcount'

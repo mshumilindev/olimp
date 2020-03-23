@@ -9,6 +9,7 @@ import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
 import userContext from "../../context/userContext";
+import { orderBy } from 'natural-orderby';
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
@@ -165,7 +166,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
     }
 
     function filterList() {
-        return list.filter(item => {
+        return orderBy(list.filter(item => {
             // let sameTeacher = user.role === 'admin';
             //
             // if ( user.role === 'teacher' ) {
@@ -181,20 +182,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
             // }
 
             return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
-        }).sort((a, b) => {
-            const aName = a.name[lang] ? a.name[lang] : a.name['ua'];
-            const bName = b.name[lang] ? b.name[lang] : b.name['ua'];
-
-            if ( aName < bName ) {
-                return -1;
-            }
-            else if ( aName > bName ) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
+        }), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 
     function showCreateSubjectModal(e) {

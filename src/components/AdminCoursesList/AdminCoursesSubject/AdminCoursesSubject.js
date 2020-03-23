@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
 import userContext from "../../../context/userContext";
+import { orderBy } from 'natural-orderby';
 
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
@@ -128,7 +129,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true).sort((a, b) => a.index - b.index);
+        return orderBy(subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 }
 const mapDispatchToProps = dispatch => ({
