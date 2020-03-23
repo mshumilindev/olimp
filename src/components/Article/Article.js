@@ -99,7 +99,7 @@ export default function Article({content, type, finishQuestions, loading}) {
                         null
                 }
                 {
-                    block.value.url ?
+                    block.type === 'audio' && block.value.url ?
                         <div className={'article__audio'}>
                             {
                                 block.value.caption ?
@@ -111,6 +111,17 @@ export default function Article({content, type, finishQuestions, loading}) {
                                 <source src={getPlayLink(block.value.url)}/>
                             </audio>
                         </div>
+                        :
+                        null
+                }
+                {
+                    block.type === 'powerpoint' ?
+                        <iframe
+                            src={getPowerpointURL(block.value)}
+                            style={{width: '100%', height: size.height}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
                         :
                         null
                 }
@@ -128,6 +139,15 @@ export default function Article({content, type, finishQuestions, loading}) {
                 }
             </div>
         )
+    }
+
+    function getPowerpointURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL.replace('/pub?', '/embed?')
+        }
+        return newURL;
     }
 
     function getPlayLink(url) {

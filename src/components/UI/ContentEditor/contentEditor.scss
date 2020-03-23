@@ -146,6 +146,9 @@
           margin-top: 0;
         }
       }
+      .modal {
+        margin-top: 0;
+      }
       a {
         color: $baseColor;
       }
@@ -288,6 +291,10 @@
         transform: translateY(-50%);
       }
     }
+  }
+  &__block-placeholder {
+    text-align: center;
+    color: $mediumGreyColor;
   }
   .preloader {
     position: absolute;

@@ -9,6 +9,7 @@ import ContentEditorText from './ContentEditorText/ContentEditorText';
 import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
 import ContentEditorYoutube from './ContentEditorYoutube/ContentEditorYoutube';
 import ContentEditorAudio from "./ContentEditorAudio/ContentEditorAudio";
+import ContentEditorPowerpoint from "./ContentEditorPowerpoint/ContentEditorPowerpoint";
 import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
 import ContentEditorDivider from './ContentEditorDivider/ContentEditorDivider';
 import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
@@ -51,6 +52,11 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             type: 'audio',
             icon: 'fas fa-headphones',
             title: 'audio'
+        },
+        {
+            type: 'powerpoint',
+            icon: 'fas fa-file-powerpoint',
+            title: 'powerpoint'
         },
         // {
         //     type: 'table',
@@ -114,6 +120,8 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                                         return <ContentEditorYoutube key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('audio') :
                                         return <ContentEditorAudio key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('powerpoint') :
+                                        return <ContentEditorPowerpoint key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('table') :
                                     //     return <ContentEditorTable key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('grid') :

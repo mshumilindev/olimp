@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
@@ -12,38 +12,49 @@ import * as instructionsJSON from './instructions/instructions';
 
 const instructions = instructionsJSON.default;
 
-export default function ContentEditorAudio({ block, setBlock, removeBlock }) {
+export default function ContentEditorPowerpoint({ block, setBlock, removeBlock }) {
     const { translate } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    block.value = block.value || {
-        caption: '',
-        url: ''
-    };
+    const [ size, setSize ] = useState({width: 0, height: 0});
+    block.value = block.value || '';
+
+    const videoContainerRef = useRef(null);
+
+    useEffect(() => {
+        setTimeout(() => {
+            const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft);
+
+            setSize({
+                width: width,
+                height: width * 56.25 / 100 + 23
+            });
+        }, 0);
+    }, []);
 
     return (
-        <div className="contentEditor__block-audio">
+        <div className="contentEditor__block-powerpoint" ref={videoContainerRef}>
             <form className="form">
-                <div className="form__row">
-                    <input type="text" className="form__field" value={block.value.caption} onChange={e => handleChange('caption', e.target.value)} placeholder={translate('enter_audio_caption')}/>
-                </div>
-                <div className="form__row">
-                    <input type="text" className="form__field" value={block.value.url} onChange={e => handleChange('url', e.target.value)} placeholder={translate('enter_audio_url')}/>
-                </div>
+                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_powerpoint_url')}/>
             </form>
             <br/>
             {
-                block.value.url ?
-                    <audio controls>
-                        <source src={getPlayLink(block.value.url)}/>
-                    </audio>
+                block.value && size.width > 0 ?
+                    <iframe
+                        src={getPowerpointURL(block.value)}
+                        style={{width: '100%', height: size.height}} frameBorder="0"
+                        allowFullScreen={true}
+                        mozAllowFullScreen={true}
+                        webkitAllowFullscreen={true} />
                     :
-                    null
+                    <div className="contentEditor__block-placeholder">
+                        { translate('powerpoint_will_be_here') }
+                    </div>
             }
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
                 {/*</span>*/}
-                <ContentEditorInstructions instructions={instructions} heading={'how_to_add_audio'} />
+                <ContentEditorInstructions instructions={instructions} heading={'how_to_add_powerpoint'} />
                 <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
                     <i className="content_title-icon fa fa-trash-alt"/>
                 </a>
@@ -57,20 +68,12 @@ export default function ContentEditorAudio({ block, setBlock, removeBlock }) {
         </div>
     );
 
-    function getPlayLink(url) {
+    function getPowerpointURL(url) {
         let newURL = url;
 
-        if ( newURL.indexOf('https://drive.google.com/file/d/') !== -1 ) {
-            newURL = newURL.replace('https://drive.google.com/file/d/', '');
-        }
-        if ( newURL.indexOf('/view?usp=sharing') !== -1 ) {
-            newURL = newURL.replace('/view?usp=sharing', '');
-        }
-
         if ( newURL.length ) {
-            newURL = 'https://docs.google.com/uc?export=download&id=' + newURL;
+           newURL = newURL.replace('/pub?', '/embed?')
         }
-
         return newURL;
     }
 
@@ -80,14 +83,10 @@ export default function ContentEditorAudio({ block, setBlock, removeBlock }) {
         setShowRemoveBlock(true);
     }
 
-    function handleChange(type, value) {
-        const newValue = block.value;
-
-        newValue[type] = value;
-
+    function handleChange(value) {
         setBlock({
             ...block,
-            value: newValue
+            value: value
         })
     }
 }

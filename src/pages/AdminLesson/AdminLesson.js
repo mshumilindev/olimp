@@ -99,7 +99,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
-                            <ContentEditor contentType="content" content={content} types={['text', 'media', 'youtube', 'audio', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                            <ContentEditor contentType="content" content={content} types={['text', 'media', 'youtube', 'audio', 'powerpoint', 'divider', 'page']} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
                         </div>
                         <div className="widget">
                             <div className="widget__title">
