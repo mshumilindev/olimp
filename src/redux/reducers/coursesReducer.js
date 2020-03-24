@@ -6,7 +6,8 @@ import {
     ALL_COURSES_BEGIN,
     ALL_COURSES_SUCCESS,
     MODULES_LESSONS_BEGIN,
-    MODULES_LESSONS_SUCCESS
+    MODULES_LESSONS_SUCCESS,
+    DISCARD_SUCCESS
 } from '../actions/coursesActions';
 
 const initialState = {
@@ -52,11 +53,17 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case LESSON_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 lesson: action.payload.lesson
-            };
+            });
+
+        case DISCARD_SUCCESS:
+            return Object.assign({}, {
+                ...state,
+                lesson: null
+            });
 
         case MODULES_LESSONS_BEGIN:
             return {

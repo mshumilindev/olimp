@@ -588,6 +588,18 @@ export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
     };
 }
 
+export function discardLesson() {
+    return dispatch => {
+        dispatch(discardLessonSuccess());
+    }
+}
+
+export const discardLessonSuccess = () => {
+    return {
+        type: DISCARD_SUCCESS
+    }
+};
+
 export const coursesBegin = () => {
     return {
         type: COURSES_BEGIN
@@ -636,6 +648,7 @@ export const modulesLessonSuccess = modulesLessons => {
     }
 };
 
+export const DISCARD_SUCCESS = 'DISCARD_SUCCESS';
 export const COURSES_BEGIN = 'COURSES_BEGIN';
 export const COURSES_SUCCESS = 'COURSES_SUCCESS';
 export const ALL_COURSES_BEGIN = 'ALL_COURSES_BEGIN';

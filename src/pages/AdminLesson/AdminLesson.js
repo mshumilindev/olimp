@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import {fetchLesson, updateLesson} from "../../redux/actions/coursesActions";
+import {fetchLesson, updateLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../../components/UI/preloader";
@@ -21,7 +21,7 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCoursesList}) {
+function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCoursesList, discardLesson}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
@@ -38,9 +38,6 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
     ];
 
     if ( !lesson ) {
-        fetchLesson(subjectID, courseID, moduleID, lessonID);
-    }
-    else if ( lesson.id !== lessonID ) {
         fetchLesson(subjectID, courseID, moduleID, lessonID);
     }
     else {
@@ -63,6 +60,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
             }
         }
     }
+
+    useEffect(() => {
+        return () => {
+            discardLesson();
+        }
+    }, []);
 
     useEffect(() => {
         if ( prevLesson && JSON.stringify(prevLesson) !== JSON.stringify(lesson) ) {
@@ -267,7 +270,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),
-    updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson))
+    updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson)),
+    discardLesson: () => dispatch(discardLesson())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminLesson);

@@ -105,7 +105,6 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                 }
             }
         });
-        console.log(contentEditorActions);
     }
 
     useEffect(() => {
