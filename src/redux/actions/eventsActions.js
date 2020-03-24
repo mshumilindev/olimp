@@ -55,7 +55,10 @@ export function fetchChat(chatID) {
                 dispatch(fetchChatError('videochat_does_not_exist'));
             }
             else {
-                dispatch(fetchChatSuccess(doc.data()));
+                dispatch(fetchChatSuccess({
+                    ...doc.data(),
+                    id: doc.id
+                }));
             }
         });
     }
@@ -80,17 +83,12 @@ export const fetchChatSuccess = chat => {
 };
 
 // === CHAT
-export function setActiveUsers(chatID, activeUsers) {
+export function setActiveUser(chatID, newActiveUsers) {
     const chatRef = db.collection('events').doc(chatID);
 
     return dispatch => {
-        // return chatRef.onSnapshot(doc => {
-        //     if ( !doc.exists ) {
-        //         dispatch(fetchChatError('videochat_does_not_exist'));
-        //     }
-        //     else {
-        //         dispatch(fetchChatSuccess(doc.data()));
-        //     }
-        // });
+        return chatRef.set({
+            activeUsers: newActiveUsers
+        }, { merge: true });
     }
 }
