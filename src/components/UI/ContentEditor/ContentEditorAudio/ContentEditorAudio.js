@@ -63,6 +63,9 @@ export default function ContentEditorAudio({ block, setBlock, removeBlock }) {
         if ( newURL.indexOf('https://drive.google.com/file/d/') !== -1 ) {
             newURL = newURL.replace('https://drive.google.com/file/d/', '');
         }
+        if ( newURL.indexOf('https://drive.google.com/open?id=') !== -1 ) {
+            newURL = newURL.replace('https://drive.google.com/open?id=', '');
+        }
         if ( newURL.indexOf('/view?usp=sharing') !== -1 ) {
             newURL = newURL.replace('/view?usp=sharing', '');
         }
