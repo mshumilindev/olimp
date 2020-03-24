@@ -106,6 +106,12 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                                 <i className="content_title-icon fa fa-file-alt"/>
                                 { translate('content') }
                             </div>
+                            <div className="widget__descr">
+                                <h3>Активні елементи:</h3>
+                                <p><i className="content_title-icon fas fa-question-circle"/> - інформація, щодо використання блоку</p>
+                                <p><i className="content_title-icon fa fa-cog"/> - налаштування блоку</p>
+                                <p><i className="content_title-icon fa fa-trash-alt"/> - видалити блок</p>
+                            </div>
                             <ContentEditor contentType="content" content={content} types={[['text', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
                         </div>
                         <div className="widget">
