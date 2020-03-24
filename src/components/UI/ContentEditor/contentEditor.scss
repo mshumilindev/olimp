@@ -191,6 +191,9 @@
         &.size-9x16 {
           padding-top: 177.77%;
         }
+        &.size-A4 {
+          padding-top: 141.45%;
+        }
       }
     }
     &-actions {
@@ -290,6 +293,15 @@
         }
         [class$="-settings-holder"] {
           padding-top: calc(177.77% - 89px);
+          height: 0;
+        }
+      }
+      &.size-A4 {
+        .form__file-trigger {
+          padding-top: 141.45%;
+        }
+        [class$="-settings-holder"] {
+          padding-top: calc(141.45% - 71px);
           height: 0;
         }
       }

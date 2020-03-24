@@ -70,6 +70,9 @@ export default function ContentEditorMedia({ block, setBlock, removeBlock }) {
                             <div className="contentEditor__block-settings-btn-holder">
                                 <a href="/" className={classNames('contentEditor__block-settings-btn size-9x16', {active: mediaSize === '9x16'})} onClick={(e) => onSetMediaSize(e, '9x16')}><span>9 x 16</span></a>
                             </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-A4', {active: mediaSize === 'A4'})} onClick={(e) => onSetMediaSize(e, 'A4')}><span>A4</span></a>
+                            </div>
                         </div>
                     </div>
                     :
