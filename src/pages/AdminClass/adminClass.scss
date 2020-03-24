@@ -46,18 +46,28 @@
     display: flex;
     font-family: $RobotoCondensed;
     margin-top: 20px;
-    cursor: pointer;
     align-items: center;
     justify-content: space-between;
-    &:hover {
-      color: $linkHoverColor;
-    }
     i {
       margin-top: -1px;
+    }
+    .form__row {
+      margin-top: 0;
+      .form__col {
+        width: auto;
+        &:nth-child(2) {
+          padding: 0;
+          color: $baseColor;
+        }
+      }
     }
   }
   &__schedule-courses-item-inner {
     display: flex;
+    cursor: pointer;
+    &:hover {
+      color: $linkHoverColor;
+    }
   }
   &__schedule-courses-item-subject {
     &:after {

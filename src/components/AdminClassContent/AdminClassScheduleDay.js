@@ -34,15 +34,18 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
                 {
                     coursesList && day.lessons.length && coursesList.length ?
                         day.lessons.sort((a, b) => {
-                            if ( a.time < b.time ) {
-                                return -1;
+                            if ( a.time && b.time ) {
+                                if ( a.time.start < b.time.start ) {
+                                    return -1;
+                                }
+                                else if ( a.time.start > b.time.start ) {
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
                             }
-                            else if ( a.time > b.time ) {
-                                return 1;
-                            }
-                            else {
-                                return 0;
-                            }
+                            return 0;
                         }).map((lesson, index) => <AdminClassScheduleDayLesson lesson={lesson} index={index} coursesList={coursesList} quickRemoveLesson={quickRemoveLesson} key={index + lesson.course} />)
                         :
                         null

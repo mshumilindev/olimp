@@ -49,15 +49,18 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                     {
                         currentClass.courses.length && day.lessons.length ?
                             day.lessons.sort((a, b) => {
-                                if ( a.time < b.time ) {
-                                    return -1;
+                                if ( a.time && b.time ) {
+                                    if ( a.time.start < b.time.start ) {
+                                        return -1;
+                                    }
+                                    else if ( a.time.start > b.time.start ) {
+                                        return 1;
+                                    }
+                                    else {
+                                        return 0;
+                                    }
                                 }
-                                else if ( a.time > b.time ) {
-                                    return 1;
-                                }
-                                else {
-                                    return 0;
-                                }
+                                return 0;
                             }).map((lesson, index) => _renderCourse(lesson, index))
                             :
                             <div className="nextSchedule__list-courses-item nextSchedule__list-courses-notFound">
@@ -82,9 +85,14 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                     <i className="fa fa-graduation-cap" />
                 </div>
                 <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id}>
-                    <span className="nextSchedule__list-courses-item-time">
-                        { lesson.time }
-                    </span>
+                    {
+                        lesson.time ?
+                            <span className="nextSchedule__list-courses-item-time">
+                                { lesson.time.start } &mdash; { lesson.time.end }
+                            </span>
+                            :
+                            null
+                    }
                     <span className="nextSchedule__list-courses-item-subject">
                         { currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] }
                     </span>

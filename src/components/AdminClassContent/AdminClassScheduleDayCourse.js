@@ -1,19 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import classNames from "classnames";
 import siteSettingsContext from "../../context/siteSettingsContext";
-const initialTime = '09:00';
+const initialTime = {start: '09:00', end: '09:45'};
 
 export default function AdminClassScheduleDayCourse({selectedLessons, coursesList, item, setSelectedLessons}) {
     const { lang } = useContext(siteSettingsContext);
     const currentSubject = coursesList.find(subject => subject.id === item.subject);
     const currentCourse = currentSubject.coursesList.find(course => course.id === item.course);
-    const [ time, setTime ] = useState(item.time ? item.time : initialTime);
-
-    useEffect(() => {
-        if ( !time ) {
-            setTime(initialTime);
-        }
-    });
+    const [ time, setTime ] = useState({start: item.time && item.time.start ? item.time.start : initialTime.start, end: item.time && item.time.end ? item.time.end : initialTime.end});
 
     return (
         <div className={classNames('adminClass__schedule-courses-item', {selected: JSON.parse(selectedLessons).some(lesson => lesson.subject === item.subject && lesson.course === item.course)})}>
@@ -36,7 +30,17 @@ export default function AdminClassScheduleDayCourse({selectedLessons, coursesLis
                 </div>
             </div>
             <form className="form" style={{minHeight: 0, width: 'auto'}}>
-                <input type="time" className="form__field" value={time} onChange={e => handleTime(e.target.value)}/>
+                <div className="form__row">
+                    <div className="form__col">
+                        <input type="time" className="form__field" value={time.start} onChange={e => handleTime('start', e.target.value)}/>
+                    </div>
+                    <div className="form__col">
+                        &mdash;
+                    </div>
+                    <div className="form__col">
+                        <input type="time" className="form__field" value={time.end} onChange={e => handleTime('end', e.target.value)}/>
+                    </div>
+                </div>
             </form>
         </div>
     );
@@ -54,15 +58,20 @@ export default function AdminClassScheduleDayCourse({selectedLessons, coursesLis
         setSelectedLessons(JSON.stringify(newSelectedLessons));
     }
 
-    function handleTime(newTime) {
+    function handleTime(type, newTime) {
         const newSelectedLessons = JSON.parse(selectedLessons);
         const currentLesson = newSelectedLessons.find(newItem => newItem.subject === item.subject && newItem.course === item.course);
+        const newTimeItem = {
+            [type]: newTime ? newTime : initialTime[type]
+        };
 
-        setTime(newTime);
-        item.time = newTime;
+        setTime({
+            ...time,
+            ...newTimeItem
+        });
 
         if ( currentLesson ) {
-            currentLesson.time = newTime;
+            currentLesson.time[type] = newTime;
             setSelectedLessons(JSON.stringify(newSelectedLessons));
         }
     }
