@@ -69,7 +69,7 @@ export default function App() {
                             <Route path='/admin-settings' component={AdminSettings} />
                             <Route path='/admin-info' component={AdminInfo} />
 
-                            <Route path='/chat' component={Chatroom} />
+                            <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
 
                             <Route path="*" component={PageNotFound} />
                         </Suspense>

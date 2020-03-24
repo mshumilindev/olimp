@@ -39,3 +39,58 @@ export const fetchEventsSuccess = usersList => {
         payload: { events }
     }
 };
+
+// === CHAT
+export const FETCH_CHAT_BEGIN = 'FETCH_CHAT_BEGIN';
+export const FETCH_CHAT_SUCCESS = 'FETCH_CHAT_SUCCESS';
+export const FETCH_CHAT_ERROR = 'FETCH_CHAT_ERROR';
+
+export function fetchChat(chatID) {
+    const chatRef = db.collection('events').doc(chatID);
+
+    return dispatch => {
+        dispatch(fetchChatBegin());
+        return chatRef.onSnapshot(doc => {
+            if ( !doc.exists ) {
+                dispatch(fetchChatError('videochat_does_not_exist'));
+            }
+            else {
+                dispatch(fetchChatSuccess(doc.data()));
+            }
+        });
+    }
+}
+
+export const fetchChatBegin = () => {
+    return {
+        type: FETCH_CHAT_BEGIN
+    }
+};
+export const fetchChatError = chatError => {
+    return {
+        type: FETCH_CHAT_ERROR,
+        payload: { chatError }
+    }
+};
+export const fetchChatSuccess = chat => {
+    return {
+        type: FETCH_CHAT_SUCCESS,
+        payload: { chat }
+    }
+};
+
+// === CHAT
+export function setActiveUsers(chatID, activeUsers) {
+    const chatRef = db.collection('events').doc(chatID);
+
+    return dispatch => {
+        // return chatRef.onSnapshot(doc => {
+        //     if ( !doc.exists ) {
+        //         dispatch(fetchChatError('videochat_does_not_exist'));
+        //     }
+        //     else {
+        //         dispatch(fetchChatSuccess(doc.data()));
+        //     }
+        // });
+    }
+}
