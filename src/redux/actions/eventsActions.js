@@ -45,7 +45,7 @@ export const FETCH_CHAT_BEGIN = 'FETCH_CHAT_BEGIN';
 export const FETCH_CHAT_SUCCESS = 'FETCH_CHAT_SUCCESS';
 export const FETCH_CHAT_ERROR = 'FETCH_CHAT_ERROR';
 
-export function fetchChat(chatID) {
+export function fetchChat(chatID, userID) {
     const chatRef = db.collection('events').doc(chatID);
 
     return dispatch => {
@@ -55,7 +55,17 @@ export function fetchChat(chatID) {
                 dispatch(fetchChatError('videochat_does_not_exist'));
             }
             else {
-                dispatch(fetchChatSuccess({
+                const chat = doc.data();
+
+                if ( chat.organizer !== userID && chat.participants.indexOf(userID) === -1 ) {
+                    return dispatch(fetchChatError('user_not_allowed_to_chat'));
+                }
+                // === Check for time
+                if ( false ) {
+                    return dispatch(fetchChatError('wrong_time_for_chat'));
+                }
+
+                return dispatch(fetchChatSuccess({
                     ...doc.data(),
                     id: doc.id
                 }));

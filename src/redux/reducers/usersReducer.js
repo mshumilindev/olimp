@@ -24,11 +24,11 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case FETCH_USERS_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 usersList: action.payload.usersList
-            };
+            });
 
         case UPDATE_USER_BEGIN:
             return {

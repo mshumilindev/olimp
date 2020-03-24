@@ -12,6 +12,7 @@ export function fetchUsers() {
         return dispatch => {
             dispatch(fetchUsersBegin());
             return usersCollection.get().then((data) => {
+                usersList.splice(0, usersList.length);
                 data.docs.forEach(doc => {
                     const docData = doc.data();
 
