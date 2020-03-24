@@ -18,7 +18,7 @@ export default function AdminClassScheduleDayLesson({coursesList, quickRemoveLes
             <div className="coursesPicker__selectedList-item-time">
                 {
                     lesson.time ?
-                        <span>{ lesson.time.start } &mdash; { lesson.time.end }</span>
+                        <span>{ lesson.time.start.split(':').splice(0, 2).join(':') } &mdash; { lesson.time.end.split(':').splice(0, 2).join(':') }</span>
                         :
                         null
                 }

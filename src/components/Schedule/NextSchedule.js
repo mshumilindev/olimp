@@ -88,7 +88,7 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                     {
                         lesson.time ?
                             <span className="nextSchedule__list-courses-item-time">
-                                { lesson.time.start } &mdash; { lesson.time.end }
+                                { lesson.time.start.split(':').splice(0, 2).join(':') } &mdash; { lesson.time.end.split(':').splice(0, 2).join(':') }
                             </span>
                             :
                             null
