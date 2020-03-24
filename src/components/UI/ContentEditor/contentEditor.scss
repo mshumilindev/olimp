@@ -103,11 +103,12 @@
   &__block {
     &-settings-holder {
       position: absolute;
-      left: 30px;
-      top: 0;
-      right: 0;
-      bottom: 0;
+      left: 40px;
+      top: 10px;
+      right: 10px;
+      bottom: 10px;
       z-index: 1;
+      border: 1px solid $mediumGreyColor;
     }
     &-settings {
       position: absolute;
@@ -139,16 +140,56 @@
         opacity: .75;
         z-index: -1;
       }
+      &-btn-holder {
+        margin: 0 20px 20px;
+        width: 60px;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+      }
       &-btn {
         font-weight: bold;
-        margin: 0 20px;
         color: $baseColor;
         border: 2px solid $baseColor;
-        padding: 10px;
+        background: $white;
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        position: relative;
+        span {
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
         &:hover,
         &.active {
           color: $linkHoverColor;
           border-color: $linkHoverColor;
+        }
+        &.size-16x9 {
+          padding-top: 56.25%;
+        }
+        &.size-4x3 {
+          padding-top: 75%;
+        }
+        &.size-1x1 {
+          padding-top: 100%;
+        }
+        &.size-3x4 {
+          padding-top: 125%;
+        }
+        &.size-4x6 {
+          padding-top: 150%;
+        }
+        &.size-9x16 {
+          padding-top: 177.77%;
         }
       }
     }
@@ -203,7 +244,7 @@
           padding-top: 56.25%;
         }
         [class$="-settings-holder"] {
-          padding-top: calc(56.25% - 16px);
+          padding-top: calc(56.25% - 28px);
           height: 0;
         }
       }
@@ -212,7 +253,7 @@
           padding-top: 75%;
         }
         [class$="-settings-holder"] {
-          padding-top: calc(75% - 21px);
+          padding-top: calc(75% - 38px);
           height: 0;
         }
       }
@@ -221,7 +262,34 @@
           padding-top: 100%;
         }
         [class$="-settings-holder"] {
-          padding-top: calc(100% - 29px);
+          padding-top: calc(100% - 50px);
+          height: 0;
+        }
+      }
+      &.size-3x4 {
+        .form__file-trigger {
+          padding-top: 125%;
+        }
+        [class$="-settings-holder"] {
+          padding-top: calc(125% - 62px);
+          height: 0;
+        }
+      }
+      &.size-4x6 {
+        .form__file-trigger {
+          padding-top: 150%;
+        }
+        [class$="-settings-holder"] {
+          padding-top: calc(150% - 75px);
+          height: 0;
+        }
+      }
+      &.size-9x16 {
+        .form__file-trigger {
+          padding-top: 177.77%;
+        }
+        [class$="-settings-holder"] {
+          padding-top: calc(177.77% - 89px);
           height: 0;
         }
       }

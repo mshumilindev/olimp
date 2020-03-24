@@ -7,6 +7,8 @@ import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
 import userContext from "../../context/userContext";
 import Breadcrumbs from "../../components/UI/Breadcrumbs/Breadcrumbs";
 import './adminLesson.scss';
+import Modal from "../../components/UI/Modal/Modal";
+import Article from "../../components/Article/Article";
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
@@ -30,6 +32,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
     const prevLesson = usePrevious(lesson);
     const [ content, setContent ] = useState(null);
     const [ questions, setQuestions ] = useState(null);
+    const [ showPreview, setShowPreview ] = useState(false);
     const breadcrumbs = [
         {
             name: translate('subjects'),
@@ -87,6 +90,10 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                     {
                         checkIfEditable() ?
                             <div className="section__title-actions">
+                                <a href="/" className="btn btn_primary" disabled={lessonUpdated} onClick={previewLesson}>
+                                    <i className="content_title-icon fa fa-eye" />
+                                    { translate('preview') }
+                                </a>
                                 <a href="/" className="btn btn__success" disabled={!lessonUpdated} onClick={saveLesson}>
                                     <i className="content_title-icon fa fa-save" />
                                     { translate('save') }
@@ -140,6 +147,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                         </div>
                     </div>
                 </div>
+                {
+                    showPreview ?
+                        <Modal className="adminLesson__previewModal" heading={lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']} onHideModal={() => setShowPreview(false)}>
+                            <Article content={lesson['content']} type={'content'} />
+                        </Modal>
+                        :
+                        null
+                }
             </div>
             :
             <Preloader/>
@@ -260,6 +275,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                 newLesson.maxScore = newLesson.questions.maxScore;
             }
             updateLesson(subjectID, courseID, moduleID, newLesson);
+        }
+    }
+
+    function previewLesson(e) {
+        e.preventDefault();
+
+        if ( !lessonUpdated ) {
+            setShowPreview(true);
         }
     }
 }

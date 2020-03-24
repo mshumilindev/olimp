@@ -22,4 +22,9 @@
   .widget__descr {
     margin-bottom: 20px;
   }
+  &__previewModal {
+    .modal__box {
+      max-width: 960px;
+    }
+  }
 }

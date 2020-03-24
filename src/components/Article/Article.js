@@ -90,7 +90,9 @@ export default function Article({content, type, finishQuestions, loading}) {
                         <>
                             {
                                 block.value ?
-                                    <ReactPlayer url={block.value} width={size.width} height={size.height} />
+                                    <div className="youtube-holder">
+                                        <ReactPlayer url={block.value} />
+                                    </div>
                                     :
                                     null
                             }
@@ -176,6 +178,9 @@ export default function Article({content, type, finishQuestions, loading}) {
 
         if ( newURL.indexOf('https://drive.google.com/file/d/') !== -1 ) {
             newURL = newURL.replace('https://drive.google.com/file/d/', '');
+        }
+        if ( newURL.indexOf('https://drive.google.com/open?id=') !== -1 ) {
+            newURL = newURL.replace('https://drive.google.com/open?id=', '');
         }
         if ( newURL.indexOf('/view?usp=sharing') !== -1 ) {
             newURL = newURL.replace('/view?usp=sharing', '');

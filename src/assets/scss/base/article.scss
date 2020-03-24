@@ -1,6 +1,7 @@
 .article {
   line-height: 1.5;
   position: relative;
+  width: 100%;
   &__block {
     margin-bottom: 20px;
     &.type-text {
@@ -58,6 +59,15 @@
     &.size-1x1 {
       padding-top: 100%;
     }
+    &.size-3x4 {
+      padding-top: 125%;
+    }
+    &.size-4x6 {
+      padding-top: 150%;
+    }
+    &.size-9x16 {
+      padding-top: 177.77%;
+    }
   }
   &__image-caption {
     text-align: center;
@@ -109,6 +119,17 @@
     audio {
       width: 100%;
       vertical-align: top;
+    }
+  }
+  .youtube-holder {
+    position: relative;
+    padding-top: 56.25%;
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important;
+      height: 100% !important;
     }
   }
 }

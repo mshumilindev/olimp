@@ -52,9 +52,24 @@ export default function ContentEditorMedia({ block, setBlock, removeBlock }) {
                     <div className="contentEditor__block-settings-holder">
                         <div className="contentEditor__block-settings">
                             <h2 className="contentEditor__block-settings-title">{ translate('dimensions') }</h2>
-                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '16x9'})} onClick={(e) => onSetMediaSize(e, '16x9')}>16 x 9</a>
-                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '4x3'})} onClick={(e) => onSetMediaSize(e, '4x3')}>4 x 3</a>
-                            <a href="/" className={classNames('contentEditor__block-settings-btn', {active: mediaSize === '1x1'})} onClick={(e) => onSetMediaSize(e, '1x1')}>1 x 1</a>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-16x9', {active: mediaSize === '16x9'})} onClick={(e) => onSetMediaSize(e, '16x9')}><span>16 x 9</span></a>
+                            </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-4x3', {active: mediaSize === '4x3'})} onClick={(e) => onSetMediaSize(e, '4x3')}><span>4 x 3</span></a>
+                            </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-1x1', {active: mediaSize === '1x1'})} onClick={(e) => onSetMediaSize(e, '1x1')}><span>1 x 1</span></a>
+                            </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-3x4', {active: mediaSize === '3x4'})} onClick={(e) => onSetMediaSize(e, '3x4')}><span>3 x 4</span></a>
+                            </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-4x6', {active: mediaSize === '4x6'})} onClick={(e) => onSetMediaSize(e, '4x6')}><span>4 x 6</span></a>
+                            </div>
+                            <div className="contentEditor__block-settings-btn-holder">
+                                <a href="/" className={classNames('contentEditor__block-settings-btn size-9x16', {active: mediaSize === '9x16'})} onClick={(e) => onSetMediaSize(e, '9x16')}><span>9 x 16</span></a>
+                            </div>
                         </div>
                     </div>
                     :
