@@ -10,6 +10,7 @@ const initialState = {
     events: [],
     loading: false,
     chat: null,
+    activeUsers: null,
     chatError: null
 };
 

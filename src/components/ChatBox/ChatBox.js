@@ -1,102 +1,35 @@
-/* global JitsiMeetExternalAPI */
-import React, { useEffect, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import userContext from "../../context/userContext";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import moment from "moment";
+import Fullscreen from 'react-full-screen';
+import ChatContainer from "./ChatContainer";
 
-function ChatBox({setActiveUser, chat, users}) {
+function ChatBox({setActiveUser, chat, users, setChatStart, setStopChat, removeActiveUser}) {
     const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
-
-    function startConference() {
-        try {
-            const domain = 'meet.jit.si';
-            const options = {
-                roomName: chat.roomName,
-                height: 400,
-                parentNode: document.getElementById('jitsi-container'),
-                interfaceConfigOverwrite: {
-                    filmStripOnly: true,
-                    SHOW_JITSI_WATERMARK: false,
-                    SHOW_WATERMARK_FOR_GUESTS: false,
-                    TOOLBAR_ALWAYS_VISIBLE: true,
-                    DISPLAY_WELCOME_PAGE_CONTENT: false,
-                    LANG_DETECTION: true,
-                    TOOLBAR_BUTTONS: [],
-                    DISABLE_TRANSCRIPTION_SUBTITLES: true,
-                    defaultLogLevel: 'error',
-                    loggingConfig: {
-                        defaultLogLevel: 'error'
-                    }
-                },
-                configOverwrite: {
-                    disableSimulcast: true,
-                    defaultLogLevel: 'error',
-                    loggingConfig: {
-                        defaultLogLevel: 'error'
-                    }
-                },
-                defaultLogLevel: 'error',
-                loggingConfig: {
-                    defaultLogLevel: 'error'
-                },
-                startAudioOnly: true,
-            };
-
-            const api = new JitsiMeetExternalAPI(domain, options);
-            api.addEventListener('videoConferenceJoined', () => {
-                console.log('Local User Joined');
-                api.executeCommand('displayName', user.name);
-                api.executeCommand('avatarUrl', user.avatar);
-            });
-        } catch (error) {
-            console.error('Failed to load Jitsi API', error);
-        }
-    }
-
-    useEffect(() => {
-        return () => {
-            removeFromActiveUsers();
-            // Add removal from active users upon 'participantLeft' event in video chat
-        }
-    }, []);
-
-    useEffect(() => {
-        // === If chat.started === true
-        // if ( JitsiMeetExternalAPI ) {
-        //     // startConference();
-        // }
-
-        if ( chat && (!chat.activeUsers || !chat.activeUsers.length || chat.activeUsers.indexOf(user.id) === -1) ) {
-            const newActiveUsers = chat.activeUsers || [];
-
-            if ( newActiveUsers.indexOf(user.id) === -1 ) {
-                newActiveUsers.push(user.id);
-            }
-
-            setActiveUser(chat.id, newActiveUsers);
-        }
-    }, [chat]);
+    const [ isFullScreen, setIsFullScreen ] = useState(false);
 
     return (
         <div className="chatroom__chatBox">
-            {/*<div id="jitsi-container" />*/}
             {
-                users && chat.activeUsers && user.role !== 'student' ?
+                users && user.role !== 'student' ?
                     <div className="chatroom__users">
                         {
-                            _renderUserItem(chat.activeUsers.indexOf(users.find(userItem => userItem.id === chat.organizer).id) !== -1 ? 'activeUser' : 'inactiveUser', users.find(userItem => userItem.id === chat.organizer))
+                            _renderUserItem(
+                                getOrganizerClasses(),
+                                users.find(userItem => userItem.id === chat.organizer)
+                            )
                         }
                         {
                             users
                                 .filter(userItem => userItem.id !== chat.organizer)
-                                .filter(userItem => chat.activeUsers.indexOf(userItem.id) !== -1)
+                                .filter(userItem => chat.activeUsers && chat.activeUsers.length && chat.activeUsers.find(activeItem => activeItem.name === userItem.name))
                                 .map(userItem => _renderUserItem('activeUser', userItem))
                         }
                         {
                             users
                                 .filter(userItem => userItem.id !== chat.organizer)
-                                .filter(userItem => chat.activeUsers.indexOf(userItem.id) === -1)
+                                .filter(userItem => !chat.activeUsers || !chat.activeUsers.length || !chat.activeUsers.find(activeItem => activeItem.name === userItem.name))
                                 .map(userItem => _renderUserItem('inactiveUser', userItem))
                         }
                     </div>
@@ -104,17 +37,41 @@ function ChatBox({setActiveUser, chat, users}) {
                     null
 
             }
-            {/*{*/}
-            {/*        users*/}
-            {/*            .filter(userItem => chat.activeUsers.indexOf(userItem.id))*/}
-            {/*            .sort()*/}
-            {/*}*/}
+            {
+                chat.started ?
+                    <Fullscreen enabled={isFullScreen}>
+                        <div className={isFullScreen ? 'chatroom__chatHolder fullscreen' : 'chatroom__chatHolder'}>
+                            {
+                                chat.started ?
+                                    <ChatContainer setActiveUser={setActiveUser} removeActiveUser={removeActiveUser} chat={chat}/>
+                                    :
+                                    null
+                            }
+                            <div className="chatroom__btnsHolder">
+                                <span className="btn btn_primary round" onClick={() => setIsFullScreen(!isFullScreen)}><i className="fas fa-compress" /></span>
+                                {
+                                    user.id === chat.organizer ?
+                                        <span className="btn btn__error round" onClick={stopChat}><i className="fas fa-phone-slash" /></span>
+                                        :
+                                        null
+                                }
+                            </div>
+                        </div>
+                    </Fullscreen>
+                    :
+                    user.id === chat.organizer ?
+                        <div className="chatroom__btnsHolder">
+                            <span className="btn btn__success round" onClick={startChat}><i className="fas fa-phone" /></span>
+                        </div>
+                        :
+                        <div className="chatroom__info">{ translate('chat_will_start_soon') }</div>
+            }
         </div>
     );
 
     function _renderUserItem(type, userItem) {
         return (
-            <div className={'chatroom__users-item ' + type}>
+            <div className={'chatroom__users-item ' + type} key={userItem.id}>
                 <div className="chatroom__users-item-avatar-holder">
                     {
                         userItem.avatar ?
@@ -123,18 +80,35 @@ function ChatBox({setActiveUser, chat, users}) {
                             <i className="chatroom__users-item-avatar-placeholder fa fa-user"/>
                     }
                 </div>
-                <div className="chatroom__users-item-name">
-                    { userItem.name }
-                </div>
+                <div className="chatroom__users-item-name" dangerouslySetInnerHTML={{__html: userItem.name.split(' ').join('<br/>')}} />
             </div>
         );
     }
 
-    function removeFromActiveUsers() {
-        if ( chat && chat.activeUsers && chat.activeUsers.length && chat.activeUsers.indexOf(user.id) > -1 ) {
-            console.log(chat.activeUsers.splice(chat.activeUsers.indexOf(user.id), 1));
-            setActiveUser(chat.id, chat.activeUsers.splice(chat.activeUsers.indexOf(user.id), 1));
+    function startChat() {
+        setChatStart(chat.id, true);
+    }
+
+    function stopChat() {
+        setStopChat(chat.id, chat.activeUsers);
+    }
+
+    function getOrganizerClasses() {
+        let classes = 'organizer';
+
+        if (
+            chat.activeUsers &&
+            chat.activeUsers.length &&
+            chat.activeUsers.find(activeItem => {
+                return activeItem.name === users.find(userItem => userItem.id === chat.organizer).name
+            })
+        ) {
+            classes += ' activeUser';
         }
+        else {
+            classes += ' inactiveUser';
+        }
+        return classes;
     }
 }
 

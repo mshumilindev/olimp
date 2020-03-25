@@ -64,7 +64,6 @@ export function fetchChat(chatID, userID) {
                 if ( false ) {
                     return dispatch(fetchChatError('wrong_time_for_chat'));
                 }
-
                 return dispatch(fetchChatSuccess({
                     ...doc.data(),
                     id: doc.id
@@ -101,4 +100,35 @@ export function setActiveUser(chatID, newActiveUsers) {
             activeUsers: newActiveUsers
         }, { merge: true });
     }
+}
+
+export function removeActiveUser(chatID, newActiveUsers) {
+    const chatRef = db.collection('events').doc(chatID);
+
+    return dispatch => {
+        return chatRef.set({
+            activeUsers: newActiveUsers
+        }, { merge: true });
+    }
+}
+
+export function setChatStart(chatID, isStarted) {
+    const chatRef = db.collection('events').doc(chatID);
+
+    return dispatch => {
+        return chatRef.set({
+            started: isStarted
+        }, { merge: true });
+    }
+}
+
+export function setStopChat(chatID, activeUsers) {
+    const chatRef = db.collection('events').doc(chatID);
+
+    return dispatch => {
+        return chatRef.set({
+            started: false,
+            activeUsers: []
+        }, {merge: true});
+    };
 }

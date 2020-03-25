@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import {Preloader} from "../../components/UI/preloader";
-import { fetchChat, setActiveUser } from '../../redux/actions/eventsActions';
+import { fetchChat, setActiveUser, setChatStart, setStopChat, removeActiveUser } from '../../redux/actions/eventsActions';
 import { fetchUsers } from '../../redux/actions/usersActions';
 import { connect } from 'react-redux';
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -9,7 +9,7 @@ import ChatBox from "../../components/ChatBox/ChatBox";
 import userContext from "../../context/userContext";
 import { orderBy } from 'natural-orderby'
 
-function Chatroom({params, fetchChat, setActiveUser, loading, chat, chatError, users}) {
+function Chatroom({params, fetchChat, setActiveUser, loading, chat, chatError, users, setChatStart, setStopChat, removeActiveUser}) {
     const { translate } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -27,7 +27,14 @@ function Chatroom({params, fetchChat, setActiveUser, loading, chat, chatError, u
                     chatError ?
                         <div className="chatroom__error">{ translate(chatError) }</div>
                         :
-                        <ChatBox setActiveUser={setActiveUser} chat={chat} users={filterUsers()} />
+                        <ChatBox
+                            setActiveUser={setActiveUser}
+                            chat={chat}
+                            users={filterUsers()}
+                            setChatStart={setChatStart}
+                            setStopChat={setStopChat}
+                            removeActiveUser={removeActiveUser}
+                        />
                 )
             }
         </div>
@@ -96,7 +103,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchChat: (chatID, userID) => dispatch(fetchChat(chatID, userID)),
-        setActiveUser: (chatID, newActiveUsers) => dispatch(setActiveUser(chatID, newActiveUsers)),
+        setActiveUser: (chatID, newActiveUser) => dispatch(setActiveUser(chatID, newActiveUser)),
+        setChatStart: (chatID, isStarted) => dispatch(setChatStart(chatID, isStarted)),
+        setStopChat: (chatID, activeUsers) => dispatch(setStopChat(chatID, activeUsers)),
+        removeActiveUser: (chatID, newActiveUser) => dispatch(removeActiveUser(chatID, newActiveUser)),
         fetchUsers: dispatch(fetchUsers())
     }
 };
