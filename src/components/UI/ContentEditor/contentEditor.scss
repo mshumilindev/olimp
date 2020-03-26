@@ -3,6 +3,8 @@
 @import '../../../assets/scss/utils/sizes';
 
 .contentEditor {
+  max-width: 852px;
+  margin: 0 auto;
   &__heading {
     text-align: right;
     font-family: $RobotoCondensed;
@@ -230,6 +232,11 @@
           color: $anchorColor;
         }
       }
+      &-fullscreen {
+        &:hover {
+          color: $anchorColor;
+        }
+      }
       &-remove {
         &:hover {
           color: $errorColor;
@@ -306,10 +313,16 @@
         }
       }
     }
-    &-youtube {
-      iframe {
-        margin-top: 10px;
-        margin-bottom: 10px;
+    &-youtube-holder {
+      position: relative;
+      padding-top: 56.25%;
+      margin-top: 10px;
+      > * {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
       }
     }
     //&-grid {

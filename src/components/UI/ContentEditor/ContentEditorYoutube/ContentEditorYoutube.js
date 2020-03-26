@@ -12,21 +12,9 @@ import ReactPlayer from 'react-player';
 export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
     const { translate } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    const [ size, setSize ] = useState({width: 0, height: 0});
     block.value = block.value || '';
 
     const videoContainerRef = useRef(null);
-
-    useEffect(() => {
-        setTimeout(() => {
-            const width = videoContainerRef.current.offsetWidth - parseInt(getComputedStyle(videoContainerRef.current).paddingLeft) - parseInt(getComputedStyle(videoContainerRef.current).paddingRight);
-
-            setSize({
-                width: width,
-                height: width * 56.25 / 100
-            });
-        }, 0);
-    }, []);
 
     return (
         <div className="contentEditor__block-youtube" ref={videoContainerRef}>
@@ -35,7 +23,9 @@ export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
             </form>
             {
                 block.value ?
-                    <ReactPlayer url={block.value} width={size.width} height={size.height} />
+                    <div className="contentEditor__block-youtube-holder">
+                        <ReactPlayer url={block.value} width={'auto'} height={'auto'} />
+                    </div>
                     :
                     null
             }

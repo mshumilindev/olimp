@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
@@ -12,22 +12,27 @@ import Confirm from '../../Confirm/Confirm';
 export default function ContentEditorText({ block, setBlock, removeBlock }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
+    const editorConfig = {
+        menubar: false,
+        language: 'uk',
+        max_height: 550,
+        plugins: [
+            'autoresize fullscreen',
+            'advlist lists image charmap anchor',
+            'visualblocks forecolor',
+            'powerpaste'
+        ],
+        powerpaste_word_import: 'prompt',
+        powerpaste_html_import: 'prompt',
+        fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
+        toolbar: ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image']
+
+    };
+
     block.value = block.value || {
         ua: '',
         ru: '',
         en: ''
-    };
-    const editorConfig = {
-        menubar: false,
-        height: 200,
-        language: 'uk',
-        plugins: [
-            'autoresize',
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste code help wordcount'
-        ],
-        toolbar: 'undo redo | formatselect bold italic underline strikeThrough subscript superscript align'
     };
 
     return (

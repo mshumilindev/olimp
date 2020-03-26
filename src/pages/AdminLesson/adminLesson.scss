@@ -1,3 +1,5 @@
+@import '../../assets/scss/utils/sizes';
+
 .adminLesson {
   .section__title {
     display: flex;
@@ -24,7 +26,11 @@
   }
   &__previewModal {
     .modal__box {
-      max-width: 960px;
+      max-width: 800px;
+    }
+    .article {
+      padding: $pageIndent;
+      box-sizing: border-box;
     }
   }
 }
