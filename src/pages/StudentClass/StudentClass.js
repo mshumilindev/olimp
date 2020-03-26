@@ -22,24 +22,26 @@ function StudentClass({classesList, allCoursesList, usersList}) {
             <div className="content__title-holder">
                 <h2 className="content__title">
                     <i className="content_title-icon fa fa-graduation-cap" />
-                    <span className="content__title-subtitle">
-                        { translate('class') }
-                    </span>
-                    {
-                        !classesList ?
-                            <Preloader size={20} color="#fff"/>
-                            :
-                            !classesList.length ?
-                                null
+                    <div className="content__title-inner">
+                        <span className="content__title-subtitle">
+                            { translate('class') }
+                        </span>
+                        {
+                            !classesList ?
+                                <Preloader size={20} color="#fff"/>
                                 :
-                                currentClass ?
-                                    currentClass.title[lang] ?
-                                        currentClass.title[lang]
-                                        :
-                                        currentClass.title['ua']
+                                !classesList.length ?
+                                    null
                                     :
-                                    <Preloader size={20} color="#fff"/>
-                    }
+                                    currentClass ?
+                                        currentClass.title[lang] ?
+                                            currentClass.title[lang]
+                                            :
+                                            currentClass.title['ua']
+                                        :
+                                        <Preloader size={20} color="#fff"/>
+                        }
+                    </div>
                 </h2>
             </div>
             {

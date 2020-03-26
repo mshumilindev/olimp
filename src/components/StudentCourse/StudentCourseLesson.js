@@ -48,29 +48,31 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
             <div className="content__title-holder">
                 <h2 className="content__title">
                     <i className="content_title-icon fa fa-paragraph" />
-                    {
-                        lesson && currentCourse ?
-                            <>
-                                <span className="content__title-subtitle">
-                                    <Link to={'/courses/' + currentCourse.subject.id + '/' + currentCourse.course.id}>
-                                        {
-                                            currentCourse.course.name[lang] ?
-                                                currentCourse.course.name[lang]
-                                                :
-                                                currentCourse.course.name['ua']
-                                        }
-                                    </Link>
-                                </span>
-                                {
-                                    lesson.name[lang] ?
-                                        lesson.name[lang]
-                                        :
-                                        lesson.name['ua']
-                                }
-                            </>
-                            :
-                            translate('lesson')
-                    }
+                    <div className="content__title-inner">
+                        {
+                            lesson && currentCourse ?
+                                <>
+                                    <span className="content__title-subtitle">
+                                        <Link to={'/courses/' + currentCourse.subject.id + '/' + currentCourse.course.id}>
+                                            {
+                                                currentCourse.course.name[lang] ?
+                                                    currentCourse.course.name[lang]
+                                                    :
+                                                    currentCourse.course.name['ua']
+                                            }
+                                        </Link>
+                                    </span>
+                                    {
+                                        lesson.name[lang] ?
+                                            lesson.name[lang]
+                                            :
+                                            lesson.name['ua']
+                                    }
+                                </>
+                                :
+                                translate('lesson')
+                        }
+                    </div>
                 </h2>
                 {
                     lesson && lesson.questions.length && !startQuestions ?

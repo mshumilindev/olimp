@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import DocumentTitle from "react-document-title";
 import StudentHeader from "../components/Header/StudentHeader";
 import StudentNav from "../components/Nav/StudentNav";
@@ -6,10 +6,16 @@ import Footer from '../components/Footer/Footer';
 import SiteSettingsContext from "../context/siteSettingsContext";
 import userContext from "../context/userContext";
 import {Preloader} from "../components/UI/preloader";
+import ChatQuickCall from "../components/ChatBox/ChatQuickCall";
 
-export default function Layout({children, location}) {
+export default function Layout({children, location, events, fetchEvents, usersList}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
+
+    useEffect(() => {
+        fetchEvents(user.id);
+    }, []);
+
     const studentNav = [
         {
             id: 0,
@@ -83,6 +89,12 @@ export default function Layout({children, location}) {
                                     null
                             }
                         </div>
+                        {
+                            events && events.length ?
+                                <ChatQuickCall events={events} usersList={usersList}/>
+                                :
+                                null
+                        }
                     </>
             }
         </DocumentTitle>

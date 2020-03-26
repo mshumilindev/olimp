@@ -1,6 +1,6 @@
 /* global JitsiMeetExternalAPI */
 
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import userContext from "../../context/userContext";
 
 let api = null;
@@ -15,7 +15,7 @@ export default function ChatContainer({chat, setActiveUser, removeActiveUser}) {
         }
         return () => {
             if ( api ) {
-                api.executeCommand('handup');
+                api.executeCommand('hangup');
                 api.removeEventListener('videoConferenceJoined', handleStartChat);
                 $chatContainer.current.innerHTML = '';
                 api = null;

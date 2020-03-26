@@ -116,7 +116,9 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true).sort((a, b) => a.index - b.index);
+        return subject.coursesList
+                        .filter(item => user.role === 'teacher' ? item.teacher === user.id : true)
+                        .sort((a, b) => a.index - b.index);
     }
 }
 const mapDispatchToProps = dispatch => ({

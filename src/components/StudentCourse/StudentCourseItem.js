@@ -42,27 +42,29 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
             <div className="content__title-holder">
                 <h2 className="content__title">
                     <i className="content_title-icon fa fa-book" />
-                    {
-                        currentCourse ?
-                            <>
-                                <div className="content__title-subtitle">
+                    <div className="content__title-inner">
+                        {
+                            currentCourse ?
+                                <>
+                                    <div className="content__title-subtitle">
+                                        {
+                                            currentCourse.subject.name[lang] ?
+                                                currentCourse.subject.name[lang]
+                                                :
+                                                currentCourse.subject.name['ua']
+                                        }
+                                    </div>
                                     {
-                                        currentCourse.subject.name[lang] ?
-                                            currentCourse.subject.name[lang]
+                                        currentCourse.course.name[lang] ?
+                                            currentCourse.course.name[lang]
                                             :
-                                            currentCourse.subject.name['ua']
+                                            currentCourse.course.name['ua']
                                     }
-                                </div>
-                                {
-                                    currentCourse.course.name[lang] ?
-                                        currentCourse.course.name[lang]
-                                        :
-                                        currentCourse.course.name['ua']
-                                }
-                            </>
-                            :
-                            translate('course')
-                    }
+                                </>
+                                :
+                                translate('course')
+                        }
+                    </div>
                 </h2>
             </div>
             {
@@ -117,7 +119,15 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                 <div className="studentCourse__module-lessons">
                     {
                         module.lessons.length ?
-                            module.lessons.sort((a, b) => a.id - b.id).map(lesson  => _renderLesson(module.id, lesson))
+                            module.lessons.sort((a, b) => {
+                                if ( a.index < b.index ) {
+                                    return -1;
+                                }
+                                if ( a.index > b.index ) {
+                                    return 1;
+                                }
+                                return 0;
+                            }).map(lesson  => _renderLesson(module.id, lesson))
                             :
                             <div className="studentCourse__module-lessons-notFound">
                                 { translate('no_lessons') }

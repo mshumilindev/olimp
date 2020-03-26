@@ -7,24 +7,26 @@ const events = [];
 export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 
-export function fetchEvents() {
-    if ( !events.length ) {
-        return dispatch => {
-            dispatch(fetchEventsBegin());
-            return eventsCollection.get().then((data) => {
-                data.docs.forEach(doc => {
-                    const docData = doc.data();
-
-                    events.push(docData);
-                });
-                dispatch(fetchEventsSuccess(events));
+export function fetchEvents(userID) {
+    return dispatch => {
+        dispatch(fetchEventsBegin());
+        return eventsCollection.onSnapshot(snapshot => {
+            snapshot.docs.forEach(doc => {
+                if ( !events || !events.length || !events.find(eventItem => eventItem.id === doc.id ) ) {
+                    events.push({
+                        ...doc.data(),
+                        id: doc.id
+                    });
+                }
+                else {
+                    events[events.indexOf(events.find(eventItem => eventItem.id === doc.id ))] = {
+                        ...doc.data(),
+                        id: doc.id
+                    };
+                }
             });
-        }
-    }
-    else {
-        return dispatch => {
-            dispatch(fetchEventsSuccess(events))
-        }
+            dispatch(fetchEventsSuccess(Object.assign([], events.filter(eventItem => eventItem.organizer === userID || eventItem.participants.indexOf(userID) !== -1))));
+        });
     }
 }
 
@@ -33,7 +35,7 @@ export const fetchEventsBegin = () => {
         type: FETCH_EVENTS_BEGIN
     }
 };
-export const fetchEventsSuccess = usersList => {
+export const fetchEventsSuccess = events => {
     return {
         type: FETCH_EVENTS_SUCCESS,
         payload: { events }
@@ -46,30 +48,23 @@ export const FETCH_CHAT_SUCCESS = 'FETCH_CHAT_SUCCESS';
 export const FETCH_CHAT_ERROR = 'FETCH_CHAT_ERROR';
 
 export function fetchChat(chatID, userID) {
-    const chatRef = db.collection('events').doc(chatID);
-
     return dispatch => {
         dispatch(fetchChatBegin());
-        return chatRef.onSnapshot(doc => {
-            if ( !doc.exists ) {
-                dispatch(fetchChatError('videochat_does_not_exist'));
-            }
-            else {
-                const chat = doc.data();
+        const currentChat = events.find(eventItem => eventItem.id === chatID);
 
-                if ( chat.organizer !== userID && chat.participants.indexOf(userID) === -1 ) {
-                    return dispatch(fetchChatError('user_not_allowed_to_chat'));
-                }
-                // === Check for time
-                if ( false ) {
-                    return dispatch(fetchChatError('wrong_time_for_chat'));
-                }
-                return dispatch(fetchChatSuccess({
-                    ...doc.data(),
-                    id: doc.id
-                }));
+        if ( !currentChat ) {
+            dispatch(fetchChatError('videochat_does_not_exist'));
+        }
+        else {
+            // === Check for time
+            if ( false ) {
+                return dispatch(fetchChatError('wrong_time_for_chat'));
             }
-        });
+            if ( currentChat.organizer !== userID && currentChat.participants.indexOf(userID) === -1 ) {
+                return dispatch(fetchChatError('user_not_allowed_to_chat'));
+            }
+            return dispatch(fetchChatSuccess(currentChat));
+        }
     }
 }
 

@@ -1,10 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Header from '../../components/Header/Header';
 import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
 import SiteSettingsContext from "../../context/siteSettingsContext";
+import userContext from "../../context/userContext";
 
-export default function Admin({children, location, params, isTeacher}) {
+export default function Admin({children, location, params, isTeacher, fetchEvents}) {
+    const { user } = useContext(userContext);
+
+    useEffect(() => {
+        fetchEvents(user.id);
+    }, []);
+
     const adminNav = [
         {
             id: 0,

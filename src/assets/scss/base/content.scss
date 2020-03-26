@@ -21,9 +21,17 @@
     text-transform: uppercase;
     font-size: 20px;
     display: flex;
+    align-items: center;
+  }
+  &__title-inner {
+    display: flex;
+    flex-wrap: wrap;
   }
   &__title-subtitle {
     color: $greyColor;
+    font-size: 14px;
+    width: 100%;
+    flex: 0 0 auto;
     &:after {
       content: '/';
       margin: 0 5px;

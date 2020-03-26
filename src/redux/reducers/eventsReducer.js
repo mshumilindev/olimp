@@ -23,11 +23,11 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case FETCH_EVENTS_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 events: action.payload.events
-            };
+            });
 
         case FETCH_CHAT_BEGIN:
             return Object.assign({}, {

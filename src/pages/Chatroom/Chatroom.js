@@ -9,13 +9,15 @@ import ChatBox from "../../components/ChatBox/ChatBox";
 import userContext from "../../context/userContext";
 import { orderBy } from 'natural-orderby'
 
-function Chatroom({params, fetchChat, setActiveUser, loading, chat, chatError, users, setChatStart, setStopChat, removeActiveUser}) {
+function Chatroom({events, params, fetchChat, setActiveUser, loading, chat, chatError, users, setChatStart, setStopChat, removeActiveUser}) {
     const { translate } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
 
     useEffect(() => {
-        fetchChat(params.chatID, user.id);
-    }, []);
+        if ( events.length ) {
+            fetchChat(params.chatID, user.id);
+        }
+    }, [events]);
 
     return (
         <div className="chatroom">
@@ -95,6 +97,7 @@ const mapStateToProps = state => {
     return {
         loading: state.eventsReducer.loading,
         chat: state.eventsReducer.chat,
+        events: state.eventsReducer.events,
         chatError: state.eventsReducer.chatError,
         users: state.usersReducer.usersList
     }

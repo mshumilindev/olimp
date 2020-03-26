@@ -56,7 +56,15 @@ function StudentCoursesItem({subjectID, courseID, currentUser}) {
                 <div className="studentCourse__module-lessons">
                     {
                         module.lessons.length ?
-                            module.lessons.sort((a, b) => a.id - b.id).map(lesson  => _renderLesson(module.id, lesson))
+                            module.lessons.sort((a, b) => {
+                                if ( a.index < b.index ) {
+                                    return -1;
+                                }
+                                if ( a.index > b.index ) {
+                                    return 1;
+                                }
+                                return 0;
+                            }).map(lesson  => _renderLesson(module.id, lesson))
                             :
                             <div className="studentCourse__module-lessons-notFound">
                                 { translate('no_lessons') }

@@ -14,8 +14,7 @@ const mapStateToProps = state => ({
     levelCoursesList: state.scheduleReducer.levelCoursesList,
     coursesList: state.scheduleReducer.coursesList,
     usersList: state.usersReducer.usersList,
-    translationsList: state.usersReducer.translationsList,
-    events: state.eventsReducer.events
+    translationsList: state.usersReducer.translationsList
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -28,7 +27,7 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses()),
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    fetchEvents: dispatch(fetchEvents())
+    fetchEvents: userID => dispatch(fetchEvents(userID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin)

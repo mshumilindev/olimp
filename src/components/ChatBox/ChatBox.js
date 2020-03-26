@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import Fullscreen from 'react-full-screen';
 import ChatContainer from "./ChatContainer";
 
-function ChatBox({setActiveUser, chat, users, setChatStart, setStopChat, removeActiveUser}) {
+export default function ChatBox({setActiveUser, chat, users, setChatStart, setStopChat, removeActiveUser}) {
     const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
@@ -111,5 +111,3 @@ function ChatBox({setActiveUser, chat, users, setChatStart, setStopChat, removeA
         return classes;
     }
 }
-
-export default ChatBox;
