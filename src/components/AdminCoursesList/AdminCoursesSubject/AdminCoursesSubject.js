@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import siteSettingsContext from '../../../context/siteSettingsContext';
 import AdminCoursesCourse from '../AdminCoursesCourse/AdminCoursesCourse';
@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
 import userContext from "../../../context/userContext";
+import { orderBy } from 'natural-orderby';
 
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
@@ -49,7 +50,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     return (
-        <div className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
+        <div id={subject.id} className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
             <ContextMenu links={contextLinks}>
                 <Link to={'/admin-courses' + (params && params.subjectID === subject.id && !params.courseID ? '' : '/' + subject.id)} className="adminCourses__list-link">
                     {
@@ -116,9 +117,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return subject.coursesList
-                        .filter(item => user.role === 'teacher' ? item.teacher === user.id : true)
-                        .sort((a, b) => a.index - b.index);
+        return orderBy(subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 }
 const mapDispatchToProps = dispatch => ({

@@ -1,48 +1,34 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins/align.min.js';
 import 'froala-editor/js/plugins/paragraph_format.min.js';
 import 'froala-editor/js/languages/ru.js';
-import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
+import ReactPlayer from 'react-player';
 
-export default function ContentEditorText({ block, setBlock, removeBlock }) {
-    const { translate, lang } = useContext(siteSettingsContext);
+export default function ContentEditorYoutube({ block, setBlock, removeBlock }) {
+    const { translate } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    const editorConfig = {
-        menubar: false,
-        language: 'uk',
-        max_height: 550,
-        plugins: [
-            'autoresize fullscreen',
-            'advlist lists image charmap anchor',
-            'visualblocks forecolor',
-            'powerpaste'
-        ],
-        powerpaste_word_import: 'prompt',
-        powerpaste_html_import: 'prompt',
-        fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
-        toolbar: ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image']
+    block.value = block.value || '';
 
-    };
-
-    block.value = block.value || {
-        ua: '',
-        ru: '',
-        en: ''
-    };
+    const videoContainerRef = useRef(null);
 
     return (
-        <div className="contentEditor__block-text">
-            <Editor
-                initialValue={block.value[lang]}
-                onEditorChange={handleChange}
-                init={editorConfig}
-                apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-            />
+        <div className="contentEditor__block-youtube" ref={videoContainerRef}>
+            <form className="form">
+                <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_youtube_url')}/>
+            </form>
+            {
+                block.value ?
+                    <div className="contentEditor__block-youtube-holder">
+                        <ReactPlayer url={block.value} width={'auto'} height={'auto'} />
+                    </div>
+                    :
+                    null
+            }
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
@@ -67,12 +53,9 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
     }
 
     function handleChange(value) {
-        const newValue = block.value;
-        newValue[lang] = value;
-
         setBlock({
             ...block,
-            value: newValue
+            value: value
         })
     }
 }

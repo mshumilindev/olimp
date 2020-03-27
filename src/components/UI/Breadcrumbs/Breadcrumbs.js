@@ -14,9 +14,9 @@ export default function Breadcrumbs({list}) {
             <div className="breadcrumbs__item" key={item.name}>
                 {
                     isLast ?
-                        <span className="breadcrumbs__noLink">{ item.name }</span>
+                        <span className="breadcrumbs__noLink" dangerouslySetInnerHTML={{__html: item.name}} />
                         :
-                        <Link to={item.url} className="breadcrumbs__link">{ item.name }</Link>
+                        <Link to={item.url} className="breadcrumbs__link" dangerouslySetInnerHTML={{__html: item.name}}/>
                 }
             </div>
         )

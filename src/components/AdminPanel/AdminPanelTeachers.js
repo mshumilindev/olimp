@@ -3,6 +3,8 @@ import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { orderBy } from 'natural-orderby';
 
 function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCourses}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -23,19 +25,26 @@ function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCo
                     <Preloader/>
                     :
                     usersList && allCoursesList ?
-                        <div className="adminDashboard__teachersList">
-                            {
-                                filterUsers().map(teacher => _renderTeacher(teacher))
-                            }
-                            <div className="nothingFound">
+                        <Scrollbars
+                            autoHeight
+                            autoHeightMax={500}
+                            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                            renderView={props => <div {...props} className="scrollbar__content"/>}
+                        >
+                            <div className="adminDashboard__teachersList">
                                 {
-                                    showCourses ?
-                                        translate('no_teachers_with_courses')
-                                        :
-                                        translate('no_teachers_no_courses')
+                                    filterUsers().map(teacher => _renderTeacher(teacher))
                                 }
+                                <div className="nothingFound">
+                                    {
+                                        showCourses ?
+                                            translate('no_teachers_with_courses')
+                                            :
+                                            translate('no_teachers_no_courses')
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        </Scrollbars>
                         :
                         <Preloader/>
             }
@@ -86,7 +95,7 @@ function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCo
                     <div className="adminDashboard__teachersList-courses">
                         {
                             selectedCourses.length ?
-                                selectedCourses.map(course => {
+                                orderBy(selectedCourses, [v => v.courseName]).map(course => {
                                     return (
                                         <span key={course.courseName}>
                                             <i className="content_title-icon fa fa-graduation-cap" />

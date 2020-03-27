@@ -42,16 +42,19 @@
   &__box {
     display: inline-block;
     vertical-align: top;
-    background: $white;
     width: 90%;
     max-width: 450px;
-    border-radius: 4px;
-    padding: $pageIndent / 2;
-    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
     position: relative;
     overflow: hidden;
     margin: 40px 20px;
     text-align: left;
+    border-bottom: 20px solid transparent;
+  }
+  &__box-inner {
+    border-radius: 4px;
+    padding: $pageIndent / 2;
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+    background: $white;
   }
   &__close {
     position: absolute;
@@ -75,5 +78,18 @@
     margin-bottom: 20px;
     font-size: 20px;
     font-family: $RobotoCondensed;
+  }
+  &__backToTop {
+    position: fixed;
+    right: $pageIndent;
+    bottom: $pageIndent;
+    z-index: 1;
+    color: $white;
+    font-size: 40px;
+    cursor: pointer;
+    transition: color .15s ease-in-out;
+    &:hover {
+      color: $linkHoverColor
+    }
   }
 }

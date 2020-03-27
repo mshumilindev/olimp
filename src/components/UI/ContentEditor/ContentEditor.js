@@ -7,6 +7,10 @@ import Modal from '../Modal/Modal';
 
 import ContentEditorText from './ContentEditorText/ContentEditorText';
 import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
+import ContentEditorYoutube from './ContentEditorYoutube/ContentEditorYoutube';
+import ContentEditorAudio from "./ContentEditorAudio/ContentEditorAudio";
+import ContentEditorPowerpoint from "./ContentEditorPowerpoint/ContentEditorPowerpoint";
+import ContentEditorWord from "./ContentEditorWord/ContentEditorWord";
 import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
 import ContentEditorDivider from './ContentEditorDivider/ContentEditorDivider';
 import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
@@ -40,6 +44,26 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             icon: 'fa fa-images',
             title: 'media'
         },
+        {
+            type: 'youtube',
+            icon: 'fab fa-youtube',
+            title: 'youtube'
+        },
+        {
+            type: 'audio',
+            icon: 'fas fa-headphones',
+            title: 'audio'
+        },
+        {
+            type: 'word',
+            icon: 'fas fa-file-word',
+            title: 'word'
+        },
+        {
+            type: 'powerpoint',
+            icon: 'fas fa-file-powerpoint',
+            title: 'powerpoint'
+        },
         // {
         //     type: 'table',
         //     icon: 'fa fa-table'
@@ -68,8 +92,17 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
 
     if ( types.length ) {
         types.forEach(defaultType => {
-            if ( defaultEditorActions.find(item => item.type === defaultType) ) {
-                contentEditorActions.push(defaultEditorActions.find(item => item.type === defaultType));
+            if ( typeof defaultType === 'object' ) {
+                contentEditorActions.push(defaultType.map(innerType => {
+                    if ( defaultEditorActions.find(item => item.type === innerType) ) {
+                        return defaultEditorActions.find(item => item.type === innerType);
+                    }
+                }));
+            }
+            else {
+                if ( defaultEditorActions.find(item => item.type === defaultType) ) {
+                    contentEditorActions.push(defaultEditorActions.find(item => item.type === defaultType));
+                }
             }
         });
     }
@@ -98,6 +131,14 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                                         return <ContentEditorText key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('media') :
                                         return <ContentEditorMedia key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('youtube') :
+                                        return <ContentEditorYoutube key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('audio') :
+                                        return <ContentEditorAudio key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('word') :
+                                        return <ContentEditorWord key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('powerpoint') :
+                                        return <ContentEditorPowerpoint key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('table') :
                                     //     return <ContentEditorTable key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     // case ('grid') :
@@ -133,19 +174,7 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
                         <div className="contentEditor__actions">
                             {
                                 contentEditorActions.length ?
-                                    contentEditorActions.map(action => {
-                                        return (
-                                            <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={action.type}>
-                                                <i className={action.icon} />
-                                                {
-                                                    action.title ?
-                                                        translate(action.title)
-                                                        :
-                                                        null
-                                                }
-                                            </a>
-                                        );
-                                    })
+                                    contentEditorActions.map(action => _renderAction(action))
                                     :
                                     null
                             }
@@ -156,6 +185,31 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             }
         </div>
     );
+
+    function _renderAction(action) {
+        if ( Array.isArray(action) ) {
+            return (
+                <div className="contentEditor__actions-row">
+                    {
+                        action.map(innerAction => _renderAction(innerAction))
+                    }
+                </div>
+            );
+        }
+        else {
+            return (
+                <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={action.type}>
+                    <i className={action.icon} />
+                    {
+                        action.title ?
+                            translate(action.title)
+                            :
+                            null
+                    }
+                </a>
+            );
+        }
+    }
 
     function _renderNoContent() {
         return <div className="contentEditor__noContent">{ translate('start_adding_content') }</div>

@@ -1,6 +1,9 @@
 .article {
   line-height: 1.5;
   position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   &__block {
     margin-bottom: 20px;
     &.type-text {
@@ -58,6 +61,15 @@
     &.size-1x1 {
       padding-top: 100%;
     }
+    &.size-3x4 {
+      padding-top: 125%;
+    }
+    &.size-4x6 {
+      padding-top: 150%;
+    }
+    &.size-9x16 {
+      padding-top: 177.77%;
+    }
   }
   &__image-caption {
     text-align: center;
@@ -96,6 +108,30 @@
       z-index: -1;
       background: $white;
       opacity: .75;
+    }
+  }
+  &__audio {
+    p {
+      margin-bottom: 10px;
+      color: $greyColor;
+      text-transform: uppercase;
+      font-family: $RobotoCondensed;
+      letter-spacing: .5px;
+    }
+    audio {
+      width: 100%;
+      vertical-align: top;
+    }
+  }
+  .youtube-holder {
+    position: relative;
+    padding-top: 56.25%;
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important;
+      height: 100% !important;
     }
   }
 }

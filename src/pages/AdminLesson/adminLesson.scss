@@ -1,0 +1,36 @@
+@import '../../assets/scss/utils/sizes';
+
+.adminLesson {
+  .section__title {
+    display: flex;
+    align-items: center;
+  }
+  .breadcrumbs {
+    flex-wrap: wrap;
+    &__item {
+      &:not(:last-child) {
+        font-size: 14px;
+      }
+      &:last-child {
+        width: 100%;
+        flex: 0 0 auto;
+        margin-top: 5px;
+        &:before {
+          display: none;
+        }
+      }
+    }
+  }
+  .widget__descr {
+    margin-bottom: 20px;
+  }
+  &__previewModal {
+    .modal__box {
+      max-width: 800px;
+    }
+    .article {
+      padding: $pageIndent;
+      box-sizing: border-box;
+    }
+  }
+}

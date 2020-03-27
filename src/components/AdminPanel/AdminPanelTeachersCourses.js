@@ -4,6 +4,7 @@ import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import userContext from "../../context/userContext";
+import { orderBy } from 'natural-orderby';
 
 function AdminPanelTeachersCourses({loading, usersList, allCoursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);

@@ -3,13 +3,14 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
-import classNames from 'classnames';
 import userContext from "../../context/userContext";
+import AdminClassScheduleDayCourse from "./AdminClassScheduleDayCourse";
+import AdminClassScheduleDayLesson from "./AdminClassScheduleDayLesson";
 
 const Modal = React.lazy(() => import('../UI/Modal/Modal'));
 
 function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSchedule}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+    const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ selectedLessons, setSelectedLessons ] = useState(JSON.stringify([]));
     const { user } = useContext(userContext);
@@ -33,16 +34,19 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
                 {
                     coursesList && day.lessons.length && coursesList.length ?
                         day.lessons.sort((a, b) => {
-                            if ( a.subject < b.subject ) {
-                                return -1;
+                            if ( a.time && b.time ) {
+                                if ( a.time.start < b.time.start ) {
+                                    return -1;
+                                }
+                                else if ( a.time.start > b.time.start ) {
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
                             }
-                            else if ( a.subject > b.subject ) {
-                                return 1;
-                            }
-                            else {
-                                return 0;
-                            }
-                        }).map((lesson, index) => _renderLesson(lesson, index))
+                            return 0;
+                        }).map((lesson, index) => <AdminClassScheduleDayLesson lesson={lesson} index={index} coursesList={coursesList} quickRemoveLesson={quickRemoveLesson} key={index + lesson.course} />)
                         :
                         null
                 }
@@ -72,7 +76,7 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
                                             else {
                                                 return 0;
                                             }
-                                        }).map(item => _renderCourse(item))
+                                        }).map(item => <AdminClassScheduleDayCourse item={item} selectedLessons={selectedLessons} coursesList={coursesList} setSelectedLessons={setSelectedLessons} key={item.course} />)
                                     }
                                 </div>
                                 :
@@ -91,69 +95,10 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
         </div>
     );
 
-    function _renderLesson(lesson, index) {
-        const currentSubject = coursesList.find(subject => subject.id === lesson.subject);
-        const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
-
-        if ( !currentCourse ) {
-            quickRemoveLesson(lesson);
-            return null;
-        }
-
-        return (
-            <div key={index + lesson.course} className="coursesPicker__selectedList-item">
-                <div className="coursesPicker__selectedList-item-subject">
-                    {
-                        currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua']
-                    }
-                </div>
-                <div className="coursesPicker__selectedList-item-course">
-                    {
-                        currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua']
-                    }
-                </div>
-                {
-                    user.role === 'admin' ?
-                        <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveLesson(lesson)}>
-                            <i className="fa fa-trash-alt"/>
-                        </span>
-                        :
-                        null
-                }
-            </div>
-        )
-    }
-
-    function _renderCourse(item) {
-        const currentSubject = coursesList.find(subject => subject.id === item.subject);
-        const currentCourse = currentSubject.coursesList.find(course => course.id === item.course);
-
-        return (
-            <div className={classNames('adminClass__schedule-courses-item', {selected: JSON.parse(selectedLessons).some(lesson => lesson.subject === item.subject && lesson.course === item.course)})} key={item.course} onClick={() => toggleLesson(item)}>
-                {
-                    JSON.parse(selectedLessons).some(lesson => lesson.subject === item.subject && lesson.course === item.course) ?
-                        <i className="content_title-icon far fa-check-square" />
-                        :
-                        <i className="content_title-icon far fa-square" />
-                }
-                <div className="adminClass__schedule-courses-item-subject">
-                    {
-                        currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua']
-                    }
-                </div>
-                <div className="adminClass__schedule-courses-item-course">
-                    {
-                        currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua']
-                    }
-                </div>
-            </div>
-        )
-    }
-
     function quickRemoveLesson(lesson) {
         const newSelectedLessons = day.lessons;
 
-        newSelectedLessons.splice(newSelectedLessons.indexOf(newSelectedLessons.find(newItem => newItem.subject === lesson.subject && newItem.course === lesson.course)), 1);
+        newSelectedLessons.splice(newSelectedLessons.indexOf(newSelectedLessons.find(newItem => newItem.subject === lesson.subject && newItem.course === lesson.course && newItem.time === lesson.time)), 1);
 
         handleAddSchedule({
             ...day,
@@ -179,18 +124,6 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
             ]
         });
         setSelectedLessons(JSON.stringify([]));
-    }
-
-    function toggleLesson(item) {
-        const newSelectedLessons = JSON.parse(selectedLessons);
-
-        if ( newSelectedLessons.some(newItem => newItem.subject === item.subject && newItem.course === item.course) ) {
-            newSelectedLessons.splice(newSelectedLessons.indexOf(newSelectedLessons.find(newItem => newItem.subject === item.subject && newItem.course === item.course)), 1);
-        }
-        else {
-            newSelectedLessons.push(item);
-        }
-        setSelectedLessons(JSON.stringify(newSelectedLessons));
     }
 }
 const mapStateToProps = state => ({

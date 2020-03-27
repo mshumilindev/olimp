@@ -9,6 +9,7 @@ import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
 import userContext from "../../context/userContext";
+import { orderBy } from 'natural-orderby';
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
@@ -92,6 +93,12 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                                     <div className="widget__title">
                                         <Breadcrumbs list={getBreadcrumbs()} />
                                     </div>
+                                    <div className="widget__descr">
+                                        <h3>Правила користування:</h3>
+                                        <p>Ліва кнопка миші - обрати предмет/модуль/урок</p>
+                                        <p>Права кнопка миші - відкрити контекстне меню</p>
+                                        <p><strong>Перед створенням нового основного предмету запевніться, що його ще не існує</strong></p>
+                                    </div>
                                     <div className="adminCourses__list">
                                         {
                                             filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
@@ -134,13 +141,13 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         const newSubject = {};
 
         newSubject.name = {
-            en: newSubjectFields.find(item => item.id === 'subjectName_en').value,
-            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value,
-            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value
+            en: newSubjectFields.find(item => item.id === 'subjectName_en').value.replace(/\s*$/,''),
+            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value.replace(/\s*$/,''),
+            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value.replace(/\s*$/,'')
         };
         newSubject.id = identify(transliterize(newSubject.name['ua']));
 
-        if ( list.some(item => item.id === newSubject.id) ) {
+        if ( list.some(item => item.id.toLowerCase() === newSubject.id.toLowerCase()) ) {
             setFormError(translate('subject_already_exists'));
         }
         else {
@@ -165,7 +172,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
     }
 
     function filterList() {
-        return list.filter(item => {
+        return orderBy(list.filter(item => {
             // let sameTeacher = user.role === 'admin';
             //
             // if ( user.role === 'teacher' ) {
@@ -181,20 +188,7 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
             // }
 
             return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
-        }).sort((a, b) => {
-            const aName = a.name[lang] ? a.name[lang] : a.name['ua'];
-            const bName = b.name[lang] ? b.name[lang] : b.name['ua'];
-
-            if ( aName < bName ) {
-                return -1;
-            }
-            else if ( aName > bName ) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
+        }), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 
     function showCreateSubjectModal(e) {

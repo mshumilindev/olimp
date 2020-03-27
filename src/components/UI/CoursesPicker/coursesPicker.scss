@@ -30,6 +30,10 @@
       background: $lightColor;
     }
   }
+  &__selectedList-item-time {
+    margin-right: 10px;
+    white-space: nowrap;
+  }
   &__selectedList-item-subject {
     color: $greyColor;
     flex: 0 0 auto;
@@ -52,7 +56,7 @@
   }
   &__list {
     overflow: auto;
-    margin: -20px 0 20px;
+    margin: 0 0 40px;
     max-height: 500px;
   }
   &__list-item {

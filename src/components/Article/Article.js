@@ -1,19 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import classNames from "classnames";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
+import ReactPlayer from 'react-player';
 
 export default function Article({content, type, finishQuestions, loading}) {
     const { lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
+    const articleRef = useRef(null);
     const [ answers, setAnswers ] = useState({
         gotScore: 0,
         blocks: []
     });
+    const [ size, setSize ] = useState({width: 0, height: 0});
+
+    useEffect(() => {
+        const width = articleRef.current.offsetWidth;
+
+        setSize({
+            width: width,
+            height: width * 56.25 / 100
+        });
+    }, []);
 
     return (
-        <article className="article">
+        <article className="article" ref={articleRef}>
             { pagifyContent()[contentPage].map(block => _renderBlock(block)) }
             {
                 pagifyContent().length > 1 && type === 'content' ?
@@ -74,6 +86,59 @@ export default function Article({content, type, finishQuestions, loading}) {
                         null
                 }
                 {
+                    block.type === 'youtube' ?
+                        <>
+                            {
+                                block.value ?
+                                    <div className="youtube-holder">
+                                        <ReactPlayer url={block.value} />
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </>
+                        :
+                        null
+                }
+                {
+                    block.type === 'audio' && block.value.url ?
+                        <div className={'article__audio'}>
+                            {
+                                block.value.caption ?
+                                    <p>{ block.value.caption }</p>
+                                    :
+                                    null
+                            }
+                            <audio controls>
+                                <source src={getPlayLink(block.value.url)}/>
+                            </audio>
+                        </div>
+                        :
+                        null
+                }
+                {
+                    block.type === 'word' ?
+                        <iframe
+                            src={getWordURL(block.value)}
+                            style={{width: '100%', height: size.width * 141 / 100, border: '1px solid grey'}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                        :
+                        null
+                }
+                {
+                    block.type === 'powerpoint' ?
+                        <iframe
+                            src={getPowerpointURL(block.value)}
+                            style={{width: '100%', height: size.height}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                        :
+                        null
+                }
+                {
                     block.type === 'divider' ?
                         <hr/>
                         :
@@ -87,6 +152,45 @@ export default function Article({content, type, finishQuestions, loading}) {
                 }
             </div>
         )
+    }
+
+    function getWordURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL += '?embedded=true&widget=false&headers=false&chrome=false';
+        }
+
+        return newURL;
+    }
+
+    function getPowerpointURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL.replace('/pub?', '/embed?')
+        }
+        return newURL;
+    }
+
+    function getPlayLink(url) {
+        let newURL = url;
+
+        if ( newURL.indexOf('https://drive.google.com/file/d/') !== -1 ) {
+            newURL = newURL.replace('https://drive.google.com/file/d/', '');
+        }
+        if ( newURL.indexOf('https://drive.google.com/open?id=') !== -1 ) {
+            newURL = newURL.replace('https://drive.google.com/open?id=', '');
+        }
+        if ( newURL.indexOf('/view?usp=sharing') !== -1 ) {
+            newURL = newURL.replace('/view?usp=sharing', '');
+        }
+
+        if ( newURL.length ) {
+            newURL = 'https://docs.google.com/uc?export=download&id=' + newURL;
+        }
+
+        return newURL;
     }
 
     function changePage(index) {

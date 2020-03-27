@@ -2,9 +2,10 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const siteSettingsCollection = db.collection('config');
-const siteSettingsList = localStorage.getItem('siteSettings') ? JSON.parse(localStorage.getItem('siteSettings')).data : {data: {}};
+let siteSettingsList = null;
 
 export function fetchSiteSettings() {
+    siteSettingsList = localStorage.getItem('siteSettings') ? JSON.parse(localStorage.getItem('siteSettings')).data : {data: {}};
     if ( !Object.keys(siteSettingsList.data).length ) {
         return dispatch => {
             dispatch(siteSettingsBegin());
