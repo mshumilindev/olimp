@@ -128,7 +128,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'url':
                 return (
                     <div className="form__field-holder">
-                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated, readonly: field.readonly})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type === 'password' ? showPassword ? 'text' : field.type : field.type} title={name} value={field.value} autoComplete="new-password" readOnly={field.readonly} title={field.value} />
+                        <input className={classNames('form__field', {required: field.required, hasErrors: (field.required && hasErrors && !field.value) || field.errorMessage, hasBtn: field.btn, isUpdated: field.updated, readonly: field.readonly})} onChange={(e) => handleFieldChange(field.id, e.target.value)} type={field.type === 'password' ? showPassword ? 'text' : field.type : field.type} title={name} value={field.value} autoComplete="new-password" readOnly={field.readonly} />
                         {
                             field.icon ?
                                 <i className={classNames('form__field-icon ' + field.icon, { isFilled: field.value })} />
