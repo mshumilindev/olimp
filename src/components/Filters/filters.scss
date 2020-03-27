@@ -59,4 +59,15 @@ $filtersIndent: 20px;
   &__showPerPage {
     max-width: 120px;
   }
+  &__showOnlyMy {
+    .check {
+      border: 1px solid $mediumGreyColor;
+    }
+    .form__checkbox.checked,
+    .form__checkbox:checked {
+      + label .check {
+        border-color: $greenColor;
+      }
+    }
+  }
 }

@@ -3,12 +3,14 @@ import './adminClassesList.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {Preloader} from "../UI/preloader";
 import AdminClassesListItem from './AdminClassesListItem';
+import withData from "../../utils/withData";
 
-function AdminClassesList({list, loading, searchQuery, startCreateClass}) {
+function AdminClassesList({list, loading, searchQuery, startCreateClass, totalItems}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
         <div className="widget">
+            { totalItems }
             {
                 list && list.length ?
                     <div className="adminClasses__list grid">
@@ -41,4 +43,4 @@ function AdminClassesList({list, loading, searchQuery, startCreateClass}) {
         </div>
     );
 }
-export default AdminClassesList;
+export default withData(AdminClassesList);

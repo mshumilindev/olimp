@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import siteSettingsContext from "../context/siteSettingsContext";
 import Filters from "../components/Filters/Filters";
 
-const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions) => {
+const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions, showOnlyMy) => {
     return (props) => {
         const { translate } = useContext(siteSettingsContext);
         const [ searchQuery, setSearchQuery ] = useState('');
@@ -14,6 +14,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             placeholder: translate('sort_by')
         });
         const [ filterBy, setFilterBy ] = useState(JSON.stringify([]));
+        const [ showOnlyMyChecked, setShowOnlyMyChecked ] = useState(!!showOnlyMy);
 
         useEffect(() => {
             if ( !sortBy.options && sortByOptions ) {
@@ -55,7 +56,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             }
         }, [filterBy, sortBy, translate]);
 
-        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} />;
+        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} />;
 
         function filterChanged(type, value) {
             if ( type === 'searchQuery' ) {
@@ -83,10 +84,21 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
 
                 setFilterBy(JSON.stringify(newFilters));
             }
+            if ( type === 'showOnlyMy' ) {
+                setShowOnlyMyChecked(!showOnlyMyChecked);
+            }
         }
 
         function _renderFilters() {
-            return <Filters showPerPage={hasShowPerPage ? showPerPage : undefined} searchQuery={hasSearch ? searchQuery : undefined} sortBy={sortBy.options ? sortBy : undefined} filterBy={JSON.parse(filterBy).length ? JSON.parse(filterBy) : undefined} filterChanged={filterChanged} />
+            return <Filters
+                showPerPage={hasShowPerPage ? showPerPage : undefined}
+                searchQuery={hasSearch ? searchQuery : undefined}
+                sortBy={sortBy.options ? sortBy : undefined}
+                filterBy={JSON.parse(filterBy).length ? JSON.parse(filterBy) : undefined}
+                showOnlyMyChecked={showOnlyMyChecked ? showOnlyMyChecked : undefined}
+                showOnlyMy={showOnlyMy ? showOnlyMy : undefined}
+                filterChanged={filterChanged}
+            />
         }
     }
 };

@@ -9,6 +9,7 @@ import './adminUsersList.scss';
 import { Link } from 'react-router-dom';
 import withPager from "../../utils/withPager";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
+import withData from '../../utils/withData';
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
@@ -61,7 +62,7 @@ class AdminUsersList extends React.Component {
     }
 
     render() {
-        const { loading, filters, pager, list } = this.props;
+        const { loading, filters, pager, list, totalItems } = this.props;
         const { translate } = this.context;
         const currentUser = JSON.parse(localStorage.getItem('user'));
 
@@ -89,6 +90,7 @@ class AdminUsersList extends React.Component {
                 </div>
                 { filters }
                 <div className="adminUsersList widget">
+                    { totalItems }
                     {
                         list && list.length ?
                             <>
@@ -265,4 +267,4 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withPager(AdminUsersList));
+export default connect(mapStateToProps, mapDispatchToProps)(withData(withPager(AdminUsersList)));

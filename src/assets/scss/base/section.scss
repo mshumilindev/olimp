@@ -68,4 +68,9 @@
     display: flex;
     justify-content: center;
   }
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    align-self: center;
+  }
 }

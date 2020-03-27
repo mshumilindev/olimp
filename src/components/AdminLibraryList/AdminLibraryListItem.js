@@ -7,6 +7,7 @@ import Form from "../Form/Form";
 import {updateDoc, downloadDoc} from "../../redux/actions/libraryActions";
 import {connect} from "react-redux";
 import classNames from "classnames";
+import userContext from "../../context/userContext";
 
 function usePrevious(value) {
     const ref = useRef(null);
@@ -20,6 +21,7 @@ function usePrevious(value) {
 
 function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc, users, isCurrent}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ isUsed, setIsUsed ] = useState(false);
     const [ docItem, setDocItem ] = useState(JSON.stringify(item));
@@ -61,16 +63,21 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
                 }
             </td>
             <td className="table__body-cell">
-                <div className="table__actions">
-                    <a href="/" className="table__actions-btn" onClick={e => onSetShowModal(e)}>
-                        <i className="content_title-icon fa fa-pencil-alt" />
-                        { translate('edit') }
-                    </a>
-                    <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => onDeleteDoc(e, JSON.parse(docItem))}>
-                        <i className="content_title-icon fa fa-trash-alt" />
-                        { translate('delete') }
-                    </a>
-                </div>
+                {
+                    JSON.parse(docItem).teacher && JSON.parse(docItem).teacher !== user.id && user.role !== 'admin' ?
+                        null
+                        :
+                        <div className="table__actions">
+                            <a href="/" className="table__actions-btn" onClick={e => onSetShowModal(e)}>
+                                <i className="content_title-icon fa fa-pencil-alt" />
+                                { translate('edit') }
+                            </a>
+                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => onDeleteDoc(e, JSON.parse(docItem))}>
+                                <i className="content_title-icon fa fa-trash-alt" />
+                                { translate('delete') }
+                            </a>
+                        </div>
+                }
                 {
                     showModal ?
                         <>

@@ -23,7 +23,7 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage}) {
+function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const $fileRef = React.createRef();
@@ -82,7 +82,7 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
                     }
                 </div>
                 { filters }
-                <AdminLibraryList list={filterList()} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags} users={usersList} onUploadFile={onUploadFile} showPerPage={showPerPage}/>
+                <AdminLibraryList list={filterList()} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags} users={usersList} onUploadFile={onUploadFile} showPerPage={showPerPage} selectedTags={selectedTags}/>
             </div>
             {
                 showConfirmRemove ?
@@ -145,7 +145,7 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
 
     function filterList() {
         return list
-            .filter(item => user.role === 'teacher' ? item.teacher === user.id : true)
+            .filter(item => showOnlyMy ? user.role === 'teacher' ? item.teacher === user.id : true : true)
             .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
 }
@@ -159,4 +159,4 @@ const mapDispatchToProps = dispatch => ({
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
     uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withTags(AdminLibrary), true, true));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withTags(AdminLibrary), true, true, null, null, 'teacher'));

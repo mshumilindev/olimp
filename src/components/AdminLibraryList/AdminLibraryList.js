@@ -3,8 +3,9 @@ import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import AdminLibaryListItem from './AdminLibraryListItem';
 import withPager from "../../utils/withPager";
+import withData from "../../utils/withData";
 
-function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, selectedTags, onUploadFile}) {
+function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, selectedTags, onUploadFile, totalItems}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
@@ -13,7 +14,10 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
                 list ?
                     list.length ?
                         <>
-                            { selectedTags }
+                            <div className="section__data">
+                                { selectedTags }
+                                { totalItems }
+                            </div>
                             <div className="table__holder">
                                 <table className="table">
                                     <colgroup>
@@ -68,4 +72,4 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
         </div>
     );
 }
-export default withPager(AdminLibraryList);
+export default withData(withPager(AdminLibraryList));
