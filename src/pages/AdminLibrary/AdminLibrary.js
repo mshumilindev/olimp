@@ -7,6 +7,9 @@ import Form from '../../components/Form/Form';
 import generator from "generate-password";
 import AdminLibraryList from "../../components/AdminLibraryList/AdminLibraryList";
 import userContext from "../../context/userContext";
+import withFilters from "../../utils/withFilters";
+import withTags from "../../utils/withTags";
+import {Preloader} from "../../components/UI/preloader";
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
@@ -20,7 +23,7 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminLibrary({loading, list, setTags, deleteDoc, uploadDoc, usersList}) {
+function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const $fileRef = React.createRef();
@@ -60,7 +63,26 @@ function AdminLibrary({loading, list, setTags, deleteDoc, uploadDoc, usersList})
                     null
             }
             <div className="section">
-                <AdminLibraryList list={list.filter(item => user.role === 'teacher' ? item.teacher === user.id : true)} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags} users={usersList} onUploadFile={onUploadFile}/>
+                <div className="section__title-holder">
+                    <h2 className="section__title">
+                        <i className="content_title-icon fa fa-bookmark" />
+                        { translate('library') }
+                    </h2>
+                    <div className="section__title-actions">
+                        <a href="/" className="btn btn_primary" onClick={e => onUploadFile(e)}>
+                            <i className="content_title-icon fa fa-cloud-upload-alt" />
+                            { translate('upload') }
+                        </a>
+                    </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
+                </div>
+                { filters }
+                <AdminLibraryList list={filterList()} loading={loading} onDeleteDoc={onDeleteDoc} setTags={setTags} users={usersList} onUploadFile={onUploadFile} showPerPage={showPerPage}/>
             </div>
             {
                 showConfirmRemove ?
@@ -120,6 +142,12 @@ function AdminLibrary({loading, list, setTags, deleteDoc, uploadDoc, usersList})
             tags: []
         });
     }
+
+    function filterList() {
+        return list
+            .filter(item => user.role === 'teacher' ? item.teacher === user.id : true)
+            .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
+    }
 }
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
@@ -131,4 +159,4 @@ const mapDispatchToProps = dispatch => ({
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
     uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(AdminLibrary);
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withTags(AdminLibrary), true, true));

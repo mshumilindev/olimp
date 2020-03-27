@@ -28,11 +28,11 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case FETCH_LIBRARY_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 libraryList: action.payload.libraryList
-            };
+            });
 
         case DELETE_DOC_BEGIN:
             return {

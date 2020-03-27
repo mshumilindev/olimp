@@ -16,7 +16,7 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
         <div className="adminChats grid">
             <div className="grid_col col-6">
                 <div className="widget">
-                    <h3 className="widget__title">{ translate('reccuring_videochats') }</h3>
+                    <h3 className="widget__title">{ translate('recurring_videochats') }</h3>
                     <Scrollbars
                         autoHeight
                         hideTracksWhenNotNeeded
@@ -34,7 +34,7 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
                                             joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
                                             :
                                             <div className="nothingFound">
-                                                { translate('no_reccuring_videochats_yet') }
+                                                { translate('no_recurring_videochats_yet') }
                                             </div>
                                     }
                                 </div>

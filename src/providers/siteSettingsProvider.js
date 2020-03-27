@@ -674,8 +674,7 @@ export default class SiteSettingsProvider extends React.Component{
                         placeholder: translate('select_teacher'),
                         id: 'teacher',
                         value: teacher,
-                        updated: false,
-                        noneditable: true
+                        updated: false
                     }
                 ]
             },
