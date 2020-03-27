@@ -9,12 +9,19 @@ export default function CustomSelect({options, placeholder, name, updated, id, v
     const [ isActive, setIsActive ] = useState(false);
 
     useEffect(() => {
+        window.addEventListener('click', e => handleBodyClick(e));
+        return () => {
+            window.removeEventListener('click', handleBodyClick);
+        }
+    }, []);
+
+    useEffect(() => {
         setIsActive(false);
     }, [value]);
 
     return (
         <div className="customSelect">
-            <div className="form__field-holder" onClick={() => setIsActive(true)}>
+            <div className="form__field-holder" onClick={e => {e.stopPropagation(); setIsActive(!isActive)}}>
                 <input className={classNames('form__field customSelect__value', {isUpdated: updated, required: required, hasErrors: hasErrors, isActive: isActive})} type="text" title={name} value={value} readOnly onChange={e => e} />
                 <i className="fa fa-chevron-down customSelect__arrow" />
                 {
@@ -62,5 +69,9 @@ export default function CustomSelect({options, placeholder, name, updated, id, v
 
     function selectOpt(fieldID, value) {
         selectChanged(fieldID, value);
+    }
+
+    function handleBodyClick(e) {
+        setIsActive(false);
     }
 }

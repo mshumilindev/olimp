@@ -8,7 +8,7 @@ import { deleteEvent } from '../../redux/actions/eventsActions';
 import Confirm from "../UI/Confirm/Confirm";
 moment.locale('uk');
 
-function ChatListItem({event, usersList, classesList, deleteEvent}) {
+function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFormFields}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
 
@@ -45,7 +45,7 @@ function ChatListItem({event, usersList, classesList, deleteEvent}) {
                 <Link to={'/chat/' + event.id} className="btn btn_primary round btn__xs">
                     <i className="fa fa-link" />
                 </Link>
-                <span className="btn btn_primary round btn__xs">
+                <span className="btn btn_primary round btn__xs" onClick={() => mapEventToFormFields(event)}>
                     <i className="fa fa-pencil-alt" />
                 </span>
                 <span className="btn btn__error round btn__xs" onClick={() => setShowConfirmDelete(true)}>

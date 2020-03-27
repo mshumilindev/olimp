@@ -65,7 +65,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
                 {
                     type: 'userPicker',
                     value: [],
-                    id: 'all',
+                    id: 'participant',
                     placeholder: translate('participant'),
                     multiple: true,
                     required: true,
@@ -74,6 +74,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
             ]
         },
         {
+            id: 'submit',
             type: 'submit',
             name: translate('save')
         }
@@ -95,7 +96,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
                     </span>
                 </div>
             </div>
-            <ChatList events={filteredEvents()} usersList={usersList} loading={loading} />
+            <ChatList events={filteredEvents()} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} />
             {
                 showEditModal ?
                     <Modal
@@ -109,6 +110,17 @@ function AdminChats({loading, events, usersList, updateEvent}) {
             }
         </section>
     );
+
+    function mapEventToFormFields(event) {
+        const newFormFields = Object.assign([], initialFormFields);
+
+        newFormFields.find(item => item.id === 'block_organizer').children[0].value = event.organizer;
+        newFormFields.find(item => item.id === 'block_participants').children[0].value = event.participants;
+        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value = event.name;
+        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value = event.datetime;
+        setFormFields(Object.assign([], newFormFields));
+        setShowEditModal(event);
+    }
 
     function handleHideModal() {
         setShowEditModal(null);
@@ -135,14 +147,15 @@ function AdminChats({loading, events, usersList, updateEvent}) {
                 length: 20,
                 numbers: true
             });
-            newEvent.organizer = formFields.find(item => item.id === 'block_organizer').children[0].value;
-            newEvent.participants = formFields.find(item => item.id === 'block_participants').children[0].value;
-            newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
-            newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
         }
         else {
-
+            newEvent.id = showEditModal.id;
         }
+        newEvent.organizer = formFields.find(item => item.id === 'block_organizer').children[0].value;
+        newEvent.participants = formFields.find(item => item.id === 'block_participants').children[0].value;
+        newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
+        newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
+
         updateEvent(newEvent.id, newEvent);
         setFormFields(Object.assign([], initialFormFields));
         setShowEditModal(false);

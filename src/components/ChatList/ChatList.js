@@ -9,7 +9,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import classNames from 'classnames';
 moment.locale('uk');
 
-export default function ChatList({events, usersList, loading}) {
+export default function ChatList({events, usersList, loading, mapEventToFormFields}) {
     const { translate } = useContext(SiteSettingsContext);
 
     return (
@@ -31,7 +31,7 @@ export default function ChatList({events, usersList, loading}) {
                                 <div className="adminChats__eventsList">
                                     {
                                         splitEvents().reccuring.length ?
-                                            joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList}/>)
+                                            joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
                                             :
                                             <div className="nothingFound">
                                                 { translate('no_reccuring_videochats_yet') }
@@ -80,7 +80,7 @@ export default function ChatList({events, usersList, loading}) {
                     { block.formattedDate }
                 </div>
                 {
-                    block.children.map(event => <ChatListItem key={event.id} event={event} usersList={usersList}/>)
+                    block.children.map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
                 }
             </div>
         )

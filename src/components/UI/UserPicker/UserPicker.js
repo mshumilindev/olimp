@@ -239,7 +239,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     }
 
     function filterUsers() {
-        return usersList.filter(user => exclude ? exclude.indexOf(user.id) === -1 : true).filter(user => type === 'all' || user.role === type && user.status === 'active').filter(user => {
+        return usersList.filter(user => exclude ? exclude.indexOf(user.id) === -1 : true).filter(user => (type !== 'teacher' && type !== 'admin' && type !== 'student') || user.role === type && user.status === 'active').filter(user => {
             if ( searchQuery ) {
                 if ( user.name.toLowerCase().includes(searchQuery.toLowerCase()) ) {
                     return user;

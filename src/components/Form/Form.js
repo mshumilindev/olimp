@@ -180,7 +180,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'userPicker':
                 return (
                     <div className="form__field-holder">
-                        <UserPicker type={field.id} noSearch selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} addUsers={(type, list) => handleFieldChange(field.id, list.length > 1 ? list : list[0])} placeholder={field.placeholder} noneditable={(user.role === 'teacher' && field.noneditable) || field.noneditable} key={field.id} multiple={field.multiple} required={field.required} hasErrors={(field.required && hasErrors && !field.value.toString())} exclude={field.exclude} />
+                        <UserPicker type={field.id} noSearch selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} addUsers={(type, list) => handleFieldChange(field.id, list.length > 1 ? list : list[0])} placeholder={field.placeholder} noneditable={(user.role === 'teacher' && field.noneditable) || field.noneditable} key={field.id} multiple={field.multiple} required={field.required} hasErrors={(field.required && hasErrors && (!field.value || !field.value.toString()))} exclude={field.exclude} />
                     </div>
                 );
 
