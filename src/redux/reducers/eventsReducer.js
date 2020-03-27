@@ -3,7 +3,8 @@ import {
     FETCH_EVENTS_SUCCESS,
     FETCH_CHAT_BEGIN,
     FETCH_CHAT_SUCCESS,
-    FETCH_CHAT_ERROR
+    FETCH_CHAT_ERROR,
+    SET_ON_A_CALL_SUCCESS
 } from '../actions/eventsActions';
 
 const initialState = {
@@ -11,7 +12,8 @@ const initialState = {
     loading: false,
     chat: null,
     activeUsers: null,
-    chatError: null
+    chatError: null,
+    onACall: false
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -49,6 +51,12 @@ export default function usersReducer(state = initialState, action) {
                 loading: false,
                 chat: null,
                 chatError: action.payload.chatError
+            });
+
+        case SET_ON_A_CALL_SUCCESS:
+            return Object.assign({}, {
+                ...state,
+                onACall: action.payload.value
             });
 
         default:

@@ -87,26 +87,6 @@ export const fetchChatSuccess = chat => {
 };
 
 // === CHAT
-export function setActiveUser(chatID, newActiveUsers) {
-    const chatRef = db.collection('events').doc(chatID);
-
-    return dispatch => {
-        return chatRef.set({
-            activeUsers: newActiveUsers
-        }, { merge: true });
-    }
-}
-
-export function removeActiveUser(chatID, newActiveUsers) {
-    const chatRef = db.collection('events').doc(chatID);
-
-    return dispatch => {
-        return chatRef.set({
-            activeUsers: newActiveUsers
-        }, { merge: true });
-    }
-}
-
 export function setChatStart(chatID, isStarted) {
     const chatRef = db.collection('events').doc(chatID);
 
@@ -117,13 +97,33 @@ export function setChatStart(chatID, isStarted) {
     }
 }
 
-export function setStopChat(chatID, activeUsers) {
+export function setStopChat(chatID) {
     const chatRef = db.collection('events').doc(chatID);
 
     return dispatch => {
         return chatRef.set({
-            started: false,
-            activeUsers: []
+            started: false
         }, {merge: true});
     };
 }
+
+export function discardChat() {
+    return dispatch => {
+        return dispatch(fetchChatSuccess(null));
+    }
+}
+
+export function setOnACall(value) {
+    return dispatch => {
+        return dispatch(setOnACallSuccess(value));
+    }
+}
+
+export const SET_ON_A_CALL_SUCCESS = 'SET_ON_A_CALL_SUCCESS';
+
+export const setOnACallSuccess = value => {
+    return {
+        type: SET_ON_A_CALL_SUCCESS,
+        payload: { value }
+    }
+};

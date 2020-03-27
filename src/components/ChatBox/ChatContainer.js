@@ -1,92 +1,155 @@
-/* global JitsiMeetExternalAPI */
-
-import React, {useContext, useEffect, useRef} from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
+import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 
-let api = null;
-
-export default function ChatContainer({chat, setActiveUser, removeActiveUser}) {
+export default function ChatContainer({chat, usersList}) {
+    const [ organizerChatID, setOrganizerChatID ] = useState(null);
+    const $localTracksContainer = useRef(null);
+    const $remoteTracksContainer = useRef(null);
+    const $chatroomUsersOrganizer = useRef(null);
+    const $chatroomUsersParticipants = useRef(null);
     const { user } = useContext(userContext);
-    const $chatContainer = useRef(null);
 
     useEffect(() => {
-        if ( JitsiMeetExternalAPI ) {
-            startConference();
-        }
+        let jitsi = new Jitsi();
+
+        jitsi.start({
+            containers: {
+                local: $localTracksContainer.current,
+                remote: $remoteTracksContainer.current,
+                organizer: $chatroomUsersOrganizer.current,
+                participants: $chatroomUsersParticipants.current
+            },
+            user: user,
+            roomName: chat.id,
+            onDisplayNameChange: onDisplayNameChange,
+            usersList: usersList,
+            onRemoteAdded: onRemoteAdded
+        });
         return () => {
-            if ( api ) {
-                api.executeCommand('hangup');
-                api.removeEventListener('videoConferenceJoined', handleStartChat);
-                $chatContainer.current.innerHTML = '';
-                api = null;
-            }
+            jitsi.stop();
         }
     }, []);
 
     useEffect(() => {
-        api.removeEventListener('participantLeft', removeFromActiveUsers);
-        api.addEventListener('participantLeft', (userLeft) => removeFromActiveUsers(userLeft.id));
-    }, [chat.activeUsers]);
+        makeVideoMain();
+
+        const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+        const obs = new MutationObserver((mutations) => {
+            setTimeout(() => {
+                makeVideoMain();
+            }, 0);
+        });
+        obs.observe( $remoteTracksContainer.current, { childList:true, subtree:true });
+    }, [organizerChatID]);
 
     return (
-        <div className="chatroom__chatContainer" ref={$chatContainer}/>
+        <>
+            <div className="chatroom__users">
+                <div className="chatroom__users-organizer" ref={$chatroomUsersOrganizer} />
+                <div className="chatroom__users-participants" ref={$chatroomUsersParticipants} />
+            </div>
+            <div className="chatroom__chatContainer">
+                <div className="chatroom__localTracks" ref={$localTracksContainer}/>
+                <div className="chatroom__remoteTracks" ref={$remoteTracksContainer}/>
+            </div>
+        </>
     );
 
-    function handleSetActiveUser(id) {
-        if ( chat && (!chat.activeUsers || !chat.activeUsers.length || !chat.activeUsers.find(activeItem => activeItem.name === user.name)) ) {
-            const newActiveUsers = chat.activeUsers || [];
-
-            newActiveUsers.push({
-                id: id,
-                name: user.name
-            });
-
-            setActiveUser(chat.id, newActiveUsers);
+    function onDisplayNameChange(id, displayName) {
+        if ( usersList.find(item => item.name === displayName).id === chat.organizer ) {
+            setOrganizerChatID(id ? id : 'local');
         }
     }
 
-    function removeFromActiveUsers(id) {
-        if ( chat && chat.activeUsers && chat.activeUsers.length && chat.activeUsers.find(activeItem => activeItem.id === id) ) {
-            removeActiveUser(chat.id, chat.activeUsers.filter(activeItem => activeItem.id !== id));
-        }
+    function onRemoteAdded() {
+        makeVideoMain();
     }
 
-    function handleStartChat(id) {
-        api.executeCommand('avatarUrl', user.avatar);
-        api.executeCommand('toggleTileView');
-        handleSetActiveUser(id);
-    }
+    function makeVideoMain() {
+        if ( organizerChatID ) {
+            if ( organizerChatID === 'local' ) {
+                const video = $localTracksContainer.current.querySelector('video');
 
-    function startConference() {
-        try {
-            const domain = 'meet.jit.si';
-            const options = {
-                roomName: chat.id,
-                parentNode: $chatContainer.current,
-                interfaceConfigOverwrite: {
-                    filmStripOnly: true,
-                    SHOW_JITSI_WATERMARK: false,
-                    SHOW_WATERMARK_FOR_GUESTS: false,
-                    TOOLBAR_ALWAYS_VISIBLE: true,
-                    DISPLAY_WELCOME_PAGE_CONTENT: false,
-                    LANG_DETECTION: true,
-                    TOOLBAR_BUTTONS: [],
-                    DISABLE_TRANSCRIPTION_SUBTITLES: true,
-                    DEFAULT_REMOTE_DISPLAY_NAME: user.name,
-                    AUTHENTICATION_ENABLE: false,
-                },
-                configOverwrite: {
-                    disableSimulcast: true
-                },
-                startAudioOnly: true,
-            };
+                if ( video ) {
+                    video.classList.add('main-video');
+                }
+            }
+            else {
+                const video = $remoteTracksContainer.current.querySelector(('#video' + organizerChatID));
 
-            // setApi(new JitsiMeetExternalAPI(domain, options));
-            api = new JitsiMeetExternalAPI(domain, options);
-
-            api.addEventListener('videoConferenceJoined', ({id}) => handleStartChat(id));
-        } catch (error) {
-            console.error('Failed to load Jitsi API', error);
+                if ( video ) {
+                    video.classList.add('main-video');
+                }
+            }
         }
     }
 }
+
+/* global JitsiMeetExternalAPI */
+
+// import React, {useContext, useEffect, useRef} from 'react';
+// import userContext from "../../context/userContext";
+//
+// let api = null;
+//
+// export default function ChatContainer({chat}) {
+//     const { user } = useContext(userContext);
+//     const $chatContainer = useRef(null);
+//
+//     useEffect(() => {
+//         if ( JitsiMeetExternalAPI ) {
+//             startConference();
+//         }
+//         return () => {
+//             if ( api ) {
+//                 api.executeCommand('hangup');
+//                 api.removeEventListener('videoConferenceJoined', handleStartChat);
+//                 $chatContainer.current.innerHTML = '';
+//                 api = null;
+//             }
+//         }
+//     }, []);
+//
+//     return (
+//         <div className="chatroom__chatContainer" ref={$chatContainer}/>
+//     );
+//
+//     function handleStartChat(id) {
+//         api.executeCommand('avatarUrl', user.avatar);
+//         api.executeCommand('toggleTileView');
+//     }
+//
+//     function startConference() {
+//         try {
+//             const domain = 'meet.jit.si';
+//             const options = {
+//                 roomName: chat.id,
+//                 parentNode: $chatContainer.current,
+//                 interfaceConfigOverwrite: {
+//                     filmStripOnly: false,
+//                     SHOW_JITSI_WATERMARK: false,
+//                     SHOW_WATERMARK_FOR_GUESTS: false,
+//                     TOOLBAR_ALWAYS_VISIBLE: true,
+//                     DISPLAY_WELCOME_PAGE_CONTENT: false,
+//                     LANG_DETECTION: true,
+//                     TOOLBAR_BUTTONS: [],
+//                     DISABLE_TRANSCRIPTION_SUBTITLES: true,
+//                     DEFAULT_REMOTE_DISPLAY_NAME: user.name,
+//                     AUTHENTICATION_ENABLE: false,
+//                     VERTICAL_FILMSTRIP: false
+//                 },
+//                 configOverwrite: {
+//                     disableSimulcast: true
+//                 }
+//             };
+//
+//             // setApi(new JitsiMeetExternalAPI(domain, options));
+//             api = new JitsiMeetExternalAPI(domain, options);
+//
+//             api.addEventListener('videoConferenceJoined', ({id}) => handleStartChat(id));
+//         } catch (error) {
+//             console.error('Failed to load Jitsi API', error);
+//         }
+//     }
+// }

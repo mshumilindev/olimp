@@ -6,7 +6,7 @@ import Footer from '../components/Footer/Footer';
 import SiteSettingsContext from "../context/siteSettingsContext";
 import userContext from "../context/userContext";
 import {Preloader} from "../components/UI/preloader";
-import ChatQuickCall from "../components/ChatBox/ChatQuickCall";
+import ChatWidget from "../components/ChatBox/ChatWidget";
 
 export default function Layout({children, location, events, fetchEvents, usersList}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
@@ -73,6 +73,7 @@ export default function Layout({children, location, events, fetchEvents, usersLi
                                 <div className="content mapContainer">
                                     <div className="content__inner">
                                         { children }
+                                        <ChatWidget/>
                                     </div>
                                 </div>
                                 {
@@ -89,12 +90,6 @@ export default function Layout({children, location, events, fetchEvents, usersLi
                                     null
                             }
                         </div>
-                        {
-                            events && events.length ?
-                                <ChatQuickCall events={events} usersList={usersList}/>
-                                :
-                                null
-                        }
                     </>
             }
         </DocumentTitle>

@@ -34,15 +34,15 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    span {
-      font-size: 20px;
-      margin-bottom: -20px;
-      height: 20px;
-      font-family: $RobotoCondensed;
-      letter-spacing: .5px;
-      transform: translateY(-300%);
-      color: $successColor;
-    }
+  }
+  &__name {
+    font-size: 20px;
+    margin-bottom: -20px;
+    height: 20px;
+    font-family: $RobotoCondensed;
+    letter-spacing: .5px;
+    transform: translateY(-300%);
+    color: $successColor;
   }
   .btn {
     position: relative;
