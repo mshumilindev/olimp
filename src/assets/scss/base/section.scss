@@ -50,6 +50,7 @@
     font-weight: normal;
     color: $white;
     &-actions {
+      white-space: nowrap;
       .btn {
         margin-left: 20px;
       }

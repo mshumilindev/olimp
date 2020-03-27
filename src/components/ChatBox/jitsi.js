@@ -55,13 +55,6 @@ class Jitsi {
                     $(containers.local).append(`<video autoplay='1' muted playsinline id='localVideo${i}' />`);
                     self.localTracks[i].attach(containers.local.querySelector(`#localVideo` + i));
                 }
-                else {
-                    const audio = document.createElement('audio');
-                    audio.autoplay = true;
-                    audio.id = 'localAudio' + i;
-                    containers.local.appendChild(audio);
-                    self.localTracks[i].attach(containers.local.querySelector(`#localAudio` + i));
-                }
                 if ( self.isJoined ) {
                     self.room.addTrack(self.localTracks[i]);
                 }

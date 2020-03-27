@@ -20,6 +20,7 @@ const StudentPage = React.lazy(() => import('./pages/StudentPage/StudentPage'));
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
 const AdminTranslations = React.lazy(() => import('./pages/AdminTranslations/AdminTranslations'));
+const AdminChats = React.lazy(() => import('./pages/AdminChats/AdminChats'));
 const AdminLibrary = React.lazy(() => import('./pages/AdminLibrary/AdminLibrary'));
 const AdminCourses = React.lazy(() => import('./pages/AdminCourses/AdminCourses'));
 const AdminLesson = React.lazy(() => import('./pages/AdminLesson/AdminLesson'));
@@ -113,6 +114,7 @@ export default function App() {
                                 <Route path='/admin-library' component={AdminLibrary}/>
                                 <Route path='/admin-settings' component={AdminSettings}/>
                                 <Route path='/admin-info' component={AdminInfo}/>
+                                <Route path='/admin-chats' component={AdminChats}/>
                                 <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
 
                                 <Route path="*" component={PageNotFound}/>

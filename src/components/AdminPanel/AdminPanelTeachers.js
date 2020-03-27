@@ -27,6 +27,7 @@ function AdminPanelTeachers({loading, usersList, allCoursesList, heading, showCo
                     usersList && allCoursesList ?
                         <Scrollbars
                             autoHeight
+                            hideTracksWhenNotNeeded
                             autoHeightMax={500}
                             renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
                             renderView={props => <div {...props} className="scrollbar__content"/>}

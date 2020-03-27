@@ -5,11 +5,12 @@ import {connect} from "react-redux";
 import withFilters from "../../../utils/withFilters";
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable, noSearch, placeholder}) {
-    const { translate } = useContext(siteSettingsContext);
+function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable, noSearch, placeholder, classesList, required, hasErrors, exclude}) {
+    const { translate, lang } = useContext(siteSettingsContext);
     const [ showUserListModal, setShowUserListModal ] = useState(false);
     const [ initialSelectedUsers, setInitialSelectedUsers ] = useState(JSON.stringify(selectedList));
     const [ selectedUsers, setSelectedUsers ] = useState(JSON.stringify(selectedList));
@@ -21,7 +22,8 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     });
 
     return (
-        <div className="userPicker">
+        <div className={classNames('userPicker', {hasErrors: hasErrors})}>
+            <input type="hidden" value={selectedList.toString()} className={classNames({required: required})}/>
             {
                 selectedList.length ?
                     <div className="userPicker__selectedList">
@@ -82,14 +84,22 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                                 </div>
                         }
                         <div className="userPicker__list">
-                            {
-                                usersList && filterUsers().length ?
-                                    filterUsers().map(user => renderUser(user))
-                                    :
-                                    <div className="nothingFound">
-                                        { translate('nothing_found') }
-                                    </div>
-                            }
+                            <Scrollbars
+                                autoHeight
+                                hideTracksWhenNotNeeded
+                                autoHeightMax={500}
+                                renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                                renderView={props => <div {...props} className="scrollbar__content"/>}
+                            >
+                                {
+                                    usersList && filterUsers().length ?
+                                        filterUsers().map(user => renderUser(user))
+                                        :
+                                        <div className="nothingFound">
+                                            { translate('nothing_found') }
+                                        </div>
+                                }
+                            </Scrollbars>
                         </div>
                         {
                             filterUsers().length ?
@@ -193,6 +203,12 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                 </div>
                 <div className="userPicker__list-item-name">
                     { user.name }
+                    {
+                        user.class ?
+                            ` - ${classesList.find(item => item.id === user.class).title[lang] ? classesList.find(item => item.id === user.class).title[lang] : classesList.find(item => item.id === user.class).title['ua']}`
+                            :
+                            null
+                    }
                 </div>
             </div>
         )
@@ -223,7 +239,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     }
 
     function filterUsers() {
-        return usersList.filter(user => user.role === type && user.status === 'active').filter(user => {
+        return usersList.filter(user => exclude ? exclude.indexOf(user.id) === -1 : true).filter(user => type === 'all' || user.role === type && user.status === 'active').filter(user => {
             if ( searchQuery ) {
                 if ( user.name.toLowerCase().includes(searchQuery.toLowerCase()) ) {
                     return user;
@@ -249,6 +265,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
 
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
-    loading: state.usersReducer.loading
+    loading: state.usersReducer.loading,
+    classesList: state.classesReducer.classesList
 });
 export default connect(mapStateToProps)(withFilters(UserPicker, true));

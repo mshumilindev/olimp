@@ -39,42 +39,48 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
         },
         {
             id: 5,
+            url: '/admin-chats',
+            icon: 'fas fa-video',
+            name: 'videochats'
+        },
+        {
+            id: 6,
             url: '/admin-courses',
             icon: 'fa fa-book',
             name: 'courses'
         },
         {
-            id: 6,
+            id: 7,
             url: '/admin-classes',
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
         {
-            id: 7,
+            id: 8,
             url: '/admin-pages',
             icon: 'fa fa-copy',
             name: 'pages'
         },
         {
-            id: 8,
+            id: 9,
             url: '/admin-library',
             icon: 'fa fa-bookmark',
             name: 'library'
         },
         {
-            id: 9,
+            id: 10,
             url: '/admin-translations',
             icon: 'fa fa-language',
             name: 'translations'
         },
         {
-            id: 10,
+            id: 11,
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'
         },
         {
-            id: 11,
+            id: 12,
             url: '/admin-info',
             icon: 'fa fa-info',
             name: 'info'
@@ -95,10 +101,16 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             name: 'profile'
         },
         {
-            id: 4,
+            id: 3,
             url: '/admin-users',
             icon: 'fa fa-users',
             name: 'users'
+        },
+        {
+            id: 4,
+            url: '/admin-chats',
+            icon: 'fas fa-video',
+            name: 'videochats'
         },
         {
             id: 5,

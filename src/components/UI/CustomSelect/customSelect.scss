@@ -11,7 +11,7 @@
         &.isActive {
             ~ [class$="__drop"] {
                 max-height: 200px;
-                overflow: auto;
+                overflow: hidden;
             }
             ~ [class$="__arrow"] {
                 transform: translateY(-50%) rotate(-180deg);

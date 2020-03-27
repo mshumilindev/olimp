@@ -1,0 +1,89 @@
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/colors';
+
+.adminChats {
+  &__eventsList {
+    padding: $widgetIndent;
+  }
+  &__eventsBlock {
+    margin-bottom: $pageIndent;
+    &.isPast:not(.isToday) {
+      *:not(.btn):not(i) {
+        color: $mediumGreyColor;
+        border-color: $lightGreyColor;
+      }
+      a:not(.btn) {
+        &:hover {
+          color: $linkHoverColor;
+        }
+      }
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &-date {
+      text-transform: uppercase;
+      font-family: $RobotoCondensed;
+      font-size: 20px;
+      border-bottom: 1px solid $anchorColor;
+      padding: 0 $widgetIndent $widgetIndent;
+      margin-bottom: $widgetIndent;
+      text-align: right;
+    }
+    &.isToday {
+      [class$="-date"] {
+        color: $successColor;
+        border-color: $successColor;
+      }
+    }
+  }
+  &__event {
+    margin-bottom: 20px;
+    border-bottom: 1px solid $mediumGreyColor;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &-time {
+      margin-right: 10px;
+      width: 50px;
+      flex: 0 0 auto;
+      color: $greyColor;
+      font-style: italic;
+    }
+    &-name {
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    &-meta {
+      display: flex;
+    }
+    &-info {
+      padding: 10px 0 20px 60px;
+    }
+    &-info-row {
+      display: flex;
+      margin-bottom: 5px;
+      line-height: 1.5;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    &-info-dt {
+      flex: 0 0 auto;
+      width: 120px;
+    }
+    &-info-dd {
+      display: flex;
+      flex-direction: column;
+    }
+    &-actions {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      .btn {
+        margin-left: 20px;
+      }
+    }
+  }
+}

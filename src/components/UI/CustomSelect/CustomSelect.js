@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import classNames from "classnames";
 import './customSelect.scss';
 import siteSettingsContext from "../../../context/siteSettingsContext";
+import {Scrollbars} from "react-custom-scrollbars";
 
 export default function CustomSelect({options, placeholder, name, updated, id, value, selectChanged, hasReset, required, hasErrors}) {
     const { translate } = useContext(siteSettingsContext);
@@ -23,15 +24,23 @@ export default function CustomSelect({options, placeholder, name, updated, id, v
                         null
                 }
                 <div className="customSelect__drop">
-                    {
-                        hasReset && value ?
-                            <div className="customSelect__drop-opt isReset" onClick={() => selectOpt(id, '')}>{ translate('reset') }</div>
-                            :
-                            null
-                    }
-                    {
-                        options.map(opt => _renderOpt(opt))
-                    }
+                    <Scrollbars
+                        autoHeight
+                        hideTracksWhenNotNeeded
+                        autoHeightMax={200}
+                        renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                        renderView={props => <div {...props} className="scrollbar__content"/>}
+                    >
+                        {
+                            hasReset && value ?
+                                <div className="customSelect__drop-opt isReset" onClick={() => selectOpt(id, '')}>{ translate('reset') }</div>
+                                :
+                                null
+                        }
+                        {
+                            options.map(opt => _renderOpt(opt))
+                        }
+                    </Scrollbars>
                 </div>
             </div>
         </div>

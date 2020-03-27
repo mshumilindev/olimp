@@ -11,6 +11,7 @@ export function fetchEvents(userID) {
     return dispatch => {
         dispatch(fetchEventsBegin());
         return eventsCollection.onSnapshot(snapshot => {
+            events.splice(0, events.length);
             snapshot.docs.forEach(doc => {
                 if ( !events || !events.length || !events.find(eventItem => eventItem.id === doc.id ) ) {
                     events.push({
@@ -127,3 +128,21 @@ export const setOnACallSuccess = value => {
         payload: { value }
     }
 };
+
+export function deleteEvent(eventID) {
+    const chatRef = db.collection('events').doc(eventID);
+
+    return dispatch => {
+        return chatRef.delete();
+    }
+}
+
+export function updateEvent(eventID, newEvent) {
+    const chatRef = db.collection('events').doc(eventID);
+
+    return dispatch => {
+        return chatRef.set({
+            ...newEvent
+        }, {merge: true});
+    }
+}
