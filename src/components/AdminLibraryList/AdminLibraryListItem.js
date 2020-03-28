@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from "react-router-dom";
 import TagsList from "../UI/TagsList/TagsList";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -9,62 +9,33 @@ import {connect} from "react-redux";
 import classNames from "classnames";
 import userContext from "../../context/userContext";
 
-function usePrevious(value) {
-    const ref = useRef(null);
-
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
-
-    return ref.current;
-}
-
 function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc, users, isCurrent}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ isUsed, setIsUsed ] = useState(false);
-    const [ docItem, setDocItem ] = useState(JSON.stringify(item));
-    const [ initialDocItem, setInitialDocItem ] = useState(JSON.stringify(item));
     const [ formUpdated, setFormUpdated ] = useState(false);
-    const prevItem = usePrevious(item);
-
-    // === Need to move this to context
-    const itemFields = getDocFormFields(JSON.parse(docItem).name, JSON.parse(docItem).tags, JSON.parse(docItem).teacher, translate('update'));
-
-    useEffect(() => {
-        if ( JSON.stringify(prevItem) !== JSON.stringify(item) ) {
-            setDocItem(JSON.stringify(item));
-            setInitialDocItem(JSON.stringify(item));
-            setShowModal(false);
-            setIsUsed(false);
-        }
-    }, [item]);
+    const [ itemFields, setItemFields ] = useState(getDocFormFields(item.name, item.tags, item.teacher, translate('update')));
 
     return (
         <tr className={classNames('table__body-row', {current: isCurrent, isUsed: isUsed})}>
             <td className="table__body-cell">
                 <div className="table__ellipsis">
-                    <a href="/" title={JSON.parse(docItem).name} onClick={e => onDownloadFile(e)}>
+                    <a href="/" title={item.name} onClick={e => onDownloadFile(e)}>
                         <i className="content_title-icon fa fa-external-link-alt" />
-                        { JSON.parse(docItem).name }
+                        { item.name }
                     </a>
                 </div>
             </td>
             <td className="table__body-cell">
-                <TagsList tagsList={JSON.parse(docItem).tags} setTags={setTags} />
+                <TagsList tagsList={item.tags} setTags={setTags} />
+            </td>
+            <td className="table__body-cell">
+                { _renderTeachers() }
             </td>
             <td className="table__body-cell">
                 {
-                    JSON.parse(docItem).teacher ?
-                        <Link to={'/admin-users/' + getTeacher(JSON.parse(docItem).teacher).login}><i className="fa fa-user content_title-icon"/>{ getTeacher(JSON.parse(docItem).teacher).name }</Link>
-                        :
-                        null
-                }
-            </td>
-            <td className="table__body-cell">
-                {
-                    JSON.parse(docItem).teacher && JSON.parse(docItem).teacher !== user.id && user.role !== 'admin' ?
+                    item.teacher && item.teacher !== user.id && user.role !== 'admin' ?
                         null
                         :
                         <div className="table__actions">
@@ -72,7 +43,7 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
                                 <i className="content_title-icon fa fa-pencil-alt" />
                                 { translate('edit') }
                             </a>
-                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => onDeleteDoc(e, JSON.parse(docItem))}>
+                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => handleDeleteFile(e)}>
                                 <i className="content_title-icon fa fa-trash-alt" />
                                 { translate('delete') }
                             </a>
@@ -92,19 +63,46 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
         </tr>
     );
 
+    function _renderTeachers() {
+        return (
+            <div className="adminLibrary__list-teachers">
+                {
+                    item.teacher ?
+                        typeof item.teacher === 'object' ?
+                            item.teacher.map(teacher => _renderTeacherItem(teacher))
+                            :
+                            _renderTeacherItem(item.teacher)
+                        :
+                        null
+                }
+            </div>
+        )
+    }
+
+    function _renderTeacherItem(teacher) {
+        return (
+            <Link to={'/admin-users/' + getTeacher(teacher).login} key={teacher}><i className="fa fa-user content_title-icon"/>{ getTeacher(teacher).name }</Link>
+        )
+    }
+
     function getTeacher(userID) {
         return users.length ? users.find(userItem => userItem.id === userID) : '';
     }
 
     function setFieldValue(fieldID, value) {
-        const newField = JSON.parse(docItem);
+        const newFields = Object.assign([], itemFields);
 
-        newField[fieldID] = value;
-        newField.updated = true;
+        if ( fieldID === 'teacher' ) {
+            newFields.find(newFieldItem => newFieldItem.id === 'teacher_block').children[0].value = (value || '');
+        }
+        else {
+            newFields.find(newFieldItem => newFieldItem.id === fieldID).value = value;
+        }
 
+        newFields.updated = true;
+
+        setItemFields(newFields);
         setFormUpdated(true);
-
-        setDocItem(JSON.stringify(newField));
     }
 
     function onSetShowModal(e) {
@@ -117,25 +115,41 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
     function onHideModal() {
         setShowModal(false);
         setIsUsed(false);
-        setDocItem(initialDocItem);
+        resetItem();
     }
 
     function handleUpdateFile() {
-        const newFile = JSON.parse(docItem);
+        const newFile = item;
 
         if ( !newFile.teacher ) {
             newFile.teacher = '';
         }
 
-        delete newFile.id;
+        newFile.name = itemFields.find(fieldItem => fieldItem.id === 'name').value;
+        newFile.tags = itemFields.find(fieldItem => fieldItem.id === 'tags').value;
+        newFile.teacher = itemFields.find(newFieldItem => newFieldItem.id === 'teacher_block').children[0].value;
 
-        updateDoc(newFile, JSON.parse(docItem).id);
+        delete newFile.updated;
+
+        updateDoc(newFile, item.id);
+        resetItem();
+    }
+
+    function handleDeleteFile(e) {
+        onDeleteDoc(e, item);
+        resetItem();
     }
 
     function onDownloadFile(e) {
         e.preventDefault();
 
-        downloadDoc(JSON.parse(docItem).ref);
+        downloadDoc(item.ref);
+    }
+
+    function resetItem() {
+        setShowModal(false);
+        setIsUsed(false);
+        setItemFields(getDocFormFields(item.name, item.tags, item.teacher, translate('update')));
     }
 }
 

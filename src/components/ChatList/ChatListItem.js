@@ -33,10 +33,7 @@ function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFor
                     <div className="adminChats__event-info-dt">{ translate('participants') }: </div>
                     <div className="adminChats__event-info-dd">
                         {
-                            formGroup(event.participants) ?
-                                <Link to={formGroup(event.participants).link}>{ formGroup(event.participants).title }</Link>
-                                :
-                                event.participants.map(partItem => <Link to={'/admin-users/' + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
+                            event.participants.map(partItem => <Link to={'/admin-users/' + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
                         }
                     </div>
                 </div>
@@ -63,20 +60,6 @@ function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFor
 
     function getUser(userID) {
         return usersList.find(item => item.id === userID);
-    }
-
-    function formGroup(list) {
-        let group = null;
-
-        // === Check if class
-        if ( list.length === list.filter(item => getUser(item).class === getUser(list[0]).class).length ) {
-            group = {
-                title: classesList.find(item => item.id === getUser(list[0]).class).title[lang],
-                link: '/admin-classes/' + getUser(list[0]).class
-            };
-        }
-
-        return group;
     }
 }
 

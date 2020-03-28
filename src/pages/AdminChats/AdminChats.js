@@ -130,7 +130,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
     function setFieldValue(fieldID, value) {
         const newFields = formFields;
 
-        if ( fieldID === 'all' ) {
+        if ( fieldID === 'participant' ) {
             newFields.find(item => item.id === 'block_participants').children[0].value = value;
         }
         if ( fieldID === 'name' || fieldID === 'recurring' || fieldID === 'datepicker' ) {

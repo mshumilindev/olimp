@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState } from 'react';
 import {connect} from "react-redux";
 import {fetchLibrary, deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -10,18 +10,9 @@ import userContext from "../../context/userContext";
 import withFilters from "../../utils/withFilters";
 import withTags from "../../utils/withTags";
 import {Preloader} from "../../components/UI/preloader";
+import Maintenance from "../../components/Maintenance/Maintenance";
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
-
-function usePrevious(value) {
-    const ref = useRef(null);
-
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
-
-    return ref.current;
-}
 
 function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
@@ -34,20 +25,12 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
         teacher: user.role ==='teacher' ? user.id : ''
     });
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
-    const prevList = usePrevious(list);
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
 
-    useEffect(() => {
-        if ( JSON.stringify(prevList) !== JSON.stringify(list) ) {
-            setFile({name: '', tags: [], teacher: user.role ==='teacher' ? user.id : ''});
-            setShowModal(false);
-
-            if ( $fileRef.current ) {
-                $fileRef.current.value = '';
-            }
-        }
-    });
+    if ( user.role !== 'admin' ) {
+        return <Maintenance/>;
+    }
 
     return (
         <div className="adminLibrary">
@@ -132,6 +115,12 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
             length: 16
         });
         uploadDoc(newFile, $fileRef.current.files[0], newID);
+        setFile({name: '', tags: [], teacher: user.role ==='teacher' ? user.id : ''});
+        setShowModal(false);
+
+        if ( $fileRef.current ) {
+            $fileRef.current.value = '';
+        }
     }
 
     function onHideModal() {

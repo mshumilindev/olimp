@@ -665,7 +665,7 @@ export default class SiteSettingsProvider extends React.Component{
             },
             {
                 type: 'block',
-                heading: translate('teacher'),
+                heading: translate('teachers'),
                 id: 'teacher_block',
                 children: [
                     {
@@ -674,7 +674,8 @@ export default class SiteSettingsProvider extends React.Component{
                         placeholder: translate('select_teacher'),
                         id: 'teacher',
                         value: teacher,
-                        updated: false
+                        updated: false,
+                        multiple: true
                     }
                 ]
             },

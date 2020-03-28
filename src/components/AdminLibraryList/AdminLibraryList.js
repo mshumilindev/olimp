@@ -35,7 +35,7 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
                                             { translate('tags') }
                                         </th>
                                         <th className="table__head-cell">
-                                            { translate('teacher') }
+                                            { translate('teachers') }
                                         </th>
                                         <th className="table__head-cell"/>
                                     </tr>

@@ -59,7 +59,7 @@
         background: $lightColor;
       }
     }
-    &.teacher {
+    &.teacher:not(.multiple) {
       flex-direction: column;
       padding-bottom: 0;
       [class$="__list-item-avatar"] {

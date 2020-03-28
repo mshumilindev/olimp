@@ -6,20 +6,16 @@ import withFilters from "../../../utils/withFilters";
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars';
-
-const Modal = React.lazy(() => import('../Modal/Modal'));
+import Modal from "../Modal/Modal";
 
 function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable, noSearch, placeholder, classesList, required, hasErrors, exclude}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showUserListModal, setShowUserListModal ] = useState(false);
-    const [ initialSelectedUsers, setInitialSelectedUsers ] = useState(JSON.stringify(selectedList));
-    const [ selectedUsers, setSelectedUsers ] = useState(JSON.stringify(selectedList));
+    const [ selectedUsers, setSelectedUsers ] = useState(selectedList);
 
     useEffect(() => {
-        if ( showUserListModal && JSON.stringify(selectedList) !== initialSelectedUsers ) {
-            handleHideModal();
-        }
-    });
+        setSelectedUsers(Object.assign([], selectedList));
+    }, [selectedList]);
 
     return (
         <div className={classNames('userPicker', {hasErrors: hasErrors})}>
@@ -133,7 +129,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
         const user = usersList.find(item => item.id === userID);
 
         return (
-            <div className={'userPicker__list-item selectedUserItem ' + type} key={userID}>
+            <div className={classNames('userPicker__list-item selectedUserItem ' + type, { multiple: multiple && selectedList.length > 1 })} key={userID}>
                 <div className="userPicker__list-item-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
                     {
                         !user.avatar ?
@@ -160,22 +156,20 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     }
 
     function quickRemoveUser(userID) {
-        const usersList = JSON.parse(selectedUsers);
+        const usersList = selectedUsers;
 
         usersList.splice(usersList.indexOf(usersList.find(user => user === userID)), 1);
 
-        setSelectedUsers(JSON.stringify(usersList));
         addUsers(type, usersList);
     }
 
     function handleHideModal() {
-        setSelectedUsers(JSON.stringify(selectedList));
-        setInitialSelectedUsers(JSON.stringify(selectedList));
+        setSelectedUsers(Object.assign([], selectedList));
         setShowUserListModal(false);
     }
 
     function renderUser(user) {
-        const usersList = JSON.parse(selectedUsers);
+        const usersList = selectedUsers;
 
         return (
             <div className={classNames('userPicker__list-item', {selected: usersList.some(item => item === user.id)})} onClick={() => chooseUser(user.id)} key={user.id}>
@@ -215,7 +209,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     }
 
     function chooseUser(userID) {
-        const usersList = JSON.parse(selectedUsers);
+        const usersList = Object.assign([], selectedUsers);
 
         if ( multiple ) {
             if ( usersList.some(user => user === userID) ) {
@@ -229,13 +223,14 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
             usersList.splice(0, usersList.length);
             usersList.push(userID);
         }
-        setSelectedUsers(JSON.stringify(usersList));
+        setSelectedUsers(usersList);
     }
 
     function onAddUsers(e) {
         e.preventDefault();
 
-        addUsers(type, JSON.parse(selectedUsers));
+        addUsers(type, selectedUsers);
+        handleHideModal();
     }
 
     function filterUsers() {

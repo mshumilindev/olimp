@@ -8,7 +8,6 @@ import AdminPanelCourses from '../../components/AdminPanel/AdminPanelCourses';
 import AdminPanelNotifications from '../../components/AdminPanel/AdminPanelNotifications';
 import Notifications from '../../components/Notifications/Notifications';
 import AdminPanelTeachersCourses from '../../components/AdminPanel/AdminPanelTeachersCourses';
-import AdminEvents from "../../components/AdminEvents/AdminEvents";
 import './adminPanel.scss';
 
 function AdminPanel({loading}) {
@@ -60,9 +59,6 @@ function AdminPanel({loading}) {
                             </div>
                             <div className="grid_col col-6">
                                 <AdminPanelTeachersCourses/>
-                            </div>
-                            <div className="grid_col col-6">
-                                <AdminEvents/>
                             </div>
                         </div>
                         :
