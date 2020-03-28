@@ -1,22 +1,22 @@
 import React from 'react';
 import AdminInfoManualsItem from "./AdminInfoManualsItem";
 
-export default function AdminInfoManuals({manuals}) {
+export default function AdminInfoManuals({manuals, id}) {
     return (
         <div className="manuals">
             {
-                manuals.map((manual, index) => _renderManual(manual, index))
+                _renderManual(manuals.find(item => item.id === id))
             }
         </div>
     );
 
-    function _renderManual(manual, index) {
+    function _renderManual(manual) {
         return (
-            <div className="manuals__manual" key={'manual' + index}>
-                <h2 className="manuals__title">{manual.title}</h2>
+            <div className="manuals__manual" key={'manual'}>
+                <h2 className="manuals__title">{manual.content.title}</h2>
                 {
-                    manual.sections && manual.sections.length ?
-                        manual.sections.map((section, index) => _renderSection(section, index))
+                    manual.content.sections && manual.content.sections.length ?
+                        manual.content.sections.map((section, index) => _renderSection(section, index))
                         :
                         null
                 }
@@ -48,7 +48,7 @@ export default function AdminInfoManuals({manuals}) {
                 <h4 className="manuals__blockTitle"><span>{ blockNum }</span> { block.blockTitle }</h4>
                 {
                     block.items && block.items.length ?
-                        block.items.map((item, index) => <AdminInfoManualsItem item={item} key={index} />)
+                        block.items.map((item, index) => <AdminInfoManualsItem item={item} key={index} id={id} />)
                         :
                         null
                 }

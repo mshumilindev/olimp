@@ -10,7 +10,7 @@ import userContext from "../../context/userContext";
 import withFilters from "../../utils/withFilters";
 import withTags from "../../utils/withTags";
 import {Preloader} from "../../components/UI/preloader";
-import Maintenance from "../../components/Maintenance/Maintenance";
+import './adminLibrary.scss';
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
@@ -27,10 +27,6 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
-
-    if ( user.role !== 'admin' ) {
-        return <Maintenance/>;
-    }
 
     return (
         <div className="adminLibrary">

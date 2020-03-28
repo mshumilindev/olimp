@@ -52,7 +52,7 @@ function Page(props) {
                     }, 1000);
                 }
                 else {
-                    if ( snapshot.docs[0].data().status === 'suspended' ) {
+                    if ( snapshot.docs[0] && snapshot.docs[0].data().status === 'suspended' ) {
                         localStorage.removeItem('user');
                         history.push('/suspended');
                     }

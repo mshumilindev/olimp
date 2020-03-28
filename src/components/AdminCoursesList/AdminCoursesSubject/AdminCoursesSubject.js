@@ -45,9 +45,11 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         }
     ];
 
-    if ( checkIfIsOpen() && !subject.coursesList ) {
-        fetchCoursesList(subject.id);
-    }
+    useEffect(() => {
+        if ( checkIfIsOpen() && !subject.coursesList ) {
+            fetchCoursesList(subject.id);
+        }
+    }, []);
 
     return (
         <div id={subject.id} className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
@@ -120,6 +122,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
         return orderBy(subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 }
+
 const mapDispatchToProps = dispatch => ({
     fetchCoursesList: (subjectID) => dispatch(fetchCoursesList(subjectID)),
     deleteSubject: (subjectID) => dispatch(deleteSubject(subjectID))

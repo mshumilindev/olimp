@@ -14,34 +14,34 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
 
     return (
         <div className="adminChats grid">
-            <div className="grid_col col-6">
-                <div className="widget">
-                    <h3 className="widget__title">{ translate('recurring_videochats') }</h3>
-                    <Scrollbars
-                        autoHeight
-                        hideTracksWhenNotNeeded
-                        autoHeightMax={500}
-                        renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
-                        renderView={props => <div {...props} className="scrollbar__content"/>}
-                    >
-                        {
-                            loading ?
-                                <Preloader/>
-                                :
-                                <div className="adminChats__eventsList">
-                                    {
-                                        splitEvents().reccuring.length ?
-                                            joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
-                                            :
-                                            <div className="nothingFound">
-                                                { translate('no_recurring_videochats_yet') }
-                                            </div>
-                                    }
-                                </div>
-                        }
-                    </Scrollbars>
-                </div>
-            </div>
+            {/*<div className="grid_col col-6">*/}
+            {/*    <div className="widget">*/}
+            {/*        <h3 className="widget__title">{ translate('recurring_videochats') }</h3>*/}
+            {/*        <Scrollbars*/}
+            {/*            autoHeight*/}
+            {/*            hideTracksWhenNotNeeded*/}
+            {/*            autoHeightMax={500}*/}
+            {/*            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}*/}
+            {/*            renderView={props => <div {...props} className="scrollbar__content"/>}*/}
+            {/*        >*/}
+            {/*            {*/}
+            {/*                loading ?*/}
+            {/*                    <Preloader/>*/}
+            {/*                    :*/}
+            {/*                    <div className="adminChats__eventsList">*/}
+            {/*                        {*/}
+            {/*                            splitEvents().reccuring.length ?*/}
+            {/*                                joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)*/}
+            {/*                                :*/}
+            {/*                                <div className="nothingFound">*/}
+            {/*                                    { translate('no_recurring_videochats_yet') }*/}
+            {/*                                </div>*/}
+            {/*                        }*/}
+            {/*                    </div>*/}
+            {/*            }*/}
+            {/*        </Scrollbars>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="grid_col col-6">
                 <div className="widget">
                     <h3 className="widget__title">{ translate('one_time_videochats') }</h3>

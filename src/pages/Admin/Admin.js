@@ -81,7 +81,7 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
         },
         {
             id: 12,
-            url: '/admin-info',
+            url: '/admin-info/videochats',
             icon: 'fa fa-info',
             name: 'info'
         }
@@ -132,7 +132,7 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
         },
         {
             id: 11,
-            url: '/admin-info',
+            url: '/admin-info/videochats',
             icon: 'fa fa-info',
             name: 'info'
         }

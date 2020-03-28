@@ -174,25 +174,31 @@ export function fetchLessons(subjectID, courseID, moduleID) {
     const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
 
     return dispatch => {
-        dispatch(coursesBegin());
-        return lessonsRef.get().then((snapshot) => {
-            subjectsList
-                .find(item => item.id === subjectID).coursesList
-                .find(item => item.id === courseID).modules
-                .find(item => item.id === moduleID).lessons = [];
+        dispatch(lessonsBegin());
+        return lessonsRef.onSnapshot(snapshot => {
+            const lessonsList = [];
+
             snapshot.docs.forEach(doc => {
-                subjectsList
-                    .find(item => item.id === subjectID).coursesList
-                    .find(item => item.id === courseID).modules
-                    .find(item => item.id === moduleID).lessons
-                    .push({
-                        ...doc.data(),
-                        id: doc.id
-                    });
+                lessonsList.push({
+                    ...doc.data(),
+                    id: doc.id
+                });
             });
-            dispatch(coursesSuccess(subjectsList));
+            dispatch(lessonsSuccess(lessonsList));
         });
     };
+}
+
+export function updateLessonsOrder(subjectID, courseID, moduleID, lessonsToUpdate) {
+    return dispatch => {
+        lessonsToUpdate.forEach((item, index) => {
+            const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(item.id);
+
+            lessonRef.set({
+                index: item.index
+            }, {merge: true}).then();
+        });
+    }
 }
 
 export function updateSubject(subject) {
@@ -612,6 +618,18 @@ export const coursesSuccess = subjectsList => {
     }
 };
 
+export const lessonsBegin = () => {
+    return {
+        type: LESSONS_BEGIN
+    }
+};
+export const lessonsSuccess = lessonsList => {
+    return {
+        type: LESSONS_SUCCESS,
+        payload: { lessonsList }
+    }
+};
+
 export const allCoursesBegin = () => {
     return {
         type: ALL_COURSES_BEGIN
@@ -657,3 +675,5 @@ export const LESSON_BEGIN = 'LESSON_BEGIN';
 export const LESSON_SUCCESS = 'LESSON_SUCCESS';
 export const MODULES_LESSONS_BEGIN = 'MODULES_LESSONS_BEGIN';
 export const MODULES_LESSONS_SUCCESS = 'MODULES_LESSONS_SUCCESS';
+export const LESSONS_BEGIN = 'LESSONS_BEGIN';
+export const LESSONS_SUCCESS = 'LESSONS_SUCCESS';

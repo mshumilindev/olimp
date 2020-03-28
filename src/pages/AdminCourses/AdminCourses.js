@@ -8,7 +8,6 @@ import {connect} from "react-redux";
 import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
-import userContext from "../../context/userContext";
 import { orderBy } from 'natural-orderby';
 
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
@@ -26,8 +25,6 @@ function usePrevious(value) {
 }
 
 function AdminCourses({history, filters, list, loading, searchQuery, params, updateSubject, allCoursesList}) {
-    const { user } = useContext(userContext);
-
     if ( params ) {
         if ( params.subjectID && list && list.length && !list.find(item => item.id === params.subjectID) ) {
             history.push('/admin-courses');

@@ -54,10 +54,13 @@ export function fetchProfile(profileLogin) {
     return dispatch => {
         dispatch(fetchProfileBegin());
         return profileRef.get().then(snapshot => {
-            const profile = {
-                ...snapshot.docs[0].data(),
-                id: snapshot.docs[0].id
-            };
+            let profile = {};
+            if ( snapshot.docs[0] ) {
+                 profile = {
+                    ...snapshot.docs[0].data(),
+                    id: snapshot.docs[0].id
+                };
+            }
 
             dispatch(fetchProfileSuccess(profile));
         });

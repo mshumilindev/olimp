@@ -76,6 +76,29 @@ $courseItemIndent: $pageIndent / 2;
   }
   &__list-courses {
     padding: $courseItemIndent / 2 0 0 28px;
+    position: relative;
+    .preloader {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: inherit;
+      &:before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: $white;
+        opacity: .95;
+      }
+      svg {
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
   }
   &__list-courses-link {
     font-family: $RobotoCondensed;
@@ -86,6 +109,9 @@ $courseItemIndent: $pageIndent / 2;
       position: absolute;
       left: 0;
       top: 1px;
+    }
+    &.isReordered {
+      cursor: grab;
     }
   }
   &__add-holder {
@@ -104,6 +130,20 @@ $courseItemIndent: $pageIndent / 2;
     @extend %s-content-link;
     .content_title-icon {
       top: 0;
+    }
+  }
+  .editSorting {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $mediumGreyColor;
+    font-family: $RobotoCondensed;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: inline-block;
+    cursor: pointer;
+    color: $anchorColor;
+    &:hover {
+      color: $linkHoverColor;
     }
   }
 }

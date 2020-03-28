@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import {withRouter, Link} from "react-router-dom";
 import {deleteLesson} from "../../../redux/actions/coursesActions";
@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesLesson({history, subjectID, courseID, moduleID, lesson, params, deleteLesson}) {
+function AdminCoursesLesson({history, subjectID, courseID, moduleID, lesson, params, deleteLesson, editOrder}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showConfirm, setShowConfirm ] = useState(false);
     const contextLinks = [
@@ -28,15 +28,23 @@ function AdminCoursesLesson({history, subjectID, courseID, moduleID, lesson, par
 
     return (
         <div className="adminCourses__list-item" style={{marginTop: 10}}>
-            <ContextMenu links={contextLinks}>
-                <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + lesson.id} className="adminCourses__list-courses-link">
-                    <i className="content_title-icon fa fa-paragraph" />
-                    { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
-                </Link>
-            </ContextMenu>
+            {
+                editOrder ?
+                    <span className="adminCourses__list-courses-link isReordered">
+                        <i className="content_title-icon fas fa-grip-lines" />
+                        { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
+                    </span>
+                    :
+                    <ContextMenu links={contextLinks}>
+                        <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + lesson.id} className="adminCourses__list-courses-link">
+                            <i className="content_title-icon fa fa-paragraph" />
+                            { lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'] }
+                        </Link>
+                    </ContextMenu>
+            }
             {
                 showConfirm ?
-                    <Confirm message={translate('sure_to_delete_lesson')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteLesson(subjectID, courseID, moduleID, lesson.id)} />
+                    <Confirm message={translate('sure_to_delete_lesson')} cancelAction={() => setShowConfirm(false)} confirmAction={confirmDeleteLesson} />
                     :
                     null
             }
@@ -49,6 +57,11 @@ function AdminCoursesLesson({history, subjectID, courseID, moduleID, lesson, par
 
     function handleDeleteLesson() {
         setShowConfirm(true);
+    }
+
+    function confirmDeleteLesson() {
+        deleteLesson(subjectID, courseID, moduleID, lesson.id);
+        setShowConfirm(false);
     }
 }
 const mapDispatchToProps = dispatch => ({

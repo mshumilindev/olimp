@@ -7,7 +7,9 @@ import {
     ALL_COURSES_SUCCESS,
     MODULES_LESSONS_BEGIN,
     MODULES_LESSONS_SUCCESS,
-    DISCARD_SUCCESS
+    DISCARD_SUCCESS,
+    LESSONS_BEGIN,
+    LESSONS_SUCCESS
 } from '../actions/coursesActions';
 
 const initialState = {
@@ -15,7 +17,8 @@ const initialState = {
     coursesList: null,
     modulesLessons: null,
     lesson: null,
-    loading: false
+    loading: false,
+    lessonsList: null
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -27,11 +30,24 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case COURSES_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 subjectsList: action.payload.subjectsList
-            };
+            });
+
+        case LESSONS_BEGIN:
+            return Object.assign({}, {
+                ...state,
+                loading: true
+            });
+
+        case LESSONS_SUCCESS:
+            return Object.assign({}, {
+                ...state,
+                loading: false,
+                lessonsList: action.payload.lessonsList
+            });
 
         case ALL_COURSES_BEGIN:
             return {

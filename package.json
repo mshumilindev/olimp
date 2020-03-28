@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@tinymce/tinymce-react": "^3.5.0",
+    "array-move": "^2.2.1",
     "classnames": "^2.2.6",
     "firebase": "^6.6.2",
     "flag-icon-css": "^3.4.6",
@@ -32,6 +33,7 @@
     "react-router-dom": "^5.1.2",
     "react-rte": "^0.16.1",
     "react-scripts": "3.0.1",
+    "react-sortable-hoc": "^1.11.0",
     "react-time-picker": "^3.9.0",
     "react-youtube": "^7.9.0",
     "redux": "^4.0.5",

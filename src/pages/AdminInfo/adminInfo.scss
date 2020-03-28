@@ -1,0 +1,35 @@
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.adminInfo {
+  position: relative;
+  &__nav-holder {
+    position: absolute;
+    left: $widgetIndent;
+    top: $widgetIndent;
+    bottom: $widgetIndent;
+    height: 100%;
+    z-index: 1;
+  }
+  &__nav {
+    position: sticky;
+    top: 217px;
+    font-family: $RobotoCondensed;
+    line-height: 1.5;
+    width: 100px;
+  }
+  &__navItem {
+    margin: 10px 0;
+    &:before {
+      content: '•';
+      margin-right: 5px;
+    }
+    span {
+      text-transform: uppercase;
+    }
+  }
+  &__manual-holder {
+    margin-left: 100px;
+  }
+}

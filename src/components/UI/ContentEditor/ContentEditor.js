@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import './contentEditor.scss';
 import {Preloader} from "../preloader";
@@ -17,22 +17,10 @@ import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
 // const ContentEditorTable = React.lazy(() => import('./ContentEditorTable/ContentEditorTable'));
 // const ContentEditorGrid = React.lazy(() => import('./ContentEditorGrid/ContentEditorGrid'));
 
-// === Need to move this to a separate file from all the files it's used in
-function usePrevious(value) {
-    const ref = useRef(null);
-
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
-
-    return ref.current;
-}
-
-export default function ContentEditor({content, setUpdated, setLessonContent, loading, types, contentType}) {
+export default function ContentEditor({content, setUpdated, isUpdated, setLessonContent, loading, types, contentType}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
-    const [ currentContent, setCurrentContent ] = useState(JSON.stringify(content));
-    const prevContent = usePrevious(currentContent);
+    const [ initialContent, setInitialContent ] = useState(null);
     const defaultEditorActions = [
         {
             type: 'text',
@@ -108,24 +96,30 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
     }
 
     useEffect(() => {
-        if ( prevContent && prevContent !== currentContent ) {
-            setUpdated();
+        if ( !isUpdated ) {
+            setInitialContent(JSON.parse(JSON.stringify(content)));
         }
-    });
+    }, [isUpdated]);
+
+    useEffect(() => {
+        if ( content && initialContent ) {
+            setUpdated(JSON.stringify(content) !== JSON.stringify(initialContent));
+        }
+    }, [content, initialContent]);
 
     return (
         <div className="contentEditor">
             {
-                contentType === 'questions' && JSON.parse(currentContent).length ?
+                contentType === 'questions' && content.length ?
                     <div className="contentEditor__heading">{ translate('max_score') }: { content.maxScore ? content.maxScore : 0 }</div>
                     :
                     null
             }
             {
-                JSON.parse(currentContent).length ?
+                content.length ?
                     <div className="contentEditor__blocks">
                         {
-                            JSON.parse(currentContent).map(block => {
+                            content.map(block => {
                                 switch (block.type) {
                                     case ('text') :
                                         return <ContentEditorText key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
@@ -228,7 +222,7 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
     function startAddContentBlock(e, blockType) {
         e.preventDefault();
 
-        const newContent = JSON.parse(currentContent);
+        const newContent = Object.assign([], content);
 
         newContent.push({
             type: blockType,
@@ -239,39 +233,37 @@ export default function ContentEditor({content, setUpdated, setLessonContent, lo
             value: ''
         });
 
+        setLessonContent(calcMaxScore(newContent));
         setShowAddModal(false);
-        setCurrentContent(JSON.stringify(newContent));
     }
 
     function removeBlock(block) {
-        const newCurrentContent = JSON.parse(currentContent);
-        const blockToRemove = newCurrentContent.find(item => item.id === block.id);
+        const newContent = Object.assign([], content);
+        const blockToRemove = newContent.find(item => item.id === block.id);
 
-        newCurrentContent.splice(newCurrentContent.indexOf(blockToRemove), 1);
-        setCurrentContent(JSON.stringify(newCurrentContent));
-        setLessonContent(calcMaxScore(newCurrentContent));
+        newContent.splice(newContent.indexOf(blockToRemove), 1);
+        setLessonContent(calcMaxScore(newContent));
     }
 
     function setBlock(block) {
-        const newCurrentContent = JSON.parse(currentContent);
+        const newContent = Object.assign([], content);
 
-        newCurrentContent.find(item => item.id === block.id).value = block.value;
-        setCurrentContent(JSON.stringify(newCurrentContent));
-        setLessonContent(calcMaxScore(newCurrentContent));
+        newContent.find(item => item.id === block.id).value = block.value;
+        setLessonContent(calcMaxScore(newContent));
     }
 
-    function calcMaxScore(newCurrentContent) {
+    function calcMaxScore(newContent) {
         if ( contentType !== 'questions' ) {
-            return newCurrentContent;
+            return newContent;
         }
         let maxScore = 0;
 
-        newCurrentContent.forEach(item => {
+        newContent.forEach(item => {
             if ( item.type === 'answers' ) {
                 maxScore += parseInt(item.value.score);
             }
         });
-        newCurrentContent.maxScore = maxScore;
-        return newCurrentContent;
+        newContent.maxScore = maxScore;
+        return newContent;
     }
 }

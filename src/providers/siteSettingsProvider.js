@@ -340,8 +340,7 @@ export default class SiteSettingsProvider extends React.Component{
                         placeholder: translate('select_teacher'),
                         id: 'teacher',
                         value: course.teacher ? course.teacher : currentUser.role === 'teacher' ? currentUser.id : '',
-                        updated: false,
-                        noneditable: true
+                        updated: false
                     }
                 ]
             },
@@ -588,12 +587,11 @@ export default class SiteSettingsProvider extends React.Component{
                                 required: true,
                                 value: user ? user.password : '',
                                 updated: false,
-                                readonly: isStudent,
-                                btn: !isStudent ? {
+                                btn: {
                                     icon: 'fas fa-random',
                                     action: passwordAction ? passwordAction : null,
                                     title: translate('generate')
-                                } : null
+                                }
                             },
                             {
                                 type: 'block',

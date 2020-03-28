@@ -58,7 +58,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
         if ( checkIfIsOpen() && !course.modules ) {
             fetchModules(params.subjectID, course.id);
         }
-    });
+    }, []);
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>

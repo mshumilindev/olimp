@@ -1,7 +1,7 @@
 import React from 'react';
 import './adminInfoManuals.scss';
 
-export default function AdminInfoManualsItem({item}) {
+export default function AdminInfoManualsItem({item, id}) {
     return (
         <div className={'manuals__item ' + item.type}>
             {
@@ -15,6 +15,11 @@ export default function AdminInfoManualsItem({item}) {
             case 'text':
                 return (
                     <p>{ item.value }</p>
+                );
+
+            case 'prominent':
+                return (
+                    <p className="prominent">{ item.value }</p>
                 );
 
             case 'list':
@@ -64,7 +69,7 @@ export default function AdminInfoManualsItem({item}) {
             case 'image':
                 return (
                     <figure>
-                        <img src={require('../../info/admin/subjects/' + item.url)} alt={item.caption}/>
+                        <img src={require('../../info/admin/' + id + '/' + item.url)} alt={item.caption}/>
                         <figcaption>{ item.caption }</figcaption>
                     </figure>
                 )

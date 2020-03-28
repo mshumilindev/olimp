@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {fetchLesson, updateLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -12,24 +12,12 @@ import Article from "../../components/Article/Article";
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
-// === Need to move this to a separate file from all the files it's used in
-function usePrevious(value) {
-    const ref = useRef(null);
-
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
-
-    return ref.current;
-}
-
 function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCoursesList, discardLesson}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
-    const prevLesson = usePrevious(lesson);
     const [ content, setContent ] = useState(null);
     const [ questions, setQuestions ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
@@ -40,47 +28,42 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
         }
     ];
 
-    if ( !lesson ) {
-        fetchLesson(subjectID, courseID, moduleID, lessonID);
-    }
-    else {
-        if ( !lessonInfoFields ) {
-            setLessonInfoFields(JSON.stringify(getLessonFields(lesson, false)));
-        }
-        if ( !content ) {
-            if ( lesson.content ) {
-                setContent(lesson.content);
-            }
-            else {
-                setContent([]);
-            }
-            if ( lesson.questions ) {
-                lesson.questions.maxScore = lesson.maxScore;
-                setQuestions(lesson.questions);
-            }
-            else {
-                setQuestions([]);
-            }
-        }
-    }
-
     useEffect(() => {
+        fetchLesson(subjectID, courseID, moduleID, lessonID);
         return () => {
             discardLesson();
         }
     }, []);
 
     useEffect(() => {
-        if ( prevLesson && JSON.stringify(prevLesson) !== JSON.stringify(lesson) ) {
+        if ( lesson ) {
+            if ( !lessonInfoFields ) {
+                setLessonInfoFields(getLessonFields(lesson, false));
+            }
+            if ( !content ) {
+                if ( lesson.content ) {
+                    setContent(Object.assign([], lesson.content));
+                }
+                else {
+                    setContent(Object.assign([], []));
+                }
+                if ( lesson.questions ) {
+                    lesson.questions.maxScore = lesson.maxScore;
+                    setQuestions(Object.assign([], lesson.questions));
+                }
+                else {
+                    setQuestions(Object.assign([], []));
+                }
+            }
             setLessonUpdated(false);
-            setLessonInfoFields(JSON.stringify(getLessonFields(lesson, false)));
+            setLessonInfoFields(Object.assign([], getLessonFields(lesson, false)));
         }
-    }, [prevLesson, lesson, getLessonFields]);
+    }, [lesson]);
 
     checkIfEditable();
 
     return (
-        lesson && lesson.id === lessonID ?
+        lesson ?
             <div className="adminLesson section">
                 <div className="section__title-holder">
                     <h2 className="section__title">
@@ -122,14 +105,24 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                                 <p><i className="content_title-icon fa fa-cog"/> - налаштування блоку</p>
                                 <p><i className="content_title-icon fa fa-trash-alt"/> - видалити блок</p>
                             </div>
-                            <ContentEditor contentType="content" content={content} types={[['text', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newContent) => setContent(newContent)} loading={loading} />
+                            {
+                                content ?
+                                    <ContentEditor contentType="content" content={content} types={[['text', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="widget">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-question"/>
                                 { translate('control_questions') }
                             </div>
-                            <ContentEditor contentType="questions" content={questions} types={[['text', 'media'], ['youtube', 'audio'], ['answers'], ['divider', 'page']]} setUpdated={() => setLessonUpdated(true)} setLessonContent={(newQuestions) => setQuestions(newQuestions)} loading={loading} />
+                            {
+                                questions ?
+                                    <ContentEditor contentType="questions" content={questions} types={[['text', 'media'], ['youtube', 'audio'], ['answers'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQuestions(Object.assign([], newQuestions))} loading={loading} />
+                                    :
+                                    null
+                            }
                         </div>
                     </div>
                     <div className="grid_col col-4">
@@ -140,7 +133,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                             </div>
                             {
                                 checkIfEditable() ?
-                                    <Form fields={JSON.parse(lessonInfoFields)} setFieldValue={setInfoFieldValue} loading={loading} />
+                                    <Form fields={lessonInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
                                     :
                                     lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']
                             }
@@ -227,7 +220,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
     }
 
     function setInfoFieldValue(fieldID, value) {
-        const newLessonInfoFields = JSON.parse(lessonInfoFields);
+        const newLessonInfoFields = lessonInfoFields;
 
         newLessonInfoFields.find(field => field.id === fieldID).value = value;
         newLessonInfoFields.find(field => field.id === fieldID).updated = false;
@@ -252,14 +245,14 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
             }
         }
 
-        setLessonInfoFields(JSON.stringify(newLessonInfoFields));
+        setLessonInfoFields(newLessonInfoFields);
     }
 
     function saveLesson(e) {
         e.preventDefault();
 
         if ( lessonUpdated ) {
-            const updatedLessonFields = JSON.parse(lessonInfoFields);
+            const updatedLessonFields = lessonInfoFields;
             const newLesson = {
                 ...lesson,
                 name: {

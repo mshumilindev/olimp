@@ -113,7 +113,8 @@ export default function App() {
                                 <Route path='/admin-translations' component={AdminTranslations}/>
                                 <Route path='/admin-library' component={AdminLibrary}/>
                                 <Route path='/admin-settings' component={AdminSettings}/>
-                                <Route path='/admin-info' component={AdminInfo}/>
+                                <Route exact path='/admin-info' render={props => <AdminInfo {...props.match} />}/>
+                                <Route exact path='/admin-info/:id' render={props => <AdminInfo {...props.match} />}/>
                                 <Route path='/admin-chats' component={AdminChats}/>
                                 <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
 
