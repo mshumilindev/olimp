@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 
-export default function ChatContainer({chat, usersList}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
@@ -28,6 +28,8 @@ export default function ChatContainer({chat, usersList}) {
         });
         return () => {
             jitsi.stop();
+            setIsFullScreen(false);
+            setIsHidden(false);
         }
     }, []);
 
@@ -57,13 +59,17 @@ export default function ChatContainer({chat, usersList}) {
     );
 
     function onDisplayNameChange(id, displayName) {
-        if ( usersList.find(item => item.name === displayName).id === chat.organizer ) {
-            setOrganizerChatID(id ? id : 'local');
-        }
+        setTimeout(() => {
+            if ( usersList.find(item => item.name === displayName).id === chat.organizer ) {
+                setOrganizerChatID(id ? id : 'local');
+            }
+        }, 0);
     }
 
     function onRemoteAdded() {
-        makeVideoMain();
+        setTimeout(() => {
+            makeVideoMain();
+        }, 0);
     }
 
     function makeVideoMain() {

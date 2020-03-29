@@ -10,17 +10,25 @@ import ChatContainer from "./ChatContainer";
 import ringing from "../../sounds/ringing.mp3";
 import './quickCall.scss';
 import classNames from 'classnames';
+import TextTooltip from "../UI/TextTooltip/TextTooltip";
 
 function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall}) {
     const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
+    const [ isHidden, setIsHidden ] = useState(false);
     const [ isChatPage, setIsChatPage ] = useState(false);
     const [ caller, setCaller ] = useState(null);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());
     }, [location]);
+
+    useEffect(() => {
+        if ( isFullScreen || isChatPage ) {
+            setIsHidden(false);
+        }
+    }, [isFullScreen, isChatPage]);
 
     useEffect(() => {
         if ( chat && chat.organizer === user.id ) {
@@ -70,13 +78,13 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
 
     function _renderChatBox() {
         return (
-            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id })}>
+            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden })}>
                 <div className="chatroom__allow">
                     { translate('allow_audio_and_video') }
                 </div>
                 <Fullscreen enabled={isFullScreen}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
-                        <ChatContainer chat={chat} usersList={usersList}/>
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden}/>
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
@@ -110,12 +118,32 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     function _renderStartedChatActions() {
         return (
             <div className="chatroom__btnsHolder">
-                <span className="btn btn_primary round" onClick={() => setIsFullScreen(!isFullScreen)}><i className="fas fa-compress" /></span>
+                {
+                    !isFullScreen && !isChatPage ?
+                        <TextTooltip position="top" text={translate('change_size')} children={
+                            <span className="btn btn_primary round" onClick={() => setIsHidden(!isHidden)}>
+                            {
+                                isHidden ?
+                                    <i className="fas fa-chevron-up" />
+                                    :
+                                    <i className="fas fa-chevron-down" />
+                            }
+                        </span>
+                        } />
+                        :
+                        null
+                }
+                <TextTooltip position="top" text={translate('fullscreen')} children={
+                    <span className="btn btn_primary round" onClick={() => setIsFullScreen(!isFullScreen)}><i
+                        className="fas fa-compress"/></span>
+                } />
                 {
                     !isChatPage ?
-                        <Link to={'/chat/' + chat.id} className="btn btn_primary round">
-                            <i className="fa fa-link" />
-                        </Link>
+                        <TextTooltip position="top" text={translate('to_chat')} children={
+                            <Link to={'/chat/' + chat.id} className="btn btn_primary round">
+                                <i className="fa fa-link"/>
+                            </Link>
+                        }/>
                         :
                         null
                 }

@@ -42,7 +42,7 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
             {/*        </Scrollbars>*/}
             {/*    </div>*/}
             {/*</div>*/}
-            <div className="grid_col col-6">
+            <div className="grid_col col-12 desktop-col-6">
                 <div className="widget">
                     <h3 className="widget__title">{ translate('one_time_videochats') }</h3>
                     <Scrollbars

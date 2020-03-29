@@ -82,13 +82,13 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                                     }).map(course => _renderCourse(course)) }
                                 </div>
                             </div>
-                            {/*<div className="grid_col col-12 tablet-col-6">*/}
-                            {/*    <div className="block studentClass__students">*/}
-                            {/*        <h2 className="block__heading">{ translate('students') }</h2>*/}
-                            {/*        { _renderUser(user) }*/}
-                            {/*        { findUsers().map(item => _renderUser(item)) }*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
+                            <div className="grid_col col-12 tablet-col-6">
+                                <div className="block studentClass__students">
+                                    <h2 className="block__heading">{ translate('students') }</h2>
+                                    { _renderUser(user) }
+                                    { findUsers().map(item => _renderUser(item)) }
+                                </div>
+                            </div>
                         </div>
                     </>
             }

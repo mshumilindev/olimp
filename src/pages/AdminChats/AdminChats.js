@@ -9,6 +9,7 @@ import Form from "../../components/Form/Form";
 import { generate } from "generate-password";
 import { updateEvent } from '../../redux/actions/eventsActions';
 import moment from "moment";
+import {orderBy} from "natural-orderby";
 
 function AdminChats({loading, events, usersList, updateEvent}) {
     const { translate } = useContext(SiteSettingsContext);
@@ -163,10 +164,10 @@ function AdminChats({loading, events, usersList, updateEvent}) {
 
     function filteredEvents() {
         if ( user.role === 'admin' ) {
-            return events;
+            return orderBy(events, v => v.datetime);
         }
         else {
-            return events.filter(event => user.role === 'admin' || event.organizer === user.id || event.participants.indexOf(user.id) !== -1);
+            return orderBy(events.filter(event => user.role === 'admin' || event.organizer === user.id || event.participants.indexOf(user.id) !== -1));
         }
     }
 }

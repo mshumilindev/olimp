@@ -81,7 +81,7 @@ class Jitsi {
 
         function onConferenceJoined() {
             console.log('conference joined!');
-            // self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
+            self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
             self.isJoined = true;
             for (let i = 0; i < self.localTracks.length; i++) {
                 self.room.addTrack(self.localTracks[i]);
@@ -165,9 +165,12 @@ class Jitsi {
 
         navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
-        navigator.getMedia({audio: true}, () => {
-            navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video']})
+        navigator.getMedia({audio: {volume: 1}}, () => {
+            navigator.getMedia({video: {
+                    width: { ideal: 480 },
+                    height: { ideal: 480 }
+                }}, () => {
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
                     .then(onLocalTracks)
                     .catch(error => {
                         throw error;
@@ -180,8 +183,11 @@ class Jitsi {
                     });
             });
         }, () => {
-            navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video']})
+            navigator.getMedia({video: {
+                    width: { ideal: 480 },
+                    height: { ideal: 480 }
+                }}, () => {
+                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
                     .then(onLocalTracks)
                     .catch(error => {
                         throw error;

@@ -72,7 +72,7 @@ function AdminCoursesModule({subjectID, courseID, module, params, loading, fetch
     }, [editOrder]);
 
     useEffect(() => {
-        if ( checkIfIsOpen() && !lessonsList ) {
+        if ( checkIfIsOpen() ) {
             fetchLessons(params.subjectID, params.courseID, module.id);
         }
     }, []);

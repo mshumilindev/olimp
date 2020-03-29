@@ -1,11 +1,8 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
-import userContext from '../../context/userContext';
-import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
+import StudentChatsList from "../../components/StudentChatsList/StudentChatsList";
 
-function StudentChats({ events, loading }) {
-    const { user } = useContext(userContext);
+export default function StudentChats() {
     const { translate } = useContext(siteSettingsContext);
 
     return (
@@ -17,31 +14,8 @@ function StudentChats({ events, loading }) {
                 </h2>
             </div>
             <section className="section">
-                {
-                    loading ?
-                        <Preloader/>
-                        :
-                        filterEvents().length ?
-                            null
-                            :
-                            <div className="nothingFound">
-                                { translate('no_videochats_yet') }
-                            </div>
-                }
+                <StudentChatsList/>
             </section>
         </div>
     );
-
-    function filterEvents() {
-        return [];
-    }
 }
-
-const mapStateToProps = state => {
-    return {
-        loading: state.eventsReducer.loading,
-        events: state.eventsReducer.events
-    }
-};
-
-export default connect(mapStateToProps, null)(StudentChats);

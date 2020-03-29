@@ -6,11 +6,13 @@ import {Link} from "react-router-dom";
 import { connect } from 'react-redux';
 import { deleteEvent } from '../../redux/actions/eventsActions';
 import Confirm from "../UI/Confirm/Confirm";
+import userContext from "../../context/userContext";
 moment.locale('uk');
 
-function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFormFields}) {
-    const { translate, lang } = useContext(SiteSettingsContext);
+function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noActions}) {
+    const { translate } = useContext(SiteSettingsContext);
     const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
+    const { user } = useContext(userContext);
 
     return (
         <div className="adminChats__event" key={event.id}>
@@ -41,17 +43,22 @@ function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFor
                     </div>
                 </div>
             </div>
-            <div className="adminChats__event-actions">
-                <Link to={'/chat/' + event.id} className="btn btn_primary round btn__xs">
-                    <i className="fa fa-link" />
-                </Link>
-                <span className="btn btn_primary round btn__xs" onClick={() => mapEventToFormFields(event)}>
-                    <i className="fa fa-pencil-alt" />
-                </span>
-                <span className="btn btn__error round btn__xs" onClick={() => setShowConfirmDelete(true)}>
-                    <i className="fa fa-trash-alt" />
-                </span>
-            </div>
+            {
+                !noActions && user.id === event.organizer ?
+                    <div className="adminChats__event-actions">
+                        <Link to={'/chat/' + event.id} className="btn btn_primary round btn__xs">
+                            <i className="fa fa-link" />
+                        </Link>
+                        <span className="btn btn_primary round btn__xs" onClick={() => mapEventToFormFields(event)}>
+                            <i className="fa fa-pencil-alt" />
+                        </span>
+                        <span className="btn btn__error round btn__xs" onClick={() => setShowConfirmDelete(true)}>
+                            <i className="fa fa-trash-alt" />
+                        </span>
+                    </div>
+                    :
+                    null
+            }
             {
                 showConfirmDelete ?
                     <Confirm cancelAction={() => setShowConfirmDelete(false)} message={translate('sure_to_delete_videochat')} confirmAction={() => deleteEvent(event.id)}/>

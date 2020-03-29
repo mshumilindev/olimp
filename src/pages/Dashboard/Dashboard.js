@@ -3,6 +3,7 @@ import './dashboard.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import NextSchedule from '../../components/Schedule/NextSchedule';
 import Notifications from '../../components/Notifications/Notifications';
+import StudentChatsList from "../../components/StudentChatsList/StudentChatsList";
 
 function Dashboard() {
     const { translate } = useContext(siteSettingsContext);
@@ -18,6 +19,9 @@ function Dashboard() {
             <Notifications type="students"/>
             <section className="section">
                 <NextSchedule/>
+            </section>
+            <section className="section">
+                <StudentChatsList showTodayOnly />
             </section>
         </>
     )
