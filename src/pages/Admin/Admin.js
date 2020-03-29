@@ -4,12 +4,14 @@ import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import userContext from "../../context/userContext";
+import ChatWidget from "../../components/ChatBox/ChatWidget";
+import '../../assets/scss/base/chatroom.scss';
 
 export default function Admin({children, location, params, isTeacher, fetchEvents}) {
     const { user } = useContext(userContext);
 
     useEffect(() => {
-        fetchEvents(user.id);
+        fetchEvents(user.id, user.role);
     }, []);
 
     const adminNav = [
@@ -158,6 +160,7 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
                     <Header/>
                     <Nav type={'admin'} showLogo nav={isTeacher ? teacherNav : adminNav} prefix="main--"/>
                     { children }
+                    <ChatWidget/>
                 </div>
             </div>
         </DocumentTitle>

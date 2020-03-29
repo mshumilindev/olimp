@@ -122,7 +122,9 @@ export function deleteDoc(docID, docRef) {
 
     return dispatch => {
         dispatch(deleteDocBegin());
-        return documentRef.delete().then(() => {
+        documentRef.delete().then(() => {
+            return documentDoc.delete();
+        }).catch(err => {
             return documentDoc.delete();
         });
     };

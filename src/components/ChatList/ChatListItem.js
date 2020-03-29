@@ -33,7 +33,10 @@ function ChatListItem({event, usersList, classesList, deleteEvent, mapEventToFor
                     <div className="adminChats__event-info-dt">{ translate('participants') }: </div>
                     <div className="adminChats__event-info-dd">
                         {
-                            event.participants.map(partItem => <Link to={'/admin-users/' + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
+                            typeof event.participants === 'object' ?
+                                event.participants.map(partItem => <Link to={'/admin-users/' + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
+                                :
+                                <Link to={'/admin-users/' + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
                         }
                     </div>
                 </div>

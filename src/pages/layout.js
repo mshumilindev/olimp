@@ -43,12 +43,18 @@ export default function Layout({children, location, events, fetchEvents, usersLi
         },
         {
             id: 4,
+            url: '/chats',
+            icon: 'fas fa-video',
+            name: 'videochats'
+        },
+        {
+            id: 5,
             url: '/class',
             icon: 'fa fa-graduation-cap',
             name: 'class'
         },
         {
-            id: 5,
+            id: 6,
             url: '/contact',
             icon: 'fa fa-mobile-alt',
             name: 'contact'

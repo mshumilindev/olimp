@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import '../../assets/scss/base/chatroom.scss';
 import userContext from "../../context/userContext";
-import ChatWidget from "../../components/ChatBox/ChatWidget";
 
 function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
     const { translate } = useContext(siteSettingsContext);
@@ -34,10 +33,7 @@ function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
                             </div>
                         </div>
                         :
-                        user.role === 'student' ?
-                            null
-                            :
-                            <ChatWidget/>
+                        null
                 )
             }
         </div>
@@ -68,11 +64,9 @@ function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
                             { translate('videochat') }
                         </h2>
                     </div>
-                    <div className="widget">
-                        {
-                            children
-                        }
-                    </div>
+                    {
+                        children
+                    }
                 </section>
             );
         }

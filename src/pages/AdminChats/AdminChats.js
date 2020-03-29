@@ -166,7 +166,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
             return events;
         }
         else {
-            return events.filter(event => event.organizer === user.id || event.participants.indexOf(user.id) !== -1);
+            return events.filter(event => user.role === 'admin' || event.organizer === user.id || event.participants.indexOf(user.id) !== -1);
         }
     }
 }

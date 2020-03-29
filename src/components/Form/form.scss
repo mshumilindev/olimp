@@ -474,6 +474,17 @@
     background-repeat: no-repeat;
     z-index: 1;
   }
+  &__file-image-actions {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  &__file-image-btn {
+    cursor: pointer;
+    padding: 10px;
+    margin: -10px;
+  }
   &__file-remove-holder {
     position: absolute;
     right: 0;

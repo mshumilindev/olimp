@@ -7,7 +7,7 @@ const events = [];
 export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 
-export function fetchEvents(userID) {
+export function fetchEvents(userID, userRole) {
     return dispatch => {
         dispatch(fetchEventsBegin());
         return eventsCollection.onSnapshot(snapshot => {
@@ -26,7 +26,7 @@ export function fetchEvents(userID) {
                     };
                 }
             });
-            dispatch(fetchEventsSuccess(Object.assign([], events.filter(eventItem => eventItem.organizer === userID || eventItem.participants.indexOf(userID) !== -1))));
+            dispatch(fetchEventsSuccess(Object.assign([], events.filter(eventItem => (userRole && userRole === 'admin') || eventItem.organizer === userID || eventItem.participants.indexOf(userID) !== -1))));
         });
     }
 }

@@ -505,7 +505,8 @@ export default class SiteSettingsProvider extends React.Component{
                 shape: 'round',
                 size: 150,
                 saveSize: 400,
-                remove: true
+                remove: true,
+                rotation: true
             },
             {
                 type: 'cols',

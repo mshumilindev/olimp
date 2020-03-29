@@ -16,6 +16,7 @@ const StudentClass = React.lazy(() => import('./pages/StudentClass/StudentClass'
 const StudentCourses = React.lazy(() => import('./pages/StudentCourses/StudentCourses'));
 const StudentCourse = React.lazy(() => import('./pages/StudentCourse/StudentCourse'));
 const StudentPage = React.lazy(() => import('./pages/StudentPage/StudentPage'));
+const StudentChats = React.lazy(() => import('./pages/StudentChats/StudentChats'));
 
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
@@ -116,6 +117,7 @@ export default function App() {
                                 <Route exact path='/admin-info' render={props => <AdminInfo {...props.match} />}/>
                                 <Route exact path='/admin-info/:id' render={props => <AdminInfo {...props.match} />}/>
                                 <Route path='/admin-chats' component={AdminChats}/>
+                                <Route exact path='/chats' component={StudentChats} />
                                 <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
 
                                 <Route path="*" component={PageNotFound}/>

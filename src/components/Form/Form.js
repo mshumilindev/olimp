@@ -397,6 +397,16 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 :
                                 null
                         }
+                        {
+                            field.rotation && field.value ?
+                                <div className="form__file-image-actions">
+                                    <TextTooltip text={translate('rotate')} position="right">
+                                        <span className="image__rotate form__file-image-btn" onClick={() => rotateImage(field.id, field.value, field.saveSize, field.ext)}><i className="fas fa-sync"/></span>
+                                    </TextTooltip>
+                                </div>
+                                :
+                                null
+                        }
                     </div>
                 );
 
@@ -466,8 +476,28 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         return ![...$requiredFields].some(field => !field.value.trim() || field.classList.contains('hasErrors'));
     }
 
-    function getImageValue(fieldID, $input, fieldSize, fieldExt) {
-        const file = $input.files[0];
+    function rotateImage(fieldID, $input, fieldSize, fieldExt) {
+        getImageValue(fieldID, $input, fieldSize, fieldExt, 90);
+    }
+
+    function getImageValue(fieldID, $input, fieldSize, fieldExt, rotation) {
+        let file = null;
+
+        if ( typeof $input === 'string' ) {
+            file = $input;
+            fetch(file)
+                .then(res => res.blob())
+                .then(data => {
+                    resizeImageValue(fieldID, data, fieldSize, fieldExt, rotation)
+                });
+        }
+        else {
+            file = $input.files[0];
+            resizeImageValue(fieldID, file, fieldSize, fieldExt, rotation);
+        }
+    }
+
+    function resizeImageValue(fieldID, file, fieldSize, fieldExt, rotation) {
         const maxWidthHeight = 1000;
 
         if ( file ) {
@@ -478,7 +508,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     fieldSize,
                     fieldExt ? fieldExt : 'JPEG',
                     100,
-                    0,
+                    rotation ? rotation : 0,
                     uri => {
                         handleFieldChange(fieldID, uri);
                     },
@@ -494,7 +524,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         maxWidthHeight,
                         fieldExt ? fieldExt : 'JPEG',
                         80,
-                        0,
+                        rotation ? rotation : 0,
                         uri => {
                             handleFieldChange(fieldID, uri);
                         },

@@ -83,17 +83,15 @@
     video.main-video {
       @extend %-s-main-video;
     }
+    audio {
+      position: fixed;
+      left: -9999px;
+      top: -9999px;
+    }
   }
   &__localTracks {
     video:not(.main-video) {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      background: $white;
-      width: 200px;
-      height: 200px;
-      border: 1px solid $white;
-      z-index: 10;
+      display: none;
     }
     video.main-video {
       @extend %-s-main-video;
@@ -188,7 +186,7 @@
   &__chatHolder {
     margin: 0 auto;
     position: relative;
-    &.fullscreen {
+    &.isFullscreen {
       max-width: 100%;
       height: 100%;
       [class$="__users"] {
@@ -215,6 +213,13 @@
         bottom: 0;
         height: 120px;
       }
+      [class$="__remoteTracks"] {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: block;
+      }
     }
   }
   &__chatContainer {
@@ -228,36 +233,42 @@
       bottom: 0;
     }
   }
+  &__allow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    max-width: 500px;
+    margin: 0 auto 10px;
+    text-align: center;
+    line-height: 1.25;
+  }
 }
 .admin {
   .chatroom {
-    &__chatHolder:not(.fullscreen) {
+    &__chatHolder:not(.isFullscreen) {
       max-width: 800px;
       overflow: hidden;
     }
     &__remoteTracks {
-      position: absolute;
-      right: -120px;
-      top: 0;
-      bottom: 0;
+      display: flex;
+      flex-wrap: wrap;
       overflow: auto;
-      opacity: .5;
       transition: all .15s ease-in-out;
-      &:hover {
-        opacity: 1;
-        right: 0;
-      }
-      > * {
-        margin-top: 2px;
-        &:first-child {
-          margin-top: 0;
-        }
-      }
+      background: $white;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
       video:not(.main-video) {
-        display: block;
-        background: $white;
         width: 150px;
         height: 150px;
+        display: block;
+      }
+    }
+    &:not(.isOrganizer),
+    &__box:not(.isOrganizer) {
+      [class$="__remoteTracks"] {
+        position: static;
       }
     }
   }
@@ -265,7 +276,52 @@
 .student {
   .chatroom {
     &__users {
+      display: none !important;
+    }
+    &__remoteTracks {
+      left: 0;
+      background: $baseColor;
+    }
+  }
+}
+.fixed {
+  .chatroom {
+    &__users {
       display: none;
+    }
+    &.isOrganizer {
+      [class$="__remoteTracks"] {
+        display: none;
+      }
+    }
+    &__allow {
+      color: $white;
+    }
+  }
+  .isFullscreen {
+    .chatroom {
+      &__users {
+        display: flex;
+      }
+    }
+  }
+}
+.admin {
+  .chatroom {
+    .preloader {
+      margin-top: 85px;
+    }
+    &__box {
+      margin-top: 85px;
+      &:not(.isOrganizer) {
+        [class$="__remoteTracks"] {
+          left: 0;
+          background: $baseColor;
+        }
+      }
+    }
+    &__message-holder {
+      margin-top: 85px;
     }
   }
 }

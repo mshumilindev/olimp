@@ -22,18 +22,7 @@ class Jitsi {
                     "muc": "conference.beta.meet.jit.si"
                 },
                 "bosh": "https://beta.meet.jit.si/http-bind",
-                "clientNode": "http://jitsi.org/jitsimeet",
-                "resolution": '1080',
-                "constraints": {
-                    "video": {
-                        "aspectRatio": '16 / 9',
-                        "height": {
-                            "ideal": '1080',
-                            "max": '1080',
-                            "min": '640'
-                        }
-                    }
-                }
+                "clientNode": "http://jitsi.org/jitsimeet"
             },
             "confOptions": {
                 "openBridgeChannel": true
@@ -78,37 +67,21 @@ class Jitsi {
             if (!self.remoteTracks[participant]) {
                 self.remoteTracks[participant] = [];
             }
-            const idx = self.remoteTracks[participant].push(track);
-
             track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('remote track muted'));
             track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('remote track stoped'));
             const id = track.getType() + participant;
 
             if (track.getType() === 'video') {
-                const item = document.createElement('div');
-                item.className = 'video-item hidden';
-                item.id = participant + idx;
-                containers.remote.appendChild(item);
-
-                $(('#' + participant + idx)).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
+                $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
             } else {
-                const item = document.createElement('div');
-                item.id = participant + idx;
-                item.className = 'audio-item';
-                containers.remote.appendChild(item);
-
-                const audio = document.createElement('audio');
-                audio.autoplay = true;
-                audio.id = 'audio' + participant;
-
-                document.getElementById(participant + idx).appendChild(audio);
+                $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
             }
             track.attach(document.getElementById(id));
         }
 
         function onConferenceJoined() {
             console.log('conference joined!');
-            self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
+            // self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
             self.isJoined = true;
             for (let i = 0; i < self.localTracks.length; i++) {
                 self.room.addTrack(self.localTracks[i]);
@@ -122,18 +95,22 @@ class Jitsi {
             }
             const tracks = self.remoteTracks[id];
 
+            if ( document.getElementById('user' + id) ) {
+                document.getElementById('user' + id).remove();
+            }
+
             for (let i = 0; i < tracks.length; i++) {
-                tracks[i].detach(document.getElementById(id + tracks[i].getType()));
+                tracks[i].detach(document.getElementById(tracks[i].getType() + id));
             }
         }
 
         function onConnectionSuccess() {
-            self.room = self.connection.initJitsiConference(('olimp_' + roomName).toLowerCase(), chatConfig.confOptions);
+            self.room = self.connection.initJitsiConference(('olimp_remote_' + roomName).toLowerCase(), chatConfig.confOptions);
             self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => console.log(`track removed!!!${track}`));
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
             self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
-                self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
+                // self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
                 self.remoteTracks[id] = [];
                 if ( !document.querySelector('user' + id) ) {
                     const userDiv = document.createElement('div');
@@ -221,13 +198,8 @@ class Jitsi {
         for (let i = 0; i < self.localTracks.length; i++) {
             self.localTracks[i].dispose();
         }
-        self.room
-            .leave()
-            .then(() => {})
-            .catch(err => console.log('room leave err: ', err))
-            .finally(() => {
-                self.connection.disconnect();
-            });
+        self.room.leave();
+        self.connection.disconnect();
     }
 }
 

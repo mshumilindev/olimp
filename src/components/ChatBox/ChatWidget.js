@@ -9,6 +9,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import ChatContainer from "./ChatContainer";
 import ringing from "../../sounds/ringing.mp3";
 import './quickCall.scss';
+import classNames from 'classnames';
 
 function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall}) {
     const { user } = useContext(userContext);
@@ -69,9 +70,12 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
 
     function _renderChatBox() {
         return (
-            <div className={isChatPage ? 'chatroom__box' : 'chatroom__box fixed'}>
+            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id })}>
+                <div className="chatroom__allow">
+                    { translate('allow_audio_and_video') }
+                </div>
                 <Fullscreen enabled={isFullScreen}>
-                    <div className={isFullScreen ? 'chatroom__chatHolder fullscreen' : 'chatroom__chatHolder'}>
+                    <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
                         <ChatContainer chat={chat} usersList={usersList}/>
                         { _renderStartedChatActions() }
                     </div>
@@ -91,18 +95,10 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                             :
                             null
                     }
-                    {
-                        isChatPage ?
-                            <span className="btn btn__success round ringing" onClick={() => setOnACall(true)}>
-                                    <div className="btn__before"/>
-                                    <i className="fas fa-phone"/>
-                                </span>
-                            :
-                            <Link to={'/chat/' + chat.id} className="btn btn__success round ringing" onClick={() => setOnACall(true)}>
-                                <div className="btn__before"/>
-                                <i className="fas fa-phone"/>
-                            </Link>
-                    }
+                    <span className="btn btn__success round ringing" onClick={() => setOnACall(true)}>
+                        <div className="btn__before"/>
+                        <i className="fas fa-phone"/>
+                    </span>
                 </div>
                 <audio autoPlay={true} loop={true}>
                     <source src={ringing}/>
@@ -182,7 +178,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     }
 
     function checkForActiveChat() {
-        return events.find(eventItem => eventItem.started === true) ? events.find(eventItem => eventItem.started === true).id : null;
+        return events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ? events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id : null;
     }
 }
 

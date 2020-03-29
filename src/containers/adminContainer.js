@@ -27,7 +27,7 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses()),
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    fetchEvents: userID => dispatch(fetchEvents(userID))
+    fetchEvents: (userID, userRole) => dispatch(fetchEvents(userID, userRole))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin)
