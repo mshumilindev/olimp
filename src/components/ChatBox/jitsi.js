@@ -1,9 +1,11 @@
 /* global JitsiMeetJS, $ */
 
+let localTracks = [];
+let room = null;
+let connection = null;
+
 class Jitsi {
     constructor() {
-        this.start = this.start.bind(this);
-        this.stop = this.stop.bind(this);
         this.connection = null;
         this.isJoined = false;
         this.room = null;
@@ -11,6 +13,9 @@ class Jitsi {
         this.remoteTracks = {};
         window.addEventListener('beforeunload', this.stop);
         window.addEventListener('unload', this.stop);
+        this.start = this.start.bind(this);
+        this.stop = this.stop.bind(this);
+        this.toggleMute = this.toggleMute.bind(this);
     }
 
     start({containers, user, roomName, onDisplayNameChange}) {
@@ -30,13 +35,14 @@ class Jitsi {
             "initOptions": {
                 "disableAudioLevels": true,
                 "desktopSharingChromeDisabled": true,
-                "desktopSharingFirefoxDisabled": true,
-                "disableSimulcast": true
+                "desktopSharingFirefoxDisabled": true
             }
         };
 
         function onLocalTracks(tracks) {
             self.localTracks = tracks;
+            localTracks = tracks;
+
             for (let i = 0; i < self.localTracks.length; i++) {
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('local track muted'));
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('local track stoped'));
@@ -72,9 +78,13 @@ class Jitsi {
             const id = track.getType() + participant;
 
             if (track.getType() === 'video') {
-                $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
+                if ( !document.getElementById('video' + participant) ) {
+                    $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
+                }
             } else {
-                $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+                if ( !document.getElementById('audio' + participant) ) {
+                    $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+                }
             }
             track.attach(document.getElementById(id));
         }
@@ -98,6 +108,12 @@ class Jitsi {
             if ( document.getElementById('user' + id) ) {
                 document.getElementById('user' + id).remove();
             }
+            if ( document.getElementById('video' + id) ) {
+                document.getElementById('video' + id).remove();
+            }
+            if ( document.getElementById('audio' + id) ) {
+                document.getElementById('audio' + id).remove();
+            }
 
             for (let i = 0; i < tracks.length; i++) {
                 tracks[i].detach(document.getElementById(tracks[i].getType() + id));
@@ -105,7 +121,7 @@ class Jitsi {
         }
 
         function onConnectionSuccess() {
-            self.room = self.connection.initJitsiConference(('olimp_remote_' + roomName).toLowerCase(), chatConfig.confOptions);
+            room = self.room = self.connection.initJitsiConference(('olimp_school_remote' + roomName).toLowerCase(), chatConfig.confOptions);
             self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => console.log(`track removed!!!${track}`));
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
@@ -155,7 +171,7 @@ class Jitsi {
 
         JitsiMeetJS.init(chatConfig.initOptions);
 
-        self.connection = new JitsiMeetJS.JitsiConnection(null, null, chatConfig.options);
+        connection = self.connection = new JitsiMeetJS.JitsiConnection(null, null, chatConfig.options);
 
         self.connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
         self.connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
@@ -199,13 +215,24 @@ class Jitsi {
     }
 
     stop() {
-        const self = this;
-
-        for (let i = 0; i < self.localTracks.length; i++) {
-            self.localTracks[i].dispose();
+        for (let i = 0; i < localTracks.length; i++) {
+            localTracks[i].dispose();
         }
-        self.room.leave();
-        self.connection.disconnect();
+        room.leave();
+        connection.disconnect();
+    }
+
+    toggleMute(value) {
+        const audio = localTracks.find(track => track.type === 'audio');
+
+        if ( audio ) {
+            if ( value ) {
+                audio.mute();
+            }
+            else {
+                audio.unmute();
+            }
+        }
     }
 }
 

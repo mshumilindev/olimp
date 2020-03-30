@@ -2,17 +2,16 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
     const $chatroomUsersOrganizer = useRef(null);
     const $chatroomUsersParticipants = useRef(null);
     const { user } = useContext(userContext);
+    let jitsi = new Jitsi();
 
     useEffect(() => {
-        let jitsi = new Jitsi();
-
         jitsi.start({
             containers: {
                 local: $localTracksContainer.current,
@@ -32,6 +31,10 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             setIsHidden(false);
         }
     }, []);
+
+    useEffect(() => {
+        jitsi.toggleMute(muteChat);
+    }, [muteChat]);
 
     useEffect(() => {
         makeVideoMain();

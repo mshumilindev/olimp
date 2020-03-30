@@ -19,6 +19,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     const [ isHidden, setIsHidden ] = useState(false);
     const [ isChatPage, setIsChatPage ] = useState(false);
     const [ caller, setCaller ] = useState(null);
+    const [ muteChat, setMuteChat ] = useState(false);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());
@@ -82,9 +83,9 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                 <div className="chatroom__allow">
                     { translate('allow_audio_and_video') }
                 </div>
-                <Fullscreen enabled={isFullScreen}>
+                <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden}/>
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat}/>
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
@@ -118,6 +119,14 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     function _renderStartedChatActions() {
         return (
             <div className="chatroom__btnsHolder">
+                <span className={classNames('btn btn_primary round', { btn__pale: muteChat })} onClick={() => setMuteChat(!muteChat)}>
+                    {
+                        muteChat ?
+                            <i className="fas fa-microphone-slash"/>
+                            :
+                            <i className="fas fa-microphone"/>
+                    }
+                </span>
                 {
                     !isFullScreen && !isChatPage ?
                         <TextTooltip position="top" text={translate('change_size')} children={
@@ -138,7 +147,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                         className="fas fa-compress"/></span>
                 } />
                 {
-                    !isChatPage ?
+                    !isChatPage && !isFullScreen ?
                         <TextTooltip position="top" text={translate('to_chat')} children={
                             <Link to={'/chat/' + chat.id} className="btn btn_primary round">
                                 <i className="fa fa-link"/>
@@ -196,6 +205,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
 
     function stopChat() {
         setStopChat(chat.id);
+        setMuteChat(false);
     }
 
     function getChatID() {

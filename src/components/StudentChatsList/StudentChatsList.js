@@ -75,7 +75,7 @@ function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
                         :
                         null
                 }
-                { orderBy(block.children, v => v.datetime).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} noActions/>) }
+                { orderBy(block.children, v => v.datetime).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} noActions isStudent/>) }
             </div>
         )
     }

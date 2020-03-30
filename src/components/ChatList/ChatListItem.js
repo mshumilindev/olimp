@@ -9,7 +9,7 @@ import Confirm from "../UI/Confirm/Confirm";
 import userContext from "../../context/userContext";
 moment.locale('uk');
 
-function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noActions}) {
+function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
     const { translate } = useContext(SiteSettingsContext);
     const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
     const { user } = useContext(userContext);
@@ -28,7 +28,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                 <div className="adminChats__event-info-row">
                     <div className="adminChats__event-info-dt">{ translate('organizer') }: </div>
                     <div className="adminChats__event-info-dd">
-                        <Link to={'/admin-users/' + getUser(event.organizer).login}>{ getUser(event.organizer).name }</Link>
+                        <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login}>{ getUser(event.organizer).name }</Link>
                     </div>
                 </div>
                 <div className="adminChats__event-info-row">
@@ -36,9 +36,9 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                     <div className="adminChats__event-info-dd">
                         {
                             typeof event.participants === 'object' ?
-                                event.participants.map(partItem => <Link to={'/admin-users/' + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
+                                event.participants.map(partItem => <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
                                 :
-                                <Link to={'/admin-users/' + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                                <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
                         }
                     </div>
                 </div>
