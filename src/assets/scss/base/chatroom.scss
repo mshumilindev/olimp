@@ -153,6 +153,22 @@
   &__info {
     @extend %-s-message;
   }
+  &__shareScreen:not(:empty) {
+    background: $white;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    ~ * {
+      display: none;
+    }
+    video {
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+    }
+  }
   &__btnsHolder {
     display: flex;
     justify-content: center;

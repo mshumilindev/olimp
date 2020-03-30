@@ -20,6 +20,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     const [ isChatPage, setIsChatPage ] = useState(false);
     const [ caller, setCaller ] = useState(null);
     const [ muteChat, setMuteChat ] = useState(false);
+    const [ shareScreen, setShareScreen ] = useState(false);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());
@@ -85,7 +86,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                 </div>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat}/>
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen}/>
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
@@ -127,6 +128,14 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                             <i className="fas fa-microphone"/>
                     }
                 </span>
+                {
+                    user.id === chat.organizer ?
+                        <TextTooltip position="top" text={translate('share_screen')} children={
+                            <span className={classNames('btn round', {btn_primary: !shareScreen, 'btn__success btn__working': shareScreen})} onClick={() => setShareScreen(!shareScreen)}><i className="fas fa-desktop"/></span>
+                        }/>
+                        :
+                        null
+                }
                 {
                     !isFullScreen && !isChatPage ?
                         <TextTooltip position="top" text={translate('change_size')} children={

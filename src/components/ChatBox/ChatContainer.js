@@ -2,12 +2,13 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
     const $chatroomUsersOrganizer = useRef(null);
     const $chatroomUsersParticipants = useRef(null);
+    const $shareScreenContainer = useRef(null);
     const { user } = useContext(userContext);
     let jitsi = new Jitsi();
 
@@ -17,7 +18,8 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 local: $localTracksContainer.current,
                 remote: $remoteTracksContainer.current,
                 organizer: $chatroomUsersOrganizer.current,
-                participants: $chatroomUsersParticipants.current
+                participants: $chatroomUsersParticipants.current,
+                shareScreen: $shareScreenContainer.current
             },
             user: user,
             roomName: chat.id,
@@ -35,6 +37,10 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     useEffect(() => {
         jitsi.toggleMute(muteChat);
     }, [muteChat]);
+
+    useEffect(() => {
+        jitsi.toggleScreenShare(shareScreen);
+    }, [shareScreen]);
 
     useEffect(() => {
         makeVideoMain();
@@ -55,6 +61,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 <div className="chatroom__users-participants" ref={$chatroomUsersParticipants} />
             </div>
             <div className="chatroom__chatContainer">
+                <div className="chatroom__shareScreen" ref={$shareScreenContainer}/>
                 <div className="chatroom__localTracks" ref={$localTracksContainer}/>
                 <div className="chatroom__remoteTracks" ref={$remoteTracksContainer}/>
             </div>

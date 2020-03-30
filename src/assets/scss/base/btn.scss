@@ -62,8 +62,45 @@
       height: 40px;
     }
   }
+  &__working {
+    position: relative;
+    &:before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      right: -4px;
+      bottom: -4px;
+      background: inherit;
+      z-index: -1;
+      border-radius: 100%;
+      opacity: .25;
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-top: 4px solid $successColor;
+      border-radius: 100%;
+      z-index: -1;
+      opacity: .5;
+      animation: workingBtn 1s linear infinite;
+      will-change: transform;
+    }
+  }
   @media screen and (max-width: $maxMobile) {
     min-width: 80px;
     font-size: 12px;
+  }
+}
+@keyframes workingBtn {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

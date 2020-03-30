@@ -3,6 +3,8 @@
 let localTracks = [];
 let room = null;
 let connection = null;
+let onShareScreen = null;
+let shareScreenTrack = null;
 
 class Jitsi {
     constructor() {
@@ -16,6 +18,7 @@ class Jitsi {
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
         this.toggleMute = this.toggleMute.bind(this);
+        this.toggleScreenShare = this.toggleScreenShare.bind(this);
     }
 
     start({containers, user, roomName, onDisplayNameChange}) {
@@ -34,9 +37,14 @@ class Jitsi {
             },
             "initOptions": {
                 "disableAudioLevels": true,
-                "desktopSharingChromeDisabled": true,
-                "desktopSharingFirefoxDisabled": true
+                "desktopSharingChromeSources": ['tab']
             }
+        };
+
+        onShareScreen = (tracks) => {
+            shareScreenTrack = tracks[0];
+            console.log(tracks, tracks[0]);
+            self.room.addTrack(tracks[0]);
         };
 
         function onLocalTracks(tracks) {
@@ -47,8 +55,8 @@ class Jitsi {
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('local track muted'));
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('local track stoped'));
                 if ( self.localTracks[i].getType() === 'video' ) {
-                    $(containers.local).append(`<video autoplay='1' muted playsinline id='localVideo${i}' />`);
-                    self.localTracks[i].attach(containers.local.querySelector(`#localVideo` + i));
+                    $(containers.remote).append(`<video autoplay='1' muted="true" playsinline id='localVideo${i}' />`);
+                    self.localTracks[i].attach(containers.remote.querySelector(`#localVideo` + i));
                 }
                 if ( self.isJoined ) {
                     self.room.addTrack(self.localTracks[i]);
@@ -75,17 +83,26 @@ class Jitsi {
             }
             track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('remote track muted'));
             track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('remote track stoped'));
-            const id = track.getType() + participant;
+            const id = track.videoType === 'desktop' ? 'shareScreen' + participant : track.getType() + participant;
 
-            if (track.getType() === 'video') {
-                if ( !document.getElementById('video' + participant) ) {
-                    $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
-                }
-            } else {
-                if ( !document.getElementById('audio' + participant) ) {
-                    $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+            console.log(track);
+            if ( track.videoType === 'desktop' ) {
+                if ( !document.getElementById('shareScreen' + participant) ) {
+                    $(containers.shareScreen).append(`<video autoplay='1' muted="true" playsinline="true" id='shareScreen${participant}' />`);
                 }
             }
+            else {
+                if (track.getType() === 'video') {
+                    if ( !document.getElementById('video' + participant) ) {
+                        $(containers.remote).append(`<video autoplay='1' muted="true" playsinline="true" id='video${participant}' />`);
+                    }
+                } else {
+                    if ( !document.getElementById('audio' + participant) ) {
+                        $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+                    }
+                }
+            }
+            console.log(document.getElementById(id));
             track.attach(document.getElementById(id));
         }
 
@@ -123,7 +140,7 @@ class Jitsi {
         function onConnectionSuccess() {
             room = self.room = self.connection.initJitsiConference(('olimp_school_remote' + roomName).toLowerCase(), chatConfig.confOptions);
             self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
-            self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => console.log(`track removed!!!${track}`));
+            self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
             self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
                 // self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
@@ -145,13 +162,18 @@ class Jitsi {
                 const userDiv = document.querySelector('#user' + id);
                 const newText = JSON.parse(text);
 
-                if ( userDiv ) {
-                    userDiv.querySelector('.chatroom__user-avatar').style.backgroundImage = 'url(' + newText.avatar + ')';
-                    userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name;
-                    userDiv.classList.remove('empty');
-                    userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name.split(' ').join('<br/>');
+                if ( newText.event ) {
+                    $(containers.shareScreen).empty();
                 }
-                onDisplayNameChange(id, newText.name);
+                else {
+                    if ( userDiv ) {
+                        userDiv.querySelector('.chatroom__user-avatar').style.backgroundImage = 'url(' + newText.avatar + ')';
+                        userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name;
+                        userDiv.classList.remove('empty');
+                        userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name.split(' ').join('<br/>');
+                    }
+                    onDisplayNameChange(id, newText.name);
+                }
             });
             self.room.join();
         }
@@ -231,6 +253,22 @@ class Jitsi {
             }
             else {
                 audio.unmute();
+            }
+        }
+    }
+
+    toggleScreenShare(value) {
+        if ( value ) {
+            JitsiMeetJS.createLocalTracks({devices: ['desktop'], resolution: 480})
+                .then(onShareScreen)
+                .catch(error => {
+                    throw error;
+                });
+        }
+        else {
+            if ( shareScreenTrack ) {
+                shareScreenTrack.dispose();
+                room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
             }
         }
     }
