@@ -59,7 +59,7 @@ class Jitsi {
 
             const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
 
-            containers.organizer.appendChild(userDiv);
+            containers.participants.appendChild(userDiv);
             userDiv.innerHTML = userInner;
             onDisplayNameChange(null, user.name);
         }
