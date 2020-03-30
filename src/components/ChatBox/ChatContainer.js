@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
@@ -39,7 +39,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     }, [muteChat]);
 
     useEffect(() => {
-        jitsi.toggleScreenShare(shareScreen);
+        jitsi.toggleScreenShare(shareScreen, setShareScreen);
     }, [shareScreen]);
 
     useEffect(() => {

@@ -86,7 +86,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                 </div>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen}/>
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen}/>
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>

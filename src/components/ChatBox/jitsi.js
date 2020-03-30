@@ -43,7 +43,6 @@ class Jitsi {
 
         onShareScreen = (tracks) => {
             shareScreenTrack = tracks[0];
-            console.log(tracks, tracks[0]);
             self.room.addTrack(tracks[0]);
         };
 
@@ -240,6 +239,9 @@ class Jitsi {
         for (let i = 0; i < localTracks.length; i++) {
             localTracks[i].dispose();
         }
+        if ( shareScreenTrack ) {
+            shareScreenTrack.dispose();
+        }
         room.leave();
         connection.disconnect();
     }
@@ -257,12 +259,12 @@ class Jitsi {
         }
     }
 
-    toggleScreenShare(value) {
+    toggleScreenShare(value, setShareScreen) {
         if ( value ) {
             JitsiMeetJS.createLocalTracks({devices: ['desktop'], resolution: 480})
                 .then(onShareScreen)
                 .catch(error => {
-                    throw error;
+                    setShareScreen(false);
                 });
         }
         else {
