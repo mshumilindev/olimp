@@ -44,6 +44,11 @@
     max-width: 800px;
     margin: 0 auto;
   }
+  &__localTracks {
+    video {
+      display: none;
+    }
+  }
   &__box {
     position: relative;
     [class$="_chatContainer"] {
@@ -76,48 +81,6 @@
       [class$="__user-avatar-holder"] {
         background-color: $greyColor;
       }
-    }
-    &.isOrganizer {
-      .chatroom__holder:not(.isFullscreen) {
-        [class$="__remoteTracks"] {
-          left: 0;
-          video {
-            height: 85.5px;
-          }
-        }
-      }
-      .isFullscreen {
-        [class$="__remoteTracks"] {
-          display: flex;
-          align-items: flex-start;
-          video {
-            width: 33.33333% !important;
-            height: auto !important;
-          }
-        }
-      }
-    }
-  }
-  &__remoteTracks {
-    video:not(.main-video) {
-      display: none;
-    }
-    video.main-video {
-      @extend %-s-main-video;
-    }
-    audio {
-      position: fixed;
-      left: -9999px;
-      top: -9999px;
-    }
-  }
-  &__localTracks {
-    video:not(.main-video) {
-      display: none;
-    }
-    video.main-video {
-      max-height: 450px;
-      @extend %-s-main-video;
     }
   }
   &__users {
@@ -215,11 +178,6 @@
     &.isFullscreen {
       max-width: 100%;
       height: 100%;
-      [class$="__localTracks"] {
-        video.main-video {
-          max-height: 100%;
-        }
-      }
       .textTooltip__text {
         color: $white;
       }
@@ -248,11 +206,7 @@
         height: 120px;
       }
       [class$="__remoteTracks"] {
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        display: block;
+        left: 80px;
       }
     }
   }
@@ -286,27 +240,6 @@
       max-width: 800px;
       overflow: hidden;
     }
-    &__remoteTracks {
-      display: flex;
-      flex-wrap: wrap;
-      overflow: auto;
-      transition: all .15s ease-in-out;
-      background: $white;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
-      video:not(.main-video) {
-        width: 150px;
-        height: 150px;
-        display: block;
-      }
-    }
-    &:not(.isOrganizer),
-    &__box:not(.isOrganizer) {
-      [class$="__remoteTracks"] {
-        position: static;
-      }
-    }
   }
 }
 .student {
@@ -315,32 +248,20 @@
       display: none !important;
     }
     &__remoteTracks {
-      left: 0;
-      background: $baseColor;
-    }
-  }
-}
-.fixed {
-  .textTooltip__text {
-    color: $white;
-  }
-  .chatroom {
-    &__users {
-      display: none;
-    }
-    &.isOrganizer {
-      [class$="__remoteTracks"] {
+      position: absolute;
+      left: 0 !important;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      video:not(.main-video) {
         display: none;
       }
-    }
-    &__allow {
-      color: $white;
-    }
-  }
-  .isFullscreen {
-    .chatroom {
-      &__users {
-        display: flex;
+      video.main-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 50%;
       }
     }
   }
@@ -352,38 +273,55 @@
     }
     &__box {
       margin-top: 85px;
-      &:not(.isOrganizer) {
-        [class$="__remoteTracks"] {
-          left: 0;
-          background: $baseColor;
-        }
-      }
-      &.isOrganizer {
-        [class$="__localTracks"] {
-          display: none;
-        }
-        [class$="__remoteTracks"] {
-          position: absolute;
-          left: 80px;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          justify-content: flex-start;
-          video {
-            width: 33.33333%;
-            object-fit: cover;
-            object-position: 50% 50%;
-          }
-        }
-      }
     }
     &__message-holder {
       margin-top: 85px;
     }
+    &__remoteTracks {
+      position: absolute;
+      left: 80px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: $white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      overflow: auto;
+      video {
+        width: 33.33333%;
+        object-fit: cover;
+        object-position: 50% 50%;
+      }
+    }
+  }
+}
+.fixed {
+  .textTooltip__text {
+    color: $white;
+  }
+  .chatroom {
+    &__users {
+      display: none;
+    }
+    &__allow {
+      color: $white;
+    }
+    &__remoteTracks {
+      left: 0;
+    }
+  }
+  .isFullscreen {
+    .chatroom {
+      &__users {
+        display: flex;
+      }
+    }
   }
 }
 .isHidden {
-  width: 160px !important;
+  width: 180px !important;
   padding: 10px !important;
   .chatroom {
     &__btnsHolder {
@@ -402,14 +340,14 @@
     &__allow {
       display: none;
     }
-  }
-  &.isOrganizer {
-    width: 200px !important;
-    [class$="__remoteTracks"] {
+    &__remoteTracks {
       video {
-        width: 161px !important;
-        height: 101.25px !important;
+        width: 100%;
+        height: 79px;
       }
     }
+  }
+  &.isOrganizer {
+    width: 220px !important;
   }
 }

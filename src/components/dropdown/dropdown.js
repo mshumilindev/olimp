@@ -10,12 +10,6 @@ export default class Dropdown extends React.Component {
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
         this.checkIfCanHide = this.checkIfCanHide.bind(this);
-
-        document.addEventListener('click', this.checkIfCanHide);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('click', this.checkIfCanHide);
     }
 
     render() {
@@ -43,7 +37,7 @@ export default class Dropdown extends React.Component {
     }
 
     toggleDropdown(action) {
-        this.setState((state) => {
+        this.setState(state => {
             return {
                 isHidden: action === 'hide' ? true : !state.isHidden
             }
