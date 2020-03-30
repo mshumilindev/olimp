@@ -36,8 +36,7 @@ class Jitsi {
                 "openBridgeChannel": true
             },
             "initOptions": {
-                "disableAudioLevels": true,
-                "desktopSharingChromeSources": ['tab']
+                "disableAudioLevels": true
             }
         };
 
@@ -54,7 +53,7 @@ class Jitsi {
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('local track muted'));
                 self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('local track stoped'));
                 if ( self.localTracks[i].getType() === 'video' ) {
-                    $(containers.remote).append(`<video autoplay='1' muted="true" playsinline id='localVideo${i}' />`);
+                    $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo${i}' />`);
                     self.localTracks[i].attach(containers.remote.querySelector(`#localVideo` + i));
                 }
                 if ( self.isJoined ) {
@@ -82,18 +81,26 @@ class Jitsi {
             }
             track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('remote track muted'));
             track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('remote track stoped'));
-            const id = track.videoType === 'desktop' ? 'shareScreen' + participant : track.getType() + participant;
+            let id = null;
+
+            if ( track.videoType === 'desktop') {
+                id = 'shareScreen' + participant;
+            }
+            else {
+                id = track.getType() + participant
+            }
 
             console.log(track);
+
             if ( track.videoType === 'desktop' ) {
                 if ( !document.getElementById('shareScreen' + participant) ) {
-                    $(containers.shareScreen).append(`<video autoplay='1' muted="true" playsinline="true" id='shareScreen${participant}' />`);
+                    $(containers.shareScreen).append(`<video autoplay='1' muted playsinline id='shareScreen${participant}' />`);
                 }
             }
             else {
                 if (track.getType() === 'video') {
                     if ( !document.getElementById('video' + participant) ) {
-                        $(containers.remote).append(`<video autoplay='1' muted="true" playsinline="true" id='video${participant}' />`);
+                        $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
                     }
                 } else {
                     if ( !document.getElementById('audio' + participant) ) {
@@ -101,7 +108,6 @@ class Jitsi {
                     }
                 }
             }
-            console.log(document.getElementById(id));
             track.attach(document.getElementById(id));
         }
 
@@ -137,7 +143,7 @@ class Jitsi {
         }
 
         function onConnectionSuccess() {
-            room = self.room = self.connection.initJitsiConference(('olimp_school_remote' + roomName).toLowerCase(), chatConfig.confOptions);
+            room = self.room = self.connection.initJitsiConference(('olimp_remote_school' + roomName).toLowerCase(), chatConfig.confOptions);
             self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
@@ -202,15 +208,16 @@ class Jitsi {
 
         navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
+
+        let i = 0;
         navigator.getMedia({audio: {volume: 1}}, () => {
-            navigator.getMedia({video: {
-                    width: { ideal: 480 },
-                    height: { ideal: 480 }
-                }}, () => {
+            navigator.getMedia({video: true}, () => {
                 JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
                     .then(onLocalTracks)
                     .catch(error => {
-                        throw error;
+                        JitsiMeetJS.enumerateDevices(devices => {
+                            goThroughVideoDevices(devices, devices.length);
+                        });
                     });
             }, () => {
                 JitsiMeetJS.createLocalTracks({devices: ['audio']})
@@ -220,19 +227,37 @@ class Jitsi {
                     });
             });
         }, () => {
-            navigator.getMedia({video: {
-                    width: { ideal: 480 },
-                    height: { ideal: 480 }
-                }}, () => {
+            navigator.getMedia({video: true}, () => {
                 JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
                     .then(onLocalTracks)
                     .catch(error => {
-                        throw error;
+                        JitsiMeetJS.enumerateDevices(devices => {
+                            goThroughVideoDevices(devices, devices.length);
+                        });
                     });
             }, () => {
                 // === Throw error, no devices available
             });
         });
+
+        function goThroughVideoDevices(devices, length) {
+            if ( devices[i].kind === 'videoinput' ) {
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId : devices[i].deviceId, resolution: 480})
+                    .then(onLocalTracks)
+                    .catch(error => {
+                        i ++;
+                        if ( i < length - 1 ) {
+                            goThroughVideoDevices(devices, length);
+                        }
+                    });
+            }
+            else {
+                i ++;
+                if ( i < length - 1 ) {
+                    goThroughVideoDevices(devices, length);
+                }
+            }
+        }
     }
 
     stop() {
