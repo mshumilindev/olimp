@@ -337,9 +337,10 @@
   padding: 10px !important;
   .chatroom {
     &__btnsHolder {
+      padding-top: 10px !important;
       .textTooltip {
         &__text {
-          font-size: 11px;
+          display: none;
         }
       }
       .btn {
@@ -360,6 +361,19 @@
     }
   }
   &.isOrganizer {
-    width: 220px !important;
+    width: 250px !important;
+  }
+  .btn__working {
+    color: $successColor;
+    position: static;
+    &:before,
+    &:after {
+      display: none;
+    }
+    &:hover {
+      i {
+        color: $successColor;
+      }
+    }
   }
 }

@@ -4,10 +4,7 @@
   position: relative;
   z-index: 1;
   &__trigger {
-    position: relative;
-    z-index: 1;
     &:hover {
-      z-index: 1;
       + .textTooltip__text {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
