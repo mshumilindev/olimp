@@ -119,4 +119,15 @@
     margin-top: 10px;
     color: $mediumGreyColor;
   }
+  .textbookModal {
+    [class$="__box"] {
+      max-width: 90%;
+    }
+    [class$="__box-inner"] {
+      height: calc(100vh - 120px);
+    }
+    object {
+      height: calc(100% - 40px) !important;
+    }
+  }
 }

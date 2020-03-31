@@ -187,7 +187,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'libraryPicker':
                 return (
                     <div className="form__field-holder">
-                        <LibraryPicker selectedList={field.value ? [field.value] : []} placeholder={field.placeholder} addBooks={(type, list) => handleFieldChange(field.id, list[0])} />
+                        <LibraryPicker selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} placeholder={field.placeholder} addBooks={(type, list) => handleFieldChange(field.id, list)} multiple={field.multiple} />
                     </div>
                 );
 

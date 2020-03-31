@@ -57,6 +57,7 @@ function UpdateCourse({history, params, subjectID, course, loading, setShowUpdat
         newCourse.textbook = newCourseFields.find(item => item.id === 'textbook_block').children.find(item => item.id === 'textbook').value;
 
         updateCourse(subjectID, newCourse);
+        toggleModal();
     }
 
     function toggleModal() {

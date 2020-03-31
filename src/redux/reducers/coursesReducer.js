@@ -9,7 +9,11 @@ import {
     MODULES_LESSONS_SUCCESS,
     DISCARD_SUCCESS,
     LESSONS_BEGIN,
-    LESSONS_SUCCESS
+    LESSONS_SUCCESS,
+    COURSES_LIST_BEGIN,
+    COURSES_LIST_SUCCESS,
+    MODULES_BEGIN,
+    MODULES_SUCCESS
 } from '../actions/coursesActions';
 
 const initialState = {
@@ -18,7 +22,9 @@ const initialState = {
     modulesLessons: null,
     lesson: null,
     loading: false,
-    lessonsList: null
+    subjectCoursesList: null,
+    lessonsList: null,
+    modulesList: null
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -50,23 +56,23 @@ export default function usersReducer(state = initialState, action) {
             });
 
         case ALL_COURSES_BEGIN:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: true
-            };
+            });
 
         case ALL_COURSES_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 coursesList: action.payload.allCoursesList
-            };
+            });
 
         case LESSON_BEGIN:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: true
-            };
+            });
 
         case LESSON_SUCCESS:
             return Object.assign({}, {
@@ -82,17 +88,43 @@ export default function usersReducer(state = initialState, action) {
             });
 
         case MODULES_LESSONS_BEGIN:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: true
-            };
+            });
 
         case MODULES_LESSONS_SUCCESS:
-            return {
+            return Object.assign({},{
                 ...state,
                 loading: false,
                 modulesLessons: action.payload.modulesLessons
-            };
+            });
+
+        case COURSES_LIST_BEGIN:
+            return Object.assign({},{
+                ...state,
+                loading: true
+            });
+
+        case COURSES_LIST_SUCCESS:
+            return Object.assign({},{
+                ...state,
+                loading: false,
+                subjectCoursesList: action.payload.subjectCoursesList
+            });
+
+        case MODULES_BEGIN:
+            return Object.assign({},{
+                ...state,
+                loading: true
+            });
+
+        case MODULES_SUCCESS:
+            return Object.assign({},{
+                ...state,
+                loading: false,
+                modulesList: action.payload.modulesList
+            });
 
         default:
             return state;

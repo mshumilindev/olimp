@@ -134,20 +134,31 @@ export function fetchModulesLessons(subjectID, courseID) {
     }
 }
 
-export function fetchCoursesList(subjectID) {
-    const courseListRef = db.collection('courses').doc(subjectID).collection('coursesList');
+export function fetchCoursesList(subjectID, userID) {
+    let courseListRef = null;
+    let unsubscribe = null;
+
+    if ( userID ) {
+        courseListRef = db.collection('courses').doc(subjectID).collection('coursesList').where('teacher', '==', userID);
+    }
+    else {
+        courseListRef = db.collection('courses').doc(subjectID).collection('coursesList');
+    }
 
     return dispatch => {
-        dispatch(coursesBegin());
-        return courseListRef.get().then((snapshot) => {
-            subjectsList.find(item => item.id === subjectID).coursesList = [];
+        dispatch(coursesListBegin());
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = courseListRef.onSnapshot(snapshot => {
+            const modulesList = [];
             snapshot.docs.forEach(doc => {
-                subjectsList.find(item => item.id === subjectID).coursesList.push({
+                modulesList.push({
                     ...doc.data(),
                     id: doc.id
                 });
             });
-            dispatch(coursesSuccess(subjectsList));
+            dispatch(coursesListSuccess(modulesList));
         });
     };
 }
@@ -156,16 +167,16 @@ export function fetchModules(subjectID, courseID) {
     const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
 
     return dispatch => {
-        dispatch(coursesBegin());
-        return modulesRef.get().then((snapshot) => {
-            subjectsList.find(item => item.id === subjectID).coursesList.find(item => item.id === courseID).modules = [];
+        dispatch(modulesBegin());
+        return modulesRef.onSnapshot(snapshot => {
+            const modulesList = [];
             snapshot.docs.forEach(doc => {
-                subjectsList.find(item => item.id === subjectID).coursesList.find(item => item.id === courseID).modules.push({
+                modulesList.push({
                     ...doc.data(),
                     id: doc.id
                 });
             });
-            dispatch(coursesSuccess(subjectsList));
+            dispatch(modulesSuccess(modulesList));
         });
     };
 }
@@ -254,42 +265,10 @@ export function deleteSubject(subjectID) {
 
 export function updateCourse(subjectID, course) {
     const courseRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id);
-    const courseID = course.id;
-
-    delete course.id;
 
     return dispatch => {
-        dispatch(coursesBegin());
         return courseRef.set({
             ...course
-        }).then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            let foundCourse = null;
-
-            if ( foundSubject.coursesList ) {
-                foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
-            }
-
-            if ( foundCourse ) {
-                foundSubject.coursesList.splice(foundSubject.coursesList.indexOf(foundCourse), 1);
-            }
-
-            if ( foundSubject.coursesList ) {
-                foundSubject.coursesList.push({
-                    ...course,
-                    id: courseID
-                });
-            }
-
-            dispatch(coursesSuccess(subjectsList.sort((a, b) => {
-                if ( a.id < b.id ) {
-                    return -1;
-                }
-                else if ( a.id > b.id ) {
-                    return 1;
-                }
-                return 0;
-            })));
         });
     };
 }
@@ -309,35 +288,11 @@ export function deleteCourse(subjectID, courseID) {
 
 export function updateModule(subjectID, courseID, module) {
     const moduleRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id);
-    const moduleID = module.id;
-
-    delete module.id;
 
     return dispatch => {
         dispatch(coursesBegin());
         return moduleRef.set({
             ...module
-        }).then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
-            let foundModule = null;
-
-            if ( foundCourse.modules ) {
-                foundModule = foundCourse.modules.find(item => item.id === moduleID);
-            }
-
-            if ( foundModule ) {
-                foundCourse.modules.splice(foundCourse.modules.indexOf(foundModule), 1);
-            }
-
-            if ( foundCourse.modules ) {
-                foundCourse.modules.push({
-                    ...module,
-                    id: moduleID
-                });
-            }
-
-            dispatch(coursesSuccess(subjectsList));
         });
     };
 }
@@ -618,6 +573,30 @@ export const coursesSuccess = subjectsList => {
     }
 };
 
+export const coursesListBegin = () => {
+    return {
+        type: COURSES_LIST_BEGIN
+    }
+};
+export const coursesListSuccess = subjectCoursesList => {
+    return {
+        type: COURSES_LIST_SUCCESS,
+        payload: { subjectCoursesList }
+    }
+};
+
+export const modulesBegin = () => {
+    return {
+        type: MODULES_BEGIN
+    }
+};
+export const modulesSuccess = modulesList => {
+    return {
+        type: MODULES_SUCCESS,
+        payload: { modulesList }
+    }
+};
+
 export const lessonsBegin = () => {
     return {
         type: LESSONS_BEGIN
@@ -677,3 +656,7 @@ export const MODULES_LESSONS_BEGIN = 'MODULES_LESSONS_BEGIN';
 export const MODULES_LESSONS_SUCCESS = 'MODULES_LESSONS_SUCCESS';
 export const LESSONS_BEGIN = 'LESSONS_BEGIN';
 export const LESSONS_SUCCESS = 'LESSONS_SUCCESS';
+export const COURSES_LIST_BEGIN = 'COURSES_LIST_BEGIN';
+export const COURSES_LIST_SUCCESS = 'COURSES_LIST_SUCCESS';
+export const MODULES_BEGIN = 'MODULES_BEGIN';
+export const MODULES_SUCCESS = 'MODULES_SUCCESS';

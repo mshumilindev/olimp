@@ -129,29 +129,32 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
         const user = usersList.find(item => item.id === userID);
 
         return (
-            <div className={classNames('userPicker__list-item selectedUserItem ' + type, { multiple: multiple && selectedList.length > 1 })} key={userID}>
-                <div className="userPicker__list-item-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
+            user ?
+                <div className={classNames('userPicker__list-item selectedUserItem ' + type, { multiple: multiple && selectedList.length > 1 })} key={userID}>
+                    <div className="userPicker__list-item-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
+                        {
+                            !user.avatar ?
+                                <div className="userPicker__list-item-avatar-placeholder">
+                                    <i className="fa fa-user"/>
+                                </div>
+                                :
+                                null
+                        }
+                    </div>
+                    <div className="userPicker__list-item-name">
+                        <Link to={'/admin-users/' + user.login}>{ user.name }</Link>
+                    </div>
                     {
-                        !user.avatar ?
-                            <div className="userPicker__list-item-avatar-placeholder">
-                                <i className="fa fa-user"/>
-                            </div>
+                        !noneditable ?
+                            <span className="userPicker__list-item-remove" onClick={() => quickRemoveUser(userID)}>
+                            <i className="fa fa-trash-alt"/>
+                        </span>
                             :
                             null
                     }
                 </div>
-                <div className="userPicker__list-item-name">
-                    <Link to={'/admin-users/' + user.login}>{ user.name }</Link>
-                </div>
-                {
-                    !noneditable ?
-                        <span className="userPicker__list-item-remove" onClick={() => quickRemoveUser(userID)}>
-                            <i className="fa fa-trash-alt"/>
-                        </span>
-                        :
-                        null
-                }
-            </div>
+                :
+                null
         )
     }
 

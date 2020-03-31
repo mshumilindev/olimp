@@ -90,8 +90,6 @@ class Jitsi {
                 id = track.getType() + participant
             }
 
-            console.log(track);
-
             if ( track.videoType === 'desktop' ) {
                 if ( !document.getElementById('shareScreen' + participant) ) {
                     $(containers.shareScreen).append(`<video autoplay='1' muted playsinline id='shareScreen${participant}' />`);

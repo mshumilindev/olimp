@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './studentLesson.scss';
-import {fetchLesson} from "../../redux/actions/coursesActions";
+import {fetchLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -9,12 +9,19 @@ import userContext from "../../context/userContext";
 import {updateUser} from "../../redux/actions/usersActions";
 import { Link } from 'react-router-dom';
 
-function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updateUser, userLoading, usersList}) {
+function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updateUser, userLoading, usersList, discardLesson}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
     const [ startQuestions, setStartQuestions ] = useState(false);
     const [ currentUser, setCurrentUser ] = useState(null);
+
+    useEffect(() => {
+        return () => {
+            setCurrentCourse(null);
+            discardLesson();
+        }
+    }, []);
 
     useEffect(() => {
         if ( allCoursesList ) {
@@ -193,7 +200,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),
-    updateUser: (id, data) => dispatch(updateUser(id, data))
+    updateUser: (id, data) => dispatch(updateUser(id, data)),
+    discardLesson: () => dispatch(discardLesson())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudentCourseLesson);

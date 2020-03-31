@@ -7,13 +7,15 @@ import {
     DOWNLOAD_DOC_BEGIN,
     DOWNLOAD_DOC_SUCCESS,
     FETCH_TEXTBOOK_BEGIN,
-    FETCH_TEXTBOOK_SUCCESS
+    FETCH_TEXTBOOK_SUCCESS,
+    DISCARD_DOC_SUCCESS,
 } from '../actions/libraryActions';
 
 const initialState = {
     libraryList: [],
     textbook: null,
-    loading: false
+    loading: false,
+    downloadedTextbook: null
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -56,10 +58,11 @@ export default function usersReducer(state = initialState, action) {
             };
 
         case DOWNLOAD_DOC_SUCCESS:
-            return {
+            return Object.assign({
                 ...state,
-                loading: false
-            };
+                loading: false,
+                downloadedTextbook: action.payload.downloadedTextbook
+            });
 
         case FETCH_TEXTBOOK_BEGIN:
             return {
@@ -73,6 +76,13 @@ export default function usersReducer(state = initialState, action) {
                 loading: false,
                 textbook: action.payload.textbook
             };
+
+        case DISCARD_DOC_SUCCESS:
+            return Object.assign({}, {
+                ...state,
+                loading: false,
+                downloadedTextbook: null
+            });
 
         default:
             return state;

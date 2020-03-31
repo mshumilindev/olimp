@@ -9,11 +9,13 @@ import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
 import userContext from "../../../context/userContext";
 import { orderBy } from 'natural-orderby';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
 
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 
-function AdminCoursesSubject({loading, subject, params, fetchCoursesList, deleteSubject}) {
+function AdminCoursesSubject({loading, subject, params, fetchCoursesList, deleteSubject, location, subjectCoursesList}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ showUpdateSubject, setShowUpdateSubject ] = useState(false);
@@ -46,10 +48,15 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     ];
 
     useEffect(() => {
-        if ( checkIfIsOpen() && !subject.coursesList ) {
-            fetchCoursesList(subject.id);
+        if ( checkIfIsOpen() ) {
+            if ( user.role === 'teacher' ) {
+                fetchCoursesList(subject.id, user.id);
+            }
+            else {
+                fetchCoursesList(subject.id);
+            }
         }
-    }, []);
+    }, [location]);
 
     return (
         <div id={subject.id} className={classNames('adminCourses__list-item', {someOpen: params && params.subjectID !== subject.id, isOpen: params && !params.courseID && params.subjectID === subject.id})}>
@@ -71,7 +78,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
                 params && params.subjectID === subject.id ?
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
-                            subject.coursesList && subject.coursesList.length ?
+                            subjectCoursesList && subjectCoursesList.length ?
                                 sortCoursesList().map(item => <AdminCoursesCourse subjectID={subject.id} course={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
@@ -119,12 +126,18 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
     }
 
     function sortCoursesList() {
-        return orderBy(subject.coursesList.filter(item => user.role === 'teacher' ? item.teacher === user.id : true), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
+        return orderBy(subjectCoursesList, [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        subjectCoursesList: state.coursesReducer.subjectCoursesList
+    }
+};
+
 const mapDispatchToProps = dispatch => ({
-    fetchCoursesList: (subjectID) => dispatch(fetchCoursesList(subjectID)),
-    deleteSubject: (subjectID) => dispatch(deleteSubject(subjectID))
+    fetchCoursesList: (subjectID, userID) => dispatch(fetchCoursesList(subjectID, userID)),
+    deleteSubject: (subjectID) => dispatch(deleteSubject(subjectID)),
 });
-export default connect(null, mapDispatchToProps)(AdminCoursesSubject);
+export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(AdminCoursesSubject);

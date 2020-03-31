@@ -8,14 +8,14 @@ import classNames from "classnames";
 import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
 import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
-import userContext from "../../../context/userContext";
+import {compose} from "redux";
+import { withRouter } from 'react-router-dom';
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList}) {
+function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
     const { lang, translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -45,20 +45,11 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
         }
     ];
 
-    const contextLinksTeacher = [
-        {
-            name: translate('create_module'),
-            icon: 'fa fa-plus',
-            action: handleCreateModule,
-            id: 0
-        }
-    ];
-
     useEffect(() => {
-        if ( checkIfIsOpen() && !course.modules ) {
+        if ( checkIfIsOpen() ) {
             fetchModules(params.subjectID, course.id);
         }
-    }, []);
+    }, [location]);
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
@@ -102,40 +93,41 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
                     null
             }
             {
-                checkIfIsOpen() ?
-                    course.textbook && libraryList.find(item => item.id === course.textbook) ?
-                        <div className="adminCourses__list-item-textbook">
-                            <i className="fa fa-bookmark" style={{marginRight: 16}} />
-                            <span className="adminCourses__list-item-textbook-label">
-                                {
-                                    translate('textbook')
-                                }
-                            </span>
+                checkIfIsOpen() && course.textbook ?
+                    <div className="adminCourses__list-item-textbook">
+                        <i className="fa fa-bookmark" style={{marginRight: 16}} />
+                        <span className="adminCourses__list-item-textbook-label">
                             {
-                                libraryList.length ?
-                                    libraryList.find(item => item.id === course.textbook).name
-                                    :
-                                    null
+                                translate('textbooks')
                             }
-                        </div>
-                        :
-                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10, marginLeft: 28}}>
-                            <i className="content_title-icon fa fa-bookmark" />
-                            { translate('no_textbook') }
-                        </div>
+                        </span>
+                        {
+                            libraryList.length ?
+                                <span className="adminCourses__list-item-textbooks">
+                                    {
+                                        typeof course.textbook === 'object' ?
+                                            course.textbook.map(textbookItem => _renderTextbook(textbookItem))
+                                            :
+                                            _renderTextbook(course.textbook)
+                                    }
+                                </span>
+                                :
+                                null
+                        }
+                    </div>
                     :
                     null
             }
             {
                 params && params.courseID === course.id ?
-                    <div className="adminCourses__list-courses" style={{marginTop: -10, marginBottom: 20}}>
-                        <div className="adminCourses__list-item" style={{marginTop: 10, paddingLeft: 0}}>
+                    <div className="adminCourses__list-courses" style={{marginBottom: 20}}>
+                        <div className="adminCourses__list-item" style={{paddingLeft: 0}}>
                             <div className="adminCourses__list-courses-link" style={{paddingLeft: 0}}>
                                 { translate('modules') }
                             </div>
                         </div>
                         {
-                            course.modules && course.modules.length ?
+                            modulesList && modulesList.length ?
                                 sortModules().map(item => <AdminCoursesModule subjectID={subjectID} courseID={course.id} module={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
@@ -168,6 +160,18 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
         </div>
     );
 
+    function _renderTextbook(textbook) {
+        const foundTextbook = libraryList.find(item => item.id === textbook);
+
+        return (
+            <span className="adminCourses__list-item-textbook-name" key={textbook}>
+                <Link to={'/admin-library/?item=' + foundTextbook.id}>
+                    { foundTextbook.name }
+                </Link>
+            </span>
+        )
+    }
+
     function getUser(user) {
         return usersList.find(item => item.id === user);
     }
@@ -189,7 +193,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
     }
 
     function sortModules() {
-        return course.modules.sort((a, b) => {
+        return modulesList.sort((a, b) => {
             if ( a.index < b.index ) {
                 return -1;
             }
@@ -203,10 +207,11 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
     libraryList: state.libraryReducer.libraryList,
+    modulesList: state.coursesReducer.modulesList
 });
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: dispatch(fetchLibrary()),
     fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
     deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(AdminCoursesCourse);
+export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(AdminCoursesCourse);

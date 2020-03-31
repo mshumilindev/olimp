@@ -4,20 +4,26 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import classNames from 'classnames';
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
+import userContext from "../../../context/userContext";
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
 function LibraryPicker({multiple, libraryList, addBooks, selectedList, placeholder}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
-    const [ initialSelectedBooks, setInitialSelectedBooks ] = useState(JSON.stringify(selectedList));
-    const [ selectedBooks, setSelectedBooks ] = useState(JSON.stringify(selectedList));
+    const [ selectedBooks, setSelectedBooks ] = useState(selectedList);
+    const { user } = useContext(userContext);
 
     useEffect(() => {
-        if ( showLibraryListModal && JSON.stringify(selectedList) !== initialSelectedBooks ) {
-            handleHideModal();
+        return () => {
+            setShowLibraryListModal(false);
         }
-    });
+    }, []);
+
+    useEffect(() => {
+        console.log(selectedList);
+        setSelectedBooks(Object.assign([], selectedList));
+    }, [selectedList]);
 
     return (
         <div className="libraryPicker">
@@ -66,11 +72,11 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
             </div>
             {
                 showLibraryListModal ?
-                    <Modal onHideModal={handleHideModal} heading={translate('new') + ' ' + translate('textbook')}>
+                    <Modal onHideModal={() => setShowLibraryListModal(false)} heading={translate('new') + ' ' + translate('textbook')}>
                         <div className="libraryPicker__list">
                             {
-                                libraryList && libraryList.length ?
-                                    libraryList.map(item => _renderLibraryItem(item))
+                                libraryList && libraryList.filter(item => item.teacher === user.id).length ?
+                                    libraryList.filter(item => item.teacher === user.id).map(item => _renderLibraryItem(item))
                                     :
                                     <div className="nothingFound">
                                         { translate('nothing_found') }
@@ -78,7 +84,7 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                             }
                         </div>
                         {
-                            libraryList.length ?
+                            libraryList.filter(item => item.teacher === user.id).length ?
                                 <div className="libraryPicker__list-btn">
                                     <a href="/" className="btn btn_primary" onClick={e => onAddBooks(e)}>
                                         {
@@ -118,7 +124,7 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                     <i className="content_title-icon fa fa-bookmark" />
                     { book.name }
                 </div>
-                <span className="libraryPicker__list-item-remove" onClick={quickRemoveBook}>
+                <span className="libraryPicker__list-item-remove" onClick={() => quickRemoveBook(book.id)}>
                     <i className="fa fa-trash-alt"/>
                 </span>
             </div>
@@ -126,7 +132,7 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
     }
 
     function _renderLibraryItem(book) {
-        const booksList = JSON.parse(selectedBooks);
+        const booksList = selectedBooks;
 
         return (
             <div className={classNames('userPicker__list-item', {selected: booksList.some(item => item === book.id)})} onClick={() => chooseBook(book.id)} key={book.id}>
@@ -149,28 +155,39 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
         )
     }
 
-    function quickRemoveBook() {
-        addBooks('textbook', ['']);
+    function quickRemoveBook(bookID) {
+        let booksList = selectedBooks;
+
+        if ( booksList.length > 1 ) {
+            addBooks('textbook', Object.assign([], booksList.filter(item => item !== bookID)));
+        }
+        else {
+            addBooks('textbook', Object.assign([],[]));
+        }
     }
 
     function chooseBook(bookID) {
-        const booksList = JSON.parse(selectedBooks);
+        let booksList = selectedBooks;
 
-        booksList.splice(0, booksList.length);
-        booksList.push(bookID);
+        if ( booksList.indexOf(bookID) !== -1 ) {
+            if ( booksList.length > 1 ) {
+                booksList = booksList.filter(item => item !== bookID);
+            }
+            else {
+                booksList = [];
+            }
+        }
+        else {
+            booksList.push(bookID);
+        }
 
-        setSelectedBooks(JSON.stringify(booksList));
+        setSelectedBooks(Object.assign([], booksList));
     }
 
     function onAddBooks(e) {
         e.preventDefault();
 
-        addBooks('textbook', JSON.parse(selectedBooks));
-    }
-
-    function handleHideModal() {
-        setSelectedBooks(JSON.stringify(selectedList));
-        setInitialSelectedBooks(JSON.stringify(selectedList));
+        addBooks('textbook', selectedBooks);
         setShowLibraryListModal(false);
     }
 }

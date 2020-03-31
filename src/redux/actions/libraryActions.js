@@ -10,7 +10,7 @@ const storageRef = storage.ref();
 export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN';
 export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
 
-export function fetchLibrary() {
+export function fetchLibrary(showForID, role) {
     return dispatch => {
         dispatch(fetchLibraryBegin());
 
@@ -33,43 +33,6 @@ export function fetchLibrary() {
             })));
         });
     }
-    // if ( !libraryList.length ) {
-    //     return dispatch => {
-    //         dispatch(fetchLibraryBegin());
-    //
-    //         return libraryCollection.get().then((data) => {
-    //             libraryList.splice(0, libraryList.length);
-    //             data.docs.forEach(doc => {
-    //                 libraryList.push({
-    //                     ...doc.data(),
-    //                     id: doc.id
-    //                 });
-    //             });
-    //             dispatch(fetchLibrarySuccess(libraryList.sort((a, b) => {
-    //                 if ( a.name < b.name ) {
-    //                     return -1;
-    //                 }
-    //                 if ( a.name > b.name ) {
-    //                     return 1;
-    //                 }
-    //                 return 0;
-    //             })));
-    //         });
-    //     }
-    // }
-    // else {
-    //     return dispatch => {
-    //         dispatch(fetchLibrarySuccess(libraryList.sort((a, b) => {
-    //             if ( a.name < b.name ) {
-    //                 return -1;
-    //             }
-    //             if ( a.name > b.name ) {
-    //                 return 1;
-    //             }
-    //             return 0;
-    //         })));
-    //     }
-    // }
 }
 
 export const FETCH_TEXTBOOK_BEGIN = 'FETCH_TEXTBOOK_BEGIN';
@@ -180,15 +143,26 @@ export function downloadDoc(ref) {
     return dispatch => {
         dispatch(downloadDocBegin());
         storageRef.child('library/' + ref).getDownloadURL().then((url) => {
-            const a = window.document.createElement("a");
-            a.target = '_blank';
-            a.href = url;
+            if ( ref.includes('.pdf') ) {
+                dispatch(downloadDocSuccess(url));
+            }
+            else {
+                const a = window.document.createElement("a");
+                a.target = '_blank';
+                a.href = url;
 
-            const e = window.document.createEvent("MouseEvents");
-            e.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            a.dispatchEvent(e);
-            dispatch(downloadDocSuccess());
+                const e = window.document.createEvent("MouseEvents");
+                e.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                a.dispatchEvent(e);
+                dispatch(downloadDocSuccess());
+            }
         });
+    }
+}
+
+export function discardDoc() {
+    return dispatch => {
+        dispatch(discardDocSuccess())
     }
 }
 
@@ -198,8 +172,17 @@ export const downloadDocBegin = () => {
     }
 };
 
-export const downloadDocSuccess = () => {
+export const downloadDocSuccess = downloadedTextbook => {
     return {
-        type: DOWNLOAD_DOC_SUCCESS
+        type: DOWNLOAD_DOC_SUCCESS,
+        payload: { downloadedTextbook }
     }
 };
+
+export const discardDocSuccess = () => {
+    return {
+        type: DISCARD_DOC_SUCCESS
+    }
+};
+
+export const DISCARD_DOC_SUCCESS = 'DISCARD_DOC_SUCCESS';

@@ -3,16 +3,25 @@ import {connect} from "react-redux";
 import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
-import {downloadDoc} from "../../redux/actions/libraryActions";
+import {downloadDoc, discardDoc} from "../../redux/actions/libraryActions";
 import {fetchModulesLessons} from "../../redux/actions/coursesActions";
 import userContext from "../../context/userContext";
 import classNames from 'classnames';
+import Modal from "../UI/Modal/Modal";
 
-function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchTextbook, textbook, downloadDoc, libraryLoading, fetchModulesLessons}) {
+function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchTextbook, textbook, downloadDoc, libraryLoading, fetchModulesLessons, downloadedTextbook, discardDoc}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
+    const [ textbookIsDownloaded, setTextbookIsDownloaded ] = useState(true);
     let currentTeacher = null;
+
+    useEffect(() => {
+        return () => {
+            discardDoc();
+            setCurrentCourse(null);
+        }
+    }, []);
 
     useEffect(() => {
         if ( allCoursesList ) {
@@ -23,9 +32,9 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                 subject: selectedSubject,
                 course: selectedCourse
             });
-
         }
     }, [allCoursesList, params.courseID, params.subjectID]);
+
 
     useEffect(() => {
         if ( currentCourse ) {
@@ -83,8 +92,22 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                         </div>
                     </div>
             }
+            {
+                downloadedTextbook && textbookIsDownloaded ?
+                    <Modal className="textbookModal" onHideModal={hideModal} heading={textbook.name}>
+                        <object data={downloadedTextbook} type="application/pdf" width="100%" height="100%">
+                            <embed src={downloadedTextbook} type="application/pdf"/>
+                        </object>
+                    </Modal>
+                    :
+                    null
+            }
         </div>
     );
+
+    function hideModal() {
+        setTextbookIsDownloaded(false);
+    }
 
     function _renderModules() {
         return (
@@ -214,11 +237,9 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                     {
                         textbook ?
                             <div className="studentCourse__textbook-item">
-                                <div className="studentCourse__textbook-icon">
-                                    <i className="fa fa-book" />
-                                </div>
-                                <a href="/" onClick={e => downloadTextbook(e)}>
-                                    { textbook.name }
+                                <a href="/" className="btn btn_primary" onClick={e => downloadTextbook(e)}>
+                                    <i className="content_title-icon fa fa-book" />
+                                    { translate('open_textbook') }
                                 </a>
                                 {
                                     libraryLoading ?
@@ -253,7 +274,12 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
     function downloadTextbook(e) {
         e.preventDefault();
 
-        downloadDoc(textbook.ref);
+        if ( !downloadedTextbook ) {
+            downloadDoc(textbook.ref);
+        }
+        else {
+            setTextbookIsDownloaded(true);
+        }
     }
 
     function getTeacher() {
@@ -266,11 +292,13 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
 const mapStateToProps = state => ({
     modulesLessons: state.coursesReducer.modulesLessons,
     modulesLessonsLoading: state.coursesReducer.loading,
-    libraryLoading: state.libraryReducer.loading
+    libraryLoading: state.libraryReducer.loading,
+    downloadedTextbook: state.libraryReducer.downloadedTextbook
 });
 
 const mapDispatchToProps = dispatch => ({
     downloadDoc: ref => dispatch(downloadDoc(ref)),
-    fetchModulesLessons: (subjectID, courseID) => dispatch(fetchModulesLessons(subjectID, courseID))
+    fetchModulesLessons: (subjectID, courseID) => dispatch(fetchModulesLessons(subjectID, courseID)),
+    discardDoc: () => dispatch(discardDoc())
 });
 export default connect(mapStateToProps, mapDispatchToProps)(StudentCourseItem);

@@ -81,7 +81,10 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
 
     function _renderTeacherItem(teacher) {
         return (
-            <Link to={'/admin-users/' + getTeacher(teacher).login} key={teacher}><i className="fa fa-user content_title-icon"/>{ getTeacher(teacher).name }</Link>
+            getTeacher(teacher) ?
+                <Link to={'/admin-users/' + getTeacher(teacher).login} key={teacher}><i className="fa fa-user content_title-icon"/>{ getTeacher(teacher).name }</Link>
+                :
+                null
         )
     }
 

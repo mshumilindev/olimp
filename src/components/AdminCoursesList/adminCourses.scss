@@ -16,6 +16,9 @@ $courseItemIndent: $pageIndent / 2;
 }
 
 .adminCourses {
+  &__list {
+    padding-top: $courseItemIndent;
+  }
   &__list-item {
     margin-top: $courseItemIndent;
     &.someOpen {
@@ -40,6 +43,9 @@ $courseItemIndent: $pageIndent / 2;
     i.isOpen {
       transform: rotate(-15deg);
     }
+    &:first-child {
+      margin-top: 0;
+    }
   }
   &__list-item-teacher {
     padding-left: 28px;
@@ -62,12 +68,23 @@ $courseItemIndent: $pageIndent / 2;
     padding-left: 28px;
     margin-top: 10px;
     font-family: $RobotoCondensed;
+    display: flex;
   }
   &__list-item-textbook-label {
     color: $greyColor;
     &:after {
       content: '/';
       margin: 0 5px;
+    }
+  }
+  &__list-item-textbooks {
+    display: flex;
+    flex-direction: column;
+  }
+  &__list-item-textbook-name {
+    margin-top: 5px;
+    &:first-child {
+      margin-top: 0;
     }
   }
   &__list-link {

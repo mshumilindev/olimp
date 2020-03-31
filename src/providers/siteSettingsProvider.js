@@ -355,7 +355,8 @@ export default class SiteSettingsProvider extends React.Component{
                         placeholder: translate('select_textbook'),
                         id: 'textbook',
                         value: course.textbook,
-                        updated: false
+                        updated: false,
+                        multiple: true
                     }
                 ]
             },
