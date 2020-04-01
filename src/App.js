@@ -48,7 +48,7 @@ export default function App() {
             const siteSettingsUpdates = snapshot.docs.find(doc => doc.id === 'siteSettings');
 
             if (savedUpdates) {
-                if (siteSettingsUpdates.exists && (!savedUpdates.siteSettings || siteSettingsUpdates.data().date > savedUpdates.siteSettings)) {
+                if (siteSettingsUpdates && siteSettingsUpdates.exists && (!savedUpdates.siteSettings || siteSettingsUpdates.data().date > savedUpdates.siteSettings)) {
                     localStorage.removeItem('siteSettings');
                     localStorage.setItem('updates', JSON.stringify({
                         ...savedUpdates,
@@ -62,6 +62,7 @@ export default function App() {
                     }));
                 }
             }
+
             setCheckedForUpdates(true);
         });
     }, []);

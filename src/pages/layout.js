@@ -7,10 +7,42 @@ import SiteSettingsContext from "../context/siteSettingsContext";
 import userContext from "../context/userContext";
 import {Preloader} from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
+import firebase from "../db/firestore";
 
 export default function Layout({children, location, events, fetchEvents, usersList}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
+
+    useEffect(() => {
+        const db = firebase.firestore();
+        const updatesCollection = db.collection('updates');
+        const savedUpdates = localStorage.getItem('updates') ? JSON.parse(localStorage.getItem('updates')) : null;
+
+        updatesCollection.get().then(snapshot => {
+            const version = snapshot.docs.find(doc => doc.id === 'version');
+
+            if (savedUpdates) {
+                if ( version && version.exists && (!savedUpdates.version || version.data().date > savedUpdates.version) ) {
+                    localStorage.setItem('updates', JSON.stringify({
+                        ...savedUpdates,
+                        version: version.data().date
+                    }));
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            } else {
+                if (version.exists) {
+                    localStorage.setItem('updates', JSON.stringify({
+                        version: version.data().date
+                    }));
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            }
+        });
+    }, [location]);
 
     useEffect(() => {
         fetchEvents(user.id);

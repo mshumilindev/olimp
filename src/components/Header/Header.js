@@ -6,8 +6,9 @@ import LanguageSelect from '../language/languageSelect';
 import Confirm from '../UI/Confirm/Confirm';
 import {connect} from "react-redux";
 import { fetchClasses } from "../../redux/actions/classesActions";
+import { setUpdates } from '../../redux/actions/updatesActions';
 
-function Header({classesList, type}) {
+function Header({classesList, type, setUpdates}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
@@ -42,6 +43,14 @@ function Header({classesList, type}) {
                         }
                     </div>
                 </div>
+                {
+                    user.role === 'admin' ?
+                        <div className="header__flush-storage" style={{marginLeft: 20}}>
+                            <span className="btn btn_primary" onClick={setVersion}>Version change</span>
+                        </div>
+                        :
+                        null
+                }
             </div>
             <div className="header__actions">
                 <div className="header__actions-item header__language">
@@ -62,6 +71,10 @@ function Header({classesList, type}) {
         </header>
     );
 
+    function setVersion() {
+        setUpdates('version');
+    }
+
     function onConfirmLogout() {
         localStorage.removeItem('user');
         window.location.replace('/');
@@ -71,7 +84,8 @@ const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList
 });
 const mapDispatchToProps = dispatch => ({
-    fetchClasses: dispatch(fetchClasses())
+    fetchClasses: dispatch(fetchClasses()),
+    setUpdates: (type) => dispatch(setUpdates(type))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

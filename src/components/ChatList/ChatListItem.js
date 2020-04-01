@@ -44,7 +44,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                 </div>
             </div>
             {
-                !noActions && user.id === event.organizer ?
+                (!noActions && user.id === event.organizer) || user.role === 'admin' ?
                     <div className="adminChats__event-actions">
                         <Link to={'/chat/' + event.id} className="btn btn_primary round btn__xs">
                             <i className="fa fa-link" />

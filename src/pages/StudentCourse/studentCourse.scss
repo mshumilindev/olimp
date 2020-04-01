@@ -51,9 +51,18 @@
       }
     }
   }
+  &__textbook-item-holder {
+    position: relative;
+  }
   &__textbook-item {
-    display: flex;
-    align-items: center;
+    position: relative;
+    margin-top: 20px;
+    &:first-child {
+      margin-top: 0;
+    }
+    > div {
+      margin-bottom: 10px;
+    }
   }
   &__textbook-icon {
     width: 40px;

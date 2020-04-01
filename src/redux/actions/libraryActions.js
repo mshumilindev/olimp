@@ -39,7 +39,7 @@ export const FETCH_TEXTBOOK_BEGIN = 'FETCH_TEXTBOOK_BEGIN';
 export const FETCH_TEXTBOOK_SUCCESS = 'FETCH_TEXTBOOK_SUCCESS';
 
 export function fetchTextbook(textbookID) {
-    const textbookRef = db.collection('library').doc(textbookID);
+    const textbookRef = db.collection('library').doc((typeof textbookID === 'object' ? textbookID[0] : textbookID));
 
     return dispatch => {
         dispatch(fetchTextbookBegin());
@@ -139,11 +139,11 @@ export const updateDocBegin = () => {
 export const DOWNLOAD_DOC_BEGIN = 'DOWNLOAD_DOC_BEGIN';
 export const DOWNLOAD_DOC_SUCCESS = 'DOWNLOAD_DOC_SUCCESS';
 
-export function downloadDoc(ref) {
+export function downloadDoc(ref, isNew) {
     return dispatch => {
         dispatch(downloadDocBegin());
         storageRef.child('library/' + ref).getDownloadURL().then((url) => {
-            if ( ref.includes('.pdf') ) {
+            if ( ref.includes('.pdf') && !isNew ) {
                 dispatch(downloadDocSuccess(url));
             }
             else {

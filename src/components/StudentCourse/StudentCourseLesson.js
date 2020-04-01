@@ -120,12 +120,12 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
                         :
                         null
                 }
-                {
-                    lesson.questions.length && startQuestions ?
-                        <Article content={lesson['questions']} type={'questions'} finishQuestions={finishQuestions} loading={userLoading}/>
-                        :
-                        null
-                }
+                {/*{*/}
+                {/*    lesson.questions.length && startQuestions ?*/}
+                {/*        <Article content={lesson['questions']} type={'questions'} finishQuestions={finishQuestions} loading={userLoading}/>*/}
+                {/*        :*/}
+                {/*        null*/}
+                {/*}*/}
             </>
         )
     }

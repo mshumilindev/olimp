@@ -5,6 +5,7 @@ import firebase from "../../db/firestore";
 const db = firebase.firestore();
 const translationsRef = db.collection('updates').doc('translations');
 const siteSettingsRef = db.collection('updates').doc('siteSettings');
+const versionRef = db.collection('updates').doc('version');
 
 export function setUpdates(type) {
     const date = new Date();
@@ -21,6 +22,13 @@ export function setUpdates(type) {
         }
         if ( type === 'siteSettings' ) {
             return siteSettingsRef.set({
+                date: date.getTime()
+            }).then(() => {
+                dispatch(updatesSuccess());
+            });
+        }
+        if ( type === 'version' ) {
+            return versionRef.set({
                 date: date.getTime()
             }).then(() => {
                 dispatch(updatesSuccess());

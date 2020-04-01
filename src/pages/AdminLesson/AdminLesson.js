@@ -112,18 +112,18 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                                     null
                             }
                         </div>
-                        <div className="widget">
-                            <div className="widget__title">
-                                <i className="content_title-icon fa fa-question"/>
-                                { translate('control_questions') }
-                            </div>
-                            {
-                                questions ?
-                                    <ContentEditor contentType="questions" content={questions} types={[['text', 'media'], ['youtube', 'audio'], ['answers'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQuestions(Object.assign([], newQuestions))} loading={loading} />
-                                    :
-                                    null
-                            }
-                        </div>
+                        {/*<div className="widget">*/}
+                        {/*    <div className="widget__title">*/}
+                        {/*        <i className="content_title-icon fa fa-question"/>*/}
+                        {/*        { translate('control_questions') }*/}
+                        {/*    </div>*/}
+                        {/*    {*/}
+                        {/*        questions ?*/}
+                        {/*            <ContentEditor contentType="questions" content={questions} types={[['text', 'media'], ['youtube', 'audio'], ['answers'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQuestions(Object.assign([], newQuestions))} loading={loading} />*/}
+                        {/*            :*/}
+                        {/*            null*/}
+                        {/*    }*/}
+                        {/*</div>*/}
                     </div>
                     <div className="grid_col col-4">
                         <div className="widget">

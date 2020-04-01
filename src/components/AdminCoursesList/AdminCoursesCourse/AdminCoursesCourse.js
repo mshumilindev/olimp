@@ -163,6 +163,14 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
     function _renderTextbook(textbook) {
         const foundTextbook = libraryList.find(item => item.id === textbook);
 
+        if ( !foundTextbook ) {
+            return (
+                <div className="adminCourses__list-item adminCourses__list-item-nothingFound">
+                    <i className="content_title-icon fa fa-unlink" />
+                    { translate('no_textbook') }
+                </div>
+            )
+        }
         return (
             <span className="adminCourses__list-item-textbook-name" key={textbook}>
                 <Link to={'/admin-library/?item=' + foundTextbook.id}>

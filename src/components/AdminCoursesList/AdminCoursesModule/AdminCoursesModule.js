@@ -9,6 +9,8 @@ import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import UpdateLesson from "../AdminCoursesActions/UpdateLesson";
 import {sortableContainer, sortableElement, arrayMove } from 'react-sortable-hoc';
 import {Preloader} from "../../UI/preloader";
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
@@ -16,7 +18,7 @@ const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const SortableContainer = sortableContainer(({children}) => children);
 const SortableItem = sortableElement(({value}) => value);
 
-function AdminCoursesModule({subjectID, courseID, module, params, loading, fetchLessons, deleteModule, updateLessonsOrder, lessonsList}) {
+function AdminCoursesModule({location, subjectID, courseID, module, params, loading, fetchLessons, deleteModule, updateLessonsOrder, lessonsList}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -75,7 +77,7 @@ function AdminCoursesModule({subjectID, courseID, module, params, loading, fetch
         if ( checkIfIsOpen() ) {
             fetchLessons(params.subjectID, params.courseID, module.id);
         }
-    }, []);
+    }, [location]);
 
     return (
         <div className={classNames('adminCourses__list-item', {someOpen: params && params.moduleID && params.moduleID !== module.id, isOpen: params && params.moduleID === module.id})} style={{marginTop: 10}}>
@@ -234,4 +236,4 @@ const mapDispatchToProps = dispatch => ({
     deleteModule: (subjectID, courseID, moduleID) => dispatch(deleteModule(subjectID, courseID, moduleID)),
     updateLessonsOrder: (subjectID, courseID, moduleID, orderedLessons) => dispatch(updateLessonsOrder(subjectID, courseID, moduleID, orderedLessons))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(AdminCoursesModule);
+export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(AdminCoursesModule);

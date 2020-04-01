@@ -146,7 +146,7 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
     function onDownloadFile(e) {
         e.preventDefault();
 
-        downloadDoc(item.ref);
+        downloadDoc(item.ref, true);
     }
 
     function resetItem() {
@@ -158,6 +158,6 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
 
 const mapDispatchToProps = dispatch => ({
     updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
-    downloadDoc: (ref) => dispatch(downloadDoc(ref))
+    downloadDoc: (ref, isNew) => dispatch(downloadDoc(ref, isNew))
 });
 export default connect(null, mapDispatchToProps)(AdminLibraryListItem);

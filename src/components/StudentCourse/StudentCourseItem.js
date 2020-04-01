@@ -9,7 +9,7 @@ import userContext from "../../context/userContext";
 import classNames from 'classnames';
 import Modal from "../UI/Modal/Modal";
 
-function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchTextbook, textbook, downloadDoc, libraryLoading, fetchModulesLessons, downloadedTextbook, discardDoc}) {
+function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchTextbook, textbook, downloadDoc, libraryLoading, fetchModulesLessons, downloadedTextbook, discardDoc, libraryList}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
@@ -38,10 +38,6 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
 
     useEffect(() => {
         if ( currentCourse ) {
-            if ( currentCourse.course.textbook ) {
-                fetchTextbook(currentCourse.course.textbook);
-            }
-
             fetchModulesLessons(currentCourse.subject.id, currentCourse.course.id);
         }
     }, [currentCourse]);
@@ -85,7 +81,12 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                             { _renderTeacher() }
                         </div>
                         <div className="grid_col col-12 tablet-col-6 block">
-                            { _renderTextbook() }
+                            {
+                                libraryList && libraryList.length ?
+                                    _renderTextbook()
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="grid_col col-12 block">
                             { _renderModules() }
@@ -94,7 +95,7 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
             }
             {
                 downloadedTextbook && textbookIsDownloaded ?
-                    <Modal className="textbookModal" onHideModal={hideModal} heading={textbook.name}>
+                    <Modal className="textbookModal" onHideModal={hideModal} heading={translate('textbook')}>
                         <object data={downloadedTextbook} type="application/pdf" width="100%" height="100%">
                             <embed src={downloadedTextbook} type="application/pdf"/>
                         </object>
@@ -107,6 +108,7 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
 
     function hideModal() {
         setTextbookIsDownloaded(false);
+        discardDoc();
     }
 
     function _renderModules() {
@@ -232,22 +234,29 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
     function _renderTextbook() {
         return (
             <>
-                <h2 className="block__heading">{ translate('textbook') }</h2>
+                <h2 className="block__heading">{ translate('textbooks') }</h2>
                 <div className="studentCourse__textbook">
                     {
-                        textbook ?
-                            <div className="studentCourse__textbook-item">
-                                <a href="/" className="btn btn_primary" onClick={e => downloadTextbook(e)}>
-                                    <i className="content_title-icon fa fa-book" />
-                                    { translate('open_textbook') }
-                                </a>
-                                {
-                                    libraryLoading ?
-                                        <Preloader size={30}/>
-                                        :
-                                        null
-                                }
-                            </div>
+                        filterLibrary().length ?
+                            filterLibrary().map(item => {
+                                return (
+                                    <div className="studentCourse__textbook-item" key={item.id}>
+                                        <div>{ item.name }</div>
+                                        <div className="studentCourse__textbook-item-holder">
+                                            <a href="/" className="btn btn_primary" onClick={e => downloadTextbook(e, item.ref)}>
+                                                <i className="content_title-icon fa fa-book" />
+                                                { translate('open_textbook') }
+                                            </a>
+                                            {
+                                                libraryLoading ?
+                                                    <Preloader size={30}/>
+                                                    :
+                                                    null
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            })
                             :
                             <div className="studentCourse__textbook-notFound">
                                 <div className="studentCourse__textbook-icon">
@@ -261,6 +270,25 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
         )
     }
 
+    function filterLibrary() {
+        const newLibrary = [];
+
+        if ( typeof currentCourse.course.textbook === 'object' ) {
+            currentCourse.course.textbook.forEach(item => {
+                if ( libraryList.find(libItem => libItem.id === item) ) {
+                    newLibrary.push(libraryList.find(libItem => libItem.id === item));
+                }
+            });
+        }
+        else {
+            if ( libraryList.find(libItem => libItem.id === currentCourse.course.textbook) ) {
+                newLibrary.push(libraryList.find(libItem => libItem.id === currentCourse.course.textbook));
+            }
+        }
+
+        return newLibrary;
+    }
+
     function checkIfHasScore(moduleID, lessonID) {
         let hasScore = null;
 
@@ -271,11 +299,11 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
         return hasScore;
     }
 
-    function downloadTextbook(e) {
+    function downloadTextbook(e, ref) {
         e.preventDefault();
 
         if ( !downloadedTextbook ) {
-            downloadDoc(textbook.ref);
+            downloadDoc(ref);
         }
         else {
             setTextbookIsDownloaded(true);
@@ -293,7 +321,8 @@ const mapStateToProps = state => ({
     modulesLessons: state.coursesReducer.modulesLessons,
     modulesLessonsLoading: state.coursesReducer.loading,
     libraryLoading: state.libraryReducer.loading,
-    downloadedTextbook: state.libraryReducer.downloadedTextbook
+    downloadedTextbook: state.libraryReducer.downloadedTextbook,
+    libraryList: state.libraryReducer.libraryList
 });
 
 const mapDispatchToProps = dispatch => ({
