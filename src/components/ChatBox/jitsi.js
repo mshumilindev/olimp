@@ -41,7 +41,6 @@ class Jitsi {
         };
 
         onShareScreen = (tracks) => {
-            console.log(tracks);
             shareScreenTrack = tracks[0];
             self.room.addTrack(tracks[0]);
         };
@@ -51,8 +50,8 @@ class Jitsi {
             localTracks = tracks;
 
             for (let i = 0; i < self.localTracks.length; i++) {
-                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('local track muted'));
-                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('local track stoped'));
+                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
                 if ( self.localTracks[i].getType() === 'video' ) {
                     $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo${i}' />`);
                     self.localTracks[i].attach(containers.remote.querySelector(`#localVideo` + i));
@@ -80,8 +79,8 @@ class Jitsi {
             if (!self.remoteTracks[participant]) {
                 self.remoteTracks[participant] = [];
             }
-            track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => console.log('remote track muted'));
-            track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => console.log('remote track stoped'));
+            track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+            track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
             let id = null;
 
             if ( track.videoType === 'desktop') {
@@ -111,7 +110,6 @@ class Jitsi {
         }
 
         function onConferenceJoined() {
-            console.log('conference joined!');
             self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
             self.isJoined = true;
             for (let i = 0; i < self.localTracks.length; i++) {
@@ -120,7 +118,6 @@ class Jitsi {
         }
 
         function onUserLeft(id) {
-            console.log('user left');
             if (!self.remoteTracks[id]) {
                 return;
             }
@@ -161,7 +158,7 @@ class Jitsi {
                 }
             });
             self.room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-            self.room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, track => console.log(`${track.getType()} - ${track.isMuted()}`));
+            self.room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, track => {});
             self.room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text) => {
                 const userDiv = document.querySelector('#user' + id);
                 const newText = JSON.parse(text);
@@ -183,11 +180,9 @@ class Jitsi {
         }
 
         function onConnectionFailed() {
-            console.error('Connection Failed!');
         }
 
         function disconnect() {
-            console.log('disconnect!');
             self.connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
             self.connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
             self.connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
