@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import {fetchChat, setChatStart, setStopChat, discardChat, setOnACall} from "../../redux/actions/eventsActions";
+import {fetchChat, setChatStart, setStopChat, discardChat, setOnACall, toggleChalkBoard} from "../../redux/actions/eventsActions";
 import {Link, withRouter} from 'react-router-dom';
 import userContext from '../../context/userContext';
 import Fullscreen from 'react-full-screen';
@@ -11,8 +11,9 @@ import ringing from "../../sounds/ringing.mp3";
 import './quickCall.scss';
 import classNames from 'classnames';
 import TextTooltip from "../UI/TextTooltip/TextTooltip";
+import ChalkBoard from "../UI/ChalkBoard/ChalkBoard";
 
-function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall}) {
+function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
     const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
@@ -80,12 +81,18 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
 
     function _renderChatBox() {
         return (
-            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden })}>
+            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden, noOpacity: chat.chalkBoardOpen })}>
                 <div className="chatroom__allow">
                     { translate('allow_audio_and_video') }
                 </div>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
+                        {
+                            chat.chalkBoardOpen ?
+                                <ChalkBoard isOrganizer={isOrganizer} chat={chat}/>
+                                :
+                                null
+                        }
                         <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen}/>
                         { _renderStartedChatActions() }
                     </div>
@@ -131,7 +138,33 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                 {
                     user.id === chat.organizer ?
                         <TextTooltip position="top" text={translate('share_screen')} children={
-                            <span className={classNames('btn round', {btn_primary: !shareScreen, 'btn__success btn__working': shareScreen})} onClick={() => setShareScreen(!shareScreen)}><i className="fas fa-desktop"/></span>
+                            <span
+                                className={classNames('btn round', {
+                                    btn_primary: !shareScreen,
+                                    'btn__success btn__working': shareScreen
+                                })}
+                                onClick={handleShareScreen}
+                                disabled={chat.chalkBoardOpen}
+                            >
+                                <i className="fas fa-desktop"/>
+                            </span>
+                        }/>
+                        :
+                        null
+                }
+                {
+                    user.id === chat.organizer ?
+                        <TextTooltip position="top" text={translate('virtual_chalkboard')} children={
+                            <span
+                                className={classNames('btn round', {
+                                    btn_primary: !chat.chalkBoardOpen,
+                                    'btn__success btn__working': chat.chalkBoardOpen
+                                })}
+                                disabled={shareScreen}
+                                onClick={handleChalkBoard}
+                            >
+                                <i className="fas fa-pencil-alt"/>
+                            </span>
                         }/>
                         :
                         null
@@ -207,6 +240,18 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
         }
     }
 
+    function handleShareScreen() {
+        if ( !chat.chalkBoardOpen ) {
+            setShareScreen(!shareScreen);
+        }
+    }
+
+    function handleChalkBoard() {
+        if ( !shareScreen ) {
+            toggleChalkBoard(chat.id, !chat.chalkBoardOpen);
+        }
+    }
+
     function startChat() {
         setOnACall(true);
         setChatStart(chat.id, true);
@@ -224,8 +269,17 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
         return null;
     }
 
+    function isOrganizer() {
+        return events.find(eventItem => eventItem.organizer === user.id)
+    }
+
     function checkForActiveChat() {
-        return events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ? events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id : null;
+        return (
+            events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ?
+                events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id
+                :
+                null
+        );
     }
 }
 
@@ -244,7 +298,8 @@ const mapDispatchToProps = dispatch => {
         setChatStart: (chatID, setStarted) => dispatch(setChatStart(chatID, setStarted)),
         setStopChat: (chatID) => dispatch(setStopChat(chatID)),
         discardChat: () => dispatch(discardChat()),
-        setOnACall: (value) => dispatch(setOnACall(value))
+        setOnACall: (value) => dispatch(setOnACall(value)),
+        toggleChalkBoard: (chatID, value) => dispatch(toggleChalkBoard(chatID, value))
     }
 };
 

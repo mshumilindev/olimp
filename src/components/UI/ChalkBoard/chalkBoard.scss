@@ -1,0 +1,85 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/sizes';
+
+.chalkBoard {
+  position: fixed;
+  left: $pageIndent;
+  top: $pageIndent;
+  right: $pageIndent;
+  bottom: $pageIndent;
+  z-index: 99999;
+  background: $baseColor;
+  &:before {
+    content: '';
+    background: $baseColor;
+    position: absolute;
+    left: -$pageIndent;
+    top: -$pageIndent;
+    right: -$pageIndent;
+    bottom: -$pageIndent;
+    opacity: .75;
+  }
+  ~ [class="__users"],
+  ~ [class="__chatContainer"] {
+    display: none;
+  }
+  &__graphContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 80px;
+    bottom: 0;
+    background: $baseColor;
+    cursor: none;
+    user-select: none;
+    border: 2px solid $white;
+  }
+  .preloader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &__actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid $white;
+    border-left: 0;
+    flex-direction: column;
+  }
+  &__actionsItem {
+    text-align: center;
+    margin: 10px 0;
+    &:last-child {
+      position: absolute;
+      bottom: 10px;
+    }
+  }
+  &__notVisible {
+    display: none;
+  }
+  .textTooltip {
+    color: $white;
+    &__trigger {
+      position: relative;
+      z-index: 2;
+      display: block;
+    }
+  }
+}
+.student {
+  .chalkBoard {
+    &__graphContainer {
+      right: 0;
+    }
+    &__actions {
+      display: none;
+    }
+  }
+}

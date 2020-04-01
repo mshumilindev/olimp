@@ -42,7 +42,7 @@
     }
   }
   &[disabled] {
-    cursor: not-allowed;
+    cursor: not-allowed !important;
     filter: grayscale(100%);
     opacity: .5;
   }

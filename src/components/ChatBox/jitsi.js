@@ -41,6 +41,7 @@ class Jitsi {
         };
 
         onShareScreen = (tracks) => {
+            console.log(tracks);
             shareScreenTrack = tracks[0];
             self.room.addTrack(tracks[0]);
         };

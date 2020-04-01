@@ -9,9 +9,11 @@ import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorText({ block, setBlock, removeBlock }) {
+export default function ContentEditorText({ block, setBlock, removeBlock, noBtns, toolbar }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
+    const editorToolbar = toolbar || ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];
+
     const editorConfig = {
         menubar: false,
         language: 'uk',
@@ -25,7 +27,7 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
         powerpaste_word_import: 'prompt',
         powerpaste_html_import: 'prompt',
         fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
-        toolbar: ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image']
+        toolbar: editorToolbar
 
     };
 
@@ -43,17 +45,24 @@ export default function ContentEditorText({ block, setBlock, removeBlock }) {
                 init={editorConfig}
                 apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
             />
-            <div className="contentEditor__block-actions">
-                {/*<span className="contentEditor__block-actions-sort">*/}
-                {/*    <i className="content_title-icon fa fa-sort"/>*/}
-                {/*</span>*/}
-                <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
-                    <i className="content_title-icon fa fa-trash-alt"/>
-                </a>
-            </div>
             {
-                showRemoveBlock ?
-                    <Confirm message={translate('sure_to_remove_block')} confirmAction={() => removeBlock(block)} cancelAction={() => setShowRemoveBlock(false)} />
+                !noBtns ?
+                    <>
+                        <div className="contentEditor__block-actions">
+                            {/*<span className="contentEditor__block-actions-sort">*/}
+                            {/*    <i className="content_title-icon fa fa-sort"/>*/}
+                            {/*</span>*/}
+                            <a href="/" onClick={e => onRemoveBlock(e)} className="contentEditor__block-actions-remove">
+                                <i className="content_title-icon fa fa-trash-alt"/>
+                            </a>
+                        </div>
+                        {
+                            showRemoveBlock ?
+                                <Confirm message={translate('sure_to_remove_block')} confirmAction={() => removeBlock(block)} cancelAction={() => setShowRemoveBlock(false)} />
+                                :
+                                null
+                        }
+                    </>
                     :
                     null
             }

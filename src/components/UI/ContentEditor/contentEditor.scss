@@ -244,6 +244,9 @@
       }
     }
     &-text {
+      .tox-statusbar {
+        display: none !important;
+      }
     }
     &-media {
       .form__row:first-child {

@@ -103,7 +103,9 @@ export function setStopChat(chatID) {
 
     return dispatch => {
         return chatRef.set({
-            started: false
+            started: false,
+            chalkBoardOpen: false,
+            chalkBoard: null
         }, {merge: true});
     };
 }
@@ -117,6 +119,26 @@ export function discardChat() {
 export function setOnACall(value) {
     return dispatch => {
         return dispatch(setOnACallSuccess(value));
+    }
+}
+
+export function sendChalkBoard(chatID, value) {
+    return dispatch => {
+        const chatRef = db.collection('events').doc(chatID);
+
+        return chatRef.set({
+            chalkBoard: value
+        }, {merge: true});
+    }
+}
+
+export function toggleChalkBoard(chatID, value) {
+    return dispatch => {
+        const chatRef = db.collection('events').doc(chatID);
+
+        return chatRef.set({
+            chalkBoardOpen: value
+        }, {merge: true});
     }
 }
 
