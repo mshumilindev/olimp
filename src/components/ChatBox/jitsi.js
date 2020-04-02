@@ -6,7 +6,6 @@ let connection = null;
 let onShareScreen = null;
 let shareScreenTrack = null;
 let onLocalTracks = null;
-let localStream = null;
 
 class Jitsi {
     constructor() {
@@ -23,7 +22,7 @@ class Jitsi {
         this.toggleScreenShare = this.toggleScreenShare.bind(this);
     }
 
-    start({containers, user, roomName, onDisplayNameChange}) {
+    start({containers, user, roomName, onDisplayNameChange, usersList}) {
         const self = this;
         const chatConfig = {
             "options": {
@@ -135,6 +134,32 @@ class Jitsi {
                     }
                 }
                 track.attach(document.getElementById(id));
+                setTimeout(() => {
+                    if ( user.role === 'student' && track.getType() === 'video' ) {
+                        const videos = containers.remote.querySelectorAll('video');
+
+                        if ( videos ) {
+                            [...videos].forEach(videoItem => {
+                                const videoID = videoItem.id.replace('video', '');
+
+                                if ( videoID ) {
+                                    const userDiv = containers.participants.querySelector(('#user' + videoID));
+
+                                    if ( userDiv ) {
+                                        const userName = userDiv.dataset.name;
+
+                                        if ( userName && !videoItem.classList.contains('main-video') ) {
+                                            if ( usersList.find(userItem => userItem.name === userName).role === 'student' ) {
+                                                videoItem.remove();
+                                                track.dispose();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }, 100);
             }, 100);
         }
 
@@ -173,7 +198,6 @@ class Jitsi {
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
             self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
-                // self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
                 self.remoteTracks[id] = [];
                 if ( !document.querySelector('user' + id) ) {
                     const userDiv = document.createElement('div');
@@ -199,6 +223,7 @@ class Jitsi {
                     if ( userDiv ) {
                         userDiv.querySelector('.chatroom__user-avatar').style.backgroundImage = 'url(' + newText.avatar + ')';
                         userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name;
+                        userDiv.dataset.name = newText.name;
                         userDiv.classList.remove('empty');
                         userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name.split(' ').join('<br/>');
                     }
