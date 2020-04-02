@@ -5,6 +5,8 @@ let room = null;
 let connection = null;
 let onShareScreen = null;
 let shareScreenTrack = null;
+let onLocalTracks = null;
+let localStream = null;
 
 class Jitsi {
     constructor() {
@@ -41,34 +43,58 @@ class Jitsi {
         };
 
         onShareScreen = (tracks) => {
-            shareScreenTrack = tracks[0];
-            self.room.addTrack(tracks[0]);
+            if ( localTracks.find(item => item.type === 'video') ) {
+                localTracks.find(item => item.type === 'video').dispose();
+                containers.remote.querySelector(`#localVideo`).remove();
+                setTimeout(() => {
+                    shareScreenTrack = tracks[0];
+                    self.room.addTrack(tracks[0]);
+                }, 100);
+            }
+            else {
+                shareScreenTrack = tracks[0];
+                self.room.addTrack(tracks[0]);
+            }
         };
 
-        function onLocalTracks(tracks) {
+        onLocalTracks = (tracks, noUserCreation) => {
             self.localTracks = tracks;
             localTracks = tracks;
 
             for (let i = 0; i < self.localTracks.length; i++) {
-                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
-                self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
-                if ( self.localTracks[i].getType() === 'video' ) {
-                    $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo${i}' />`);
-                    self.localTracks[i].attach(containers.remote.querySelector(`#localVideo` + i));
+                if ( !noUserCreation ) {
+                    self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+                    self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
+                    if (self.localTracks[i].getType() === 'video') {
+                        $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                        self.localTracks[i].attach(containers.remote.querySelector(`#localVideo`));
+                    }
                 }
-                if ( self.isJoined ) {
+                else {
+                    self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+                    self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
+                    if ( self.localTracks.find(item => item.type === 'video').getType() === 'video' ) {
+                        if ( !containers.remote.querySelector(`#localVideo`) ) {
+                            $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                        }
+                        self.localTracks[i].attach(containers.remote.querySelector('#localVideo'));
+                    }
+                }
+                if (self.isJoined) {
                     self.room.addTrack(self.localTracks[i]);
                 }
             }
-            const userDiv = document.createElement('div');
-            userDiv.className = 'chatroom__user';
+            if ( !noUserCreation ) {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'chatroom__user';
 
-            const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
+                const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
 
-            containers.participants.appendChild(userDiv);
-            userDiv.innerHTML = userInner;
-            onDisplayNameChange(null, user.name);
-        }
+                containers.participants.appendChild(userDiv);
+                userDiv.innerHTML = userInner;
+                onDisplayNameChange(null, user.name);
+            }
+        };
 
         function onRemoteTrack(track) {
             if (track.isLocal()) {
@@ -80,7 +106,7 @@ class Jitsi {
                 self.remoteTracks[participant] = [];
             }
             track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
-            track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
+            track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, id => {});
             let id = null;
 
             if ( track.videoType === 'desktop') {
@@ -90,23 +116,26 @@ class Jitsi {
                 id = track.getType() + participant
             }
 
-            if ( track.videoType === 'desktop' ) {
-                if ( !document.getElementById('shareScreen' + participant) ) {
+            setTimeout(() => {
+                if ( track.videoType === 'desktop' ) {
+                    if ( containers.remote.querySelector('#video' + participant) ) {
+                        containers.remote.querySelector('#video' + participant).remove();
+                    }
                     $(containers.shareScreen).append(`<video autoplay='1' muted playsinline id='shareScreen${participant}' />`);
                 }
-            }
-            else {
-                if (track.getType() === 'video') {
-                    if ( !document.getElementById('video' + participant) ) {
-                        $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
-                    }
-                } else {
-                    if ( !document.getElementById('audio' + participant) ) {
-                        $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+                else {
+                    if (track.getType() === 'video') {
+                        if ( !document.getElementById('video' + participant) ) {
+                            $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
+                        }
+                    } else {
+                        if ( !document.getElementById('audio' + participant) ) {
+                            $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+                        }
                     }
                 }
-            }
-            track.attach(document.getElementById(id));
+                track.attach(document.getElementById(id));
+            }, 100);
         }
 
         function onConferenceJoined() {
@@ -201,43 +230,31 @@ class Jitsi {
         self.connection.connect();
 
         navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        self.startDevices();
+    }
 
-
+    startDevices(onlyVideo) {
         let i = 0;
-        navigator.getMedia({audio: {volume: 1}}, () => {
-            navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
-                    .then(onLocalTracks)
-                    .catch(error => {
-                        JitsiMeetJS.enumerateDevices(devices => {
-                            goThroughVideoDevices(devices, devices.length);
-                        });
-                    });
-            }, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio']})
-                    .then(onLocalTracks)
-                    .catch(error => {
-                        throw error;
-                    });
+
+        JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
+            .then(tracks => onLocalTracks(tracks, onlyVideo))
+            .catch(error => {
+                JitsiMeetJS.enumerateDevices(devices => {
+                    if ( devices.find(item => item.kind === 'videoinput') ) {
+                        goThroughVideoDevices(devices, devices.length);
+                    }
+                    else {
+                        JitsiMeetJS.createLocalTracks({devices: ['audio']})
+                            .then((tracks) => onLocalTracks(tracks, onlyVideo))
+                            .catch();
+                    }
+                });
             });
-        }, () => {
-            navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
-                    .then(onLocalTracks)
-                    .catch(error => {
-                        JitsiMeetJS.enumerateDevices(devices => {
-                            goThroughVideoDevices(devices, devices.length);
-                        });
-                    });
-            }, () => {
-                // === Throw error, no devices available
-            });
-        });
 
         function goThroughVideoDevices(devices, length) {
             if ( devices[i].kind === 'videoinput' ) {
                 JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId : devices[i].deviceId, resolution: 480})
-                    .then(onLocalTracks)
+                    .then((tracks) => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         i ++;
                         if ( i < length - 1 ) {
@@ -261,8 +278,12 @@ class Jitsi {
         if ( shareScreenTrack ) {
             shareScreenTrack.dispose();
         }
-        room.leave();
-        connection.disconnect();
+        setTimeout(() => {
+            room.leave(() => {
+                console.log('true');
+            });
+            connection.disconnect();
+        }, 100);
     }
 
     toggleMute(value) {
@@ -290,6 +311,9 @@ class Jitsi {
             if ( shareScreenTrack ) {
                 shareScreenTrack.dispose();
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
+                setTimeout(() => {
+                    this.startDevices(true);
+                }, 100);
             }
         }
     }

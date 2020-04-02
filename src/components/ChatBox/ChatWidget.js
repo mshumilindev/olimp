@@ -22,10 +22,27 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     const [ caller, setCaller ] = useState(null);
     const [ muteChat, setMuteChat ] = useState(false);
     const [ shareScreen, setShareScreen ] = useState(false);
+    const [ isStopping, setIsStopping ] = useState(false);
+    const [ isStarted, setIsStarted ] = useState(false);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());
     }, [location]);
+
+    useEffect(() => {
+        if ( chat ) {
+            if ( chat.started ) {
+                setIsStopping(false);
+                setIsStarted(true);
+            }
+            else {
+                setIsStopping(true);
+                setTimeout(() => {
+                    setIsStarted(false);
+                }, isOrganizer() ? 2 : 1);
+            }
+        }
+    }, [chat]);
 
     useEffect(() => {
         if ( isFullScreen || isChatPage ) {
@@ -63,7 +80,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     }, [chat, usersList]);
 
     if ( chat ) {
-        if ( chat.started ) {
+        if ( isStarted ) {
             if ( onACall ) {
                 return _renderChatBox();
             }
@@ -93,7 +110,7 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
                                 :
                                 null
                         }
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen}/>
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen} isStopping={isStopping} />
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
@@ -253,11 +270,13 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     }
 
     function startChat() {
+        setIsStopping(false);
         setOnACall(true);
         setChatStart(chat.id, true);
     }
 
     function stopChat() {
+        setIsStopping(true);
         setStopChat(chat.id);
         setMuteChat(false);
     }
