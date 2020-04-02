@@ -27,15 +27,12 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             usersList: usersList,
             onRemoteAdded: onRemoteAdded
         });
-    }, []);
-
-    useEffect(() => {
-        if ( isStopping ) {
+        return () => {
             jitsi.stop();
             setIsFullScreen(false);
             setIsHidden(false);
         }
-    }, [isStopping]);
+    }, []);
 
     useEffect(() => {
         jitsi.toggleMute(muteChat);

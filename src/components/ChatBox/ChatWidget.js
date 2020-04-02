@@ -23,7 +23,6 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     const [ muteChat, setMuteChat ] = useState(false);
     const [ shareScreen, setShareScreen ] = useState(false);
     const [ isStopping, setIsStopping ] = useState(false);
-    const [ isStarted, setIsStarted ] = useState(false);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());
@@ -33,13 +32,9 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
         if ( chat ) {
             if ( chat.started ) {
                 setIsStopping(false);
-                setIsStarted(true);
             }
             else {
                 setIsStopping(true);
-                setTimeout(() => {
-                    setIsStarted(false);
-                }, isOrganizer() ? 2 : 1);
             }
         }
     }, [chat]);
@@ -80,8 +75,8 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     }, [chat, usersList]);
 
     if ( chat ) {
-        if ( isStarted ) {
-            if ( onACall ) {
+        if ( chat.started ) {
+            if ( onACall && !isStopping ) {
                 return _renderChatBox();
             }
             else {

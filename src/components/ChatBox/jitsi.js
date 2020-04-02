@@ -303,12 +303,8 @@ class Jitsi {
         if ( shareScreenTrack ) {
             shareScreenTrack.dispose();
         }
-        setTimeout(() => {
-            room.leave(() => {
-                console.log('true');
-            });
-            connection.disconnect();
-        }, 100);
+        room.leave();
+        connection.disconnect();
     }
 
     toggleMute(value) {
