@@ -45,9 +45,19 @@ class Jitsi {
             if ( localTracks.find(item => item.type === 'video') ) {
                 localTracks.find(item => item.type === 'video').dispose();
                 containers.remote.querySelector(`#localVideo`).remove();
-                setTimeout(() => {
-                    shareScreenTrack = tracks[0];
-                    self.room.addTrack(tracks[0]);
+
+                let i = 0;
+                const interval = setInterval(() => {
+                    i++;
+
+                    if ( !localTracks.find(item => item.type === 'video') ) {
+                        shareScreenTrack = tracks[0];
+                        self.room.addTrack(tracks[0]);
+                    }
+
+                    if ( i === 30 ) {
+                        clearInterval(interval);
+                    }
                 }, 100);
             }
             else {
@@ -70,13 +80,15 @@ class Jitsi {
                     }
                 }
                 else {
-                    self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
-                    self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
-                    if ( self.localTracks.find(item => item.type === 'video').getType() === 'video' ) {
-                        if ( !containers.remote.querySelector(`#localVideo`) ) {
-                            $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                    if ( self.localTracks.find(item => item.type === 'video') ) {
+                        self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+                        self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
+                        if ( self.localTracks.find(item => item.type === 'video').getType() === 'video' ) {
+                            if ( !containers.remote.querySelector(`#localVideo`) ) {
+                                $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                            }
+                            self.localTracks[i].attach(containers.remote.querySelector('#localVideo'));
                         }
-                        self.localTracks[i].attach(containers.remote.querySelector('#localVideo'));
                     }
                 }
                 if (self.isJoined) {
@@ -160,7 +172,7 @@ class Jitsi {
                         }
                     }
                 }, 100);
-            }, 100);
+            }, 1000);
         }
 
         function onConferenceJoined() {
@@ -332,8 +344,18 @@ class Jitsi {
             if ( shareScreenTrack ) {
                 shareScreenTrack.dispose();
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
-                setTimeout(() => {
-                    this.startDevices(true);
+
+                let i = 0;
+                const interval = setInterval(() => {
+                    i++;
+
+                    if ( !shareScreenTrack ) {
+                        this.startDevices(true);
+                    }
+
+                    if ( i === 30 ) {
+                        clearInterval(interval);
+                    }
                 }, 100);
             }
         }
