@@ -36,9 +36,19 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                     <div className="adminChats__event-info-dd">
                         {
                             typeof event.participants === 'object' ?
-                                event.participants.map(partItem => <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>)
+                                event.participants.map(partItem => {
+                                    if ( getUser(partItem) ) {
+                                        return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem)} key={partItem}>{ getUser(partItem).name }</Link>;
+                                    }
+                                    else {
+                                        return 'undefined';
+                                    }
+                                })
                                 :
-                                <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                                getUser(event.participants) ?
+                                    <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                                    :
+                                    null
                         }
                     </div>
                 </div>

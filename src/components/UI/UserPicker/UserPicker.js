@@ -62,7 +62,7 @@ function UserPicker(
                 selectedList.length ?
                     <div className="userPicker__selectedList">
                         {
-                            selectedList.sort((a, b) => {
+                            selectedList.filter(userItem => usersList.find(user => user.id === userItem)).sort((a, b) => {
                                 const aName = usersList.find(user => user.id === a).name;
                                 const bName = usersList.find(user => user.id === b).name;
 
@@ -261,7 +261,7 @@ function UserPicker(
         // === Checking if at least first user of the selected users has class
         if ( usersList[0].class ) {
             const firstClassItem = usersList[0].class;
-            const usersFromSelected = listToCheck.map(item => usersList.find(userItem => userItem.id === item));
+            const usersFromSelected = listToCheck.filter(userItem => usersList.find(userItem => userItem.id === userItem)).map(item => usersList.find(userItem => userItem.id === item));
 
             // === Checking if all the selected users have the same class
             if ( usersFromSelected.every(userItem => userItem.class && userItem.class === firstClassItem) ) {
