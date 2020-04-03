@@ -1,0 +1,23 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/sizes';
+@import '../../assets/scss/utils/fonts';
+
+.guestPage {
+  &__title {
+    margin: -#{$pageIndent} -#{$pageIndent} $pageIndent;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $baseColor;
+    color: $white;
+    font-family: $RobotoCondensed;
+    text-align: center;
+    font-size: 20px;
+  }
+  &__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

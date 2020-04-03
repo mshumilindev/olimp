@@ -261,7 +261,8 @@
     }
   }
 }
-.student {
+.student,
+.guest {
   .chatroom {
     &__users {
       display: none !important;

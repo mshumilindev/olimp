@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import TextTooltip from "../UI/TextTooltip/TextTooltip";
 import ChalkBoard from "../UI/ChalkBoard/ChalkBoard";
 
-function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
+function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
     const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
@@ -23,6 +23,17 @@ function ChatWidget({location, events, usersList, fetchChat, chat, setChatStart,
     const [ muteChat, setMuteChat ] = useState(false);
     const [ shareScreen, setShareScreen ] = useState(false);
     const [ isStopping, setIsStopping ] = useState(false);
+
+    useEffect(() => {
+        if ( user.role === 'guest' ) {
+            if ( onACall ) {
+                history.push('/chat/' + chat.id);
+            }
+            else {
+                history.push('/guest');
+            }
+        }
+    }, [onACall]);
 
     useEffect(() => {
         setIsChatPage(!!getChatID());

@@ -95,7 +95,7 @@ export default function Layout({children, location, events, fetchEvents, usersLi
 
     const currentPage = studentNav && studentNav.length ? studentNav.find(item => item.url === location.pathname) && studentNav.find(item => item.url === location.pathname).name : '';
 
-    const docTitle = siteName + ' | ' + (currentPage ? translate(currentPage) : 'Завантаження...');
+    const docTitle = siteName + ' | ' + (user.role === 'student' ? (currentPage ? translate(currentPage) : 'Завантаження...') : translate('guest'));
 
     return (
         <DocumentTitle title={ docTitle }>
@@ -107,7 +107,12 @@ export default function Layout({children, location, events, fetchEvents, usersLi
                         <div className={'page ' + user.role}>
                             <div className="page__inner">
                                 <StudentHeader/>
-                                <StudentNav nav={studentNav} />
+                                {
+                                    user.role === 'student' ?
+                                        <StudentNav nav={studentNav} />
+                                        :
+                                        null
+                                }
                                 <div className="content mapContainer">
                                     <div className="content__inner">
                                         { children }
@@ -115,15 +120,21 @@ export default function Layout({children, location, events, fetchEvents, usersLi
                                     </div>
                                 </div>
                                 {
-                                    window.outerWidth < 769 ?
-                                        <Footer/>
+                                    user.role === 'student' ?
+                                        window.outerWidth < 769 ?
+                                            <Footer/>
+                                            :
+                                            null
                                         :
                                         null
                                 }
                             </div>
                             {
-                                window.outerWidth >= 769 ?
-                                    <Footer/>
+                                user.role === 'student' ?
+                                    window.outerWidth >= 769 ?
+                                        <Footer/>
+                                        :
+                                        null
                                     :
                                     null
                             }

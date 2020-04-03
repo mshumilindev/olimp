@@ -123,7 +123,8 @@ export default function App() {
                                 <Route exact path='/chats' component={StudentChats} />
                                 <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
 
-                                <Route exact path='/guest' component={Guest}/>
+                                <Route exact path='/guest' component={Guest} />
+
                                 <Route path="*" component={PageNotFound}/>
                             </Suspense>
                         </Page>

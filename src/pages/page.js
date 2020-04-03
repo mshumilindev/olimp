@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import MainContainer from "../containers/configContainer";
 import AdminContainer from '../containers/adminContainer';
-import GuestContainer from '../containers/guestContainer';
 import {Provider} from "react-redux";
 import {mainStore} from "../redux/stores/mainStore";
 import userContext from "../context/userContext";
@@ -90,7 +89,7 @@ function Page(props) {
         <Provider store={mainStore}>
             {
                 localStorage.getItem('user') ?
-                    user.role === 'student' ?
+                    user.role === 'student' || user.role === 'guest' ?
                         <MainContainer location={location} children={children}/>
                         :
                         user.role === 'admin' ?
@@ -99,10 +98,7 @@ function Page(props) {
                             user.role === 'teacher' ?
                                 <AdminContainer location={location} children={children} isTeacher/>
                                 :
-                                user.role === 'guest' ?
-                                    <GuestContainer location={location} children={children}/>
-                                    :
-                                    null
+                                null
                     :
                     children
             }

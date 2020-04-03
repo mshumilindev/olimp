@@ -70,7 +70,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
 
     function onDisplayNameChange(id, displayName) {
         setTimeout(() => {
-            if ( usersList.find(item => item.name === displayName).id === chat.organizer ) {
+            if ( usersList.find(item => item.name === displayName) && usersList.find(item => item.name === displayName).id === chat.organizer ) {
                 setOrganizerChatID(id ? id : 'local');
             }
         }, 0);

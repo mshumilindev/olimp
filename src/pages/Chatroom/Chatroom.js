@@ -56,19 +56,34 @@ function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
             );
         }
         else {
-            return (
-                <section className="section">
-                    <div className="section__title-holder">
-                        <h2 className="section__title">
-                            <i className="content_title-icon fa fa-video"/>
-                            { translate('videochat') }
-                        </h2>
-                    </div>
-                    {
-                        children
-                    }
-                </section>
-            );
+            if ( user.role === 'guest' ) {
+                return (
+                    <section className="section">
+                        <div className="guestPage__title">
+                            <span>{ translate('welcome') },&nbsp;</span>
+                            <span className="guestPage__name">{ user.name }!</span>
+                        </div>
+                        {
+                            children
+                        }
+                    </section>
+                );
+            }
+            else {
+                return (
+                    <section className="section">
+                        <div className="section__title-holder">
+                            <h2 className="section__title">
+                                <i className="content_title-icon fa fa-video"/>
+                                { translate('videochat') }
+                            </h2>
+                        </div>
+                        {
+                            children
+                        }
+                    </section>
+                );
+            }
         }
     }
 }
