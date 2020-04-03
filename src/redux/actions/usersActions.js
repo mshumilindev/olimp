@@ -8,6 +8,8 @@ export const FETCH_USERS_BEGIN = 'FETCH_USERS_BEGIN';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 
 export function fetchUsers() {
+    const isAdmin = JSON.parse(localStorage.getItem('user')).role === 'admin';
+
     if ( !usersList.length ) {
         return dispatch => {
             dispatch(fetchUsersBegin());
@@ -16,11 +18,22 @@ export function fetchUsers() {
                 data.docs.forEach(doc => {
                     const docData = doc.data();
 
-                    Object.assign(docData, {
-                        id: doc.id
-                    });
+                    if ( !isAdmin ) {
+                        if ( docData.role !== 'guest' ) {
+                            Object.assign(docData, {
+                                id: doc.id
+                            });
 
-                    usersList.push(docData);
+                            usersList.push(docData);
+                        }
+                    }
+                    else {
+                        Object.assign(docData, {
+                            id: doc.id
+                        });
+
+                        usersList.push(docData);
+                    }
                 });
                 dispatch(fetchUsersSuccess(usersList));
             });

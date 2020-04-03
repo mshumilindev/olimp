@@ -536,6 +536,10 @@ export default class SiteSettingsProvider extends React.Component{
                             {
                                 id: 'student',
                                 title: translate('student')
+                            },
+                            {
+                                id: 'guest',
+                                title: translate('guest')
                             }
                         ]
                     },

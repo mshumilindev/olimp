@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import MainContainer from "../containers/configContainer";
 import AdminContainer from '../containers/adminContainer';
+import GuestContainer from '../containers/guestContainer';
 import {Provider} from "react-redux";
 import {mainStore} from "../redux/stores/mainStore";
 import userContext from "../context/userContext";
@@ -36,6 +37,9 @@ function Page(props) {
             }
             else if ( user.role === 'student' && location.pathname.includes('admin') ) {
                 history.push('/');
+            }
+            else if ( user.role === 'guest' && !location.pathname.includes('/guest') ) {
+                history.push('/guest');
             }
         }
 
@@ -95,7 +99,10 @@ function Page(props) {
                             user.role === 'teacher' ?
                                 <AdminContainer location={location} children={children} isTeacher/>
                                 :
-                                null
+                                user.role === 'guest' ?
+                                    <GuestContainer location={location} children={children}/>
+                                    :
+                                    null
                     :
                     children
             }

@@ -22,7 +22,7 @@ const sortByOptions = [
 const filterByOptions = [
     {
         id: 'filterByRole',
-        options: ['admin', 'teacher', 'student'],
+        options: ['admin', 'teacher', 'student', 'guest'],
         placeholder: 'role'
     },
     {

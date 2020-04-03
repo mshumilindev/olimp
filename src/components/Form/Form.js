@@ -265,7 +265,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                 </div>
                                 :
                                 <div className={classNames('form__select-holder', {hasErrors: field.required && hasErrors && !field.value})}>
-                                    <CustomSelect options={field.options} hasReset={field.hasReset} id={field.id} updated={field.updated} name={translate(field.name)} value={translate(field.value)} selectChanged={setFieldValue} placeholder={translate(field.placeholder)} required={field.required} hasErrors={field.hasErrors}/>
+                                    <CustomSelect options={hideGuests(field.options)} hasReset={field.hasReset} id={field.id} updated={field.updated} name={translate(field.name)} value={translate(field.value)} selectChanged={setFieldValue} placeholder={translate(field.placeholder)} required={field.required} hasErrors={field.hasErrors}/>
                                 </div>
                         }
                     </div>
@@ -586,5 +586,14 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         }
 
         handleFieldChange(fieldID, newValue);
+    }
+
+    function hideGuests(options) {
+        if ( user.role === 'admin' ) {
+            return options;
+        }
+        else {
+            return options.filter(item => item.id !== 'guest');
+        }
     }
 }
