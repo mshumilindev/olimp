@@ -338,6 +338,7 @@ function UserPicker(
 
         return orderBy(usersList
             .filter(user => exclude ? exclude.indexOf(user.id) === -1 : true)
+            .filter(user => user.status === 'active')
             .filter(user => (type !== 'teacher' && type !== 'admin' && type !== 'student') || (user.role === type && user.status === 'active'))
             .filter(user => {
                 if ( searchQuery ) {
