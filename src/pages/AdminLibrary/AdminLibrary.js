@@ -130,7 +130,7 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
 
     function filterList() {
         return list
-            .filter(item => showOnlyMy ? user.role === 'teacher' ? item.teacher === user.id : true : true)
+            .filter(item => showOnlyMy ? user.role === 'teacher' ? item.teacher && (item.teacher === user.id || item.teacher.indexOf(user.id)) !== -1 : true : true)
             .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
 }

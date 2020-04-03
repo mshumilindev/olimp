@@ -81,6 +81,17 @@
         top: 0;
       }
     }
+    &.selectAll {
+      background: $baseColor;
+      color: $white;
+      height: 40px;
+      &.selected {
+        color: $greenColor;
+        i {
+          color: $greenColor;
+        }
+      }
+    }
   }
   &__list-item-avatar {
     margin-right: 10px;
@@ -102,6 +113,14 @@
   &__list-item-name {
     font-family: $RobotoCondensed;
     width: 100%;
+  }
+  &__list-item-class {
+    font-family: $RobotoCondensed;
+    white-space: nowrap;
+    width: 150px;
+    i {
+      font-size: 12px;
+    }
   }
   &__list-item-check {
     margin-right: 10px;
@@ -125,6 +144,11 @@
       color: $errorColor;
     }
   }
+  .modal {
+    &__box {
+      max-width: 500px;
+    }
+  }
   .filters {
     position: relative;
     left: 0;
@@ -132,9 +156,23 @@
     z-index: 1;
     background: none;
     padding: 0 20px 10px;
-    margin: 0 -20px 25px;
+    margin: 0 -30px 25px;
     border-bottom: 1px solid $lightGreyColor;
     box-shadow: 0 5px 5px 0 rgba(0,0,0,.05);
+    &__item {
+      padding: 0 5px;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+    }
+    &__searchQuery {
+      width: 50%;
+    }
+    &__filterBy {
+      width: 25%;
+    }
+    &__selectClass {
+      width: 25%;
+    }
     &__heading {
       display: none;
     }
@@ -163,13 +201,17 @@
       overflow: hidden;
     }
   }
-  .scrollbar__track {
-    width: 6px !important;
-    border-radius: 0;
-    background: transparent;
+  &__list {
     > div {
-      background: $baseColor !important;
-      border-radius: 0;
+      > .scrollbar__track {
+        width: 6px !important;
+        border-radius: 0;
+        background: transparent;
+        > div {
+          background: $baseColor !important;
+          border-radius: 0;
+        }
+      }
     }
   }
 }

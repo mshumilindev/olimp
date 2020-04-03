@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import siteSettingsContext from "../context/siteSettingsContext";
 import Filters from "../components/Filters/Filters";
 
-const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions, showOnlyMy) => {
+const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions, showOnlyMy, selectClass) => {
     return (props) => {
         const { translate } = useContext(siteSettingsContext);
         const [ searchQuery, setSearchQuery ] = useState('');
@@ -15,6 +15,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
         });
         const [ filterBy, setFilterBy ] = useState(JSON.stringify([]));
         const [ showOnlyMyChecked, setShowOnlyMyChecked ] = useState(!!showOnlyMy);
+        const [ selectedClass, setSelectedClass ] = useState(null);
 
         useEffect(() => {
             if ( !sortBy.options && sortByOptions ) {
@@ -56,7 +57,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             }
         }, [filterBy, sortBy, translate]);
 
-        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} />;
+        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} selectedClass={selectedClass} setSelectedClass={setSelectedClass} />;
 
         function filterChanged(type, value) {
             if ( type === 'searchQuery' ) {
@@ -87,6 +88,9 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             if ( type === 'showOnlyMy' ) {
                 setShowOnlyMyChecked(!showOnlyMyChecked);
             }
+            if ( type === 'selectedClass' ) {
+                setSelectedClass(value);
+            }
         }
 
         function _renderFilters() {
@@ -98,6 +102,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
                 showOnlyMyChecked={showOnlyMyChecked ? showOnlyMyChecked : undefined}
                 showOnlyMy={showOnlyMy ? showOnlyMy : undefined}
                 filterChanged={filterChanged}
+                selectedClass={selectClass ? selectedClass : undefined}
             />
         }
     }

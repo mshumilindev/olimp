@@ -8,8 +8,9 @@ const FiltersSortBy = React.lazy(() => import('./FiltersSortBy'));
 const FiltersFilterBy = React.lazy(() => import('./FiltersFilterBy'));
 const FiltersShowPerPage = React.lazy(() => import('./FiltersShowPerPage'));
 const FiltersShowOnlyMy = React.lazy(() => import('./FiltersShowOnlyMy'));
+const FiltersSelectClass = React.lazy(() => import('./FiltersSelectClass'));
 
-export default function Filters({searchQuery, sortBy, filterBy, showPerPage, filterChanged, showOnlyMy, showOnlyMyChecked}) {
+export default function Filters({searchQuery, sortBy, filterBy, showPerPage, filterChanged, showOnlyMy, showOnlyMyChecked, selectedClass}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
@@ -53,6 +54,14 @@ export default function Filters({searchQuery, sortBy, filterBy, showPerPage, fil
                         typeof showOnlyMy !== 'undefined' ?
                             <div className="filters__item filters__showOnlyMy">
                                 <FiltersShowOnlyMy showOnlyMyChecked={showOnlyMyChecked} filterChanged={filterChanged} />
+                            </div>
+                            :
+                            null
+                    }
+                    {
+                        typeof selectedClass !== 'undefined' ?
+                            <div className="filters__item filters__selectClass">
+                                <FiltersSelectClass selectedClass={selectedClass} filterChanged={filterChanged} />
                             </div>
                             :
                             null

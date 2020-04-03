@@ -20,45 +20,58 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     const [ showPassword, setShowPassword ] = useState(false);
 
     return (
-        <form className={classNames('form', {hasErrors: hasErrors || formError})} ref={$form} onSubmit={e => submitForm(e)}>
-            {
-                heading ?
-                    <h2 className="form__heading">{ heading }</h2>
-                    :
-                    null
-            }
-            {
-                hasErrors ?
-                    <div className="form__error">
-                        { translate('fill_required') }
-                    </div>
-                    :
-                    null
-            }
-            {
-                formError ?
-                    <div className="form__error">
-                        { translate(formError) }
-                    </div>
-                    :
-                    null
-            }
-            {
-                fields && fields.length ?
-                    fields.map(field => _renderField(field))
-                    :
-                    null
-            }
-            {
-                loading ?
-                    <div className="form__loading">
-                        <Preloader color={user.role === 'student' ? '#7f00a3' : null} />
-                    </div>
-                    :
-                    null
-            }
-        </form>
+        formAction ?
+            <form className={classNames('form', {hasErrors: hasErrors || formError})} ref={$form} onSubmit={e => submitForm(e)}>
+                { _renderForm() }
+            </form>
+            :
+            <div className={classNames('form', {hasErrors: hasErrors || formError})} ref={$form}>
+                { _renderForm() }
+            </div>
     );
+
+    function _renderForm() {
+        return (
+            <>
+                {
+                    heading ?
+                        <h2 className="form__heading">{ heading }</h2>
+                        :
+                        null
+                }
+                {
+                    hasErrors ?
+                        <div className="form__error">
+                            { translate('fill_required') }
+                        </div>
+                        :
+                        null
+                }
+                {
+                    formError ?
+                        <div className="form__error">
+                            { translate(formError) }
+                        </div>
+                        :
+                        null
+                }
+                {
+                    fields && fields.length ?
+                        fields.map(field => _renderField(field))
+                        :
+                        null
+                }
+                {
+                    loading ?
+                        <div className="form__loading">
+                            <Preloader color={user.role === 'student' ? '#7f00a3' : null} />
+                        </div>
+                        :
+                        null
+                }
+            </>
+        )
+    }
 
     function _renderField(field) {
         return (
@@ -180,7 +193,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'userPicker':
                 return (
                     <div className="form__field-holder">
-                        <UserPicker type={field.id} noSearch selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} addUsers={(type, list) => handleFieldChange(field.id, list.length > 1 ? list : list[0])} placeholder={field.placeholder} noneditable={(user.role === 'teacher' && field.noneditable) || field.noneditable} key={field.id} multiple={field.multiple} required={field.required} hasErrors={(field.required && hasErrors && (!field.value || !field.value.toString()))} exclude={field.exclude} />
+                        <UserPicker type={field.id} selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} addUsers={(type, list) => handleFieldChange(field.id, list.length > 1 ? list : list[0])} placeholder={field.placeholder} noneditable={(user.role === 'teacher' && field.noneditable) || field.noneditable} key={field.id} multiple={field.multiple} required={field.required} hasErrors={(field.required && hasErrors && (!field.value || !field.value.toString()))} exclude={field.exclude} />
                     </div>
                 );
 

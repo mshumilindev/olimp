@@ -37,6 +37,30 @@ function AdminUsers({usersList, searchQuery, sortBy, showPerPage, filterBy, filt
 
     function filterUsersList() {
         return usersList && filterBy.length ? usersList
+            .filter(user => {
+                const returnValues = [];
+                const filterByRole = filterBy.find(filter => filter.id === 'filterByRole');
+                const filterByStatus = filterBy.find(filter => filter.id === 'filterByStatus');
+
+                filterByRole.value ?
+                    user.role === filterByRole.value ?
+                        returnValues.push(true)
+                        :
+                        returnValues.push(false)
+                    :
+                    returnValues.push(true);
+
+                filterByStatus.value ?
+                    user.status === filterByStatus.value ?
+                        returnValues.push(true)
+                        :
+                        returnValues.push(false)
+                    :
+                    returnValues.push(true);
+
+                return returnValues.every(value => value);
+            })
+            .filter(user => user.name.toLowerCase().includes(searchQuery.toLowerCase()))
             .sort((a, b) => {
                 if ( a.name < b.name ) {
                     return -1;
@@ -64,30 +88,6 @@ function AdminUsers({usersList, searchQuery, sortBy, showPerPage, filterBy, filt
                 }
                 return 0;
             })
-            .filter(user => {
-                const returnValues = [];
-                const filterByRole = filterBy.find(filter => filter.id === 'filterByRole');
-                const filterByStatus = filterBy.find(filter => filter.id === 'filterByStatus');
-
-                filterByRole.value ?
-                    user.role === filterByRole.value ?
-                        returnValues.push(true)
-                        :
-                        returnValues.push(false)
-                    :
-                    returnValues.push(true);
-
-                filterByStatus.value ?
-                    user.status === filterByStatus.value ?
-                        returnValues.push(true)
-                        :
-                        returnValues.push(false)
-                    :
-                    returnValues.push(true);
-
-                return returnValues.every(value => value);
-            })
-            .filter(user => user.name.toLowerCase().includes(searchQuery.toLowerCase()))
             :
             usersList;
     }

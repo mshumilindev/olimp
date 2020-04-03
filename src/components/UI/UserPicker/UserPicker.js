@@ -7,15 +7,53 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Modal from "../Modal/Modal";
+import {orderBy} from "natural-orderby";
 
-function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, selectedList, noneditable, noSearch, placeholder, classesList, required, hasErrors, exclude}) {
+const filterByOptions = [
+    {
+        id: 'filterByRole',
+        placeholder: 'role',
+        options: ['admin', 'teacher', 'student']
+    }
+];
+
+function UserPicker(
+    {
+        type,
+        multiple,
+        usersList,
+        addUsers,
+        selectedList,
+        noneditable,
+        noSearch,
+        placeholder,
+        classesList,
+        required,
+        hasErrors,
+        exclude,
+        filters,
+        searchQuery,
+        filterBy,
+        selectedClass,
+        setSelectedClass
+    }
+) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showUserListModal, setShowUserListModal ] = useState(false);
     const [ selectedUsers, setSelectedUsers ] = useState(selectedList);
+    const [ allSelected, setAllSelected ] = useState(false);
 
     useEffect(() => {
         setSelectedUsers(Object.assign([], selectedList));
+        checkForClass();
     }, [selectedList]);
+
+    useEffect(() => {
+        checkForClass();
+        if ( !showUserListModal ) {
+            setSelectedClass(null);
+        }
+    }, [selectedList, showUserListModal]);
 
     return (
         <div className={classNames('userPicker', {hasErrors: hasErrors})}>
@@ -37,7 +75,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                                 else {
                                     return 0;
                                 }
-                            }).map(item => renderSelectedUser(item))
+                            }).map(item => _renderSelectedUser(item))
                         }
                     </div>
                     :
@@ -80,6 +118,12 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                                 </div>
                         }
                         <div className="userPicker__list">
+                            {
+                                selectedClass && usersList && filterUsers().length ?
+                                    _renderUser('selectAll')
+                                    :
+                                    null
+                            }
                             <Scrollbars
                                 autoHeight
                                 hideTracksWhenNotNeeded
@@ -89,7 +133,7 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
                             >
                                 {
                                     usersList && filterUsers().length ?
-                                        filterUsers().map(user => renderUser(user))
+                                        filterUsers().map(user => _renderUser(user))
                                         :
                                         <div className="nothingFound">
                                             { translate('nothing_found') }
@@ -125,7 +169,60 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
         </div>
     );
 
-    function renderSelectedUser(userID) {
+    function _renderUser(user) {
+        const usersList = selectedUsers;
+
+        return (
+            <div className={classNames('userPicker__list-item', {selected: user === 'selectAll' ? allSelected : usersList.some(item => item === user.id), selectAll: user === 'selectAll'})} onClick={() => handleChooseUser(user)} key={user.id}>
+                {
+                    multiple ?
+                        (user === 'selectAll' ? allSelected : usersList.some(item => item === user.id)) ?
+                            <i className="userPicker__list-item-check far fa-check-square selected" />
+                            :
+                            <i className="userPicker__list-item-check far fa-square" />
+                        :
+                        usersList.some(item => item === user.id) ?
+                            <i className="userPicker__list-item-check far fa-dot-circle selected" />
+                            :
+                            <i className="userPicker__list-item-check far fa-circle" />
+                }
+                {
+                    user !== 'selectAll' ?
+                        <div className="userPicker__list-item-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
+                            {
+                                !user.avatar ?
+                                    <div className="userPicker__list-item-avatar-placeholder">
+                                        <i className="fa fa-user"/>
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                        :
+                        null
+                }
+                <div className="userPicker__list-item-name">
+                    {
+                        user === 'selectAll' ?
+                            translate('select_all')
+                            :
+                            user.name
+                    }
+                </div>
+                {
+                    user.class ?
+                        <div className="userPicker__list-item-class">
+                            <i className="content_title-icon fas fa-graduation-cap" />
+                            { classesList.find(item => item.id === user.class).title[lang] ? classesList.find(item => item.id === user.class).title[lang] : classesList.find(item => item.id === user.class).title['ua'] }
+                        </div>
+                        :
+                        null
+                }
+            </div>
+        )
+    }
+
+    function _renderSelectedUser(userID) {
         const user = usersList.find(item => item.id === userID);
 
         return (
@@ -158,6 +255,29 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
         )
     }
 
+    function checkForClass(newUsersList) {
+        const listToCheck = newUsersList || selectedList;
+
+        // === Checking if at least first user of the selected users has class
+        if ( usersList[0].class ) {
+            const firstClassItem = usersList[0].class;
+            const usersFromSelected = listToCheck.map(item => usersList.find(userItem => userItem.id === item));
+
+            // === Checking if all the selected users have the same class
+            if ( usersFromSelected.every(userItem => userItem.class && userItem.class === firstClassItem) ) {
+
+                // === Checking if there are more students in the selected class
+                if ( usersList.filter(userItem => userItem.class === firstClassItem).length === usersFromSelected.length ) {
+                    setSelectedClass(firstClassItem);
+                    setAllSelected(true);
+                }
+                else {
+                    setAllSelected(false);
+                }
+            }
+        }
+    }
+
     function quickRemoveUser(userID) {
         const usersList = selectedUsers;
 
@@ -171,62 +291,39 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
         setShowUserListModal(false);
     }
 
-    function renderUser(user) {
-        const usersList = selectedUsers;
-
-        return (
-            <div className={classNames('userPicker__list-item', {selected: usersList.some(item => item === user.id)})} onClick={() => chooseUser(user.id)} key={user.id}>
-                {
-                    multiple ?
-                        usersList.some(item => item === user.id) ?
-                            <i className="userPicker__list-item-check far fa-check-square selected" />
-                            :
-                            <i className="userPicker__list-item-check far fa-square" />
-                        :
-                        usersList.some(item => item === user.id) ?
-                            <i className="userPicker__list-item-check far fa-dot-circle selected" />
-                            :
-                            <i className="userPicker__list-item-check far fa-circle" />
-                }
-                <div className="userPicker__list-item-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
-                    {
-                        !user.avatar ?
-                            <div className="userPicker__list-item-avatar-placeholder">
-                                <i className="fa fa-user"/>
-                            </div>
-                            :
-                            null
-                    }
-                </div>
-                <div className="userPicker__list-item-name">
-                    { user.name }
-                    {
-                        user.class ?
-                            ` - ${classesList.find(item => item.id === user.class).title[lang] ? classesList.find(item => item.id === user.class).title[lang] : classesList.find(item => item.id === user.class).title['ua']}`
-                            :
-                            null
-                    }
-                </div>
-            </div>
-        )
+    function handleChooseUser(user) {
+        if ( user === 'selectAll' ) {
+            if ( allSelected ) {
+                setSelectedUsers([]);
+            }
+            else {
+                setSelectedUsers(filterUsers().map(item => item.id));
+            }
+            setAllSelected(!allSelected);
+        }
+        else {
+            chooseUser(user.id);
+        }
     }
 
     function chooseUser(userID) {
-        const usersList = Object.assign([], selectedUsers);
+        const newUsersList = Object.assign([], selectedUsers);
 
         if ( multiple ) {
-            if ( usersList.some(user => user === userID) ) {
-                usersList.splice(usersList.indexOf(usersList.find(user => user === userID)), 1);
+            if ( newUsersList.some(user => user === userID) ) {
+                newUsersList.splice(newUsersList.indexOf(newUsersList.find(user => user === userID)), 1);
             }
             else {
-                usersList.push(userID);
+                newUsersList.push(userID);
             }
         }
         else {
-            usersList.splice(0, usersList.length);
-            usersList.push(userID);
+            newUsersList.splice(0, newUsersList.length);
+            newUsersList.push(userID);
         }
-        setSelectedUsers(usersList);
+
+        checkForClass(newUsersList);
+        setSelectedUsers(newUsersList);
     }
 
     function onAddUsers(e) {
@@ -237,33 +334,35 @@ function UserPicker({type, multiple, usersList, searchQuery, filters, addUsers, 
     }
 
     function filterUsers() {
-        return usersList.filter(user => exclude ? exclude.indexOf(user.id) === -1 : true).filter(user => (type !== 'teacher' && type !== 'admin' && type !== 'student') || user.role === type && user.status === 'active').filter(user => {
-            if ( searchQuery ) {
-                if ( user.name.toLowerCase().includes(searchQuery.toLowerCase()) ) {
+        const role = filterBy.find(filterItem => filterItem.id === 'filterByRole').value;
+
+        return orderBy(usersList
+            .filter(user => exclude ? exclude.indexOf(user.id) === -1 : true)
+            .filter(user => (type !== 'teacher' && type !== 'admin' && type !== 'student') || (user.role === type && user.status === 'active'))
+            .filter(user => {
+                if ( searchQuery ) {
+                    if ( user.name.toLowerCase().includes(searchQuery.toLowerCase()) ) {
+                        return user;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
                     return user;
                 }
-            }
-            else {
                 return user;
-            }
-            return user;
-        }).sort((a, b) => {
-            if ( a.name < b.name ) {
-                return -1;
-            }
-            else if ( a.name > b.name ) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
+            })
+            .filter(user => selectedClass ? user.role === 'student' && user.class === selectedClass : true)
+            .filter(user => role ? user.role === role : true), v => v.name);
     }
 }
 
-const mapStateToProps = state => ({
-    usersList: state.usersReducer.usersList,
-    loading: state.usersReducer.loading,
-    classesList: state.classesReducer.classesList
-});
-export default connect(mapStateToProps)(withFilters(UserPicker, true));
+const mapStateToProps = state => {
+    return {
+        usersList: state.usersReducer.usersList,
+        loading: state.usersReducer.loading,
+        classesList: state.classesReducer.classesList
+    }
+};
+export default connect(mapStateToProps)(withFilters(UserPicker, true, null, null, filterByOptions, null, true));
