@@ -7,7 +7,7 @@ import {downloadDoc, discardDoc} from "../../redux/actions/libraryActions";
 import {fetchModulesLessons} from "../../redux/actions/coursesActions";
 import userContext from "../../context/userContext";
 import classNames from 'classnames';
-import StudentCourseItemTextbook from "./StudentCourseItem/StudentCourseItemTextbook";
+import StudentTextbook from "../StudentTextbook/StudentTextbook";
 
 function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchModulesLessons, libraryList}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -225,7 +225,7 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                             filterLibrary().map(item => {
                                 return (
                                     <div className="studentCourse__textbook-item" key={item.id}>
-                                        <StudentCourseItemTextbook docRef={item.ref} name={item.name}/>
+                                        <StudentTextbook docRef={item.ref} name={item.name}/>
                                     </div>
                                 )
                             })

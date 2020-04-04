@@ -87,6 +87,12 @@ export default function Layout({children, location, events, fetchEvents, usersLi
         },
         {
             id: 6,
+            url: '/library',
+            icon: 'fa fa-book-open',
+            name: 'library'
+        },
+        {
+            id: 7,
             url: '/contact',
             icon: 'fa fa-mobile-alt',
             name: 'contact'

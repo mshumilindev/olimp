@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import firebase from "../../../db/firestore";
-import siteSettingsContext from "../../../context/siteSettingsContext";
-import Modal from "../../UI/Modal/Modal";
+import firebase from "../../db/firestore";
+import siteSettingsContext from "../../context/siteSettingsContext";
+import Modal from "../UI/Modal/Modal";
 
-export default function StudentCourseItemTextbook({ docRef, name }) {
+export default function StudentTextbook({ docRef, name }) {
     const [ textbook, setTextbook ] = useState(null);
     const { translate } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
@@ -27,7 +27,7 @@ export default function StudentCourseItemTextbook({ docRef, name }) {
             {
                 textbook ?
                     <>
-                        <div>{ name }</div>
+                        <div className="studentCourse__textbook-item-title">{ name }</div>
                         <div className="studentCourse__textbook-item-holder">
                             {
                                 checkIfMobile() || textbook.type === 'else' ?

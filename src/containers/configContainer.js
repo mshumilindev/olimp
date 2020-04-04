@@ -7,6 +7,7 @@ import {fetchAllCourses} from "../redux/actions/coursesActions";
 import {fetchClasses} from "../redux/actions/classesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
 import {fetchEvents} from "../redux/actions/eventsActions";
+import {fetchLibrary} from "../redux/actions/libraryActions";
 
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
@@ -28,6 +29,7 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses()),
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
+    fetchLibrary: dispatch(fetchLibrary()),
     fetchEvents: (userID) => dispatch(fetchEvents(userID))
 });
 

@@ -1,0 +1,86 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
+
+.library {
+  &__list {
+
+  }
+  &__list-course {
+    margin: 40px -10px 0;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__list-courseName-subject {
+    color: $greyColor;
+    &:after {
+      content: '/';
+      margin: 0 5px;
+    }
+  }
+  &__list-courseName {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: $RobotoCondensed;
+    border-bottom: 1px solid $mediumGreyColor;
+    padding: 0 10px 20px;
+    display: flex;
+    align-items: center;
+  }
+  &__list-textbooksItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    &:nth-child(2n) {
+      background: $lightColor;
+    }
+    &:first-child {
+      margin-top: 0;
+    }
+    &:hover {
+      background: $lightBlueColor;
+    }
+  }
+  &__list-notFound {
+    justify-content: flex-start;
+    min-height: 45px;
+    color: $mediumGreyColor;
+    font-family: $RobotoCondensed;
+    &:hover {
+      background: inherit;
+    }
+  }
+  &__list-textbookIcon {
+    width: 40px;
+    height: 40px;
+    background-color: $lightGreyColor;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  @media screen and (max-width: $maxMobile) {
+    &__list-textbooksItem {
+      display: block;
+    }
+    .studentCourse__textbook-item-title {
+      word-break: break-word;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+  }
+  .textbookModal {
+    [class$="__box"] {
+      max-width: 90%;
+    }
+    [class$="__box-inner"] {
+      height: calc(100vh - 120px);
+    }
+    object {
+      height: calc(100% - 40px) !important;
+    }
+  }
+}
