@@ -103,7 +103,8 @@
     &.readonly {
       cursor: not-allowed;
     }
-    &:focus:not(.readonly) {
+    &:focus:not(.readonly):not(.customSelect__value),
+    &.customSelect__value.isActive {
       border-color: $btnPrimary;
       ~ .form__field-placeholder {
         top: 0;
