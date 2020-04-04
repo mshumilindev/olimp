@@ -9,6 +9,7 @@ import Breadcrumbs from "../../components/UI/Breadcrumbs/Breadcrumbs";
 import './adminLesson.scss';
 import Modal from "../../components/UI/Modal/Modal";
 import Article from "../../components/Article/Article";
+import { withRouter, Prompt } from 'react-router-dom';
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
@@ -34,6 +35,10 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
             discardLesson();
         }
     }, []);
+
+    useEffect(() => {
+        window.onbeforeunload = lessonUpdated && (() => translate('save_before_leaving'));
+    });
 
     useEffect(() => {
         if ( lesson ) {
@@ -148,6 +153,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                         :
                         null
                 }
+                <Prompt when={lessonUpdated} message={translate('save_before_leaving')} />
             </div>
             :
             <Preloader/>
@@ -290,4 +296,4 @@ const mapDispatchToProps = dispatch => ({
     discardLesson: () => dispatch(discardLesson())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdminLesson);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AdminLesson));
