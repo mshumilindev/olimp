@@ -49,6 +49,7 @@
     [class$="_chatContainer"] {
       background: $baseColor;
       border: 1px solid $linkHoverColor;
+      box-sizing: border-box;
     }
     &.fixed {
       position: fixed;
@@ -254,13 +255,6 @@
     line-height: 1.25;
   }
 }
-.admin {
-  .chatroom {
-    &__chatHolder:not(.isFullscreen) {
-      max-width: 800px;
-    }
-  }
-}
 .student,
 .guest {
   .chatroom {
@@ -288,6 +282,9 @@
 }
 .admin {
   .chatroom {
+    &__chatHolder:not(.isFullscreen) {
+      max-width: 800px;
+    }
     .preloader {
       margin-top: 85px;
     }
@@ -310,10 +307,119 @@
       justify-content: flex-start;
       overflow: auto;
       flex-direction: row;
+      .closeFullsizeVideo {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 30px;
+        color: $white;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        z-index: 2;
+        display: none;
+      }
+      &.hasFullsizeVideo {
+        .closeFullsizeVideo {
+          display: block;
+          cursor: pointer;
+          transform: none;
+          transition: transform .15s ease-in-out;
+          &:hover {
+            transform: scale(1.15);
+          }
+        }
+      }
       video {
-        width: 33.33333%;
         object-fit: cover;
         object-position: 50% 50%;
+        background: $lightGreyColor;
+        border: 1px solid $white;
+        box-sizing: border-box;
+        width: 33.33333%;
+        height: 0;
+        padding-top: 33.33333%;
+        &:hover {
+          border-color: $anchorColor;
+        }
+        &.fullsizeVideo {
+          position: absolute;
+          left: 0 !important;
+          top: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          padding: 0 !important;
+          z-index: 1;
+          border-color: $white !important;
+        }
+      }
+      &.tracks_qty_1 {
+        video {
+          width: 100%;
+          height: 100%;
+          padding-top: 0;
+          border-color: $white;
+        }
+      }
+      &.tracks_qty_2 {
+        video {
+          width: 50%;
+          height: 100%;
+          padding-top: 0;
+        }
+      }
+      &.tracks_qty_3,
+      &.tracks_qty_4 {
+        video {
+          width: 50%;
+          height: 50%;
+          padding-top: 0;
+        }
+      }
+      &.tracks_qty_5,
+      &.tracks_qty_6 {
+        video {
+          width: 33.33333%;
+          height: 50%;
+          padding-top: 0;
+        }
+      }
+    }
+    &__chatHolder.isFullscreen {
+      video {
+        width: 25%;
+        height: 50%;
+        padding-top: 0;
+      }
+      .tracks_qty_1 {
+        video {
+          width: 100%;
+          height: 100%;
+          padding-top: 0;
+        }
+      }
+      .tracks_qty_2 {
+        video {
+          width: 50%;
+          height: 100%;
+          padding-top: 0;
+        }
+      }
+      .tracks_qty_3,
+      .tracks_qty_4 {
+        video {
+          width: 50%;
+          height: 50%;
+          padding-top: 0;
+        }
+      }
+      .tracks_qty_5,
+      .tracks_qty_6 {
+        video {
+          width: 33.33333%;
+          height: 50%;
+          padding-top: 0;
+        }
       }
     }
   }

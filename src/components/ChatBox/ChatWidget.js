@@ -285,6 +285,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         setIsStopping(true);
         setStopChat(chat.id);
         setMuteChat(false);
+        setIsFullScreen(false);
     }
 
     function getChatID() {

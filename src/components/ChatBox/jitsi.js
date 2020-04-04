@@ -42,26 +42,14 @@ class Jitsi {
         };
 
         onShareScreen = (tracks) => {
+            shareScreenTrack = tracks[0];
+
             if ( localTracks.find(item => item.type === 'video') ) {
                 localTracks.find(item => item.type === 'video').dispose();
+                room.replaceTrack(localTracks.find(item => item.type === 'video'), shareScreenTrack);
                 containers.remote.querySelector(`#localVideo`).remove();
-
-                let i = 0;
-                const interval = setInterval(() => {
-                    i++;
-
-                    if ( !localTracks.find(item => item.type === 'video') ) {
-                        shareScreenTrack = tracks[0];
-                        self.room.addTrack(tracks[0]);
-                    }
-
-                    if ( i === 30 ) {
-                        clearInterval(interval);
-                    }
-                }, 100);
             }
             else {
-                shareScreenTrack = tracks[0];
                 self.room.addTrack(tracks[0]);
             }
         };
@@ -92,7 +80,13 @@ class Jitsi {
                     }
                 }
                 if (self.isJoined) {
-                    self.room.addTrack(self.localTracks[i]);
+                    if ( shareScreenTrack && self.localTracks[i].type === 'video' ) {
+                        shareScreenTrack.dispose();
+                        room.replaceTrack(shareScreenTrack, self.localTracks[i]);
+                    }
+                    else {
+                        self.room.addTrack(self.localTracks[i]);
+                    }
                 }
             }
             if ( !noUserCreation ) {
@@ -120,14 +114,14 @@ class Jitsi {
             track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, id => {});
             let id = null;
 
-            if ( track.videoType === 'desktop') {
-                id = 'shareScreen' + participant;
-            }
-            else {
-                id = track.getType() + participant
-            }
-
             setTimeout(() => {
+                if ( track.videoType === 'desktop') {
+                    id = 'shareScreen' + participant;
+                }
+                else {
+                    id = track.getType() + participant
+                }
+
                 if ( track.videoType === 'desktop' ) {
                     if ( containers.remote.querySelector('#video' + participant) ) {
                         containers.remote.querySelector('#video' + participant).remove();
@@ -342,21 +336,8 @@ class Jitsi {
         }
         else {
             if ( shareScreenTrack ) {
-                shareScreenTrack.dispose();
+                this.startDevices(true);
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
-
-                let i = 0;
-                const interval = setInterval(() => {
-                    i++;
-
-                    if ( !shareScreenTrack ) {
-                        this.startDevices(true);
-                    }
-
-                    if ( i === 30 ) {
-                        clearInterval(interval);
-                    }
-                }, 100);
             }
         }
     }

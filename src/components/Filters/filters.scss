@@ -73,7 +73,7 @@ $filtersIndent: 20px;
   .form {
     &__field {
       &-placeholder {
-        background: $lightGreyColor;
+        background: $lightGreyColor !important;
       }
     }
   }

@@ -11,6 +11,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     const $shareScreenContainer = useRef(null);
     const { user } = useContext(userContext);
     let jitsi = new Jitsi();
+    const [ classes, setClasses ] = useState('chatroom__remoteTracks');
 
     useEffect(() => {
         jitsi.start({
@@ -27,7 +28,10 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             usersList: usersList,
             onRemoteAdded: onRemoteAdded
         });
+        addClasses();
+        document.addEventListener('click', pickVideo);
         return () => {
+            document.removeEventListener('click', pickVideo);
             jitsi.stop();
             setIsFullScreen(false);
             setIsHidden(false);
@@ -49,6 +53,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
         const obs = new MutationObserver((mutations) => {
             setTimeout(() => {
                 makeVideoMain();
+                addClasses();
             }, 0);
         });
         obs.observe( $remoteTracksContainer.current, { childList:true, subtree:true });
@@ -63,10 +68,27 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             <div className="chatroom__chatContainer">
                 <div className="chatroom__shareScreen" ref={$shareScreenContainer}/>
                 <div className="chatroom__localTracks" ref={$localTracksContainer}/>
-                <div className="chatroom__remoteTracks" ref={$remoteTracksContainer}/>
+                <div className={classes} ref={$remoteTracksContainer}>
+                    <i className="closeFullsizeVideo fa fa-times" />
+                </div>
             </div>
         </>
     );
+
+    function pickVideo(e) {
+        if ( user.role !== 'student' ) {
+            if ( e.target.tagName === 'VIDEO' ) {
+                e.target.classList.toggle('fullsizeVideo');
+                $remoteTracksContainer.current.classList.toggle('hasFullsizeVideo');
+            }
+            if ( e.target.classList.contains('closeFullsizeVideo') ) {
+                if ( $remoteTracksContainer.current.querySelector('.fullsizeVideo') ) {
+                    $remoteTracksContainer.current.querySelector('.fullsizeVideo').classList.remove('fullsizeVideo');
+                }
+                $remoteTracksContainer.current.classList.remove('hasFullsizeVideo');
+            }
+        }
+    }
 
     function onDisplayNameChange(id, displayName) {
         setTimeout(() => {
@@ -79,6 +101,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     function onRemoteAdded() {
         setTimeout(() => {
             makeVideoMain();
+            addClasses();
         }, 0);
     }
 
@@ -99,5 +122,11 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 }
             }
         }
+    }
+
+    function addClasses() {
+        const initialClass = 'chatroom__remoteTracks';
+
+        setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('video').length);
     }
 }
