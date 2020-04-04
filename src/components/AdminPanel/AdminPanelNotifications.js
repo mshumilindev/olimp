@@ -26,18 +26,18 @@ function AdminPanelNotifications({loading, notificationsList, updateNotification
                     <Preloader/>
                     :
                     JSON.parse(notifications) ?
-                        <>
-                            <div className="notifications">
+                        <div className="grid">
+                            <div className="grid_col col-12 desktop-col-6 notifications">
                                 {
                                     <AdminPanelNotificationsItem type="teachers" notification={JSON.parse(notifications).teachers} setFieldValue={setFieldValue} resetNotification={resetNotification} updateNotification={(type) => updateNotification(type, JSON.parse(notifications)[type])} onConfirmRemove={onConfirmRemove} />
                                 }
                             </div>
-                            <div className="notifications">
+                            <div className="grid_col col-12 desktop-col-6 notifications">
                                 {
                                     <AdminPanelNotificationsItem type="students" notification={JSON.parse(notifications).students} setFieldValue={setFieldValue} resetNotification={resetNotification} updateNotification={(type) => updateNotification(type, JSON.parse(notifications)[type])} onConfirmRemove={onConfirmRemove} />
                                 }
                             </div>
-                        </>
+                        </div>
                         :
                         <Preloader/>
             }

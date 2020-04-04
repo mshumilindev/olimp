@@ -1,12 +1,4 @@
 .notifications {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid $lightGreyColor;
-  &:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
   &__typeHeading {
     font-family: $RobotoCondensed;
     font-weight: bold;
@@ -44,6 +36,15 @@
   }
   .nothingFound {
     color: $mediumGreyColor;
+  }
+  @media screen and (max-width: $minDesktop) {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $lightGreyColor;
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
   }
 }
 .notification {
