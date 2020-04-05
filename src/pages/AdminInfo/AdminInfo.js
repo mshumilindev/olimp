@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, {useContext, useEffect} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import AdminInfoManuals from '../../components/AdminInfo/AdminInfoManuals';
 import './adminInfo.scss';
 import classNames from 'classnames';
@@ -19,18 +19,39 @@ const manuals = [
     }
 ];
 
-export default function AdminInfo({params}) {
+function AdminInfo({location, history, params}) {
     const { translate } = useContext(siteSettingsContext);
     const nav = [
         {
             id: 'videochats',
-            title: translate('videochats')
+            title: translate('videochats'),
+            sections: manuals.find(item => item.id === 'videochats').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
         },
         {
             id: 'subjects',
-            title: translate('subjects')
+            title: translate('subjects'),
+            sections: manuals.find(item => item.id === 'subjects').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
         }
     ];
+
+    useEffect(() => {
+        if ( location.hash && location.hash.indexOf('#') !== -1 ) {
+            const id = location.hash.replace('#', '');
+
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.getElementById(id).offsetTop,
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+        else {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, [location]);
 
     return (
         <section className="section">
@@ -46,10 +67,23 @@ export default function AdminInfo({params}) {
                         {
                             nav.map(navItem => {
                                 return (
-                                    <div className={classNames('adminInfo__navItem')}>
+                                    <div className={classNames('adminInfo__navItem')} key={navItem.id}>
                                         {
                                             navItem.id === params.id ?
-                                                <span>{ navItem.title }</span>
+                                                <span>
+                                                    { navItem.title }
+                                                    <ul>
+                                                        {
+                                                            navItem.sections.map(section => {
+                                                                return (
+                                                                    <li key={section.id}>
+                                                                        <Link to={/admin-info/ + navItem.id + '#' + section.id}>{ section.title }</Link>
+                                                                    </li>
+                                                                )
+                                                            })
+                                                        }
+                                                    </ul>
+                                                </span>
                                                 :
                                                 <Link to={'/admin-info/' + navItem.id}>
                                                     { navItem.title }
@@ -73,3 +107,5 @@ export default function AdminInfo({params}) {
         </section>
     );
 }
+
+export default withRouter(AdminInfo);

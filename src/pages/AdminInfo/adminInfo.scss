@@ -4,6 +4,8 @@
 
 .adminInfo {
   position: relative;
+  max-width: 900px;
+  margin: 0 auto;
   &__nav-holder {
     position: absolute;
     left: $widgetIndent;
@@ -25,8 +27,37 @@
       content: '•';
       margin-right: 5px;
     }
-    span {
+    > span {
       text-transform: uppercase;
+      ul {
+        text-transform: none;
+        padding-left: 10px;
+        border-bottom: 1px solid $mediumGreyColor;
+        padding-bottom: 10px;
+        counter-reset: section;
+        font-size: 14px;
+        li {
+          margin-top: 10px;
+          line-height: 1;
+          position: relative;
+          padding-left: 15px;
+          &:before {
+            counter-increment: section;
+            content: counter(section)". ";
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+        }
+      }
+    }
+    &:last-child {
+      span {
+        ul {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+      }
     }
   }
   &__manual-holder {

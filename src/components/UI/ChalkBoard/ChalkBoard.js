@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef} from 'react';
+import React, {useContext, useState} from 'react';
 import './chalkBoard.scss';
 import {Preloader} from "../../UI/preloader";
 import TextTooltip from "../../UI/TextTooltip/TextTooltip";

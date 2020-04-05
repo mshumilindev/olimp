@@ -17,7 +17,7 @@ function Page(props) {
     history.listen(location => {
         const pathChanged = prevLocation.pathname !== location.pathname;
         const hashChanged = prevLocation.hash !== location.hash;
-        if ( (pathChanged || hashChanged) && !location.pathname.includes('/admin-courses') ){
+        if ( (pathChanged || hashChanged) && !location.pathname.includes('/admin-courses') && !location.pathname.includes('/admin-info') ){
             window.scrollTo(0, 0);
         }
         prevLocation = location;

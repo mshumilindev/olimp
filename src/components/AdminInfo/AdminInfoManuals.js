@@ -28,7 +28,7 @@ export default function AdminInfoManuals({manuals, id}) {
         const sectionNum = index + 1;
 
         return (
-            <div className="manuals__section" key={'section' + index}>
+            <div className="manuals__section" key={'section' + index} id={section.sectionID}>
                 <h3 className="manuals__sectionTitle"><span>{ sectionNum }.</span> { section.sectionTitle }</h3>
                 {
                     section.blocks && section.blocks.length ?

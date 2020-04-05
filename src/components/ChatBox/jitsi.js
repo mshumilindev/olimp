@@ -85,6 +85,7 @@ class Jitsi {
                         room.replaceTrack(shareScreenTrack, self.localTracks[i]);
                     }
                     else {
+                        shareScreenTrack.dispose();
                         self.room.addTrack(self.localTracks[i]);
                     }
                 }
