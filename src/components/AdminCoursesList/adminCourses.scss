@@ -21,6 +21,9 @@ $courseItemIndent: $pageIndent / 2;
   }
   &__list-item {
     margin-top: $courseItemIndent;
+    .contextmenu {
+      z-index: 1;
+    }
     &.someOpen {
       a {
         color: $mediumGreyColor;

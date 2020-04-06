@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
+import Form from "../Form/Form";
 
 export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, isStopping}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
@@ -74,6 +75,10 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             </div>
         </>
     );
+
+    function setDevice(fieldID, value) {
+        jitsi.setDevice(value);
+    }
 
     function pickVideo(e) {
         if ( user.role !== 'student' ) {

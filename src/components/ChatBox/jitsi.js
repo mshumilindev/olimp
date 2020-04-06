@@ -134,7 +134,7 @@ class Jitsi {
                     $(containers.shareScreen).append(`<video autoplay='1' muted playsinline id='shareScreen${participant}' />`);
                 }
                 else {
-                    if (track.getType() === 'video') {
+                    if ( track.getType() === 'video' ) {
                         if ( !document.getElementById('video' + participant) ) {
                             $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
                         }
@@ -248,7 +248,7 @@ class Jitsi {
         let i = 0;
         navigator.getMedia({audio: {volume: 1}}, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480, facingMode: 'user'})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -264,7 +264,7 @@ class Jitsi {
             });
         }, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
+                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480, facingMode: 'user'})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -329,7 +329,7 @@ class Jitsi {
                 });
         }
         else {
-            if ( room ) {
+            if ( room && shareScreenTrack ) {
                 this.startDevices(true);
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
             }

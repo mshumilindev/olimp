@@ -1,0 +1,15 @@
+.adminUpdates {
+  max-width: 600px;
+  &__list-item {
+    margin-bottom: 10px;
+    display: flex;
+    line-height: 1.25;
+    &:before {
+      content: '-';
+      margin-right: 5px;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
