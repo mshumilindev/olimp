@@ -258,6 +258,9 @@
 .student,
 .guest {
   .chatroom {
+    .closeFullsizeVideo {
+      display: none;
+    }
     &__users {
       display: none !important;
     }

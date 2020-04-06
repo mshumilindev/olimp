@@ -127,6 +127,8 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     function addClasses() {
         const initialClass = 'chatroom__remoteTracks';
 
-        setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('video').length);
+        if ( $remoteTracksContainer.current ) {
+            setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('video').length);
+        }
     }
 }

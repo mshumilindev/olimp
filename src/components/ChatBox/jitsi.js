@@ -85,20 +85,24 @@ class Jitsi {
                         room.replaceTrack(shareScreenTrack, self.localTracks[i]);
                     }
                     else {
-                        shareScreenTrack.dispose();
+                        if ( shareScreenTrack ) {
+                            shareScreenTrack.dispose();
+                        }
                         self.room.addTrack(self.localTracks[i]);
                     }
                 }
             }
             if ( !noUserCreation ) {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'chatroom__user';
+                if ( !containers.organizer.querySelector('chatroom__user') ) {
+                    const userDiv = document.createElement('div');
+                    userDiv.className = 'chatroom__user';
 
-                const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
+                    const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
 
-                containers.participants.appendChild(userDiv);
-                userDiv.innerHTML = userInner;
-                onDisplayNameChange(null, user.name);
+                    containers.organizer.appendChild(userDiv);
+                    userDiv.innerHTML = userInner;
+                    onDisplayNameChange(null, user.name);
+                }
             }
         };
 
@@ -141,32 +145,6 @@ class Jitsi {
                     }
                 }
                 track.attach(document.getElementById(id));
-                setTimeout(() => {
-                    if ( user.role === 'student' && track.getType() === 'video' ) {
-                        const videos = containers.remote.querySelectorAll('video');
-
-                        if ( videos ) {
-                            [...videos].forEach(videoItem => {
-                                const videoID = videoItem.id.replace('video', '');
-
-                                if ( videoID ) {
-                                    const userDiv = containers.participants.querySelector(('#user' + videoID));
-
-                                    if ( userDiv ) {
-                                        const userName = userDiv.dataset.name;
-
-                                        if ( userName && !videoItem.classList.contains('main-video') ) {
-                                            if ( usersList.find(userItem => userItem.name === userName).role === 'student' ) {
-                                                videoItem.remove();
-                                                track.dispose();
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }, 100);
             }, 1000);
         }
 
@@ -261,27 +239,42 @@ class Jitsi {
 
         self.connection.connect();
 
-        navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
         self.startDevices();
     }
 
     startDevices(onlyVideo) {
-        let i = 0;
+        navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
-        JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
-            .then(tracks => onLocalTracks(tracks, onlyVideo))
-            .catch(error => {
-                JitsiMeetJS.enumerateDevices(devices => {
-                    if ( devices.find(item => item.kind === 'videoinput') ) {
-                        goThroughVideoDevices(devices, devices.length);
-                    }
-                    else {
-                        JitsiMeetJS.createLocalTracks({devices: ['audio']})
-                            .then((tracks) => onLocalTracks(tracks, onlyVideo))
-                            .catch();
-                    }
-                });
+        let i = 0;
+        navigator.getMedia({audio: {volume: 1}}, () => {
+            navigator.getMedia({video: true}, () => {
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
+                    .then(tracks => onLocalTracks(tracks, onlyVideo))
+                    .catch(error => {
+                        JitsiMeetJS.enumerateDevices(devices => {
+                            goThroughVideoDevices(devices, devices.length);
+                        });
+                    });
+            }, () => {
+                JitsiMeetJS.createLocalTracks({devices: ['audio']})
+                    .then(tracks => onLocalTracks(tracks, onlyVideo))
+                    .catch(error => {
+                        throw error;
+                    });
             });
+        }, () => {
+            navigator.getMedia({video: true}, () => {
+                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
+                    .then(tracks => onLocalTracks(tracks, onlyVideo))
+                    .catch(error => {
+                        JitsiMeetJS.enumerateDevices(devices => {
+                            goThroughVideoDevices(devices, devices.length);
+                        });
+                    });
+            }, () => {
+                // === Throw error, no devices available
+            });
+        });
 
         function goThroughVideoDevices(devices, length) {
             if ( devices[i].kind === 'videoinput' ) {
@@ -336,7 +329,7 @@ class Jitsi {
                 });
         }
         else {
-            if ( shareScreenTrack ) {
+            if ( room ) {
                 this.startDevices(true);
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
             }

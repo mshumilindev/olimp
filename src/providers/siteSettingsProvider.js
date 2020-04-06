@@ -155,7 +155,7 @@ export default class SiteSettingsProvider extends React.Component{
     }
 
     identify(value) {
-        return value.replace(/^a-z0-9]/gi,'').split(' ').join('_').toLowerCase();
+        return value.replace(/^a-z0-9]/gi,'').replace(/\?/g,'').split(' ').join('_').toLowerCase();
     }
 
     transliterize(value) {

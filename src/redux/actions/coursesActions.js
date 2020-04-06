@@ -279,8 +279,6 @@ export function deleteCourse(subjectID, courseID) {
     return dispatch => {
         dispatch(coursesBegin());
         return courseRef.delete().then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            foundSubject.coursesList.splice(foundSubject.coursesList.indexOf(foundSubject.coursesList.find(item => item.id === courseID)), 1);
             dispatch(coursesSuccess(subjectsList));
         });
     };
@@ -303,10 +301,6 @@ export function deleteModule(subjectID, courseID, moduleID) {
     return dispatch => {
         dispatch(coursesBegin());
         return moduleRef.delete().then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
-
-            foundCourse.modules.splice(foundCourse.modules.indexOf(foundCourse.modules.find(item => item.id === moduleID)), 1);
             dispatch(coursesSuccess(subjectsList));
         });
     };
@@ -466,28 +460,6 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
             ...newLesson
         }).then(() => {
             handleContent();
-            if ( updateTree ) {
-                const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
-
-                dispatch(coursesBegin());
-                return lessonsRef.get().then((snapshot) => {
-                    subjectsList
-                        .find(item => item.id === subjectID).coursesList
-                        .find(item => item.id === courseID).modules
-                        .find(item => item.id === moduleID).lessons = [];
-                    snapshot.docs.forEach(doc => {
-                        subjectsList
-                            .find(item => item.id === subjectID).coursesList
-                            .find(item => item.id === courseID).modules
-                            .find(item => item.id === moduleID).lessons
-                            .push({
-                                ...doc.data(),
-                                id: doc.id
-                            });
-                    });
-                    dispatch(coursesSuccess(subjectsList));
-                });
-            }
         });
     };
 }
@@ -498,11 +470,6 @@ export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
     return dispatch => {
         dispatch(coursesBegin());
         return lessonRef.delete().then(() => {
-            const foundSubject = subjectsList.find(item => item.id === subjectID);
-            const foundCourse = foundSubject.coursesList.find(item => item.id === courseID);
-            const foundModule = foundCourse.modules.find(item => item.id === moduleID);
-
-            foundModule.lessons.splice(foundModule.lessons.indexOf(foundModule.lessons.find(item => item.id === lessonID)), 1);
             dispatch(coursesSuccess(subjectsList));
         });
     };
@@ -516,6 +483,7 @@ export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
     return dispatch => {
         dispatch(lessonBegin());
         return lessonRef.get().then(snapshot => {
+            console.log(snapshot);
             lesson = {
                 ...snapshot.data(),
                 id: snapshot.id
