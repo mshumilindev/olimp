@@ -248,7 +248,7 @@ class Jitsi {
         let i = 0;
         navigator.getMedia({audio: {volume: 1}}, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480, facingMode: 'user'})
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -264,7 +264,7 @@ class Jitsi {
             });
         }, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480, facingMode: 'user'})
+                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
