@@ -1,6 +1,6 @@
 .page {
   padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
-  background: $lightColor;
+  background: $pageColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
   &__inner {
     display: flex;

@@ -254,6 +254,17 @@
     text-align: center;
     line-height: 1.25;
   }
+  &__devicePicker {
+    max-width: 200px;
+    margin-left: auto;
+    height: 0;
+    margin-bottom: -20px;
+    .form {
+      &__field-placeholder {
+        background: $lightColor !important;
+      }
+    }
+  }
 }
 .student,
 .guest {
@@ -279,6 +290,13 @@
         height: 100%;
         object-fit: cover;
         object-position: 50% 50%;
+      }
+    }
+    &__devicePicker {
+      .form {
+        &__field-placeholder {
+          background: $white !important;
+        }
       }
     }
   }
@@ -338,8 +356,7 @@
         border: 1px solid $white;
         box-sizing: border-box;
         width: 33.33333%;
-        height: 0;
-        padding-top: 33.33333%;
+        height: 33.33333%;
         &:hover {
           border-color: $anchorColor;
         }
@@ -440,6 +457,9 @@
     }
     &__remoteTracks {
       left: 0;
+    }
+    &__devicePicker {
+      display: none;
     }
   }
   .isFullscreen {

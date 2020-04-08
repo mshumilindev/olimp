@@ -24,8 +24,6 @@
   }
   &__list {
     margin: -5px -20px 20px;
-    max-height: 300px;
-    overflow: auto;
   }
   &__selectedList {
     margin: -5px 0 -20px;
@@ -37,6 +35,8 @@
     display: flex;
     align-items: center;
     padding: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
     &.selected {
       background: $greenColor;
     }
@@ -66,6 +66,8 @@
   &__list-item-name {
     font-family: $RobotoCondensed;
     width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   &__list-item-check {
     margin-right: 10px;

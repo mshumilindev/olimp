@@ -243,12 +243,14 @@ class Jitsi {
     }
 
     startDevices(onlyVideo) {
+        const selectedCameraID = localStorage.getItem('videoDevice') ? JSON.parse(localStorage.getItem('videoDevice')).id : null;
+
         navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
         let i = 0;
         navigator.getMedia({audio: {volume: 1}}, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480})
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], resolution: 480, cameraDeviceId: selectedCameraID})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -264,7 +266,7 @@ class Jitsi {
             });
         }, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480})
+                JitsiMeetJS.createLocalTracks({devices: ['video'], resolution: 480, cameraDeviceId: selectedCameraID})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -334,6 +336,22 @@ class Jitsi {
                 room.sendTextMessage(JSON.stringify({event: 'onRemoveShareScreen'}));
             }
         }
+    }
+
+    changeVideoDevice(value, label) {
+        localStorage.setItem('videoDevice', JSON.stringify({id: value, label: label}));
+        JitsiMeetJS.createLocalTracks({devices: ['video'], cameraDeviceId: value, resolution: 480})
+            .then(tracks => {
+                if ( localTracks.find(item => item.type === 'video') ) {
+                    localTracks.find(item => item.type === 'video').dispose();
+                    room.replaceTrack(localTracks.find(item => item.type === 'video'), tracks[0]);
+                    localTracks[localTracks.indexOf(localTracks.find(item => item.type === 'video'))] = tracks[0];
+                }
+                else {
+                    localTracks.push(tracks[0]);
+                    room.addTrack(tracks[0]);
+                }
+            });
     }
 }
 

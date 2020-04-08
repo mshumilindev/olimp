@@ -5,167 +5,162 @@ const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
 const Confirm = React.lazy(() => import('../UI/Confirm/Confirm'));
 
-function AdminPanelNotificationsItem({loading, type, notification, setFieldValue, updateNotification, resetNotification, onConfirmRemove}) {
+function AdminPanelNotificationsItem({loading, notification, updateNotification, onConfirmRemove}) {
     const { translate, lang } = useContext(siteSettingsContext);
+    const initialFormFields = [
+        {
+            type: 'select',
+            placeholder: translate('choose_type'),
+            id: 'type',
+            value: notification.type,
+            required: true,
+            hasErrors: false,
+            updated: false,
+            options: [
+                {
+                    id: 'message',
+                    icon: 'fas fa-comment',
+                    title: translate('message')
+                },
+                {
+                    id: 'warning',
+                    icon: 'fa fa-exclamation-triangle',
+                    title: translate('warning')
+                },
+                {
+                    id: 'error',
+                    icon: 'fa fa-exclamation',
+                    title: translate('error')
+                }
+            ]
+        },
+        {
+            type: 'block',
+            heading: translate('heading'),
+            id: 'heading',
+            children: [
+                {
+                    type: 'text',
+                    id: 'heading_UA',
+                    value: notification.heading.ua,
+                    updated: false,
+                    placeholder: translate('heading') + ' ' + translate('in_ua')
+                },
+                {
+                    type: 'text',
+                    id: 'heading_RU',
+                    value: notification.heading.ru,
+                    updated: false,
+                    placeholder: translate('heading') + ' ' + translate('in_ru')
+                },
+                {
+                    type: 'text',
+                    id: 'heading_EN',
+                    value: notification.heading.en,
+                    updated: false,
+                    placeholder: translate('heading') + ' ' + translate('in_en')
+                }
+            ]
+        },
+        {
+            type: 'block',
+            heading: translate('text'),
+            id: 'text',
+            children: [
+                {
+                    type: 'textarea',
+                    id: 'text_UA',
+                    value: notification.text.ua,
+                    updated: false,
+                    placeholder: translate('text') + ' ' + translate('in_ua'),
+                    required: true,
+                    hasErrors: false
+                },
+                {
+                    type: 'textarea',
+                    id: 'text_RU',
+                    value: notification.text.ru,
+                    updated: false,
+                    placeholder: translate('text') + ' ' + translate('in_ru')
+                },
+                {
+                    type: 'textarea',
+                    id: 'text_EN',
+                    value: notification.text.en,
+                    updated: false,
+                    placeholder: translate('text') + ' ' + translate('in_en')
+                }
+            ]
+        },
+        {
+            type: 'block',
+            heading: translate('link'),
+            id: 'link',
+            children: [
+                {
+                    type: 'text',
+                    id: 'link_UA',
+                    value: notification.link.text.ua,
+                    updated: false,
+                    placeholder: translate('link_text') + ' ' + translate('in_ua')
+                },
+                {
+                    type: 'text',
+                    id: 'link_RU',
+                    value: notification.link.text.ru,
+                    updated: false,
+                    placeholder: translate('link_text') + ' ' + translate('in_ru')
+                },
+                {
+                    type: 'text',
+                    id: 'link_EN',
+                    value: notification.link.text.en,
+                    updated: false,
+                    placeholder: translate('link_text') + ' ' + translate('in_en')
+                },
+                {
+                    type: 'text',
+                    id: 'url',
+                    value: notification.link.url,
+                    updated: false,
+                    placeholder: translate('link_url')
+                }
+            ]
+        },
+        {
+            type: 'submit',
+            id: 'submit',
+            name: translate('save')
+        }
+    ];
     const [ showModal, setShowModal ] = useState(false);
-    const [ formFields, setFormFields ] = useState([]);
-    const [ initialNotification, setInitialNotification ] = useState(null);
+    const [ formFields, setFormFields ] = useState(initialFormFields);
     const [ formUpdated, setFormUpdated ] = useState(false);
     const [ showRemoveConfirm, setShowRemoveConfirm ] = useState(false);
 
-    if ( !initialNotification ) {
-        setInitialNotification(JSON.stringify(notification));
-    }
-
     useEffect(() => {
-        if ( initialNotification ) {
-            if ( JSON.stringify(notification) !== initialNotification ) {
-                setFormUpdated(true);
-            }
-            else {
-                setFormUpdated(false);
-            }
-        }
-        setFormFields([
-            {
-                type: 'select',
-                placeholder: translate('choose_type'),
-                id: 'type',
-                value: notification.type,
-                required: true,
-                hasErrors: false,
-                updated: JSON.parse(initialNotification).type !== notification.type,
-                options: [
-                    {
-                        id: 'message',
-                        icon: 'fas fa-comment',
-                        title: translate('message')
-                    },
-                    {
-                        id: 'warning',
-                        icon: 'fa fa-exclamation-triangle',
-                        title: translate('warning')
-                    },
-                    {
-                        id: 'error',
-                        icon: 'fa fa-exclamation',
-                        title: translate('error')
-                    }
-                ]
-            },
-            {
-                type: 'block',
-                heading: translate('heading'),
-                id: 'heading',
-                children: [
-                    {
-                        type: 'text',
-                        id: 'heading_UA',
-                        value: notification.heading.ua,
-                        updated: JSON.parse(initialNotification).heading.ua !== notification.heading.ua,
-                        placeholder: translate('heading') + ' ' + translate('in_ua')
-                    },
-                    {
-                        type: 'text',
-                        id: 'heading_RU',
-                        value: notification.heading.ru,
-                        updated: JSON.parse(initialNotification).heading.ru !== notification.heading.ru,
-                        placeholder: translate('heading') + ' ' + translate('in_ru')
-                    },
-                    {
-                        type: 'text',
-                        id: 'heading_EN',
-                        value: notification.heading.en,
-                        updated: JSON.parse(initialNotification).heading.en !== notification.heading.en,
-                        placeholder: translate('heading') + ' ' + translate('in_en')
-                    }
-                ]
-            },
-            {
-                type: 'block',
-                heading: translate('text'),
-                id: 'text',
-                children: [
-                    {
-                        type: 'textarea',
-                        id: 'text_UA',
-                        value: notification.text.ua,
-                        updated: JSON.parse(initialNotification).text.ua !== notification.text.ua,
-                        placeholder: translate('text') + ' ' + translate('in_ua'),
-                        required: true,
-                        hasErrors: false
-                    },
-                    {
-                        type: 'textarea',
-                        id: 'text_RU',
-                        value: notification.text.ru,
-                        updated: JSON.parse(initialNotification).text.ru !== notification.text.ru,
-                        placeholder: translate('text') + ' ' + translate('in_ru')
-                    },
-                    {
-                        type: 'textarea',
-                        id: 'text_EN',
-                        value: notification.text.en,
-                        updated: JSON.parse(initialNotification).text.en !== notification.text.en,
-                        placeholder: translate('text') + ' ' + translate('in_en')
-                    }
-                ]
-            },
-            {
-                type: 'block',
-                heading: translate('link'),
-                id: 'link',
-                children: [
-                    {
-                        type: 'text',
-                        id: 'link_UA',
-                        value: notification.link.text.ua,
-                        updated: JSON.parse(initialNotification).link.text.ua !== notification.link.text.ua,
-                        placeholder: translate('link_text') + ' ' + translate('in_ua')
-                    },
-                    {
-                        type: 'text',
-                        id: 'link_RU',
-                        value: notification.link.text.ru,
-                        updated: JSON.parse(initialNotification).link.text.ru !== notification.link.text.ru,
-                        placeholder: translate('link_text') + ' ' + translate('in_ru')
-                    },
-                    {
-                        type: 'text',
-                        id: 'link_EN',
-                        value: notification.link.text.en,
-                        updated: JSON.parse(initialNotification).link.text.en !== notification.link.text.en,
-                        placeholder: translate('link_text') + ' ' + translate('in_en')
-                    },
-                    {
-                        type: 'text',
-                        id: 'url',
-                        value: notification.link.url,
-                        updated: JSON.parse(initialNotification).link.url !== notification.link.url,
-                        placeholder: translate('link_url')
-                    }
-                ]
-            },
-            {
-                type: 'submit',
-                id: 'submit',
-                name: translate('save')
-            }
-        ]);
-    }, [notification, initialNotification]);
+        // if ( initialNotification ) {
+        //     if ( JSON.stringify(notification) !== initialNotification ) {
+        //         setFormUpdated(true);
+        //     }
+        //     else {
+        //         setFormUpdated(false);
+        //     }
+        // }
+    }, [notification]);
 
     return (
         <>
             <div className="notifications__typeHeading">
-                {
-                    type === 'teachers' ?
-                        translate('notifications_for_teachers')
-                        :
-                        type === 'students' ?
-                            translate('notifications_for_students')
-                            :
-                            null
-                }
+                {/*{*/}
+                {/*    type === 'teachers' ?*/}
+                {/*        translate('notifications_for_teachers')*/}
+                {/*        :*/}
+                {/*        type === 'students' ?*/}
+                {/*            translate('notifications_for_students')*/}
+                {/*            :*/}
+                {/*            null*/}
+                {/*}*/}
                 {
                     notification.type ?
                         <div className="notifications__typeHeading-remove">
@@ -232,22 +227,6 @@ function AdminPanelNotificationsItem({loading, type, notification, setFieldValue
                             </div>
                     }
                 </div>
-                <div className="notifications__add">
-                        <span className="notifications__add-btn" onClick={() => setShowModal(true)}>
-                            {
-                                notification.type ?
-                                    <>
-                                        <i className="content_title-icon fa fa-pencil-alt" />
-                                        { translate('edit') }
-                                    </>
-                                    :
-                                    <>
-                                        <i className="content_title-icon fa fa-plus" />
-                                        { translate('add') }
-                                    </>
-                            }
-                        </span>
-                </div>
             </div>
             {
                 showModal ?
@@ -266,24 +245,55 @@ function AdminPanelNotificationsItem({loading, type, notification, setFieldValue
         </>
     );
 
+    function handleSetFieldValue(fieldID, value) {
+        const newFields = formFields;
+
+        if ( fieldID.includes('heading') ) {
+            newFields.find(block => block.id === 'heading').children.find(field => field.id === fieldID).value = value;
+            if ( value ) {
+                newFields.find(block => block.id === 'heading').children.find(field => field.id === fieldID).updated = true;
+            }
+        }
+        else if ( fieldID.includes('text') ) {
+            newFields.find(block => block.id === 'text').children.find(field => field.id === fieldID).value = value;
+            if ( value ) {
+                newFields.find(block => block.id === 'text').children.find(field => field.id === fieldID).updated = true;
+            }
+        }
+        else if ( fieldID.includes('link') || fieldID === 'url' ) {
+            newFields.find(block => block.id === 'link').children.find(field => field.id === fieldID).value = value;
+            if ( value ) {
+                newFields.find(block => block.id === 'link').children.find(field => field.id === fieldID).updated = true;
+            }
+        }
+        else {
+            formFields.find(field => field.id === fieldID).value = value;
+            if ( value ) {
+                formFields.find(field => field.id === fieldID).updated = true;
+            }
+        }
+
+        if ( value && !formUpdated ) {
+            setFormUpdated(true);
+        }
+
+        setFormFields(Object.assign([], newFields));
+    }
+
     function handleConfirmRemove() {
         setShowRemoveConfirm(false);
-        onConfirmRemove(type);
+        // onConfirmRemove(type);
     }
 
     function handleUpdateNotification() {
         setShowModal(false);
-        setInitialNotification(JSON.stringify(notification));
-        updateNotification(type);
+        // updateNotification(type);
     }
 
     function handleResetNotification() {
         setShowModal(false);
-        resetNotification(type, JSON.parse(initialNotification));
-    }
-
-    function handleSetFieldValue(fieldID, value) {
-        setFieldValue(fieldID, value, type);
+        setFormFields(initialFormFields);
+        setFormUpdated(false);
     }
 }
 export default AdminPanelNotificationsItem;

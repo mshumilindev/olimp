@@ -38,7 +38,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                             typeof event.participants === 'object' ?
                                 event.participants.map(partItem => {
                                     if ( getUser(partItem) ) {
-                                        return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem)} key={partItem}>{ getUser(partItem).name }</Link>;
+                                        return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>;
                                     }
                                     else {
                                         return 'undefined';

@@ -3,40 +3,42 @@ import firebase from "../../db/firestore";
 const db = firebase.firestore();
 
 const notificationsCollection = db.collection('notifications');
-const notificationsList = localStorage.getItem('notifications') ? JSON.parse(localStorage.getItem('notifications')) : {};
 
 export function fetchNotifications() {
-    if ( !notificationsList.length ) {
-        return dispatch => {
-            dispatch(fetchNotificationsBegin());
-            return notificationsCollection.get().then(snapshot => {
-                snapshot.docs.forEach(doc => {
-                    notificationsList[doc.id] = doc.data();
-                });
-                dispatch(fetchNotificationsSuccess(notificationsList));
-            });
+    return dispatch => {
+        dispatch(fetchNotificationsBegin());
+        return notificationsCollection.onSnapshot(snapshot => {
+            const notificationsList = [];
 
-        }
-    }
-    else {
-        return dispatch => {
-            dispatch(fetchNotificationsSuccess(notificationsList))
-        }
+            snapshot.docs.forEach(doc => {
+                notificationsList.push({
+                    ...doc.data(),
+                    id: doc.id
+                })
+            });
+            dispatch(fetchNotificationsSuccess(notificationsList));
+        });
+
     }
 }
 
-export function updateNotification(type, newNotification) {
-    const notificationRef = db.collection('notifications').doc(type);
+export function updateNotification(newNotification) {
+    const notificationRef = db.collection('notifications').doc(newNotification.id);
 
     return dispatch => {
         dispatch(fetchNotificationsBegin());
         return notificationRef.set({
             ...newNotification
-        }).then(() => {
-            notificationsList[type] = newNotification;
-            dispatch(fetchNotificationsSuccess(notificationsList));
-        });
+        }, { merge: true });
+    }
+}
 
+export function removeNotification(notificationID) {
+    const notificationRef = db.collection('notifications').doc(notificationID);
+
+    return dispatch => {
+        dispatch(fetchNotificationsBegin());
+        return notificationRef.delete();
     }
 }
 

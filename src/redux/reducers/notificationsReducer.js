@@ -8,17 +8,17 @@ const initialState = {
 export default function configReducer(state = initialState, action) {
     switch ( action.type ) {
         case NOTIFICATIONS_BEGIN:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: true
-            };
+            });
 
         case NOTIFICATIONS_SUCCESS:
-            return {
+            return Object.assign({}, {
                 ...state,
                 loading: false,
                 notificationsList: action.payload.notificationsList
-            };
+            });
 
         default:
             return state;

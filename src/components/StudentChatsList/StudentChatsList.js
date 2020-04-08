@@ -52,7 +52,7 @@ function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
             newEventsArr.find(item => item.formattedDate === formattedDate).children.push(event);
         });
 
-        return orderBy(newEventsArr.filter(block => showTodayOnly ? block.formattedDate === moment().format('DD MMMM YYYY') : true).filter(block => block.date > moment().unix()), v => v.date);
+        return orderBy(newEventsArr.filter(block => showTodayOnly ? block.formattedDate === moment().format('DD MMMM YYYY') : true).filter(block => block.date > moment(moment().format('MM DD YYYY')).unix()), v => v.date);
     }
 
     function splitEvents() {

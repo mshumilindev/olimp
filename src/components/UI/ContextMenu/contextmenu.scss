@@ -5,6 +5,7 @@
   position: relative;
   font-family: $RobotoCondensed;
   &.active {
+    z-index: 2;
     > a {
       color: $linkHoverColor;
     }

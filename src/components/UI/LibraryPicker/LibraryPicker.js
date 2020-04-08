@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import classNames from 'classnames';
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import userContext from "../../../context/userContext";
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
@@ -74,17 +75,25 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                 showLibraryListModal ?
                     <Modal onHideModal={() => setShowLibraryListModal(false)} heading={translate('new') + ' ' + translate('textbook')}>
                         <div className="libraryPicker__list">
-                            {
-                                libraryList && libraryList.filter(item => item.teacher === user.id).length ?
-                                    libraryList.filter(item => item.teacher === user.id).map(item => _renderLibraryItem(item))
-                                    :
-                                    <div className="nothingFound">
-                                        { translate('nothing_found') }
-                                    </div>
-                            }
+                            <Scrollbars
+                                autoHeight
+                                hideTracksWhenNotNeeded
+                                autoHeightMax={500}
+                                renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                                renderView={props => <div {...props} className="scrollbar__content"/>}
+                            >
+                                {
+                                    libraryList && libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).length ?
+                                        libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).map(item => _renderLibraryItem(item))
+                                        :
+                                        <div className="nothingFound">
+                                            { translate('nothing_found') }
+                                        </div>
+                                }
+                            </Scrollbars>
                         </div>
                         {
-                            libraryList.filter(item => item.teacher === user.id).length ?
+                            libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).length ?
                                 <div className="libraryPicker__list-btn">
                                     <a href="/" className="btn btn_primary" onClick={e => onAddBooks(e)}>
                                         {
@@ -135,20 +144,20 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
         const booksList = selectedBooks;
 
         return (
-            <div className={classNames('userPicker__list-item', {selected: booksList.some(item => item === book.id)})} onClick={() => chooseBook(book.id)} key={book.id}>
+            <div className={classNames('libraryPicker__list-item', {selected: booksList.some(item => item === book.id)})} onClick={() => chooseBook(book.id)} key={book.id}>
                 {
                     multiple ?
                         booksList.some(item => item === book.id) ?
-                            <i className="userPicker__list-item-check far fa-check-square selected" />
+                            <i className="libraryPicker__list-item-check far fa-check-square selected" />
                             :
-                            <i className="userPicker__list-item-check far fa-square" />
+                            <i className="libraryPicker__list-item-check far fa-square" />
                         :
                         booksList.some(item => item === book.id) ?
-                            <i className="userPicker__list-item-check far fa-dot-circle selected" />
+                            <i className="libraryPicker__list-item-check far fa-dot-circle selected" />
                             :
-                            <i className="userPicker__list-item-check far fa-circle" />
+                            <i className="libraryPicker__list-item-check far fa-circle" />
                 }
-                <div className="userPicker__list-item-name">
+                <div className="libraryPicker__list-item-name" title={book.name}>
                     { book.name }
                 </div>
             </div>

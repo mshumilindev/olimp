@@ -18,8 +18,11 @@ $navIndent: 20px;
     padding: $navIndent;
   }
   &_logo-item {
-    margin: -$navIndent (-$navIndent) 0;
-    padding: $pageIndent $navIndent ($pageIndent / 2);
+    margin-top: -$navIndent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: $headerHeight;
   }
   &_logo {
     max-width: 100%;

@@ -130,4 +130,23 @@
       padding-left: 50px;
     }
   }
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    font-family: $RobotoCondensed;
+    > * {
+      margin-left: 20px;
+      cursor: pointer;
+      &:hover {
+        opacity: .75;
+      }
+    }
+    &-edit {
+      color: $anchorColor;
+    }
+    &-remove {
+      color: $errorColor;
+    }
+  }
 }

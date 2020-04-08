@@ -8,6 +8,7 @@ import {fetchClasses} from "../redux/actions/classesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
 import {fetchEvents} from "../redux/actions/eventsActions";
 import {fetchLibrary} from "../redux/actions/libraryActions";
+import {fetchNotifications} from "../redux/actions/notificationsActions";
 
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
@@ -30,7 +31,8 @@ const mapDispatchToProps = dispatch => ({
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
     fetchLibrary: dispatch(fetchLibrary()),
-    fetchEvents: (userID) => dispatch(fetchEvents(userID))
+    fetchEvents: (userID) => dispatch(fetchEvents(userID)),
+    fetchNotifications: dispatch(fetchNotifications())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Layout)

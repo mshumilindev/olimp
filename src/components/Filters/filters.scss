@@ -5,7 +5,7 @@ $filtersIndent: 20px;
 
 .filters {
   padding: $filtersIndent $pageIndent;
-  background: $lightGreyColor;
+  background: $pageColor;
   position: fixed;
   z-index: 10;
   left: $navWidth;
@@ -43,13 +43,13 @@ $filtersIndent: 20px;
     &__field {
       &:focus:not(.readonly) {
         ~ .form__field-placeholder {
-          background: $lightGreyColor;
+          background: $pageColor;
         }
       }
     }
     &__field-placeholder {
       &.isFilled {
-        background: $lightGreyColor;
+        background: $pageColor;
       }
     }
     &__radio-holder {
@@ -73,7 +73,7 @@ $filtersIndent: 20px;
   .form {
     &__field {
       &-placeholder {
-        background: $lightGreyColor !important;
+        background: $pageColor !important;
       }
     }
   }

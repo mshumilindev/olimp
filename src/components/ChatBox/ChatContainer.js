@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
 import userContext from "../../context/userContext";
 import Form from "../Form/Form";
+import siteSettingsContext from "../../context/siteSettingsContext";
 
 export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, isStopping}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
@@ -10,7 +11,10 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     const $chatroomUsersOrganizer = useRef(null);
     const $chatroomUsersParticipants = useRef(null);
     const $shareScreenContainer = useRef(null);
+    const [ videoDevices, setVideoDevices ] = useState(null);
+    const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(localStorage.getItem('videoDevice') ? JSON.parse(localStorage.getItem('videoDevice')) : null);
     const { user } = useContext(userContext);
+    const { translate } = useContext(siteSettingsContext);
     let jitsi = new Jitsi();
     const [ classes, setClasses ] = useState('chatroom__remoteTracks');
 
@@ -29,6 +33,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             usersList: usersList,
             onRemoteAdded: onRemoteAdded
         });
+        getVideoDevices();
         addClasses();
         document.addEventListener('click', pickVideo);
         return () => {
@@ -73,11 +78,20 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                     <i className="closeFullsizeVideo fa fa-times" />
                 </div>
             </div>
+            {
+                videoDevices && videoDevices.length > 1 ?
+                    <div className="chatroom__devicePicker">
+                        <Form fields={[{type: 'select', placeholder: translate('video_devices'), value: selectedVideoDevice ? selectedVideoDevice.label : '', options: videoDevices, id: 'videoDevices'}]} setFieldValue={changeVideoDevice}/>
+                    </div>
+                    :
+                    null
+            }
         </>
     );
 
-    function setDevice(fieldID, value) {
-        jitsi.setDevice(value);
+    function changeVideoDevice(fieldID, value) {
+        setSelectedVideoDevice({id: value, label: videoDevices.find(device => device.id === value).title});
+        jitsi.changeVideoDevice(value, videoDevices.find(device => device.id === value).title);
     }
 
     function pickVideo(e) {
@@ -135,5 +149,19 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
         if ( $remoteTracksContainer.current ) {
             setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('video').length);
         }
+    }
+
+    function getVideoDevices() {
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            const newDevices = devices.filter(device => device.kind === 'videoinput').map(device => {
+                return {
+                    id: device.deviceId,
+                    title: device.label
+                }
+            });
+            if ( newDevices.length ) {
+                setVideoDevices(newDevices);
+            }
+        });
     }
 }
