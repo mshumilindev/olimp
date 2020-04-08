@@ -1,4 +1,5 @@
 import firebase from "../../db/firestore";
+import moment from 'moment';
 
 const db = firebase.firestore();
 const eventsCollection = db.collection('events');
@@ -93,7 +94,7 @@ export function setChatStart(chatID, isStarted) {
 
     return dispatch => {
         return chatRef.set({
-            started: isStarted
+            started: isStarted ? moment().unix() : null
         }, { merge: true });
     }
 }

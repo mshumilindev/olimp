@@ -21,7 +21,9 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                     { moment(event.datetime * 1000).format('HH:mm') }
                 </div>
                 <div className="adminChats__event-name">
-                    { event.name }
+                    <Link to={'/chat/' + event.id}>
+                        { event.name }
+                    </Link>
                 </div>
             </div>
             <div className="adminChats__event-info">

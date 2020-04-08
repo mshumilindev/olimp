@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  background: $lightGreyColor;
+  background: $white;
   > span {
     position: absolute;
     left: 0;
@@ -40,6 +40,54 @@
 }
 
 .chatroom {
+  &__title {
+    font-size: 20px;
+    text-align: center;
+    font-family: $RobotoCondensed;
+    max-width: 800px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -50px;
+  }
+  &__title-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__connection {
+    margin-right: 10px;
+    margin-left: -25px;
+    position: relative;
+    &.good {
+      color: $successColor;
+    }
+    &.medium {
+      color: $warningColor;
+    }
+    &.bad {
+      color: $errorColor;
+    }
+    &.offline {
+      color: $mediumGreyColor;
+      .offlineAnimation {
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: $greyColor;
+        width: 0;
+        overflow: hidden;
+        animation: connectionLost 1s linear infinite;
+      }
+    }
+  }
+  &__timer {
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 300;
+  }
   &__message-holder {
     max-width: 800px;
     margin: 0 auto;
@@ -84,6 +132,11 @@
       }
       &.noOpacity {
         opacity: 1;
+      }
+      [class$="__title"] {
+        color: $white;
+        font-size: 16px;
+        top: -45px;
       }
     }
   }
@@ -194,7 +247,7 @@
     }
   }
   &__chatHolder {
-    margin: 0 auto;
+    margin: 120px auto 0;
     position: relative;
     &.isFullscreen {
       max-width: 100%;
@@ -202,8 +255,20 @@
       .textTooltip__text {
         color: $white;
       }
+      [class$="__title"] {
+        position: absolute;
+        z-index: 1;
+        color: $white;
+        max-width: 100%;
+        top: 0;
+        left: 80px;
+        padding: 20px 100px 20px 20px;
+        background: rgba(248,80,50,1);
+        background: linear-gradient(rgba(0,0,0,.75), transparent);
+      }
       [class$="__users"] {
         height: 100%;
+        z-index: 1;
       }
       [class$="__chatContainer"] {
         padding-top: 0;
@@ -268,9 +333,12 @@
 }
 .student,
 .guest {
+  .closeFullsizeVideo {
+    display: none;
+  }
   .chatroom {
-    .closeFullsizeVideo {
-      display: none;
+    &__chatHolder {
+      margin-top: 80px;
     }
     &__users {
       display: none !important;
@@ -298,6 +366,17 @@
           background: $white !important;
         }
       }
+    }
+    &__title {
+      max-width: 960px;
+    }
+  }
+  .isFullscreen {
+    [class$="__title"] {
+      color: $white;
+      text-align: center;
+      left: 0;
+      right: 0;
     }
   }
 }
@@ -449,6 +528,9 @@
     color: $white;
   }
   .chatroom {
+    &__chatHolder {
+      margin-top: 40px;
+    }
     &__users {
       display: none;
     }
@@ -464,6 +546,9 @@
   }
   .isFullscreen {
     .chatroom {
+      &__remoteTracks {
+        left: 80px;
+      }
       &__users {
         display: flex;
       }
@@ -517,4 +602,15 @@
 }
 .isFullscreen {
   background: $baseColor;
+  margin-top: 0 !important;
+}
+
+@keyframes connectionLost {
+  0% {
+    width: 33.33333%;
+  }
+  100% {
+    width: 100%;
+  }
+
 }

@@ -12,6 +12,7 @@ import './quickCall.scss';
 import classNames from 'classnames';
 import TextTooltip from "../UI/TextTooltip/TextTooltip";
 import ChalkBoard from "../UI/ChalkBoard/ChalkBoard";
+import ChatInfo from "./ChatInfo";
 
 function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
     const { user } = useContext(userContext);
@@ -85,31 +86,26 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         }
     }, [chat, usersList]);
 
-    if ( chat ) {
-        if ( chat.started ) {
-            if ( onACall && !isStopping ) {
-                return _renderChatBox();
-            }
-            else {
-                return _renderCallBox();
-            }
-        }
-        else {
-            return _renderStoppedChatActions();
-        }
-    }
-    else {
-        return null;
-    }
+    return (
+        chat ?
+            chat.started ?
+                onACall && !isStopping ?
+                    _renderChatBox()
+                    :
+                    _renderCallBox()
+                :
+                _renderStoppedChatActions()
+            :
+            null
+    );
 
     function _renderChatBox() {
+        console.log('true');
         return (
             <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden, noOpacity: chat.chalkBoardOpen })}>
-                <div className="chatroom__allow">
-                    { translate('allow_audio_and_video') }
-                </div>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
+                        <ChatInfo chat={chat} />
                         {
                             chat.chalkBoardOpen ?
                                 <ChalkBoard isOrganizer={isOrganizer} chat={chat}/>
@@ -236,6 +232,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
             return (
                 <>
                     <div className="chatroom__message-holder">
+                        <ChatInfo isStatic={true} chat={chat} />
                         <div className="chatroom__info">
                             <span>
                                 <i className="fas fa-eye-slash"/>
@@ -252,6 +249,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         else {
             return (
                 <div className="chatroom__message-holder">
+                    <ChatInfo isStatic={true} chat={chat} />
                     <div className="chatroom__info">
                         <span>
                             <i className="fas fa-eye-slash"/>
@@ -301,8 +299,8 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
 
     function checkForActiveChat() {
         return (
-            events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ?
-                events.find(eventItem => eventItem.started === true && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id
+            events.find(eventItem => eventItem.started && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ?
+                events.find(eventItem => eventItem.started && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id
                 :
                 null
         );
