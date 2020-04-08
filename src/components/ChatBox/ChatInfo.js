@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import moment from "moment";
 import classNames from 'classnames';
+import TextTooltip from "../UI/TextTooltip/TextTooltip";
+import siteSettingsContext from "../../context/siteSettingsContext";
 
 export default function ChatInfo({isStatic, chat}) {
     const timerMultiplier = 60;
 
+    const { translate } = useContext(siteSettingsContext);
     const [ chatCount, setChatCount ] = useState(0);
     const [ connection, setConnection ] = useState(null);
     const [ chatTimer, setChatTimer ] = useState(null);
@@ -36,15 +39,17 @@ export default function ChatInfo({isStatic, chat}) {
             <div className="chatroom__title-inner">
                 {
                     connection ?
-                        <div className={classNames('chatroom__connection', {good: connection === 'good', medium: connection === 'medium', bad: connection === 'bad', offline: connection === 'offline'})}>
-                            {
-                                connection === 'offline' ?
-                                    <span className="offlineAnimation"><i className="fas fa-signal" /></span>
-                                    :
-                                    null
-                            }
-                            <i className="fas fa-signal" />
-                        </div>
+                        <TextTooltip text={translate(connection === 'good' ? 'good_connection' : connection === 'medium' ? 'medium_connection' : connection === 'bad' ? 'bad_connection' : 'offline_connection')} children={
+                            <div className={classNames('chatroom__connection', {good: connection === 'good', medium: connection === 'medium', bad: connection === 'bad', offline: connection === 'offline'})}>
+                                {
+                                    connection === 'offline' ?
+                                        <span className="offlineAnimation"><i className="fas fa-signal" /></span>
+                                        :
+                                        null
+                                }
+                                <i className="fas fa-signal" />
+                            </div>
+                        }/>
                         :
                         null
                 }
