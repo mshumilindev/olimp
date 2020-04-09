@@ -27,17 +27,6 @@
     }
   }
 }
-%-s-main-video {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 50%;
-}
 
 .chatroom {
   &__title {
@@ -231,6 +220,13 @@
     ~ * {
       display: none;
     }
+    .video {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
     video {
       object-fit: contain;
       width: 100%;
@@ -335,6 +331,30 @@
       }
     }
   }
+  &__chatContainer {
+    .video {
+      position: relative;
+    }
+    video {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+    }
+    .isMuted {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 1;
+      color: $errorColor;
+      font-size: 20px;
+    }
+  }
 }
 .student,
 .guest {
@@ -360,39 +380,37 @@
       justify-content: flex-start;
       overflow: auto;
       flex-direction: row;
-      video:not(.main-video):not(#localVideo) {
+      .video:not(.main-video):not(.localVideo) {
         display: none;
       }
-      video.main-video,
-      video#localVideo {
+      .video.main-video,
+      .video.localVideo {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        object-position: 50% 50%;
       }
       &.tracks_qty_1 {
-        video {
+        .video {
           width: 100%;
           height: 100%;
           border-color: $white;
         }
       }
       &.tracks_qty_2 {
-        video {
+        .video {
           width: 50%;
           height: 100%;
         }
       }
       &.tracks_qty_3,
       &.tracks_qty_4 {
-        video {
+        .video {
           width: 50%;
           height: 50%;
         }
       }
       &.tracks_qty_5,
       &.tracks_qty_6 {
-        video {
+        .video {
           width: 33.33333%;
           height: 50%;
         }
@@ -466,9 +484,7 @@
           }
         }
       }
-      video {
-        object-fit: cover;
-        object-position: 50% 50%;
+      .video {
         background: $lightGreyColor;
         border: 1px solid $white;
         box-sizing: border-box;
@@ -491,60 +507,60 @@
         }
       }
       &.tracks_qty_1 {
-        video {
+        .video {
           width: 100%;
           height: 100%;
           border-color: $white;
         }
       }
       &.tracks_qty_2 {
-        video {
+        .video {
           width: 50%;
           height: 100%;
         }
       }
       &.tracks_qty_3,
       &.tracks_qty_4 {
-        video {
+        .video {
           width: 50%;
           height: 50%;
         }
       }
       &.tracks_qty_5,
       &.tracks_qty_6 {
-        video {
+        .video {
           width: 33.33333%;
           height: 50%;
         }
       }
     }
     &__chatHolder.isFullscreen {
-      video {
+      .video {
         width: 25%;
         height: 50%;
       }
       .tracks_qty_1 {
-        video {
+        .video {
           width: 100%;
           height: 100%;
         }
       }
       .tracks_qty_2 {
-        video {
+        .video {
           width: 50%;
           height: 100%;
         }
       }
       .tracks_qty_3,
       .tracks_qty_4 {
-        video {
+        .video {
           width: 50%;
           height: 50%;
         }
       }
       .tracks_qty_5,
       .tracks_qty_6 {
-        video {
+        .video {
           width: 33.33333%;
           height: 50%;
         }
@@ -606,7 +622,7 @@
       display: none;
     }
     &__remoteTracks {
-      video {
+      .video {
         width: 100%;
         height: 141px;
       }

@@ -47,7 +47,7 @@ class Jitsi {
             if ( localTracks.find(item => item.type === 'video') ) {
                 localTracks.find(item => item.type === 'video').dispose();
                 room.replaceTrack(localTracks.find(item => item.type === 'video'), shareScreenTrack);
-                containers.remote.querySelector(`#localVideo`).remove();
+                containers.remote.querySelector(`.localVideo`).remove();
             }
             else {
                 self.room.addTrack(tracks[0]);
@@ -63,7 +63,7 @@ class Jitsi {
                     self.localTracks[i].addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
                     self.localTracks[i].addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
                     if (self.localTracks[i].getType() === 'video') {
-                        $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                        $(containers.remote).append(`<div class="video localVideo"><video autoplay='1' muted playsinline id='localVideo' /></div>`);
                         self.localTracks[i].attach(containers.remote.querySelector(`#localVideo`));
                     }
                 }
@@ -72,8 +72,8 @@ class Jitsi {
                         self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
                         self.localTracks.find(item => item.type === 'video').addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
                         if ( self.localTracks.find(item => item.type === 'video').getType() === 'video' ) {
-                            if ( !containers.remote.querySelector(`#localVideo`) ) {
-                                $(containers.remote).append(`<video autoplay='1' muted playsinline id='localVideo' />`);
+                            if ( !containers.remote.querySelector(`.localVideo`) ) {
+                                $(containers.remote).append(`<div class="video localVideo"><video autoplay='1' muted playsinline id='localVideo' /></div>`);
                             }
                             self.localTracks[i].attach(containers.remote.querySelector('#localVideo'));
                         }
@@ -115,7 +115,45 @@ class Jitsi {
             if (!self.remoteTracks[participant]) {
                 self.remoteTracks[participant] = [];
             }
-            track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, () => {});
+            if ( self.remoteTracks[participant].indexOf(track) === -1 ) {
+                self.remoteTracks[participant].push(track);
+            }
+            track.addEventListener(JitsiMeetJS.events.track.TRACK_MUTE_CHANGED, track => {
+                const videoEl = document.querySelector('.' + track.containers[0].id.replace('audio', 'video'));
+                const shareScreenEl = document.querySelector('.' + track.containers[0].id.replace('audio', 'shareScreen'));
+                const isMuted = track.muted;
+
+                if ( videoEl ) {
+                    if ( isMuted ) {
+                        if ( !videoEl.querySelector('.isMuted') ) {
+                            const icon = document.createElement('i');
+                            icon.classList = 'fas fa-microphone-slash isMuted';
+
+                            videoEl.appendChild(icon);
+                        }
+                    }
+                    else {
+                        if ( videoEl.querySelector('.isMuted') ) {
+                            videoEl.querySelector('.isMuted').remove();
+                        }
+                    }
+                }
+                else if ( shareScreenEl ) {
+                    if ( isMuted ) {
+                        if ( !videoEl.querySelector('.isMuted') ) {
+                            const icon = document.createElement('i');
+                            icon.classList = 'fas fa-microphone-slash isMuted';
+
+                            videoEl.appendChild(icon);
+                        }
+                    }
+                    else {
+                        if ( videoEl.querySelector('.isMuted') ) {
+                            videoEl.querySelector('.isMuted').remove();
+                        }
+                    }
+                }
+            });
             track.addEventListener(JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, id => {});
             let id = null;
 
@@ -128,19 +166,80 @@ class Jitsi {
                 }
 
                 if ( track.videoType === 'desktop' ) {
-                    if ( containers.remote.querySelector('#video' + participant) ) {
-                        containers.remote.querySelector('#video' + participant).remove();
+                    if ( containers.remote.querySelector('.video' + participant) ) {
+                        containers.remote.querySelector('.video' + participant).remove();
                     }
-                    $(containers.shareScreen).append(`<video autoplay='1' muted playsinline id='shareScreen${participant}' />`);
+                    $(containers.shareScreen).append(`<div class='video shareScreen${participant}'><video autoplay='1' muted playsinline id='shareScreen${participant}' /></div>`);
+                    if ( self.remoteTracks[track.ownerEndpointId] && self.remoteTracks[track.ownerEndpointId].find(item => item.type === 'audio') ) {
+                        const videoEl = containers.remote.querySelector('.shareScreen' + track.ownerEndpointId);
+                        const isMuted = self.remoteTracks[track.ownerEndpointId].find(item => item.type === 'audio').muted;
+
+                        if ( videoEl ) {
+                            if ( isMuted ) {
+                                if ( !videoEl.querySelector('.isMuted') ) {
+                                    const icon = document.createElement('i');
+                                    icon.classList = 'fas fa-microphone-slash isMuted';
+
+                                    videoEl.appendChild(icon);
+                                }
+                            }
+                            else {
+                                if ( videoEl.querySelector('.isMuted') ) {
+                                    videoEl.querySelector('.isMuted').remove();
+                                }
+                            }
+                        }
+                    }
                 }
                 else {
                     if ( track.getType() === 'video' ) {
-                        if ( !document.getElementById('video' + participant) ) {
-                            $(containers.remote).append(`<video autoplay='1' muted playsinline id='video${participant}' />`);
+                        if ( !document.querySelector('.video' + participant) ) {
+                            $(containers.remote).append(`<div class='video video${participant}'><video autoplay='1' muted playsinline id='video${participant}' /></div>`);
+                            if ( self.remoteTracks[track.ownerEndpointId] && self.remoteTracks[track.ownerEndpointId].find(item => item.type === 'audio') ) {
+                                const videoEl = containers.remote.querySelector('.video' + track.ownerEndpointId);
+                                const isMuted = self.remoteTracks[track.ownerEndpointId].find(item => item.type === 'audio').muted;
+
+                                if ( videoEl ) {
+                                    if ( isMuted ) {
+                                        if ( !videoEl.querySelector('.isMuted') ) {
+                                            const icon = document.createElement('i');
+                                            icon.classList = 'fas fa-microphone-slash isMuted';
+
+                                            videoEl.appendChild(icon);
+                                        }
+                                    }
+                                    else {
+                                        if ( videoEl.querySelector('.isMuted') ) {
+                                            videoEl.querySelector('.isMuted').remove();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } else {
                         if ( !document.getElementById('audio' + participant) ) {
                             $(containers.remote).append(`<audio autoplay='1' id='audio${participant}' />`);
+
+                            if ( track.containers.length ) {
+                                const videoEl = document.querySelector('.' + track.containers[0].id.replace('audio', 'video'));
+                                const isMuted = track.muted;
+
+                                if ( videoEl ) {
+                                    if ( isMuted ) {
+                                        if ( !videoEl.querySelector('.isMuted') ) {
+                                            const icon = document.createElement('i');
+                                            icon.classList = 'fas fa-microphone-slash isMuted';
+
+                                            videoEl.appendChild(icon);
+                                        }
+                                    }
+                                    else {
+                                        if ( videoEl.querySelector('.isMuted') ) {
+                                            videoEl.querySelector('.isMuted').remove();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -161,12 +260,13 @@ class Jitsi {
                 return;
             }
             const tracks = self.remoteTracks[id];
+            delete self.remoteTracks[id];
 
             if ( document.getElementById('user' + id) ) {
                 document.getElementById('user' + id).remove();
             }
-            if ( document.getElementById('video' + id) ) {
-                document.getElementById('video' + id).remove();
+            if ( document.querySelector('.video' + id) ) {
+                document.querySelector('.video' + id).remove();
             }
             if ( document.getElementById('audio' + id) ) {
                 document.getElementById('audio' + id).remove();
@@ -183,7 +283,6 @@ class Jitsi {
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
             self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
-                self.remoteTracks[id] = [];
                 if ( !document.querySelector('user' + id) ) {
                     const userDiv = document.createElement('div');
                     userDiv.className = 'chatroom__user empty';

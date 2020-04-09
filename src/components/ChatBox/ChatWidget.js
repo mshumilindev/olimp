@@ -8,15 +8,20 @@ import Fullscreen from 'react-full-screen';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ChatContainer from "./ChatContainer";
 import ringing from "../../sounds/ringing.mp3";
+import dialing from "../../sounds/dialing.mp3";
 import './quickCall.scss';
 import classNames from 'classnames';
 import TextTooltip from "../UI/TextTooltip/TextTooltip";
 import ChalkBoard from "../UI/ChalkBoard/ChalkBoard";
 import ChatInfo from "./ChatInfo";
+import moment from "moment";
+import 'moment/locale/uk';
+import 'moment/locale/ru';
+import 'moment/locale/en-gb';
 
 function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
     const { user } = useContext(userContext);
-    const { translate } = useContext(siteSettingsContext);
+    const { translate, lang } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
     const [ isHidden, setIsHidden ] = useState(false);
     const [ isChatPage, setIsChatPage ] = useState(false);
@@ -24,6 +29,19 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     const [ muteChat, setMuteChat ] = useState(false);
     const [ shareScreen, setShareScreen ] = useState(false);
     const [ isStopping, setIsStopping ] = useState(false);
+    const [ usersLength, setUsersLength ] = useState(1);
+
+    useEffect(() => {
+        if ( lang === 'ua' ) {
+            moment.locale('uk');
+        }
+        if ( lang === 'ru' ) {
+            moment.locale('ru');
+        }
+        if ( lang === 'en' ) {
+            moment.locale('en-gb');
+        }
+    }, [lang]);
 
     useEffect(() => {
         if ( user.role === 'guest' ) {
@@ -111,10 +129,18 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                                 :
                                 null
                         }
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen} isStopping={isStopping} />
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen} isStopping={isStopping} setUsersLength={setUsersLength} />
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
+                {
+                    usersLength < 2 ?
+                        <audio autoPlay={true} loop={true}>
+                            <source src={dialing}/>
+                        </audio>
+                        :
+                        null
+                }
             </div>
         );
     }
@@ -250,10 +276,21 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                 <div className="chatroom__message-holder">
                     <ChatInfo isStatic={true} chat={chat} />
                     <div className="chatroom__info">
-                        <span>
-                            <i className="fas fa-eye-slash"/>
-                            { translate('chat_will_start_soon') }
-                        </span>
+                        {
+                            chat.datetime - moment().unix() > 3600 ?
+                                <span>
+                                    <i className="far fa-clock"/>
+                                    <span>
+                                        { translate('videochat_will_start_at') }
+                                        { moment(chat.datetime * 1000).format(' HH:mm, DD MMMM YYYY') }
+                                    </span>
+                                </span>
+                                :
+                                <span>
+                                    <i className="fas fa-eye-slash"/>
+                                    { translate('chat_will_start_soon') }
+                                </span>
+                        }
                     </div>
                 </div>
             );

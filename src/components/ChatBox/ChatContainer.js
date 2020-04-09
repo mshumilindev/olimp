@@ -4,13 +4,14 @@ import userContext from "../../context/userContext";
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, isStopping}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, setUsersLength}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
     const $chatroomUsersOrganizer = useRef(null);
     const $chatroomUsersParticipants = useRef(null);
     const $shareScreenContainer = useRef(null);
+    const $mainContainer = useRef(null);
     const [ videoDevices, setVideoDevices ] = useState(null);
     const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(localStorage.getItem('videoDevice') ? JSON.parse(localStorage.getItem('videoDevice')) : null);
     const { user } = useContext(userContext);
@@ -71,7 +72,7 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 <div className="chatroom__users-organizer" ref={$chatroomUsersOrganizer} />
                 <div className="chatroom__users-participants" ref={$chatroomUsersParticipants} />
             </div>
-            <div className="chatroom__chatContainer">
+            <div className="chatroom__chatContainer" ref={$mainContainer}>
                 <div className="chatroom__shareScreen" ref={$shareScreenContainer}/>
                 <div className="chatroom__localTracks" ref={$localTracksContainer}/>
                 <div className={classes} ref={$remoteTracksContainer}>
@@ -96,8 +97,12 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
 
     function pickVideo(e) {
         if ( user.role !== 'student' ) {
-            if ( e.target.tagName === 'VIDEO' ) {
+            if ( e.target.classList.contains('video') ) {
                 e.target.classList.toggle('fullsizeVideo');
+                $remoteTracksContainer.current.classList.toggle('hasFullsizeVideo');
+            }
+            else if ( e.target.closest('.video') ) {
+                e.target.closest('.video').classList.toggle('fullsizeVideo');
                 $remoteTracksContainer.current.classList.toggle('hasFullsizeVideo');
             }
             if ( e.target.classList.contains('closeFullsizeVideo') ) {
@@ -127,27 +132,28 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     function makeVideoMain() {
         if ( organizerChatID ) {
             if ( organizerChatID === 'local' ) {
-                const video = $localTracksContainer.current.querySelector('video');
+                const video = $localTracksContainer.current.querySelector('.video');
 
                 if ( video ) {
                     video.classList.add('main-video');
                 }
             }
             else {
-                const video = $remoteTracksContainer.current.querySelector(('#video' + organizerChatID));
+                const video = $remoteTracksContainer.current.querySelector(('.video' + organizerChatID));
 
                 if ( video ) {
                     video.classList.add('main-video');
                 }
             }
         }
+        setUsersLength($mainContainer.current.querySelectorAll('audio').length + 1);
     }
 
     function addClasses() {
         const initialClass = 'chatroom__remoteTracks';
 
         if ( $remoteTracksContainer.current ) {
-            setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('video').length);
+            setClasses(initialClass + ' tracks_qty_' + $remoteTracksContainer.current.querySelectorAll('.video').length);
         }
     }
 

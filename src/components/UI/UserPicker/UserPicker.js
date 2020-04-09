@@ -62,34 +62,24 @@ function UserPicker(
             {
                 selectedList.length ?
                     <div className="userPicker__selectedList">
-                        <Scrollbars
-                            autoHeight
-                            hideTracksWhenNotNeeded
-                            autoHeightMax={500}
-                            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
-                            renderView={props => <div {...props} className="scrollbar__content"/>}
-                        >
-                            {
-                                selectedList.filter(userItem => usersList.find(user => user.id === userItem)).sort((a, b) => {
-                                    const aName = usersList.find(user => user.id === a).name;
-                                    const bName = usersList.find(user => user.id === b).name;
-
-                                    if ( aName < bName ) {
-                                        return -1;
-                                    }
-                                    if ( aName > bName ) {
-                                        return 1;
-                                    }
-                                    else {
-                                        return 0;
-                                    }
-                                }).map(item => _renderSelectedUser(item))
-                            }
-                        </Scrollbars>
+                        {
+                            selectedList.length === 1 ?
+                                _renderSelectedList()
+                                :
+                                <Scrollbars
+                                    autoHeight
+                                    hideTracksWhenNotNeeded
+                                    autoHeightMax={500}
+                                    renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                                    renderView={props => <div {...props} className="scrollbar__content"/>}
+                                >
+                                    { _renderSelectedList() }
+                                </Scrollbars>
+                        }
                     </div>
                     :
                     <div className="nothingFound">
-                        { translate('nothing_found') }
+                        { translate('no_user_selected') }
                     </div>
             }
             {
@@ -177,6 +167,25 @@ function UserPicker(
             }
         </div>
     );
+
+    function _renderSelectedList() {
+        return (
+            selectedList.filter(userItem => usersList.find(user => user.id === userItem)).sort((a, b) => {
+                const aName = usersList.find(user => user.id === a).name;
+                const bName = usersList.find(user => user.id === b).name;
+
+                if ( aName < bName ) {
+                    return -1;
+                }
+                if ( aName > bName ) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }).map(item => _renderSelectedUser(item))
+        )
+    }
 
     function _renderUser(user) {
         const usersList = selectedUsers;

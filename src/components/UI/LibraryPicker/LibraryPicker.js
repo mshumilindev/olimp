@@ -50,7 +50,7 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                     </div>
                     :
                     <div className="nothingFound">
-                        { translate('nothing_found') }
+                        { translate('no_textbook') }
                     </div>
             }
             <div className="libraryPicker__add">
