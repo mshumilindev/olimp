@@ -16,7 +16,7 @@ function Dashboard() {
                     { translate('dashboard') }
                 </h2>
             </div>
-            <Notifications type="students"/>
+            <Notifications/>
             <section className="section">
                 <NextSchedule/>
             </section>

@@ -8,6 +8,7 @@ import Form from '../../components/Form/Form';
 import Profile from '../../components/Profile/Profile';
 import generator from "generate-password";
 import './studentProfile.scss';
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentProfile({profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
@@ -67,6 +68,7 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
                         null
                 }
             </div>
+            <Notifications/>
             <div className="studentProfile__content">
                 {
                     !JSON.parse(currentUser) && loading ?

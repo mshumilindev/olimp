@@ -7,6 +7,7 @@ import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import './studentCourses.scss';
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentCourses({classesList, allCoursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -28,6 +29,7 @@ function StudentCourses({classesList, allCoursesList}) {
                     { translate('courses') }
                 </h2>
             </div>
+            <Notifications/>
             <div className="studentCourses__list">
                 {
                     classesList && allCoursesList ?

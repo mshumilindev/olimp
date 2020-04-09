@@ -53,7 +53,9 @@ export default function ChatInfo({isStatic, chat}) {
                         :
                         null
                 }
-                { chat.name }
+                <span className="chatroom__title-text" title={chat.name}>
+                    { chat.name }
+                </span>
             </div>
             {
                 chatCount > 0 ?

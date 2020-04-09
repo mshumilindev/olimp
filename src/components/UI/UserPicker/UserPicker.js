@@ -31,6 +31,7 @@ function UserPicker(
         required,
         hasErrors,
         exclude,
+        excludeRole,
         filters,
         searchQuery,
         filterBy,
@@ -61,22 +62,30 @@ function UserPicker(
             {
                 selectedList.length ?
                     <div className="userPicker__selectedList">
-                        {
-                            selectedList.filter(userItem => usersList.find(user => user.id === userItem)).sort((a, b) => {
-                                const aName = usersList.find(user => user.id === a).name;
-                                const bName = usersList.find(user => user.id === b).name;
+                        <Scrollbars
+                            autoHeight
+                            hideTracksWhenNotNeeded
+                            autoHeightMax={500}
+                            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                            renderView={props => <div {...props} className="scrollbar__content"/>}
+                        >
+                            {
+                                selectedList.filter(userItem => usersList.find(user => user.id === userItem)).sort((a, b) => {
+                                    const aName = usersList.find(user => user.id === a).name;
+                                    const bName = usersList.find(user => user.id === b).name;
 
-                                if ( aName < bName ) {
-                                    return -1;
-                                }
-                                if ( aName > bName ) {
-                                    return 1;
-                                }
-                                else {
-                                    return 0;
-                                }
-                            }).map(item => _renderSelectedUser(item))
-                        }
+                                    if ( aName < bName ) {
+                                        return -1;
+                                    }
+                                    if ( aName > bName ) {
+                                        return 1;
+                                    }
+                                    else {
+                                        return 0;
+                                    }
+                                }).map(item => _renderSelectedUser(item))
+                            }
+                        </Scrollbars>
                     </div>
                     :
                     <div className="nothingFound">
@@ -338,6 +347,7 @@ function UserPicker(
 
         return orderBy(usersList
             .filter(user => exclude ? exclude.indexOf(user.id) === -1 : true)
+            .filter(user => excludeRole ? user.role !== excludeRole : true)
             .filter(user => user.status === 'active')
             .filter(user => (type !== 'teacher' && type !== 'admin' && type !== 'student') || (user.role === type && user.status === 'active'))
             .filter(user => {

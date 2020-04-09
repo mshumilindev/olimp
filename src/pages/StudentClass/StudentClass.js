@@ -5,6 +5,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import './studentClass.scss';
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentClass({classesList, allCoursesList, usersList}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -44,6 +45,7 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                     </div>
                 </h2>
             </div>
+            <Notifications/>
             {
                 !classesList || !allCoursesList || !usersList.length || !currentClass ?
                     <Preloader/>

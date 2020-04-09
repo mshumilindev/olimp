@@ -1,27 +1,21 @@
 import React, {useContext } from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../UI/preloader";
 import userContext from "../../context/userContext";
 
 /**
  * @return {null}
  */
-function Notifications({type, notificationsList, loading}) {
+function Notifications({notificationsList}) {
     const { lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
 
-    if ( loading ) {
-        return <Preloader/>;
+    if ( notificationsList && filteredNotifications().length ) {
+        return (
+            filteredNotifications().map(notification => _renderNotification(notification))
+        )
     }
-    else {
-        if ( notificationsList && filteredNotifications().length ) {
-            return (
-                filteredNotifications().map(notification => _renderNotification(notification))
-            )
-        }
-        return null;
-    }
+    return null;
 
     function _renderNotification(notification) {
         return (

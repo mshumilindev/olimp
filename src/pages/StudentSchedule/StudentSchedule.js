@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import Schedule from '../../components/Schedule/Schedule';
 import siteSettingsContext from "../../context/siteSettingsContext";
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentSchedule() {
     const { translate } = useContext(siteSettingsContext);
@@ -13,6 +14,7 @@ function StudentSchedule() {
                     { translate('schedule') }
                 </h2>
             </div>
+            <Notifications/>
             <Schedule/>
         </>
     )

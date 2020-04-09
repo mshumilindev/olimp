@@ -6,10 +6,11 @@ import classNames from 'classnames';
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import userContext from "../../../context/userContext";
 import { Scrollbars } from 'react-custom-scrollbars';
+import withFilters from "../../../utils/withFilters";
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function LibraryPicker({multiple, libraryList, addBooks, selectedList, placeholder}) {
+function LibraryPicker({multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
     const [ selectedBooks, setSelectedBooks ] = useState(selectedList);
@@ -22,7 +23,6 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
     }, []);
 
     useEffect(() => {
-        console.log(selectedList);
         setSelectedBooks(Object.assign([], selectedList));
     }, [selectedList]);
 
@@ -74,6 +74,9 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
             {
                 showLibraryListModal ?
                     <Modal onHideModal={() => setShowLibraryListModal(false)} heading={translate('new') + ' ' + translate('textbook')}>
+                        <div className="userPicker__filters">
+                            { filters }
+                        </div>
                         <div className="libraryPicker__list">
                             <Scrollbars
                                 autoHeight
@@ -83,8 +86,8 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                                 renderView={props => <div {...props} className="scrollbar__content"/>}
                             >
                                 {
-                                    libraryList && libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).length ?
-                                        libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).map(item => _renderLibraryItem(item))
+                                    libraryList && libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(item => user.role === 'admin' || item.teacher === user.id).length ?
+                                        libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(item => user.role === 'admin' || item.teacher === user.id).map(item => _renderLibraryItem(item))
                                         :
                                         <div className="nothingFound">
                                             { translate('nothing_found') }
@@ -208,4 +211,4 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: dispatch(fetchLibrary())
 });
-export default connect(mapStateToProps, mapDispatchToProps)(LibraryPicker);
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(LibraryPicker, true));

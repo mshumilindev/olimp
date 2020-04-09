@@ -78,7 +78,7 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
                 params && params.subjectID === subject.id ?
                     <div className="adminCourses__list-courses" style={{marginTop: -10}}>
                         {
-                            subjectCoursesList && subjectCoursesList.length ?
+                            subjectCoursesList && sortCoursesList().length ?
                                 sortCoursesList().map(item => <AdminCoursesCourse subjectID={subject.id} course={item} key={item.index} params={params} loading={loading} />)
                                 :
                                 <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>

@@ -100,7 +100,6 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     );
 
     function _renderChatBox() {
-        console.log('true');
         return (
             <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden, noOpacity: chat.chalkBoardOpen })}>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>

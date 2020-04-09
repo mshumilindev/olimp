@@ -483,7 +483,6 @@ export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
     return dispatch => {
         dispatch(lessonBegin());
         return lessonRef.get().then(snapshot => {
-            console.log(snapshot);
             lesson = {
                 ...snapshot.data(),
                 id: snapshot.id

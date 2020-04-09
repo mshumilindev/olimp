@@ -6,6 +6,7 @@ import {Preloader} from "../../components/UI/preloader";
 import './studentContact.scss';
 import Contact from '../../components/Contact/Contact';
 import Map from '../../components/Map/Map';
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentContact({contactList, loading, address}) {
     const { translate } = useContext(siteSettingsContext);
@@ -18,9 +19,13 @@ function StudentContact({contactList, loading, address}) {
                     { translate('contact') }
                 </h2>
             </div>
+            <Notifications/>
             {
                 address ?
-                    <Map address={address.value} small/>
+                    <>
+                        { address.value }
+                        <Map address={address.value}/>
+                    </>
                     :
                     null
             }

@@ -1,50 +1,46 @@
+/* global google */
+
 import React, { useState, useEffect } from 'react';
-import Map from 'pigeon-maps';
-import Marker from 'pigeon-marker';
 import './map.scss';
 import {Preloader} from "../UI/preloader";
+import GoogleMapReact from 'google-map-react';
 
-function MapContainer({address, small}) {
-    const [ width, setWidth ] = useState(null);
-    const [ height, setHeight ] = useState(null);
-    const parsedAddres = address.split(', ');
+function MapContainer({address}) {
+    const [ geolocation, setGeolocation ] = useState(null);
+    const geocoder = new google.maps.Geocoder();
 
     useEffect(() => {
-        if ( !width && !height ) {
-            setSize();
+        if ( address ) {
+            geocoder.geocode({address: address}, (res) => {
+                if ( res && res.length ) {
+                    setGeolocation({lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng()})
+                }
+            });
         }
     }, [address]);
 
     return (
         <div className="map">
-            {
-                width && height ?
-                    <Map center={[parseFloat(parsedAddres[0]), parseFloat(parsedAddres[1])]} zoom={15} width={width} height={height}>
-                        <Marker anchor={[parseFloat(parsedAddres[0]), parseFloat(parsedAddres[1])]} payload={1} />
-                    </Map>
-                    :
-                    <Preloader/>
-            }
+            <div className="map__inner">
+                {
+                    geolocation ?
+                        <GoogleMapReact
+                            bootstrapURLKeys={{ key: 'AIzaSyAP1mtGvLFJGu-LMzwIOJrqabTF3oDKgMw' }}
+                            defaultCenter={{lat: geolocation.lat, lng: geolocation.lng}}
+                            defaultZoom={15}
+                            yesIWantToUseGoogleMapApiInternals
+                        >
+                            <div className="map__marker" lat={geolocation.lat} lng={geolocation.lng}>
+                                <i className="fas fa-map-marker-alt" />
+                            </div>
+                        </GoogleMapReact>
+                        :
+                        <Preloader/>
+                }
+            </div>
         </div>
     );
 
-    function setSize() {
-        const mapContainer = document.querySelector('.mapContainer');
-
-        setWidth(mapContainer.getBoundingClientRect().width);
-
-        if ( window.outerWidth > 769 ) {
-            if ( small ) {
-                setHeight(mapContainer.getBoundingClientRect().width * 28.125 / 100);
-            }
-            else {
-                setHeight(mapContainer.getBoundingClientRect().width * 56.25 / 100);
-            }
-        }
-        else {
-            setHeight(mapContainer.getBoundingClientRect().width * 56.25 / 100);
-        }
-    }
 }
 
 export default MapContainer;

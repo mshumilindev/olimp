@@ -25,7 +25,8 @@ function AdminPanelNotifications({loading, notificationsList, updateNotification
                     required: true,
                     hasErrors: false,
                     multiple: true,
-                    updated: false
+                    updated: false,
+                    excludeRole: 'admin'
                 }
             ]
         },

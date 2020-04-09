@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import StudentChatsList from "../../components/StudentChatsList/StudentChatsList";
+import Notifications from "../../components/Notifications/Notifications";
 
 export default function StudentChats() {
     const { translate } = useContext(siteSettingsContext);
@@ -13,6 +14,7 @@ export default function StudentChats() {
                     { translate('videochats') }
                 </h2>
             </div>
+            <Notifications/>
             <section className="section">
                 <StudentChatsList/>
             </section>

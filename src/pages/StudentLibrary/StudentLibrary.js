@@ -6,6 +6,7 @@ import userContext from "../../context/userContext";
 import { fetchClass } from '../../redux/actions/classesActions';
 import StudentLibraryList from "../../components/StudentLibraryList/StudentLibraryList";
 import './studentLibrary.scss';
+import Notifications from "../../components/Notifications/Notifications";
 
 function StudentLibrary({ loading, libraryList, classData, fetchClass }) {
     const { translate } = useContext(siteSettingsContext);
@@ -23,6 +24,7 @@ function StudentLibrary({ loading, libraryList, classData, fetchClass }) {
                     { translate('library') }
                 </h2>
             </div>
+            <Notifications/>
             <div className="library">
                 {
                     loading || !libraryList || !classData ?
