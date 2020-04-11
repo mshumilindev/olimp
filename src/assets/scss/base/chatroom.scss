@@ -385,7 +385,7 @@
       }
       .video.main-video,
       .video.localVideo {
-        width: 100%;
+        width: 50%;
         height: 100%;
       }
       &.tracks_qty_1 {
@@ -393,26 +393,6 @@
           width: 100%;
           height: 100%;
           border-color: $white;
-        }
-      }
-      &.tracks_qty_2 {
-        .video {
-          width: 50%;
-          height: 100%;
-        }
-      }
-      &.tracks_qty_3,
-      &.tracks_qty_4 {
-        .video {
-          width: 50%;
-          height: 50%;
-        }
-      }
-      &.tracks_qty_5,
-      &.tracks_qty_6 {
-        .video {
-          width: 33.33333%;
-          height: 50%;
         }
       }
     }

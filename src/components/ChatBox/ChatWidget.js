@@ -134,7 +134,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                     </div>
                 </Fullscreen>
                 {
-                    usersLength < 2 ?
+                    usersLength < 2 && isOrganizer() ?
                         <audio autoPlay={true} loop={true}>
                             <source src={dialing}/>
                         </audio>
