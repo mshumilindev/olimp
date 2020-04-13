@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import Header from '../../components/Header/Header';
 import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
@@ -7,6 +7,7 @@ import userContext from "../../context/userContext";
 import ChatWidget from "../../components/ChatBox/ChatWidget";
 import '../../assets/scss/base/chatroom.scss';
 import firebase from "../../db/firestore";
+import classNames from 'classnames';
 
 export default function Admin({children, location, params, isTeacher, fetchEvents}) {
     const { user } = useContext(userContext);
@@ -191,7 +192,7 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
     if ( firstLevelPath.includes('/') ) {
         firstLevelPath = firstLevelPath.substr(0, firstLevelPath.indexOf('/'));
     }
-    firstLevelPath = '/' + firstLevelPath;
+    firstLevelPath = (firstLevelPath === 'chat' ? '/admin-chats' : '/' + firstLevelPath);
 
     const currentPage = adminNav && adminNav.length ? adminNav.find(item => item.url === firstLevelPath) ? adminNav.find(item => item.url === firstLevelPath).name : 'admin' : '';
 
@@ -200,7 +201,7 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
     return (
         <DocumentTitle title={ docTitle }>
             <div className="admin">
-                <div className="page">
+                <div className={classNames('page page-' + currentPage)}>
                     <Header/>
                     <Nav type={'admin'} showLogo nav={isTeacher ? teacherNav : adminNav} prefix="main--"/>
                     { children }

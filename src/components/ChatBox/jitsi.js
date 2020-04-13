@@ -92,18 +92,6 @@ class Jitsi {
                     }
                 }
             }
-            if ( !noUserCreation ) {
-                if ( !containers.organizer.querySelector('chatroom__user') ) {
-                    const userDiv = document.createElement('div');
-                    userDiv.className = 'chatroom__user';
-
-                    const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar" style="background-image: url(${user.avatar})"></div></div><div class="chatroom__user-name">${user.name.split(' ').join('<br/>')}</div>`;
-
-                    containers.organizer.appendChild(userDiv);
-                    userDiv.innerHTML = userInner;
-                    onDisplayNameChange(null, user.name);
-                }
-            }
         };
 
         function onRemoteTrack(track) {
@@ -261,9 +249,10 @@ class Jitsi {
             }
             const tracks = self.remoteTracks[id];
             delete self.remoteTracks[id];
+            console.log(id);
 
-            if ( document.getElementById('user' + id) ) {
-                document.getElementById('user' + id).remove();
+            if ( document.querySelector('[data-user-id="' + id + '"]') ) {
+                onDisplayNameChange(id, null);
             }
             if ( document.querySelector('.video' + id) ) {
                 document.querySelector('.video' + id).remove();
@@ -282,34 +271,24 @@ class Jitsi {
             self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
             self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
             self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-            self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
-                if ( !document.querySelector('user' + id) ) {
-                    const userDiv = document.createElement('div');
-                    userDiv.className = 'chatroom__user empty';
-                    userDiv.id = 'user' + id;
-
-                    const userInner = `<div class="chatroom__user-avatar-holder"><i class="chatroom__user-avatar-placeholder fa fa-user"></i><div class="chatroom__user-avatar"></div></div><div class="chatroom__user-name"></div>`;
-
-                    containers.participants.appendChild(userDiv);
-                    userDiv.innerHTML = userInner;
-                }
-            });
+            self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {});
             self.room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
             self.room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, track => {});
             self.room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text) => {
-                const userDiv = document.querySelector('#user' + id);
                 const newText = JSON.parse(text);
 
                 if ( newText.event ) {
                     $(containers.shareScreen).empty();
                 }
                 else {
-                    if ( userDiv ) {
-                        userDiv.querySelector('.chatroom__user-avatar').style.backgroundImage = 'url(' + newText.avatar + ')';
-                        userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name;
-                        userDiv.dataset.name = newText.name;
-                        userDiv.classList.remove('empty');
-                        userDiv.querySelector('.chatroom__user-name').innerHTML = newText.name.split(' ').join('<br/>');
+                    const $usersContainer = document.querySelector('.chatroom__users');
+
+                    if ( $usersContainer ) {
+                        const $userConnected = $usersContainer.querySelector('[data-user-name="' + newText.name + '"]');
+
+                        if ( $userConnected ) {
+                            $userConnected.classList.add('isPresent');
+                        }
                     }
                     onDisplayNameChange(id, newText.name);
                 }

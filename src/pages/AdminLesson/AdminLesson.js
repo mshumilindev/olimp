@@ -131,7 +131,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                         {/*</div>*/}
                     </div>
                     <div className="grid_col col-4">
-                        <div className="widget">
+                        <div className="widget sticky">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-info"/>
                                 { translate('info') }

@@ -18,6 +18,7 @@ import moment from "moment";
 import 'moment/locale/uk';
 import 'moment/locale/ru';
 import 'moment/locale/en-gb';
+import {Scrollbars} from "react-custom-scrollbars";
 
 function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
     const { user } = useContext(userContext);
@@ -30,6 +31,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     const [ shareScreen, setShareScreen ] = useState(false);
     const [ isStopping, setIsStopping ] = useState(false);
     const [ usersLength, setUsersLength ] = useState(1);
+    const [ usersPresent, setUsersPresent ] = useState([]);
 
     useEffect(() => {
         if ( lang === 'ua' ) {
@@ -129,7 +131,13 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                                 :
                                 null
                         }
-                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen} isStopping={isStopping} setUsersLength={setUsersLength} />
+                        {
+                            user.id === chat.organizer ?
+                                _renderUnconditionally()
+                                :
+                                null
+                        }
+                        <ChatContainer chat={chat} usersList={usersList} setIsFullScreen={setIsFullScreen} setIsHidden={setIsHidden} muteChat={muteChat} shareScreen={shareScreen} setShareScreen={setShareScreen} isStopping={isStopping} setUsersLength={setUsersLength} onDisplayNameChange={onDisplayNameChange} />
                         { _renderStartedChatActions() }
                     </div>
                 </Fullscreen>
@@ -259,6 +267,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                     <div className="chatroom__message-holder">
                         <ChatInfo isStatic={true} chat={chat} />
                         <div className="chatroom__info">
+                            { _renderUnconditionally() }
                             <span>
                                 <i className="fas fa-eye-slash"/>
                                 { translate('you_can_start_chat') }
@@ -266,6 +275,17 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                         </div>
                     </div>
                     <div className="chatroom__btnsHolder">
+                        <TextTooltip position="top" text={translate('prepare_chalkboard')} children={
+                            <span
+                                className={classNames('btn round', {
+                                    btn_primary: !chat.chalkBoardOpen,
+                                    'btn__success btn__working': chat.chalkBoardOpen
+                                })}
+                                onClick={handleChalkBoard}
+                            >
+                                <i className="fas fa-pencil-alt"/>
+                            </span>
+                        }/>
                         <span className="btn btn__success round" onClick={startChat}><i className="fas fa-phone" /></span>
                     </div>
                 </>
@@ -297,6 +317,73 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         }
     }
 
+    function _renderUnconditionally() {
+        return (
+            <div className="chatroom__users">
+                <Scrollbars
+                    autoHeight
+                    hideTracksWhenNotNeeded
+                    autoHeightMax={'100%'}
+                    renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                    renderView={props => <div {...props} className="scrollbar__content"/>}
+                >
+                    { _renderUser(chat.organizer, true) }
+                    { chat.participants.filter(userItem => usersPresent.find(usersPresentItem => usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
+                    <hr/>
+                    { chat.participants.filter(userItem => !usersPresent.find(usersPresentItem => usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
+                </Scrollbars>
+                {
+                    chat.chalkBoardOpen ?
+                        <ChalkBoard isOrganizer={isOrganizer} chat={chat}/>
+                        :
+                        null
+                }
+            </div>
+        );
+    }
+
+    function _renderUser(currentUser, isOrganizer) {
+        const gottenUser = getUser(currentUser);
+
+        if ( !gottenUser ) {
+            return null;
+        }
+
+        return (
+            <div className={classNames('chatroom__user', {isOrganizer: isOrganizer, isPresent: usersPresent.find(usersPresentItem => usersPresentItem.name === gottenUser.name)})} key={currentUser} data-user-id={usersPresent.find(userPresentItem => userPresentItem.name === gottenUser.name)  ? usersPresent.find(userPresentItem => userPresentItem.name === gottenUser.name).id : currentUser}>
+                <div className="chatroom__user-avatar-holder">
+                    <i className="chatroom__user-avatar-placeholder fa fa-user"/>
+                    <div className="chatroom__user-avatar" style={{backgroundImage: 'url(' + gottenUser.avatar + ')'}}/>
+                </div>
+                <div className="chatroom__user-name">{ gottenUser.name } </div>
+            </div>
+        )
+    }
+
+    function getUser(userToGet) {
+        return usersList.find(userItem => userItem.id === userToGet);
+    }
+
+    function onDisplayNameChange(id, displayName) {
+        const newUsersPresent = usersPresent;
+
+        if ( displayName ) {
+            newUsersPresent.push({
+                id: id,
+                name: displayName
+            });
+
+            setUsersPresent(Object.assign([], newUsersPresent));
+        }
+        else {
+            console.log('true');
+            if ( newUsersPresent.find(newUserItem => newUserItem.id === id) ) {
+                console.log('true');
+                setUsersPresent(Object.assign([], newUsersPresent.filter(newUserItem => newUserItem.id !== id).length ? newUsersPresent.filter(newUserItem => newUserItem.id !== id) : []));
+            }
+        }
+    }
+
     function handleShareScreen() {
         if ( !chat.chalkBoardOpen ) {
             setShareScreen(!shareScreen);
@@ -318,6 +405,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     function stopChat() {
         setIsStopping(true);
         setStopChat(chat.id);
+        setUsersPresent([]);
         setMuteChat(false);
         setIsFullScreen(false);
     }

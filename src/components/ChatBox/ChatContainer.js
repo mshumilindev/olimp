@@ -4,12 +4,10 @@ import userContext from "../../context/userContext";
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, setUsersLength}) {
+export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, setUsersLength, onDisplayNameChange}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
-    const $chatroomUsersOrganizer = useRef(null);
-    const $chatroomUsersParticipants = useRef(null);
     const $shareScreenContainer = useRef(null);
     const $mainContainer = useRef(null);
     const [ videoDevices, setVideoDevices ] = useState(null);
@@ -24,13 +22,11 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
             containers: {
                 local: $localTracksContainer.current,
                 remote: $remoteTracksContainer.current,
-                organizer: $chatroomUsersOrganizer.current,
-                participants: $chatroomUsersParticipants.current,
                 shareScreen: $shareScreenContainer.current
             },
             user: user,
             roomName: chat.id,
-            onDisplayNameChange: onDisplayNameChange,
+            onDisplayNameChange: handleDisplayNameChange,
             usersList: usersList,
             onRemoteAdded: onRemoteAdded
         });
@@ -68,10 +64,6 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
 
     return (
         <>
-            <div className="chatroom__users">
-                <div className="chatroom__users-organizer" ref={$chatroomUsersOrganizer} />
-                <div className="chatroom__users-participants" ref={$chatroomUsersParticipants} />
-            </div>
             <div className="chatroom__chatContainer" ref={$mainContainer}>
                 <div className="chatroom__shareScreen" ref={$shareScreenContainer}/>
                 <div className="chatroom__localTracks" ref={$localTracksContainer}/>
@@ -114,11 +106,13 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
         }
     }
 
-    function onDisplayNameChange(id, displayName) {
+    function handleDisplayNameChange(id, displayName) {
+        console.log(displayName);
         setTimeout(() => {
             if ( usersList.find(item => item.name === displayName) && usersList.find(item => item.name === displayName).id === chat.organizer ) {
                 setOrganizerChatID(id ? id : 'local');
             }
+            onDisplayNameChange(id, displayName);
         }, 0);
     }
 
@@ -146,7 +140,9 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 }
             }
         }
-        setUsersLength($mainContainer.current.querySelectorAll('audio').length + 1);
+        if ( $mainContainer.current ) {
+            setUsersLength($mainContainer.current.querySelectorAll('audio').length + 1);
+        }
     }
 
     function addClasses() {

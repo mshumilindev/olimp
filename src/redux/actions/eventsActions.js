@@ -105,8 +105,7 @@ export function setStopChat(chatID) {
     return dispatch => {
         return chatRef.set({
             started: false,
-            chalkBoardOpen: false,
-            chalkBoard: null
+            chalkBoardOpen: false
         }, {merge: true});
     };
 }
