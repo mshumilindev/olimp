@@ -5,7 +5,7 @@ import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
 import ReactPlayer from 'react-player';
 
-export default function Article({content, type, finishQuestions, loading}) {
+export default function Article({content, type, finishQuestions, loading, onBlockClick}) {
     const { lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
@@ -26,7 +26,7 @@ export default function Article({content, type, finishQuestions, loading}) {
 
     return (
         <article className="article" ref={articleRef}>
-            { pagifyContent()[contentPage].map(block => _renderBlock(block)) }
+            { pagifyContent()[contentPage].map((block, index) => _renderBlock(block, index)) }
             {
                 pagifyContent().length > 1 && type === 'content' ?
                     _renderPager(pagifyContent().length)
@@ -60,9 +60,9 @@ export default function Article({content, type, finishQuestions, loading}) {
         )
     }
 
-    function _renderBlock(block) {
+    function _renderBlock(block, index) {
         return (
-            <div className={'article__block type-' + block.type} key={block.id}>
+            <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick(index)}>
                 {
                     block.type === 'text' ?
                         <div dangerouslySetInnerHTML={{__html: block.value[lang] ? block.value[lang] : block.value['ua']}}/>

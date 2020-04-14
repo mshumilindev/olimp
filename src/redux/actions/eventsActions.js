@@ -142,6 +142,16 @@ export function toggleChalkBoard(chatID, value) {
     }
 }
 
+export function toggleLesson(chatID, value) {
+    return dispatch => {
+        const chatRef = db.collection('events').doc(chatID);
+
+        return chatRef.set({
+            lessonOpen: value
+        }, {merge: true});
+    }
+}
+
 export const SET_ON_A_CALL_SUCCESS = 'SET_ON_A_CALL_SUCCESS';
 
 export const setOnACallSuccess = value => {

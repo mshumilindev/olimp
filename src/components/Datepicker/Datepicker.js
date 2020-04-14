@@ -5,7 +5,7 @@ import CustomSelect from "../UI/CustomSelect/CustomSelect";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
 
-export default function Datepicker({value, onChange, time, required, hasErrors}) {
+export default function Datepicker({value, onChange, time, required, hasErrors, label}) {
     const [ date, setDate ] = useState(null);
     const { translate } = useContext(SiteSettingsContext);
 
@@ -27,35 +27,41 @@ export default function Datepicker({value, onChange, time, required, hasErrors})
     }, [value]);
 
     return (
-        <div className="form datepicker">
+        <div className="datepicker form__holder">
             {
-                date ?
-                    <div className="form__row">
-                        <div className="form__field-holder">
-                            <CustomSelect value={date.day} options={getDayOptions()} selectChanged={(fieldID, value) => handleChange(value, 2, 'day')} placeholder={translate('day')} required={required} hasErrors={hasErrors}/>
-                            {/*<input type="text" className={classNames('datepicker__day form__field', { required: required, hasErrors: hasErrors})} value={date.day} onChange={e => handleChange(e.target.value, 2, 'day')}/>*/}
-                            {/*<span className={classNames('form__field-placeholder', {isFilled: date.day})}>{ translate('date') }</span>*/}
-                        </div>
-                        <div className="form__field-holder">
-                            <CustomSelect value={date.month} options={getMonthOptions()} selectChanged={(fieldID, value) => handleChange(value, 2, 'month')} placeholder={translate('month')} required={required} hasErrors={hasErrors}/>
-                            {/*<input type="text" className={classNames('datepicker__day form__field', { required: required, hasErrors: hasErrors})} value={date.month} onChange={e => handleChange(e.target.value, 2, 'month')}/>*/}
-                            {/*<span className={classNames('form__field-placeholder', {isFilled: date.month})}>{ translate('month') }</span>*/}
-                        </div>
-                        <div className="form__field-holder">
-                            <CustomSelect value={date.year} options={getYearOptions()} selectChanged={(fieldID, value) => handleChange(value, 4, 'year')} placeholder={translate('year')} required={required} hasErrors={hasErrors}/>
-                        </div>
-                        {
-                            time ?
-                                <div className="form__field-holder">
-                                    <CustomSelect value={date.time} options={getTimeOptions()} selectChanged={(fieldID, value) => handleTimeChange(value)} placeholder={translate('time')} required={required} hasErrors={hasErrors} />
-                                </div>
-                                :
-                                null
-                        }
+                label ?
+                    <div className="form__field-label">
+                        { label }
                     </div>
                     :
                     null
             }
+            <div className="form">
+                {
+                    date ?
+                        <div className="form__row">
+                            <div className="form__field-holder">
+                                <CustomSelect value={date.day} options={getDayOptions()} selectChanged={(fieldID, value) => handleChange(value, 2, 'day')} placeholder={translate('day')} required={required} hasErrors={hasErrors}/>
+                            </div>
+                            <div className="form__field-holder">
+                                <CustomSelect value={date.month} options={getMonthOptions()} selectChanged={(fieldID, value) => handleChange(value, 2, 'month')} placeholder={translate('month')} required={required} hasErrors={hasErrors}/>
+                            </div>
+                            <div className="form__field-holder">
+                                <CustomSelect value={date.year} options={getYearOptions()} selectChanged={(fieldID, value) => handleChange(value, 4, 'year')} placeholder={translate('year')} required={required} hasErrors={hasErrors}/>
+                            </div>
+                            {
+                                time ?
+                                    <div className="form__field-holder">
+                                        <CustomSelect value={date.time} options={getTimeOptions()} selectChanged={(fieldID, value) => handleTimeChange(value)} placeholder={translate('time')} required={required} hasErrors={hasErrors} />
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                        :
+                        null
+                }
+            </div>
         </div>
     );
 
@@ -118,7 +124,7 @@ export default function Datepicker({value, onChange, time, required, hasErrors})
     }
 
     function getYearOptions() {
-        let i = moment().format('YYYY');
+        let i = 2020;
         const options = [];
 
         while ( i < parseInt(moment().format('YYYY')) + 5 ) {

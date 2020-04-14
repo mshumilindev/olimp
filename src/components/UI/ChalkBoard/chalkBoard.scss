@@ -73,7 +73,8 @@
     }
   }
 }
-.student {
+.student,
+.guest {
   .chalkBoard {
     &__graphContainer {
       right: 0;

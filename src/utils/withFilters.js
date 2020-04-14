@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import siteSettingsContext from "../context/siteSettingsContext";
 import Filters from "../components/Filters/Filters";
+import moment from "moment";
 
-const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions, showOnlyMy, selectClass) => {
+const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions, filterByOptions, showOnlyMy, selectClass, filterByDate) => {
     return (props) => {
         const { translate } = useContext(siteSettingsContext);
         const [ searchQuery, setSearchQuery ] = useState('');
@@ -13,6 +14,20 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             id: 'sortBy',
             placeholder: translate('sort_by')
         });
+        const [ filterByDateFields, setFilterByDateFields ] = useState([
+            {
+                type: 'datepicker',
+                id: 'datepickerStart',
+                value: moment().subtract(7,'d').unix(),
+                label: translate('from')
+            },
+            {
+                type: 'datepicker',
+                id: 'datepickerEnd',
+                value: moment().unix(),
+                label: translate('to')
+            }
+        ]);
         const [ filterBy, setFilterBy ] = useState(JSON.stringify([]));
         const [ showOnlyMyChecked, setShowOnlyMyChecked ] = useState(!!showOnlyMy);
         const [ selectedClass, setSelectedClass ] = useState(null);
@@ -57,7 +72,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             }
         }, [filterBy, sortBy, translate]);
 
-        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} selectedClass={selectedClass} setSelectedClass={setSelectedClass} />;
+        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} selectedClass={selectedClass} setSelectedClass={setSelectedClass} filterByDate={{start: filterByDateFields[0].value, end: filterByDateFields[1].value}} />;
 
         function filterChanged(type, value) {
             if ( type === 'searchQuery' ) {
@@ -91,6 +106,12 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             if ( type === 'selectedClass' ) {
                 setSelectedClass(value);
             }
+            if ( type === 'datepickerStart' || type === 'datepickerEnd' ) {
+                const newFields = filterByDateFields;
+
+                newFields.find(item => item.id === type).value = value;
+                setFilterByDateFields(Object.assign([], newFields));
+            }
         }
 
         function _renderFilters() {
@@ -103,6 +124,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
                 showOnlyMy={showOnlyMy ? showOnlyMy : undefined}
                 filterChanged={filterChanged}
                 selectedClass={selectClass ? selectedClass : undefined}
+                filterByDate={filterByDate ? filterByDateFields : undefined}
             />
         }
     }

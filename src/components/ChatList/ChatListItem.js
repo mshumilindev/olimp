@@ -43,7 +43,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                                         return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>;
                                     }
                                     else {
-                                        return 'undefined';
+                                        return null;
                                     }
                                 })
                                 :

@@ -90,38 +90,44 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
+        // {
+        //     id: 8,
+        //     url: '/admin-attendance',
+        //     icon: 'fa fa-user-check',
+        //     name: 'attendance'
+        // },
         {
-            id: 8,
+            id: 9,
             url: '/admin-pages',
             icon: 'fa fa-copy',
             name: 'pages'
         },
         {
-            id: 9,
+            id: 10,
             url: '/admin-library',
             icon: 'fa fa-bookmark',
             name: 'library'
         },
         {
-            id: 10,
+            id: 11,
             url: '/admin-translations',
             icon: 'fa fa-language',
             name: 'translations'
         },
         {
-            id: 11,
+            id: 12,
             url: '/admin-settings',
             icon: 'fa fa-cogs',
             name: 'settings'
         },
         {
-            id: 12,
+            id: 13,
             url: '/admin-info/videochats',
             icon: 'fa fa-info',
             name: 'info'
         },
         {
-            id: 13,
+            id: 14,
             url: '/admin-updates',
             icon: 'fa fa-list-ol',
             name: 'updates'
@@ -165,8 +171,14 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
+        // {
+        //     id: 8,
+        //     url: '/admin-attendance',
+        //     icon: 'fa fa-user-check',
+        //     name: 'attendance'
+        // },
         {
-            id: 8,
+            id: 9,
             url: '/admin-library',
             icon: 'fa fa-bookmark',
             name: 'library'

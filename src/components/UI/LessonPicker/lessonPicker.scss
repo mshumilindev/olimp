@@ -1,0 +1,105 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/fonts';
+
+.lessonPicker {
+  &__subjectsList {
+    border: 1px solid $mediumGreyColor;
+  }
+  &__subject {
+    font-family: $RobotoCondensed;
+    padding: 20px;
+    color: $mediumGreyColor;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__coursesList {
+    padding-top: 10px;
+    padding-left: 28px;
+  }
+  &__course {
+    margin-top: 20px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__modulesList {
+    padding-top: 10px;
+    padding-left: 30px;
+  }
+  &__module {
+    margin-top: 20px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__lessonsList {
+    padding-top: 10px;
+    padding-left: 28px;
+  }
+  &__lesson {
+    margin-top: 10px;
+    cursor: pointer;
+    color: $baseColor;
+    display: flex;
+    &:hover,
+    &.isPicked {
+      color: $linkHoverColor;
+    }
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__pick {
+    margin-top: 20px;
+    text-align: center;
+  }
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    .nothingFound {
+      margin-bottom: -20px;
+      width: 100%;
+    }
+  }
+  &__remove {
+    cursor: pointer;
+    &:hover {
+      color: $errorColor;
+    }
+  }
+  &__selectedLesson {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    span {
+      font-family: $RobotoCondensed;
+      color: $greyColor;
+      font-size: 12px;
+      letter-spacing: 1px;
+      &:before {
+        content: '/';
+        margin: 0 5px;
+      }
+      &:first-child {
+        &:before {
+          display: none;
+        }
+      }
+      &:last-child {
+        width: 100%;
+        flex: 0 0 auto;
+        display: block;
+        color: $baseColor;
+        font-size: inherit;
+        margin-top: 5px;
+        letter-spacing: inherit;
+        &:before {
+          display: none;
+        }
+      }
+    }
+  }
+}

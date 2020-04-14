@@ -41,6 +41,9 @@ $filtersIndent: 20px;
       box-sizing: border-box;
     }
     &__field {
+      &-placeholder {
+        background: $pageColor !important;
+      }
       &:focus:not(.readonly) {
         ~ .form__field-placeholder {
           background: $pageColor;
@@ -70,11 +73,10 @@ $filtersIndent: 20px;
       }
     }
   }
-  .form {
-    &__field {
-      &-placeholder {
-        background: $pageColor !important;
-      }
+  &__filterByDate {
+    width: 550px;
+    .form__row {
+      margin-top: 20px !important;
     }
   }
 }

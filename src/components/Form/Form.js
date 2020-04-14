@@ -11,6 +11,7 @@ import UserPicker from "../UI/UserPicker/UserPicker";
 import LibraryPicker from "../UI/LibraryPicker/LibraryPicker";
 import userContext from "../../context/userContext";
 import Datepicker from "../Datepicker/Datepicker";
+import LessonPicker from "../UI/LessonPicker/LessonPicker";
 
 export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
     const $form = useRef(null);
@@ -186,7 +187,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             case 'datepicker':
                 return (
                     <div className="form__field-holder">
-                        <Datepicker required={field.required} value={field.value} onChange={date => handleFieldChange(field.id, date) } time={field.time} hasErrors={(field.required && hasErrors && !field.value)} />
+                        <Datepicker required={field.required} value={field.value} onChange={date => handleFieldChange(field.id, date) } time={field.time} hasErrors={(field.required && hasErrors && !field.value)} label={field.label} />
                     </div>
                 );
 
@@ -201,6 +202,13 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                 return (
                     <div className="form__field-holder">
                         <LibraryPicker selectedList={field.value ? typeof field.value !== 'object' ? [field.value] : field.value : []} placeholder={field.placeholder} addBooks={(type, list) => handleFieldChange(field.id, list)} multiple={field.multiple} />
+                    </div>
+                );
+
+            case 'lessonPicker':
+                return (
+                    <div className="form__field-holder">
+                        <LessonPicker selectedLesson={field.value} setLesson={(lesson) => handleFieldChange(field.id, lesson)} />
                     </div>
                 );
 

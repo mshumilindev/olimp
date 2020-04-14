@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import {fetchChat, setChatStart, setStopChat, discardChat, setOnACall, toggleChalkBoard} from "../../redux/actions/eventsActions";
+import {fetchChat, setChatStart, setStopChat, discardChat, setOnACall, toggleChalkBoard, toggleLesson} from "../../redux/actions/eventsActions";
 import {Link, withRouter} from 'react-router-dom';
 import userContext from '../../context/userContext';
 import Fullscreen from 'react-full-screen';
@@ -19,8 +19,12 @@ import 'moment/locale/uk';
 import 'moment/locale/ru';
 import 'moment/locale/en-gb';
 import {Scrollbars} from "react-custom-scrollbars";
+import firebase from "firebase";
+import Article from "../Article/Article";
 
-function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard}) {
+const db = firebase.firestore();
+
+function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard, toggleLesson}) {
     const { user } = useContext(userContext);
     const { translate, lang } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
@@ -32,6 +36,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     const [ isStopping, setIsStopping ] = useState(false);
     const [ usersLength, setUsersLength ] = useState(1);
     const [ usersPresent, setUsersPresent ] = useState([]);
+    const [ chatLesson, setChatLesson ] = useState(null);
 
     useEffect(() => {
         if ( lang === 'ua' ) {
@@ -67,6 +72,33 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
             }
             else {
                 setIsStopping(true);
+            }
+            if ( chat.lessonOpen && (!chatLesson || chatLesson.id !== chat.lesson.lessonID) ) {
+                const lessonRef = db.collection('courses').doc(chat.lesson.subjectID).collection('coursesList').doc(chat.lesson.courseID).collection('modules').doc(chat.lesson.moduleID).collection('lessons').doc(chat.lesson.lessonID);
+                const lessonContentRef = db.collection('courses').doc(chat.lesson.subjectID).collection('coursesList').doc(chat.lesson.courseID).collection('modules').doc(chat.lesson.moduleID).collection('lessons').doc(chat.lesson.lessonID).collection('content');
+                let newLesson = null;
+
+                lessonRef.get().then(doc => {
+                    newLesson = {
+                        ...doc.data(),
+                        id: doc.id,
+                        content: []
+                    };
+                    lessonContentRef.get().then(snapshot => {
+                        if ( snapshot.docs.length ) {
+                            newLesson.content = snapshot.docs.map(doc => {
+                                return {
+                                    ...doc.data(),
+                                    id: doc.id
+                                }
+                            });
+                            setChatLesson(newLesson);
+                        }
+                        else {
+                            setChatLesson(newLesson);
+                        }
+                    });
+                });
             }
         }
     }, [chat]);
@@ -121,19 +153,25 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
 
     function _renderChatBox() {
         return (
-            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: chat.organizer === user.id, isHidden: isHidden, noOpacity: chat.chalkBoardOpen })}>
+            <div className={classNames('chatroom__box', {fixed: !isChatPage, isOrganizer: isOrganizer(), isHidden: isHidden, noOpacity: chat.chalkBoardOpen })} style={chat.chalkBoardOpen ? {zIndex: 100} : null}>
                 <Fullscreen enabled={isFullScreen} onChange={isFull => setIsFullScreen(isFull)}>
                     <div className={classNames('chatroom__chatHolder', { isFullscreen: isFullScreen })}>
                         <ChatInfo chat={chat} />
                         {
                             chat.chalkBoardOpen ?
-                                <ChalkBoard isOrganizer={isOrganizer} chat={chat}/>
+                                <ChalkBoard isOrganizer={isOrganizer()} chat={chat}/>
                                 :
                                 null
                         }
                         {
-                            user.id === chat.organizer ?
+                            user.role !== 'student' && user.role !== 'guest' ?
                                 _renderUnconditionally()
+                                :
+                                null
+                        }
+                        {
+                            chat.lessonOpen && chatLesson && chatLesson.content.length ?
+                                _renderLesson()
                                 :
                                 null
                         }
@@ -189,35 +227,76 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                 </span>
                 {
                     user.id === chat.organizer ?
-                        <TextTooltip position="top" text={translate('share_screen')} children={
-                            <span
-                                className={classNames('btn round', {
-                                    btn_primary: !shareScreen,
-                                    'btn__success btn__working': shareScreen
-                                })}
-                                onClick={handleShareScreen}
-                                disabled={chat.chalkBoardOpen}
-                            >
-                                <i className="fas fa-desktop"/>
-                            </span>
-                        }/>
-                        :
-                        null
-                }
-                {
-                    user.id === chat.organizer ?
-                        <TextTooltip position="top" text={translate('virtual_chalkboard')} children={
-                            <span
-                                className={classNames('btn round', {
-                                    btn_primary: !chat.chalkBoardOpen,
-                                    'btn__success btn__working': chat.chalkBoardOpen
-                                })}
-                                disabled={shareScreen}
-                                onClick={handleChalkBoard}
-                            >
-                                <i className="fas fa-pencil-alt"/>
-                            </span>
-                        }/>
+                        <>
+                            {
+                                !shareScreen && !chat.chalkBoardOpen && !chat.lessonOpen ?
+                                    <div className="chatroom__interactions-holder">
+                                        <span
+                                            className={classNames('btn round', {
+                                                btn_primary: !shareScreen,
+                                                'btn__success btn__working': shareScreen
+                                            })}
+                                            disabled={chat.chalkBoardOpen}
+                                        >
+                                            <i className="fas fa-ellipsis-h"/>
+                                        </span>
+                                        { _renderInteractions() }
+                                    </div>
+                                    :
+                                    null
+                            }
+                            {
+                                shareScreen ?
+                                    <TextTooltip position="top" text={translate('share_screen')} children={
+                                        <span
+                                            className={classNames('btn round', {
+                                                btn_primary: !shareScreen,
+                                                'btn__success btn__working': shareScreen
+                                            })}
+                                            onClick={handleShareScreen}
+                                            disabled={chat.chalkBoardOpen}
+                                        >
+                                            <i className="fas fa-desktop"/>
+                                        </span>
+                                    }/>
+                                    :
+                                    null
+                            }
+                            {
+                                chat.lessonOpen ?
+                                    <TextTooltip position="top" text={chat.lessonOpen ? translate('close_lesson') : translate('open_lesson')} children={
+                                        <span
+                                            className={classNames('btn round', {
+                                                btn_primary: !chat.lessonOpen,
+                                                'btn__success btn__working': chat.lessonOpen
+                                            })}
+                                            onClick={handleOpenLesson}
+                                            disabled={chat.chalkBoardOpen}
+                                        >
+                                            <i className="fas fa-paragraph"/>
+                                        </span>
+                                    }/>
+                                    :
+                                    null
+                            }
+                            {
+                                chat.chalkBoardOpen ?
+                                    <TextTooltip position="top" text={translate('virtual_chalkboard')} children={
+                                        <span
+                                            className={classNames('btn round', {
+                                                btn_primary: !chat.chalkBoardOpen,
+                                                'btn__success btn__working': chat.chalkBoardOpen
+                                            })}
+                                            disabled={shareScreen}
+                                            onClick={handleChalkBoard}
+                                        >
+                                            <i className="fas fa-pencil-alt"/>
+                                        </span>
+                                    }/>
+                                    :
+                                    null
+                            }
+                        </>
                         :
                         null
                 }
@@ -260,11 +339,64 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         );
     }
 
+    function _renderInteractions() {
+        return (
+            <div className="chatroom__interactions">
+                <div className="chatroom__interactions-item" onClick={handleShareScreen}>
+                    <span
+                        className={classNames('btn round', {
+                            btn_primary: !shareScreen,
+                            'btn__success btn__working': shareScreen
+                        })}
+                        disabled={chat.chalkBoardOpen}
+                    >
+                        <i className="fas fa-desktop"/>
+                    </span>
+                    { translate('share_screen') }
+                </div>
+                {
+                    chat.lesson ?
+                        <div className="chatroom__interactions-item" onClick={handleOpenLesson}>
+                            <span
+                                className={classNames('btn round', {
+                                    btn_primary: !chat.lessonOpen,
+                                    'btn__success btn__working': chat.lessonOpen
+                                })}
+                                disabled={chat.chalkBoardOpen}
+                            >
+                                <i className="fas fa-paragraph"/>
+                            </span>
+                            {
+                                chat.lessonOpen ?
+                                    translate('close_lesson')
+                                    :
+                                    translate('open_lesson')
+                            }
+                        </div>
+                        :
+                        null
+                }
+                <div className="chatroom__interactions-item" onClick={handleChalkBoard}>
+                    <span
+                        className={classNames('btn round', {
+                            btn_primary: !chat.chalkBoardOpen,
+                            'btn__success btn__working': chat.chalkBoardOpen
+                        })}
+                        disabled={shareScreen}
+                    >
+                        <i className="fas fa-pencil-alt"/>
+                    </span>
+                    { translate('virtual_chalkboard') }
+                </div>
+            </div>
+        )
+    }
+
     function _renderStoppedChatActions() {
         if ( user.id === chat.organizer ) {
             return (
                 <>
-                    <div className="chatroom__message-holder">
+                    <div className="chatroom__message-holder" style={chat.chalkBoardOpen ? {zIndex: 100} : null}>
                         <ChatInfo isStatic={true} chat={chat} />
                         <div className="chatroom__info">
                             { _renderUnconditionally() }
@@ -328,13 +460,13 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                     renderView={props => <div {...props} className="scrollbar__content"/>}
                 >
                     { _renderUser(chat.organizer, true) }
-                    { chat.participants.filter(userItem => usersPresent.find(usersPresentItem => usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
+                    { participantsToArray().filter(userItem => usersPresent.find(usersPresentItem => getUser(userItem) && usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
                     <hr/>
-                    { chat.participants.filter(userItem => !usersPresent.find(usersPresentItem => usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
+                    { participantsToArray().filter(userItem => !usersPresent.find(usersPresentItem => getUser(userItem) && usersPresentItem.name === getUser(userItem).name)).map(userItem => _renderUser(userItem)) }
                 </Scrollbars>
                 {
                     chat.chalkBoardOpen ?
-                        <ChalkBoard isOrganizer={isOrganizer} chat={chat}/>
+                        <ChalkBoard isOrganizer={isOrganizer()} chat={chat}/>
                         :
                         null
                 }
@@ -360,6 +492,53 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
         )
     }
 
+    function _renderLesson() {
+        return (
+            <div className="chatroom__lesson">
+                <div className="chatroom__lesson-inner">
+                    {
+                        isOrganizer() ?
+                            <div className="chatroom__lesson-blocks">
+                                <Scrollbars
+                                    autoHeight
+                                    hideTracksWhenNotNeeded
+                                    autoHeightMax={'100%'}
+                                    renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                                    renderView={props => <div {...props} className="scrollbar__content"/>}
+                                >
+                                    <Article content={chatLesson.content} onBlockClick={handleBlockClick}/>
+                                </Scrollbars>
+                            </div>
+                            :
+                            null
+                    }
+                    <div className="chatroom__lesson-content">
+                        <Scrollbars
+                            autoHeight
+                            hideTracksWhenNotNeeded
+                            autoHeightMax={'100%'}
+                            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                            renderView={props => <div {...props} className="scrollbar__content"/>}
+                        >
+                            <Article content={[chatLesson.content[chat.lessonOpen - 1]]} onBlockClick={handleBlockClick}/>
+                        </Scrollbars>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    function handleBlockClick(index) {
+        toggleLesson(chat.id, index + 1);
+    }
+
+    function participantsToArray() {
+        if ( typeof chat.participants === 'object' ) {
+            return chat.participants;
+        }
+        return [chat.participants];
+    }
+
     function getUser(userToGet) {
         return usersList.find(userItem => userItem.id === userToGet);
     }
@@ -376,9 +555,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
             setUsersPresent(Object.assign([], newUsersPresent));
         }
         else {
-            console.log('true');
             if ( newUsersPresent.find(newUserItem => newUserItem.id === id) ) {
-                console.log('true');
                 setUsersPresent(Object.assign([], newUsersPresent.filter(newUserItem => newUserItem.id !== id).length ? newUsersPresent.filter(newUserItem => newUserItem.id !== id) : []));
             }
         }
@@ -418,7 +595,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     }
 
     function isOrganizer() {
-        return events.find(eventItem => eventItem.organizer === user.id)
+        return chat.organizer === user.id;
     }
 
     function checkForActiveChat() {
@@ -428,6 +605,10 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                 :
                 null
         );
+    }
+
+    function handleOpenLesson() {
+        toggleLesson(chat.id, chat.lessonOpen ? null : 1);
     }
 }
 
@@ -447,7 +628,8 @@ const mapDispatchToProps = dispatch => {
         setStopChat: (chatID) => dispatch(setStopChat(chatID)),
         discardChat: () => dispatch(discardChat()),
         setOnACall: (value) => dispatch(setOnACall(value)),
-        toggleChalkBoard: (chatID, value) => dispatch(toggleChalkBoard(chatID, value))
+        toggleChalkBoard: (chatID, value) => dispatch(toggleChalkBoard(chatID, value)),
+        toggleLesson: (chatID, value) => dispatch(toggleLesson(chatID, value))
     }
 };
 

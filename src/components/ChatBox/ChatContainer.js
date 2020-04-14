@@ -107,7 +107,6 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     }
 
     function handleDisplayNameChange(id, displayName) {
-        console.log(displayName);
         setTimeout(() => {
             if ( usersList.find(item => item.name === displayName) && usersList.find(item => item.name === displayName).id === chat.organizer ) {
                 setOrganizerChatID(id ? id : 'local');
@@ -133,10 +132,12 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
                 }
             }
             else {
-                const video = $remoteTracksContainer.current.querySelector(('.video' + organizerChatID));
+                if ( $remoteTracksContainer.current ) {
+                    const video = $remoteTracksContainer.current.querySelector(('.video' + organizerChatID));
 
-                if ( video ) {
-                    video.classList.add('main-video');
+                    if ( video ) {
+                        video.classList.add('main-video');
+                    }
                 }
             }
         }

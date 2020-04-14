@@ -90,11 +90,65 @@ hr {
     margin-top: 5px;
     font-weight: 300;
   }
+  &__interactions-holder {
+    position: relative;
+    padding-top: 10px;
+    transform: translateY(-5px);
+    &:hover {
+      [class$="__interactions"] {
+        display: block;
+      }
+    }
+  }
+  &__interactions {
+    position: absolute;
+    bottom: 100%;
+    background: $white;
+    padding: 10px;
+    transform: translateX(-50%);
+    left: 50%;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.25);
+    border-radius: 4px;
+    display: none;
+    z-index: 1;
+    &:after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -7px;
+      background: $white;
+      width: 10px;
+      height: 10px;
+      transform: rotate(45deg) translateX(-50%);
+    }
+  }
+  &__interactions-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 10px;
+    font-family: $RobotoCondensed;
+    cursor: pointer;
+    &:first-child {
+      margin-top: 0;
+    }
+    .btn {
+      margin-right: 10px;
+      opacity: 1 !important;
+      width: 30px;
+      height: 30px;
+      i {
+        font-size: 14px;
+      }
+    }
+    &:hover {
+      background: $lightBlueColor;
+    }
+  }
   &__message-holder {
     max-width: 800px;
     margin: 0 auto;
     position: relative;
-    z-index: 100;
   }
   &__box {
     position: relative;
@@ -239,11 +293,13 @@ hr {
       top: 0;
       right: 0;
       bottom: 0;
+      width: 100% !important;
+      height: 100% !important;
     }
     video {
       object-fit: contain;
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
     }
   }
   &__btnsHolder {
@@ -252,6 +308,8 @@ hr {
     align-items: center;
     height: 120px;
     z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
     > * {
       margin: 0 10px;
     }
@@ -268,6 +326,10 @@ hr {
       height: 100%;
       .textTooltip__text {
         color: $white;
+      }
+      [class$="__lesson"] {
+        padding: 0;
+        bottom: 1px;
       }
       [class$="__title"] {
         position: absolute;
@@ -366,6 +428,112 @@ hr {
       z-index: 1;
       color: $errorColor;
       font-size: 20px;
+    }
+  }
+  &__lesson {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    right: 1px;
+    padding-top: 56.25%;
+    z-index: 1;
+    background: $white;
+  }
+  &__lesson-inner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+  }
+  &__lesson-blocks {
+    width: 250px;
+    background: $baseColor;
+    max-width: 25%;
+    overflow: auto;
+    height: 100%;
+    > * {
+      height: 100% !important;
+    }
+    .scrollbar__content {
+      overflow-x: hidden !important;
+    }
+    .scrollbar__track {
+      z-index: 2;
+      > * {
+        background: $anchorColor !important;
+      }
+    }
+    .article {
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .article__block {
+      margin-bottom: 5px;
+      font-size: 8px;
+      background: $white;
+      position: relative;
+      padding: 5px;
+      cursor: pointer;
+      &:hover {
+        &:after {
+          background: $anchorColor;
+          opacity: .25;
+        }
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        opacity: 0;
+        transition: all .15s ease-in-out;
+      }
+      * {
+        user-select: none;
+      }
+      p {
+        margin-bottom: 5px;
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &__lesson-content {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    > * {
+      height: 100% !important;
+    }
+    .scrollbar__track {
+      > * {
+        background: $anchorColor !important;
+      }
+    }
+    .scrollbar__content {
+      height: 100% !important;
+      overflow-x: hidden !important;
+    }
+    .article {
+      max-width: 900px;
+      margin: 0 auto;
+      min-height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &__block {
+        width: 100%;
+        height: 100%;
+        padding-right: 20px;
+        box-sizing: border-box;
+      }
     }
   }
 }
@@ -618,6 +786,11 @@ hr {
       .video {
         width: 100%;
         height: 141px;
+      }
+    }
+    &__interactions-item {
+      .btn {
+        color: $baseColor;
       }
     }
   }

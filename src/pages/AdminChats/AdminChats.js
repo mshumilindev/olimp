@@ -75,6 +75,18 @@ function AdminChats({loading, events, usersList, updateEvent}) {
             ]
         },
         {
+            type: 'block',
+            heading: translate('lesson'),
+            id: 'lesson',
+            children: [
+                {
+                    type: 'lessonPicker',
+                    value: {},
+                    id: 'lessonPicker'
+                }
+            ]
+        },
+        {
             id: 'submit',
             type: 'submit',
             name: translate('save')
@@ -117,6 +129,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
 
         newFormFields.find(item => item.id === 'block_organizer').children[0].value = event.organizer;
         newFormFields.find(item => item.id === 'block_participants').children[0].value = event.participants;
+        newFormFields.find(item => item.id === 'lesson').children[0].value = event.lesson;
         newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value = event.name;
         newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value = event.datetime;
         setFormFields(Object.assign([], newFormFields));
@@ -137,6 +150,9 @@ function AdminChats({loading, events, usersList, updateEvent}) {
         if ( fieldID === 'name' || fieldID === 'recurring' || fieldID === 'datepicker' ) {
             newFields.find(item => item.id === 'info').children.find(item => item.id === fieldID).value = value;
         }
+        if ( fieldID === 'lessonPicker' ) {
+            newFields.find(item => item.id === 'lesson').children.find(item => item.id === fieldID).value = value;
+        }
 
         setFormFields(Object.assign([], newFields));
     }
@@ -154,6 +170,7 @@ function AdminChats({loading, events, usersList, updateEvent}) {
         }
         newEvent.organizer = formFields.find(item => item.id === 'block_organizer').children[0].value;
         newEvent.participants = formFields.find(item => item.id === 'block_participants').children[0].value;
+        newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
         newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
         newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
 

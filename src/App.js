@@ -35,6 +35,7 @@ const AdminProfile = React.lazy(() => import('./pages/AdminProfile/AdminProfile'
 const AdminInfo = React.lazy(() => import('./pages/AdminInfo/AdminInfo'));
 const Chatroom = React.lazy(() => import('./pages/Chatroom/Chatroom'));
 const AdminUpdates = React.lazy(() => import('./pages/AdminUpdates/AdminUpdates'));
+const AdminAttendance = React.lazy(() => import('./pages/AdminAttendance/AdminAttendance'));
 
 const Guest = React.lazy(() => import('./pages/Guest/Guest'));
 
@@ -126,6 +127,7 @@ export default function App() {
                                 <Route exact path='/chats' component={StudentChats} />
                                 <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
                                 <Route path='/admin-updates' component={AdminUpdates}/>
+                                <Route path='/admin-attendance' component={AdminAttendance}/>
 
                                 <Route exact path='/guest' component={Guest} />
 
