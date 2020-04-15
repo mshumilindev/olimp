@@ -75,6 +75,9 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     }
 
     function _renderField(field) {
+        if ( field.hidden ) {
+            return null;
+        }
         return (
             <div className="form__row" key={field.id}>
                 { getFormFieldType(field) }
@@ -597,7 +600,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     }
 
     function hideGuests(options) {
-        if ( user.role === 'admin' ) {
+        if ( user.role === 'admin' || user.canSeeGuests ) {
             return options;
         }
         else {

@@ -20,12 +20,6 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
                 id: 'datepickerStart',
                 value: moment().subtract(7,'d').unix(),
                 label: translate('from')
-            },
-            {
-                type: 'datepicker',
-                id: 'datepickerEnd',
-                value: moment().unix(),
-                label: translate('to')
             }
         ]);
         const [ filterBy, setFilterBy ] = useState(JSON.stringify([]));
@@ -72,7 +66,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             }
         }, [filterBy, sortBy, translate]);
 
-        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} selectedClass={selectedClass} setSelectedClass={setSelectedClass} filterByDate={{start: filterByDateFields[0].value, end: filterByDateFields[1].value}} />;
+        return <WrappedComponent {...props} filterChanged={filterChanged} searchQuery={searchQuery} showPerPage={showPerPage} sortBy={sortBy} filterBy={JSON.parse(filterBy)} filters={_renderFilters()} showOnlyMy={!!showOnlyMy && showOnlyMyChecked ? showOnlyMy : null} selectedClass={selectedClass} setSelectedClass={setSelectedClass} filterByDate={{start: filterByDateFields[0].value, end: moment(filterByDateFields[0].value * 1000).add(6, 'd').unix()}} />;
 
         function filterChanged(type, value) {
             if ( type === 'searchQuery' ) {
@@ -106,10 +100,10 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             if ( type === 'selectedClass' ) {
                 setSelectedClass(value);
             }
-            if ( type === 'datepickerStart' || type === 'datepickerEnd' ) {
+            if ( type === 'datepickerStart' ) {
                 const newFields = filterByDateFields;
 
-                newFields.find(item => item.id === type).value = value;
+                newFields.find(item => item.id === 'datepickerStart').value = value;
                 setFilterByDateFields(Object.assign([], newFields));
             }
         }

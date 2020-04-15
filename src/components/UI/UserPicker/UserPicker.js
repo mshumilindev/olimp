@@ -13,7 +13,7 @@ const filterByOptions = [
     {
         id: 'filterByRole',
         placeholder: 'role',
-        options: ['admin', 'teacher', 'student']
+        options: ['admin', 'teacher', 'student', 'guest']
     }
 ];
 

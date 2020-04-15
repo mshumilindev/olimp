@@ -473,6 +473,7 @@ export default class SiteSettingsProvider extends React.Component{
             login: '',
             password: '',
             role: role ? role : '',
+            canSeeGuests: false,
             status: 'suspended',
             isNew: true,
             email: '',
@@ -523,7 +524,7 @@ export default class SiteSettingsProvider extends React.Component{
                         value: user ? user.role : '',
                         storedValue: user ? user.role : '',
                         updated: false,
-                        readonly: user ? !user.isNew : false,
+                        readonly: user ? !user.isNew && user.role !== 'guest' : false,
                         options: [
                             {
                                 id: 'admin',
@@ -554,6 +555,16 @@ export default class SiteSettingsProvider extends React.Component{
                         readonly: user.id === JSON.parse(localStorage.getItem('user')).id
                     },
                 ]
+            },
+            {
+                type: 'checkbox',
+                id: 'canSeeGuests',
+                name: 'canSeeGuests',
+                label: 'can_see_guests',
+                value: user ? user.canSeeGuests : '',
+                checked: true,
+                unchecked: false,
+                hidden: JSON.parse(localStorage.getItem('user')).role !== 'admin'
             },
             {
                 type: 'tabs',

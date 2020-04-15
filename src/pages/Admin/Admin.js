@@ -90,12 +90,12 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
-        // {
-        //     id: 8,
-        //     url: '/admin-attendance',
-        //     icon: 'fa fa-user-check',
-        //     name: 'attendance'
-        // },
+        {
+            id: 8,
+            url: '/admin-attendance',
+            icon: 'fa fa-user-check',
+            name: 'attendance'
+        },
         {
             id: 9,
             url: '/admin-pages',
@@ -171,12 +171,12 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             icon: 'fa fa-graduation-cap',
             name: 'classes'
         },
-        // {
-        //     id: 8,
-        //     url: '/admin-attendance',
-        //     icon: 'fa fa-user-check',
-        //     name: 'attendance'
-        // },
+        {
+            id: 8,
+            url: '/admin-attendance',
+            icon: 'fa fa-user-check',
+            name: 'attendance'
+        },
         {
             id: 9,
             url: '/admin-library',

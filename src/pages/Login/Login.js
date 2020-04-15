@@ -144,7 +144,8 @@ export default class Login extends React.Component {
                             tel: snapshot.docs[0].data().tel,
                             login: snapshot.docs[0].data().login,
                             class: snapshot.docs[0].data().class,
-                            scores: snapshot.docs[0].data().scores
+                            scores: snapshot.docs[0].data().scores,
+                            canSeeGuests: snapshot.docs[0].data().canSeeGuests
                         }));
                         window.location.reload();
                     }

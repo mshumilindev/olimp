@@ -2,5 +2,54 @@
 @import '../../assets/scss/utils/fonts';
 
 .adminAttendance {
-
+  .filters__selectClass {
+    width: 150px;
+  }
+  .table {
+    border: 1px solid $mediumGreyColor;
+    &__body-row:not(:hover) {
+      background: $white;
+    }
+    &__body-cell {
+      border: 1px solid $mediumGreyColor;
+    }
+  }
+  &__classRow {
+    background: $greyColor !important;
+    color: $white;
+    [class$="__body-cell"] {
+      border: none;
+    }
+  }
+  &__user {
+    font-family: $RobotoCondensed;
+  }
+  &__day {
+    text-align: center;
+    line-height: 20px;
+    text-transform: none;
+    strong {
+      text-align: right;
+      display: inline-block;
+      vertical-align: top;
+      font-weight: 300;
+    }
+    span {
+      color: $mediumGreyColor;
+    }
+    &.isWeekend {
+      opacity: .5;
+    }
+  }
+  &__check {
+    text-align: center;
+    color: $greyColor;
+    font-size: 20px;
+    &.isWeekend {
+      opacity: .25;
+    }
+    i {
+      cursor: pointer;
+    }
+  }
 }
