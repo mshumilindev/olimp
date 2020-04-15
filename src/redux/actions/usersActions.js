@@ -2,7 +2,6 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const usersCollection = db.collection('users');
-const usersList = [];
 
 export const FETCH_USERS_BEGIN = 'FETCH_USERS_BEGIN';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
@@ -10,39 +9,33 @@ export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 export function fetchUsers() {
     const isAdmin = JSON.parse(localStorage.getItem('user')).role === 'admin' || JSON.parse(localStorage.getItem('user')).canSeeGuests === true;
 
-    if ( !usersList.length ) {
-        return dispatch => {
-            dispatch(fetchUsersBegin());
-            return usersCollection.get().then((data) => {
-                usersList.splice(0, usersList.length);
-                data.docs.forEach(doc => {
-                    const docData = doc.data();
+    return dispatch => {
+        dispatch(fetchUsersBegin());
+        return usersCollection.onSnapshot(snapshot => {
+            const usersList = [];
 
-                    if ( !isAdmin ) {
-                        if ( docData.role !== 'guest' ) {
-                            Object.assign(docData, {
-                                id: doc.id
-                            });
+            snapshot.docs.forEach(doc => {
+                const docData = doc.data();
 
-                            usersList.push(docData);
-                        }
-                    }
-                    else {
+                if ( !isAdmin ) {
+                    if ( docData.role !== 'guest' ) {
                         Object.assign(docData, {
                             id: doc.id
                         });
 
                         usersList.push(docData);
                     }
-                });
-                dispatch(fetchUsersSuccess(usersList));
+                }
+                else {
+                    Object.assign(docData, {
+                        id: doc.id
+                    });
+
+                    usersList.push(docData);
+                }
             });
-        }
-    }
-    else {
-        return dispatch => {
-            dispatch(fetchUsersSuccess(usersList))
-        }
+            dispatch(fetchUsersSuccess(usersList));
+        });
     }
 }
 
@@ -99,24 +92,9 @@ export function updateUser(id, updatedFields) {
     const userDoc = db.collection('users').doc(id);
 
     return dispatch => {
-        dispatch(updateUserBegin());
         return userDoc.set({
             ...updatedFields
-        }, {merge: true}).then(() => {
-            return usersCollection.get().then((data) => {
-                usersList.splice(0, usersList.length);
-                data.docs.forEach(doc => {
-                    const docData = doc.data();
-
-                    Object.assign(docData, {
-                        id: doc.id
-                    });
-
-                    usersList.push(docData);
-                });
-                dispatch(updateUserSuccess());
-            });
-        });
+        }, {merge: true});
     }
 }
 
@@ -139,22 +117,7 @@ export function deleteUser(id) {
     const userDoc = db.collection('users').doc(id);
 
     return dispatch => {
-        dispatch(deleteUserBegin());
-        return userDoc.delete().then(() => {
-            return usersCollection.get().then((data) => {
-                usersList.splice(0, usersList.length);
-                data.docs.forEach(doc => {
-                    const docData = doc.data();
-
-                    Object.assign(docData, {
-                        id: doc.id
-                    });
-
-                    usersList.push(docData);
-                });
-                dispatch(deleteUserSuccess());
-            });
-        });
+        return userDoc.delete();
     }
 }
 
