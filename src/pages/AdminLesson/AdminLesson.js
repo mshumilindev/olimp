@@ -20,7 +20,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
     const [ content, setContent ] = useState(null);
-    const [ questions, setQuestions ] = useState(null);
+    const [ QA, setQA ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
     const breadcrumbs = [
         {
@@ -52,12 +52,11 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                 else {
                     setContent(Object.assign([], []));
                 }
-                if ( lesson.questions ) {
-                    lesson.questions.maxScore = lesson.maxScore;
-                    setQuestions(Object.assign([], lesson.questions));
+                if ( lesson.QA ) {
+                    setQA(Object.assign([], lesson.QA));
                 }
                 else {
-                    setQuestions(Object.assign([], []));
+                    setQA(Object.assign([], []));
                 }
             }
             setLessonUpdated(false);
@@ -112,23 +111,23 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                             </div>
                             {
                                 content ?
-                                    <ContentEditor contentType="content" content={content} types={[['text', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
+                                    <ContentEditor contentType="content" content={content} types={[['text', 'formula', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
                                     :
                                     null
                             }
                         </div>
-                        {/*<div className="widget">*/}
-                        {/*    <div className="widget__title">*/}
-                        {/*        <i className="content_title-icon fa fa-question"/>*/}
-                        {/*        { translate('control_questions') }*/}
-                        {/*    </div>*/}
-                        {/*    {*/}
-                        {/*        questions ?*/}
-                        {/*            <ContentEditor contentType="questions" content={questions} types={[['text', 'media'], ['youtube', 'audio'], ['answers'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQuestions(Object.assign([], newQuestions))} loading={loading} />*/}
-                        {/*            :*/}
-                        {/*            null*/}
-                        {/*    }*/}
-                        {/*</div>*/}
+                        <div className="widget">
+                            <div className="widget__title">
+                                <i className="content_title-icon fa fa-question"/>
+                                { translate('control_questions') }
+                            </div>
+                            {
+                                QA ?
+                                    <ContentEditor contentType="questions" content={QA} types={[['text', 'formula', 'media'], ['youtube', 'audio'], ['answers'], ['divider']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQA(Object.assign([], newQuestions))} loading={loading} />
+                                    :
+                                    null
+                            }
+                        </div>
                     </div>
                     <div className="grid_col col-4">
                         <div className="widget sticky">
@@ -267,12 +266,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                     en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
                 },
                 content: content,
-                questions: questions
+                QA: QA
             };
-            delete newLesson.maxScore;
-            if ( newLesson.questions.maxScore ) {
-                newLesson.maxScore = newLesson.questions.maxScore;
-            }
             updateLesson(subjectID, courseID, moduleID, newLesson);
         }
     }

@@ -309,10 +309,10 @@ export function deleteModule(subjectID, courseID, moduleID) {
 export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTree) {
     const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id);
     const contentRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id).collection('content');
-    const questionsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id).collection('questions');
+    const QARef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newLesson.id).collection('QA');
     const lessonID = newLesson.id;
     const content = JSON.stringify(newLesson.content);
-    const questions = JSON.stringify(newLesson.questions);
+    const QA = JSON.stringify(newLesson.QA);
     let toDeleteI = 0;
     let toCreateI = 0;
     let toDeleteX = 0;
@@ -320,7 +320,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
 
     delete newLesson.id;
     delete newLesson.content;
-    delete newLesson.questions;
+    delete newLesson.QA;
 
     return dispatch => {
         const handleContent = () => {
@@ -379,12 +379,12 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
 
 
         const handleQuestions = () => {
-            questionsRef.get().then(snapshot => {
+            QARef.get().then(snapshot => {
                 if ( snapshot.docs.length ) {
                     deleteQuestion(snapshot);
                 }
                 else {
-                    if ( questions && JSON.parse(questions) && JSON.parse(questions).length ) {
+                    if ( QA && JSON.parse(QA) && JSON.parse(QA).length ) {
                         createQuestion();
                     }
                     else {
@@ -395,8 +395,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                         if ( content ) {
                             lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
                         }
-                        if ( questions ) {
-                            lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
+                        if ( QA ) {
+                            lesson.QA = JSON.parse(QA).sort((a, b) => a.order - b.order);
                         }
                         dispatch(lessonSuccess(lesson));
                     }
@@ -405,14 +405,14 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
         };
 
         const deleteQuestion = snapshot => {
-            const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('questions').doc(snapshot.docs[toDeleteX].id);
+            const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('QA').doc(snapshot.docs[toDeleteX].id);
             docRef.delete().then(() => {
                 toDeleteX ++;
                 if ( toDeleteX < snapshot.docs.length ) {
                     deleteQuestion(snapshot);
                 }
                 else {
-                    if ( JSON.parse(questions) && JSON.parse(questions).length ) {
+                    if ( JSON.parse(QA) && JSON.parse(QA).length ) {
                         createQuestion();
                     }
                     else {
@@ -421,7 +421,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                             id: lessonID
                         };
                         lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
-                        lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
+                        lesson.QA = JSON.parse(QA).sort((a, b) => a.order - b.order);
                         dispatch(lessonSuccess(lesson));
                     }
                 }
@@ -429,8 +429,8 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
         };
 
         const createQuestion = () => {
-            const block = JSON.parse(questions)[toCreateX];
-            const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('questions').doc(block.id);
+            const block = JSON.parse(QA)[toCreateX];
+            const docRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('QA').doc(block.id);
 
             delete block.id;
 
@@ -439,7 +439,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                 order: toCreateX
             }).then(() => {
                 toCreateX ++;
-                if ( toCreateX < JSON.parse(questions).length ) {
+                if ( toCreateX < JSON.parse(QA).length ) {
                     createQuestion();
                 }
                 else {
@@ -448,7 +448,7 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
                         id: lessonID
                     };
                     lesson.content = JSON.parse(content).sort((a, b) => a.order - b.order);
-                    lesson.questions = JSON.parse(questions).sort((a, b) => a.order - b.order);
+                    lesson.QA = JSON.parse(QA).sort((a, b) => a.order - b.order);
                     dispatch(lessonSuccess(lesson));
                 }
             });
@@ -478,7 +478,7 @@ export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
 export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
     const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
     const contentRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('content');
-    const questionsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('questions');
+    const QARef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('QA');
 
     return dispatch => {
         dispatch(lessonBegin());
@@ -497,18 +497,18 @@ export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
                         });
                     });
                 }
-                return questionsRef.get().then(questionsSnapshot => {
-                    const questions = [];
-                    if ( questionsSnapshot.docs.length ) {
-                        questionsSnapshot.docs.forEach(doc => {
-                            questions.push({
+                return QARef.get().then(QASnapshot => {
+                    const QA = [];
+                    if ( QASnapshot.docs.length ) {
+                        QASnapshot.docs.forEach(doc => {
+                            QA.push({
                                 ...doc.data(),
                                 id: doc.id
                             });
                         });
                     }
                     lesson.content = content.sort((a, b) => a.order - b.order);
-                    lesson.questions = questions.sort((a, b) => a.order - b.order);
+                    lesson.QA = QA.sort((a, b) => a.order - b.order);
                     dispatch(lessonSuccess(lesson));
                 });
             });

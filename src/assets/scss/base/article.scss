@@ -47,6 +47,25 @@
     &:last-child {
       margin-bottom: 0;
     }
+    &.type-formula {
+      position: relative;
+      user-select: none;
+      .tox-statusbar {
+        display: none !important;
+      }
+      .tox-editor-header {
+        display: none !important;
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+      }
+    }
   }
   &__image {
     background-size: cover;

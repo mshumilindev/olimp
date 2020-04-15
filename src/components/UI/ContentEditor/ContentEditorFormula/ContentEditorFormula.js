@@ -9,24 +9,21 @@ import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorFormula({ block, setBlock, removeBlock, noBtns, toolbar }) {
+export default function ContentEditorFormula({ block, setBlock, removeBlock, noBtns }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    const editorToolbar = toolbar || ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];
+    const editorToolbar = ['tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
 
     const editorConfig = {
         menubar: false,
         language: 'uk',
         max_height: 550,
+        external_plugins: {
+            'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
+        },
         plugins: [
-            'autoresize fullscreen',
-            'advlist lists image charmap anchor',
-            'visualblocks',
-            'powerpaste'
+            'autoresize'
         ],
-        powerpaste_word_import: 'prompt',
-        powerpaste_html_import: 'prompt',
-        fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
         toolbar: editorToolbar,
     };
 

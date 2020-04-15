@@ -4,6 +4,14 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
 import ReactPlayer from 'react-player';
+import ContentEditor from "../UI/ContentEditor/ContentEditor";
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/js/plugins/align.min.js';
+import 'froala-editor/js/plugins/paragraph_format.min.js';
+import 'froala-editor/js/languages/ru.js';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default function Article({content, type, finishQuestions, loading, onBlockClick}) {
     const { lang } = useContext(siteSettingsContext);
@@ -14,6 +22,17 @@ export default function Article({content, type, finishQuestions, loading, onBloc
         blocks: []
     });
     const [ size, setSize ] = useState({width: 0, height: 0});
+
+    const editorConfig = {
+        menubar: false,
+        language: 'uk',
+        plugins: [
+            'autoresize'
+        ],
+        external_plugins: {
+            'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
+        }
+    };
 
     useEffect(() => {
         const width = articleRef.current.offsetWidth;
@@ -62,10 +81,20 @@ export default function Article({content, type, finishQuestions, loading, onBloc
 
     function _renderBlock(block, index) {
         return (
-            <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick(index)}>
+            <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick ? onBlockClick(index) : null}>
                 {
                     block.type === 'text' ?
                         <div dangerouslySetInnerHTML={{__html: block.value[lang] ? block.value[lang] : block.value['ua']}}/>
+                        :
+                        null
+                }
+                {
+                    block.type === 'formula' ?
+                        <Editor
+                            initialValue={block.value[lang]}
+                            init={editorConfig}
+                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                        />
                         :
                         null
                 }

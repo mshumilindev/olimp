@@ -6,6 +6,7 @@ import generator from 'generate-password';
 import Modal from '../Modal/Modal';
 
 import ContentEditorText from './ContentEditorText/ContentEditorText';
+import ContentEditorFormula from './ContentEditorFormula/ContentEditorFormula';
 import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
 import ContentEditorYoutube from './ContentEditorYoutube/ContentEditorYoutube';
 import ContentEditorAudio from "./ContentEditorAudio/ContentEditorAudio";
@@ -26,6 +27,11 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
             type: 'text',
             icon: 'fa fa-font',
             title: 'text',
+        },
+        {
+            type: 'formula',
+            icon: 'fa fa-square-root-alt',
+            title: 'formula',
         },
         {
             type: 'media',
@@ -123,6 +129,8 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
                                 switch (block.type) {
                                     case ('text') :
                                         return <ContentEditorText key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('formula') :
+                                        return <ContentEditorFormula key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('media') :
                                         return <ContentEditorMedia key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('youtube') :
