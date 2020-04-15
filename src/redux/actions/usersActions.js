@@ -102,7 +102,7 @@ export function updateUser(id, updatedFields) {
         dispatch(updateUserBegin());
         return userDoc.set({
             ...updatedFields
-        }).then(() => {
+        }, {merge: true}).then(() => {
             return usersCollection.get().then((data) => {
                 usersList.splice(0, usersList.length);
                 data.docs.forEach(doc => {

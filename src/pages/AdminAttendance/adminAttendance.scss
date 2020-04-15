@@ -12,6 +12,7 @@
     }
     &__body-cell {
       border: 1px solid $mediumGreyColor;
+      vertical-align: top;
     }
   }
   &__classRow {
@@ -43,13 +44,39 @@
   }
   &__check {
     text-align: center;
-    color: $greyColor;
-    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    margin-top: 10px;
+    &:first-child {
+      margin-top: 0;
+    }
     &.isWeekend {
       opacity: .25;
     }
-    i {
-      cursor: pointer;
+    &-inner {
+      display: flex;
+      align-items: center;
+      color: $greyColor;
+      &:hover {
+        color: $baseColor;
+      }
+      &.isChecked {
+        color: $successColor;
+        &:hover {
+          opacity: .75;
+        }
+      }
+    }
+    &-icon {
+      font-size: 20px;
+    }
+    &-title {
+      word-break: break-word;
+      text-align: left;
+      font-family: $RobotoCondensed;
+      font-weight: 400;
+      font-size: 14px;
+      letter-spacing: .5px;
     }
   }
 }
