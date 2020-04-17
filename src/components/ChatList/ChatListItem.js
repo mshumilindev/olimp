@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { deleteEvent } from '../../redux/actions/eventsActions';
 import Confirm from "../UI/Confirm/Confirm";
 import userContext from "../../context/userContext";
+import classNames from 'classnames';
+
 moment.locale('uk');
 
 function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
@@ -21,6 +23,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                     { moment(event.datetime * 1000).format('HH:mm') }
                 </div>
                 <div className="adminChats__event-name">
+                    <span className={classNames('adminChats__event-status', {isActive: event.started})}/>
                     <Link to={'/chat/' + event.id}>
                         { event.name }
                     </Link>

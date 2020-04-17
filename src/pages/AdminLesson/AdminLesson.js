@@ -250,7 +250,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
             }
         }
 
-        setLessonInfoFields(newLessonInfoFields);
+        setLessonInfoFields(Object.assign([], newLessonInfoFields));
     }
 
     function saveLesson(e) {

@@ -54,6 +54,22 @@
     &-name {
       text-transform: uppercase;
       font-weight: bold;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    &-status {
+      background: $mediumGreyColor;
+      width: 5px;
+      height: 5px;
+      border-radius: 100%;
+      margin: -3px 6px 0 -13px;
+      &.isActive {
+        background: $successColor;
+        + a {
+          color: $successColor;
+        }
+      }
     }
     &-meta {
       display: flex;
