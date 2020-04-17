@@ -22,7 +22,7 @@ export default function Modal({children, onHideModal, heading, className}) {
                                 <i className={'modal__close fa fa-times'} onClick={onHideModal} />
                                 {
                                     heading ?
-                                        <h2 className="modal__heading">{ heading }</h2>
+                                        <h2 className="modal__heading" dangerouslySetInnerHTML={{__html: heading}}/>
                                         :
                                         null
                                 }

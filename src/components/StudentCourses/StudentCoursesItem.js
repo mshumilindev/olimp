@@ -6,10 +6,11 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import classNames from "classnames";
 import {Link} from "react-router-dom";
 import userContext from "../../context/userContext";
+import { connect } from 'react-redux';
 
 const db = firebase.firestore();
 
-function StudentCoursesItem({subjectID, courseID, currentUser}) {
+function StudentCoursesItem({subjectID, courseID, currentUser, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ modulesLessons, setModulesLessons ] = useState(null);
@@ -111,7 +112,7 @@ function StudentCoursesItem({subjectID, courseID, currentUser}) {
                 {
                     checkIfHasScore(moduleID, lesson.id) ?
                         <div className="studentCourse__score">
-                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) } / { lesson.maxScore }</span>
+                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) }</span>
                         </div>
                         :
                         null
@@ -178,13 +179,20 @@ function StudentCoursesItem({subjectID, courseID, currentUser}) {
 
     function checkIfHasScore(moduleID, lessonID) {
         let hasScore = null;
-        const selectedUser = currentUser ? JSON.parse(currentUser) : user;
+        const foundTest = tests.find(item => item.lesson.subjectID === subjectID && item.lesson.courseID === courseID && item.lesson.moduleID === moduleID && item.lesson.lessonID === lessonID && item.userID === user.id);
 
-        if ( selectedUser && selectedUser.scores && selectedUser.scores[subjectID] && selectedUser.scores[subjectID][courseID] && selectedUser.scores[subjectID][courseID][moduleID] && selectedUser.scores[subjectID][courseID][moduleID][lessonID] ) {
-            hasScore = selectedUser.scores[subjectID][courseID][moduleID][lessonID].gotScore;
+        if ( foundTest && foundTest.score ) {
+            hasScore = foundTest.score;
         }
 
         return hasScore;
     }
 }
-export default StudentCoursesItem;
+
+const mapStateToProps = state => {
+    return {
+        tests: state.testsReducer.tests
+    }
+};
+
+export default connect(mapStateToProps)(StudentCoursesItem);

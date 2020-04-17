@@ -249,7 +249,6 @@ class Jitsi {
             }
             const tracks = self.remoteTracks[id];
             delete self.remoteTracks[id];
-            console.log(id);
 
             if ( document.querySelector('[data-user-id="' + id + '"]') ) {
                 onDisplayNameChange(id, null);

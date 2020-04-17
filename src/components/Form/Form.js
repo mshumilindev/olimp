@@ -12,8 +12,42 @@ import LibraryPicker from "../UI/LibraryPicker/LibraryPicker";
 import userContext from "../../context/userContext";
 import Datepicker from "../Datepicker/Datepicker";
 import LessonPicker from "../UI/LessonPicker/LessonPicker";
+import {Editor} from "@tinymce/tinymce-react";
 
 export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
+    const editorToolbar = ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];
+
+    const editorConfig = {
+        menubar: false,
+        language: 'uk',
+        max_height: 550,
+        plugins: [
+            'autoresize fullscreen',
+            'advlist lists image charmap anchor',
+            'visualblocks',
+            'powerpaste'
+        ],
+        powerpaste_word_import: 'prompt',
+        powerpaste_html_import: 'prompt',
+        fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
+        toolbar: editorToolbar,
+    };
+
+    const formulaToolbar = ['tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
+
+    const formulaConfig = {
+        menubar: false,
+        language: 'uk',
+        max_height: 550,
+        external_plugins: {
+            'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
+        },
+        plugins: [
+            'autoresize'
+        ],
+        toolbar: formulaToolbar,
+    };
+
     const $form = useRef(null);
     const { user } = useContext(userContext);
     const [ hasErrors, setHasErrors ] = useState(false);
@@ -187,6 +221,30 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                     </div>
                 );
 
+            case 'editor':
+                return (
+                    <div className="form__field-holder">
+                        <Editor
+                            initialValue={field.value}
+                            onEditorChange={(value) => setFieldValue(field.id, value)}
+                            init={editorConfig}
+                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                        />
+                    </div>
+                );
+
+            case 'formula':
+                return (
+                    <div className="form__field-holder">
+                        <Editor
+                            initialValue={field.value}
+                            onEditorChange={(value) => setFieldValue(field.id, value)}
+                            init={formulaConfig}
+                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                        />
+                    </div>
+                );
+
             case 'datepicker':
                 return (
                     <div className="form__field-holder">
@@ -308,8 +366,8 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         {
                             field.options.map(opt => {
                                 return (
-                                    <div className="form__radio-item" key={opt.name}>
-                                        <input type="checkbox" className="form__checkbox" id={field.name + '-' + opt.name} name={field.name} checked={field.value.indexOf(opt.name) !== -1 } onChange={() => handleFieldChange(field.id, opt.name)}/>
+                                    <div className="form__radio-item" key={field.id + opt.name}>
+                                        <input type="checkbox" className="form__checkbox" id={field.id + '-' + opt.id} name={field.id} checked={field.value.indexOf(opt.name) !== -1 } onChange={() => handleFieldChange(field.id, opt.name)}/>
                                         {
                                             opt.icon ?
                                                 <label htmlFor={field.name + '-' + opt.name}>
@@ -319,7 +377,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                                                 </label>
                                                 :
                                                 <>
-                                                    <label htmlFor={field.name + '-' + opt.name}>
+                                                    <label htmlFor={field.id + '-' + opt.id}>
                                                         {
                                                             field.variant === 'alt' ?
                                                                 field.value.indexOf(opt.name) !== -1 ?
@@ -349,18 +407,18 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         {
                             field.options.map(opt => {
                                 return (
-                                    <div className="form__radio-item" key={opt.name}>
-                                        <input type="radio" className="form__radio" id={field.name + '-' + opt.name} name={field.name} checked={field.value === opt.name} onChange={() => handleFieldChange(field.id, opt.name)}/>
+                                    <div className="form__radio-item" key={field.id + opt.name}>
+                                        <input type="radio" className="form__radio" id={field.id + '-' + opt.id} name={field.id} checked={field.value === opt.name} onChange={() => handleFieldChange(field.id, opt.name)}/>
                                         {
                                             opt.icon ?
-                                                <label htmlFor={field.name + '-' + opt.name}>
+                                                <label htmlFor={field.id + '-' + opt.id}>
                                                     <TextTooltip text={translate(opt.name)}>
                                                         <i className={opt.icon} />
                                                     </TextTooltip>
                                                 </label>
                                                 :
                                                 <>
-                                                    <label htmlFor={field.name + '-' + opt.name}>
+                                                    <label htmlFor={field.id + '-' + opt.id}>
                                                         {
                                                             field.variant === 'alt' ?
                                                                 field.value === opt.name ?

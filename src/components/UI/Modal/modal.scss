@@ -78,6 +78,11 @@
     margin-bottom: 20px;
     font-size: 20px;
     font-family: $RobotoCondensed;
+    padding: 0 40px;
+    span {
+      color: $greyColor;
+      font-weight: 300;
+    }
   }
   &__backToTop {
     position: fixed;

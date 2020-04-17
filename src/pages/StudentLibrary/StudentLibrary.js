@@ -13,7 +13,9 @@ function StudentLibrary({ loading, libraryList, classData, fetchClass }) {
     const { user } = useContext(userContext);
 
     useEffect(() => {
-        fetchClass(user.class);
+        if ( user.class ) {
+            fetchClass(user.class);
+        }
     }, []);
 
     return (

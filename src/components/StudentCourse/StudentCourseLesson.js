@@ -6,10 +6,10 @@ import {Preloader} from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Article from '../Article/Article';
 import userContext from "../../context/userContext";
-import {updateUser} from "../../redux/actions/usersActions";
 import { Link } from 'react-router-dom';
+import {updateTest} from "../../redux/actions/testsActions";
 
-function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updateUser, userLoading, usersList, discardLesson}) {
+function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userLoading, discardLesson, tests, updateTest}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
@@ -82,22 +82,31 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
                     </div>
                 </h2>
                 {
-                    lesson && lesson.questions.length && !startQuestions ?
-                        !hasAnswers() ?
+                    lesson && lesson.QA.length && !startQuestions ?
+                        !getTest() ?
                             <div className="content__title-actions">
                                 <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
                                     { translate('start_quiz') }
                                 </a>
                             </div>
                             :
-                            <div className="content__title-actions">
-                                <div className="studentLesson__score">
-                                    <div className="studentLesson__score-item">
-                                        <div>{ translate('score') }</div>
-                                        <div className="studentLesson__score-num">{ hasAnswers().gotScore }<span> / { lesson.maxScore }</span></div>
+                            getTest().score ?
+                                <div className="content__title-actions">
+                                    <div className="studentLesson__score">
+                                        <div className="studentLesson__score-item">
+                                            <div>{ translate('score') }</div>
+                                            <div className="studentLesson__score-num">{ getTest().score }</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                :
+                                <div className="content__title-actions">
+                                    <div className="studentLesson__score">
+                                        <div className="studentLesson__score-item">
+                                            <i className="fas fa-hourglass-half" />
+                                        </div>
+                                    </div>
+                                </div>
                         :
                         null
                 }
@@ -120,12 +129,12 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
                         :
                         null
                 }
-                {/*{*/}
-                {/*    lesson.questions.length && startQuestions ?*/}
-                {/*        <Article content={lesson['questions']} type={'questions'} finishQuestions={finishQuestions} loading={userLoading}/>*/}
-                {/*        :*/}
-                {/*        null*/}
-                {/*}*/}
+                {
+                    lesson.QA.length && startQuestions ?
+                        <Article content={lesson['QA']} type={'questions'} finishQuestions={finishQuestions} loading={userLoading}/>
+                        :
+                        null
+                }
             </>
         )
     }
@@ -137,58 +146,18 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, updat
     }
 
     function finishQuestions(answers) {
-        const updatedUser = usersList.find(item => item.id === JSON.parse(currentUser).id);
+        const newAnswers = {
+            lesson: params,
+            blocks: answers.blocks,
+            userID: user.id
+        };
 
-        answers.maxScore = lesson.maxScore;
-
-        if ( updatedUser.scores ) {
-            if ( updatedUser.scores[params.subjectID] ) {
-                if ( updatedUser.scores[params.subjectID][params.courseID] ) {
-                    if ( updatedUser.scores[params.subjectID][params.courseID][params.moduleID] ) {
-                        updatedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] = answers;
-                    }
-                    else {
-                        updatedUser.scores[params.subjectID][params.courseID][params.moduleID] = {};
-                        updatedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] = answers;
-                    }
-                }
-                else {
-                    updatedUser.scores[params.subjectID][params.courseID] = {};
-                    updatedUser.scores[params.subjectID][params.courseID][params.moduleID] = {};
-                    updatedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] = answers;
-                }
-            }
-            else {
-                updatedUser.scores[params.subjectID] = {};
-                updatedUser.scores[params.subjectID][params.courseID] = {};
-                updatedUser.scores[params.subjectID][params.courseID][params.moduleID] = {};
-                updatedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] = answers;
-            }
-        }
-        else {
-            updatedUser.scores = {};
-            updatedUser.scores[params.subjectID] = {};
-            updatedUser.scores[params.subjectID][params.courseID] = {};
-            updatedUser.scores[params.subjectID][params.courseID][params.moduleID] = {};
-            updatedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] = answers;
-        }
-
-        updateUser(JSON.parse(currentUser).id, updatedUser);
-
-        delete updatedUser.password;
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        window.location.reload();
+        setStartQuestions(false);
+        updateTest(newAnswers);
     }
 
-    function hasAnswers() {
-        let hasAnswers = null;
-        const parsedUser = JSON.parse(currentUser);
-
-        if ( parsedUser && parsedUser.scores && parsedUser.scores[params.subjectID] && parsedUser.scores[params.subjectID][params.courseID] && parsedUser.scores[params.subjectID][params.courseID][params.moduleID] && parsedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID] ) {
-            hasAnswers = parsedUser.scores[params.subjectID][params.courseID][params.moduleID][params.lessonID];
-        }
-
-        return hasAnswers;
+    function getTest() {
+        return tests.find(item => item.id === params.lessonID + '_' + user.id);
     }
 }
 
@@ -196,12 +165,13 @@ const mapStateToProps = state => ({
     lesson: state.coursesReducer.lesson,
     loading: state.coursesReducer.loading,
     userLoading: state.usersReducer.loading,
-    usersList: state.usersReducer.usersList
+    usersList: state.usersReducer.usersList,
+    tests: state.testsReducer.tests
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),
-    updateUser: (id, data) => dispatch(updateUser(id, data)),
-    discardLesson: () => dispatch(discardLesson())
+    discardLesson: () => dispatch(discardLesson()),
+    updateTest: (newTest) => dispatch(updateTest(newTest))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudentCourseLesson);

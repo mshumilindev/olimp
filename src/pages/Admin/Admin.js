@@ -172,10 +172,16 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             name: 'classes'
         },
         {
-            id: 8,
+            id: 7,
             url: '/admin-attendance',
             icon: 'fa fa-user-check',
             name: 'attendance'
+        },
+        {
+            id: 8,
+            url: '/admin-tests',
+            icon: 'fas fa-clipboard-check',
+            name: 'testing'
         },
         {
             id: 9,

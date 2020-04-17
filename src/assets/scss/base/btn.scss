@@ -27,6 +27,11 @@
     &:hover {
       color: $white;
     }
+    &.btn__working {
+      &:after {
+        border-top-color: $errorColor;
+      }
+    }
   }
   &__success {
     background: $successColor;
@@ -91,6 +96,11 @@
       will-change: transform;
     }
   }
+  &__spinning {
+    i {
+      animation: spinningBtn 2s linear infinite;
+    }
+  }
   @media screen and (max-width: $maxMobile) {
     min-width: 80px;
     font-size: 12px;
@@ -102,5 +112,16 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@keyframes spinningBtn {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
   }
 }

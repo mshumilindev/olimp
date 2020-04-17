@@ -111,7 +111,7 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
                             </div>
                             {
                                 content ?
-                                    <ContentEditor contentType="content" content={content} types={[['text', 'formula', 'media', 'word', 'powerpoint'], ['youtube', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
+                                    <ContentEditor contentType="content" content={content} types={[['text', 'formula', 'media', 'word', 'powerpoint'], ['youtube', 'video', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
                                     :
                                     null
                             }

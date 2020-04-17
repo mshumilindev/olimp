@@ -24,7 +24,7 @@ function LessonPicker({coursesList, setLesson, selectedLesson}) {
         <div className="lessonPicker">
             <div className="lessonPicker__info">
                 {
-                    selectedLesson ?
+                    selectedLesson && selectedLesson.subjectID ?
                         <>
                             <div className="lessonPicker__selectedLesson">
                                 <i className="content_title-icon fa fa-paragraph" />

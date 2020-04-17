@@ -24,6 +24,9 @@ import Article from "../Article/Article";
 
 const db = firebase.firestore();
 
+let mediaRecorder = null;
+let chunks = [];
+
 function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard, toggleLesson}) {
     const { user } = useContext(userContext);
     const { translate, lang } = useContext(siteSettingsContext);
@@ -37,6 +40,52 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     const [ usersLength, setUsersLength ] = useState(1);
     const [ usersPresent, setUsersPresent ] = useState([]);
     const [ chatLesson, setChatLesson ] = useState(null);
+    const [ isRecording, setIsRecording ] = useState(false);
+    const [ chatVideo, setChatVideo ] = useState(null);
+
+    useEffect(() => {
+        navigator.getUserMedia = (navigator.getUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.webkitGetUserMedia);
+
+        if ( isRecording ) {
+            navigator.getUserMedia({audio: true, video: true}, stream => {
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.start();
+            });
+        }
+        else {
+            if ( mediaRecorder ) {
+                mediaRecorder.stop();
+            }
+        }
+        if ( mediaRecorder ) {
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { 'type' : 'video/avi;codecs=opus' });
+                const url = URL.createObjectURL(blob);
+
+                setChatVideo(url);
+            };
+
+            mediaRecorder.ondataavailable = function(e) {
+                chunks.push(e.data);
+            }
+        }
+    }, [isRecording]);
+
+    useEffect(() => {
+        if ( chatVideo ) {
+            const link = document.createElement('a');
+
+            link.id = 'recordLink';
+            link.href = chatVideo;
+            link.download = chat.name;
+
+            document.querySelector('body').appendChild(link);
+            document.getElementById('recordLink').click();
+            document.getElementById('recordLink').remove();
+            setChatVideo(null);
+        }
+    }, [chatVideo]);
 
     useEffect(() => {
         if ( lang === 'ua' ) {
@@ -72,8 +121,11 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
             }
             else {
                 setIsStopping(true);
+                if ( mediaRecorder ) {
+                    setIsRecording(false);
+                }
             }
-            if ( chat.lessonOpen && (!chatLesson || chatLesson.id !== chat.lesson.lessonID) ) {
+            if ( chat.lessonOpen && chat.lesson.subjectID && chat.lesson.courseID && (!chatLesson || chatLesson.id !== chat.lesson.lessonID) ) {
                 const lessonRef = db.collection('courses').doc(chat.lesson.subjectID).collection('coursesList').doc(chat.lesson.courseID).collection('modules').doc(chat.lesson.moduleID).collection('lessons').doc(chat.lesson.lessonID);
                 const lessonContentRef = db.collection('courses').doc(chat.lesson.subjectID).collection('coursesList').doc(chat.lesson.courseID).collection('modules').doc(chat.lesson.moduleID).collection('lessons').doc(chat.lesson.lessonID).collection('content');
                 let newLesson = null;
@@ -217,14 +269,32 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     function _renderStartedChatActions() {
         return (
             <div className="chatroom__btnsHolder">
-                <span className={classNames('btn btn_primary round', { btn__pale: muteChat })} onClick={() => setMuteChat(!muteChat)}>
-                    {
-                        muteChat ?
-                            <i className="fas fa-microphone-slash"/>
-                            :
-                            <i className="fas fa-microphone"/>
-                    }
-                </span>
+                {
+                    isOrganizer() ?
+                        <TextTooltip position="top" text={!isRecording ? translate('record') : translate('stop_recording')} children={
+                            <span
+                                className={classNames('btn round', {
+                                    btn_primary: !isRecording,
+                                    'btn__error btn__working btn__spinning': isRecording
+                                })}
+                                onClick={() => setIsRecording(!isRecording)}>
+                                <i className="fas fa-compact-disc"/>
+                            </span>
+                        }/>
+                        :
+                        null
+                }
+                <TextTooltip position="top" text={!muteChat ? translate('mute_microphone') : translate('unmute_microphone')} children={
+                    <span className={classNames('btn btn_primary round', {btn__pale: muteChat})}
+                          onClick={() => setMuteChat(!muteChat)}>
+                        {
+                            muteChat ?
+                                <i className="fas fa-microphone-slash"/>
+                                :
+                                <i className="fas fa-microphone"/>
+                        }
+                    </span>
+                }/>
                 {
                     user.id === chat.organizer ?
                         <>
@@ -263,7 +333,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                                     null
                             }
                             {
-                                chat.lessonOpen ?
+                                chat.lessonOpen && chat.lesson && chat.lesson.subjectID ?
                                     <TextTooltip position="top" text={chat.lessonOpen ? translate('close_lesson') : translate('open_lesson')} children={
                                         <span
                                             className={classNames('btn round', {
@@ -330,7 +400,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                         null
                 }
                 {
-                    user.id === chat.organizer ?
+                    isOrganizer() ?
                         <span className="btn btn__error round" onClick={stopChat}><i className="fas fa-phone-slash" /></span>
                         :
                         null
@@ -355,7 +425,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
                     { translate('share_screen') }
                 </div>
                 {
-                    chat.lesson ?
+                    chat.lesson && chat.lesson && chat.lesson.subjectID ?
                         <div className="chatroom__interactions-item" onClick={handleOpenLesson}>
                             <span
                                 className={classNames('btn round', {

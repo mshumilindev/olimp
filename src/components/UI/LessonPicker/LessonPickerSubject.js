@@ -2,9 +2,11 @@ import React, {useContext} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import LessonPickerCourse from "./LessonPickerCourse";
 import {orderBy} from "natural-orderby";
+import userContext from "../../../context/userContext";
 
 export default function LessonPickerSubject({subject, setLesson, pickedLesson}) {
     const { lang } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
 
     return (
         <div className="lessonPicker__subject">
@@ -12,7 +14,7 @@ export default function LessonPickerSubject({subject, setLesson, pickedLesson}) 
             { subject.name[lang] ? subject.name[lang] : subject.name['ua'] }
             <div className="lessonPicker__coursesList">
                 {
-                    orderBy(subject.coursesList, v => v.name[lang] ? v.name[lang] : v.name['ua'])
+                    orderBy(subject.coursesList.filter(courseItem => courseItem.teacher === user.id), v => v.name[lang] ? v.name[lang] : v.name['ua'])
                         .map(courseItem => {
                             return (
                                 <LessonPickerCourse

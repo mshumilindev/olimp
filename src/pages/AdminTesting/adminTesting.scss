@@ -1,0 +1,89 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.adminTesting {
+  &__subjectsList {
+    font-family: $RobotoCondensed;
+  }
+  &__course {
+    margin-top: 40px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__modulesList {
+    padding-left: 30px;
+  }
+  &__module {
+    margin-top: 20px;
+  }
+  &__lessonsList {
+    padding-left: 28px;
+  }
+  &__lesson {
+    margin-top: 20px;
+  }
+  &__testsList {
+    padding-left: 30px;
+    padding-top: 10px;
+  }
+  &__test {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    &.no-test {
+      [class$="__test-inner"] {
+        color: $greyColor;
+        i:not(.modal__close) {
+          color: $greyColor;
+          background: $lightGreyColor;
+        }
+      }
+    }
+    &.noScore {
+      [class$="__test-inner"] {
+        i:not(.modal__close) {
+          background: $lightGreyColor;
+          color: $greyColor;
+        }
+      }
+    }
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  &__test-inner {
+    display: flex;
+    align-items: center;
+    &:hover {
+      opacity: .75;
+      cursor: pointer;
+    }
+    i {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+      font-size: 14px;
+      background: $successColor;
+      color: $white;
+      &:not(.fa) {
+        font-weight: bold;
+        font-style: normal;
+        font-size: 16px;
+      }
+    }
+  }
+  hr {
+    background: $baseColor;
+    height: 1px;
+  }
+  &__btnScore {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

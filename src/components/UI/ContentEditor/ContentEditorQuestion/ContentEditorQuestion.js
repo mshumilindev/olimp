@@ -9,6 +9,7 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
 
     block.value = block.value || {
+        type: '',
         answers: [
             {
                 ua: '',
@@ -16,40 +17,52 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
                 en: ''
             }
         ],
-        correctAnswers: '',
-        score: ''
+        correctAnswers: ''
     };
+    const QASettingsFields = [
+        {
+            type: 'select',
+            id: 'type',
+            value: block.value.type,
+            placeholder: translate('choose_type'),
+            options: [
+                {
+                    id: 'multiple_choice',
+                    title: translate('multiple_choice')
+                },
+                {
+                    id: 'text',
+                    title: translate('text')
+                },
+                {
+                    id: 'formula',
+                    title: translate('formula')
+                }
+            ]
+        }
+    ];
     const formFields = [
         {
             type: 'text',
             id: 'correctAnswers',
             value: block.value.correctAnswers,
             placeholder: translate('correct_answers')
-        },
-        {
-            type: 'number',
-            id: 'score',
-            value: block.value.score,
-            placeholder: translate('score_for_correct_answer')
         }
     ];
 
     return (
         <div className="contentEditor__block-question">
-            <div className="contentEditor__block-question-answers">
-                {
-                    block.value.answers.map((item, index) => <ContentEditorQuestionItem item={item} key={index} index={index} handleChange={handleAnswersChange} removeAnswer={onRemoveAnswer} />)
-                }
-                <div className="contentEditor__block-question-answer">
-                    <a href="/" className="contentEditor__block-question-add" onClick={e => onAddAnswer(e)}>
-                        <i className="content_title-icon fa fa-plus-circle"/>
-                        { translate('add_answer') }
-                    </a>
-                </div>
+            <div className="contentEditor__block-question-settings">
+                <Form fields={QASettingsFields} setFieldValue={(fieldID, value) => handleQASettings(fieldID, value)}/>
             </div>
-            <div className="contentEditor__block-question-correctAnswers">
-                <Form fields={formFields} setFieldValue={(fieldID, value) => handleCorrectAnswers(fieldID, value)}/>
-            </div>
+            {
+                block.value.type ?
+                    _renderAnswer()
+                    :
+                    <div className="contentEditor__block-question-message">
+                        { translate('choose_type') }
+                    </div>
+            }
             <div className="contentEditor__block-actions">
                 {/*<span className="contentEditor__block-actions-sort">*/}
                 {/*    <i className="content_title-icon fa fa-sort"/>*/}
@@ -66,6 +79,54 @@ export default function ContentEditorQuestion({ block, setBlock, removeBlock }) 
             }
         </div>
     );
+
+    function _renderAnswer() {
+        if ( block.value.type === 'text' ) {
+            return (
+                <div className="contentEditor__block-question-message isProminent">
+                    { translate('text_will_be_shown') }
+                </div>
+            )
+        }
+        if ( block.value.type === 'formula' ) {
+            return (
+                <div className="contentEditor__block-question-message isProminent">
+                    { translate('formula_will_be_shown') }
+                </div>
+            )
+        }
+        if ( block.value.type === 'multiple_choice' ) {
+            return (
+                <>
+                    <div className="contentEditor__block-question-answers">
+                    {
+                        block.value.answers.map((item, index) => <ContentEditorQuestionItem item={item} key={index} index={index} handleChange={handleAnswersChange} removeAnswer={onRemoveAnswer} />)
+                    }
+                    <div className="contentEditor__block-question-answer">
+                        <a href="/" className="contentEditor__block-question-add" onClick={e => onAddAnswer(e)}>
+                            <i className="content_title-icon fa fa-plus-circle"/>
+                            { translate('add_answer') }
+                        </a>
+                    </div>
+                    </div>
+                    <div className="contentEditor__block-question-correctAnswers">
+                        <Form fields={formFields} setFieldValue={(fieldID, value) => handleCorrectAnswers(fieldID, value)}/>
+                    </div>
+                </>
+            )
+        }
+    }
+
+    function handleQASettings(fieldID, value) {
+        const newValue = block.value;
+
+        newValue[fieldID] = value;
+
+        setBlock({
+            ...block,
+            value: newValue
+        });
+    }
 
     function onRemoveBlock(e) {
         e.preventDefault();

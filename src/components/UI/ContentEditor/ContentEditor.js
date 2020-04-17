@@ -10,6 +10,7 @@ import ContentEditorFormula from './ContentEditorFormula/ContentEditorFormula';
 import ContentEditorMedia from './ContentEditorMedia/ContentEditorMedia';
 import ContentEditorYoutube from './ContentEditorYoutube/ContentEditorYoutube';
 import ContentEditorAudio from "./ContentEditorAudio/ContentEditorAudio";
+import ContentEditorVideo from "./ContentEditorVideo/ContentEditorVideo";
 import ContentEditorPowerpoint from "./ContentEditorPowerpoint/ContentEditorPowerpoint";
 import ContentEditorWord from "./ContentEditorWord/ContentEditorWord";
 import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
@@ -47,6 +48,11 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
             type: 'audio',
             icon: 'fas fa-headphones',
             title: 'audio'
+        },
+        {
+            type: 'video',
+            icon: 'fas fa-video',
+            title: 'video'
         },
         {
             type: 'word',
@@ -116,12 +122,6 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
     return (
         <div className="contentEditor">
             {
-                contentType === 'questions' && content.length ?
-                    <div className="contentEditor__heading">{ translate('max_score') }: { content.maxScore ? content.maxScore : 0 }</div>
-                    :
-                    null
-            }
-            {
                 content.length ?
                     <div className="contentEditor__blocks">
                         {
@@ -137,6 +137,8 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
                                         return <ContentEditorYoutube key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('audio') :
                                         return <ContentEditorAudio key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                                    case ('video') :
+                                        return <ContentEditorVideo key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('word') :
                                         return <ContentEditorWord key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('powerpoint') :
@@ -176,7 +178,7 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
                         <div className="contentEditor__actions">
                             {
                                 contentEditorActions.length ?
-                                    contentEditorActions.map(action => _renderAction(action))
+                                    contentEditorActions.map((action, index) => _renderAction(action, index))
                                     :
                                     null
                             }
@@ -188,19 +190,19 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
         </div>
     );
 
-    function _renderAction(action) {
+    function _renderAction(action, index) {
         if ( Array.isArray(action) ) {
             return (
-                <div className="contentEditor__actions-row">
+                <div className="contentEditor__actions-row" key={'' + index + action.type}>
                     {
-                        action.map(innerAction => _renderAction(innerAction))
+                        action.map((innerAction, innerIndex) => _renderAction(innerAction, innerIndex))
                     }
                 </div>
             );
         }
         else {
             return (
-                <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={action.type}>
+                <a href="/" className="contentEditor__actions-link" onClick={e => startAddContentBlock(e, action.type)} key={'' + index + action.type}>
                     <i className={action.icon} />
                     {
                         action.title ?
@@ -241,7 +243,7 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
             value: ''
         });
 
-        setLessonContent(calcMaxScore(newContent));
+        setLessonContent(newContent);
         setShowAddModal(false);
     }
 
@@ -250,28 +252,13 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
         const blockToRemove = newContent.find(item => item.id === block.id);
 
         newContent.splice(newContent.indexOf(blockToRemove), 1);
-        setLessonContent(calcMaxScore(newContent));
+        setLessonContent(newContent);
     }
 
     function setBlock(block) {
         const newContent = Object.assign([], content);
 
         newContent.find(item => item.id === block.id).value = block.value;
-        setLessonContent(calcMaxScore(newContent));
-    }
-
-    function calcMaxScore(newContent) {
-        if ( contentType !== 'questions' ) {
-            return newContent;
-        }
-        let maxScore = 0;
-
-        newContent.forEach(item => {
-            if ( item.type === 'answers' ) {
-                maxScore += parseInt(item.value.score);
-            }
-        });
-        newContent.maxScore = maxScore;
-        return newContent;
+        setLessonContent(newContent);
     }
 }

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
 
-function ArticleAnswer({block, setAnswer}) {
+function ArticleAnswer({block, setAnswer, answers}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const correctAnswers = block.value.correctAnswers.split(', ');
     const newFields = [{
@@ -11,49 +11,82 @@ function ArticleAnswer({block, setAnswer}) {
         variant: 'alt',
         name: translate('answers')
     }];
-    const [ formFields, setFormFields ] = useState(JSON.stringify(null));
+    const [ formFields, setFormFields ] = useState(null);
 
-    if ( correctAnswers.length === 1 ) {
-        block.value.answers.forEach((answer, index) => {
-            newFields[0].type = 'radio';
-            newFields[0].value = '';
-            newFields[0].options.push({
-                id: index,
-                name: answer[lang] ? answer[lang] : answer['ua']
-            });
-        });
+    if ( block.value.type === 'text' ) {
+        newFields[0].type = 'editor';
+        newFields[0].value = '';
+        newFields[0].name = translate('answer');
+        delete newFields[0].options;
+        delete newFields[0].variant;
+    }
+    else if ( block.value.type === 'formula' ) {
+        newFields[0].type = 'formula';
+        newFields[0].value = '';
+        newFields[0].name = translate('answer');
+        delete newFields[0].options;
+        delete newFields[0].variant;
     }
     else {
-        block.value.answers.forEach((answer, index) => {
-            newFields[0].type = 'checkboxes';
-            newFields[0].value = [];
-            newFields[0].options.push({
-                id: index,
-                name: answer[lang] ? answer[lang] : answer['ua']
+        if ( correctAnswers.length === 1 ) {
+            block.value.answers.forEach((answer, index) => {
+                newFields[0].type = 'radio';
+                newFields[0].value = '';
+                newFields[0].options.push({
+                    id: index,
+                    name: answer[lang] ? answer[lang] : answer['ua']
+                });
             });
-        });
+        }
+        else {
+            block.value.answers.forEach((answer, index) => {
+                newFields[0].type = 'checkboxes';
+                newFields[0].value = [];
+                newFields[0].options.push({
+                    id: index,
+                    name: answer[lang] ? answer[lang] : answer['ua']
+                });
+            });
+        }
     }
 
-    if ( !JSON.parse(formFields) ) {
-        setFormFields(JSON.stringify(newFields));
+    if ( !formFields ) {
+        setFormFields(Object.assign([], newFields));
     }
 
     return (
         <div className="article__answers">
             {
-                JSON.parse(formFields) ?
-                    <Form fields={JSON.parse(formFields)} setFieldValue={setFieldValue}/>
+                formFields ?
+                    <Form fields={formFields} setFieldValue={setFieldValue}/>
                     :
                     null
             }
-            <div className="article__answers-confirm">
-                <a href="/" className="btn btn_primary" disabled={!JSON.parse(formFields) || !JSON.parse(formFields)[0].value.toString()} onClick={e => confirmAnswer(e)}>{ translate('confirm') }</a>
-            </div>
         </div>
     );
 
     function setFieldValue(fieldID, value) {
-        const currentFields = JSON.parse(formFields);
+        const currentFields = formFields;
+        const newAnswer = answers.blocks.find(item => item.id === block.id);
+
+        if ( newAnswer ) {
+            if ( correctAnswers.length === 1 ) {
+                setAnswer(fieldID, [value]);
+            }
+            else {
+                if ( newAnswer.value.indexOf(value) !== -1 ) {
+                    setAnswer(fieldID, newAnswer.value.filter(item => item !== value));
+                }
+                else {
+                    setAnswer(fieldID, [...newAnswer.value, value]);
+                }
+            }
+        }
+        else {
+            setAnswer(fieldID, [value]);
+        }
+
+        console.log(formFields);
 
         if ( correctAnswers.length === 1 ) {
             currentFields[0].value = value;
@@ -67,33 +100,7 @@ function ArticleAnswer({block, setAnswer}) {
             }
         }
 
-        setFormFields(JSON.stringify(currentFields));
-    }
-
-    function confirmAnswer(e) {
-        e.preventDefault();
-
-        const fields = JSON.parse(formFields);
-        let score = 0;
-
-        if ( correctAnswers.length === 1 ) {
-            const chosenValue = '' + (block.value.answers.indexOf(block.value.answers.find(item => item[lang] ? item[lang] === fields[0].value : item['ua'] === fields[0].value)) + 1);
-
-            if ( correctAnswers.indexOf(chosenValue) !== -1 ) {
-                score = block.value.score;
-            }
-        }
-        else {
-            const chosenValues = fields[0].value;
-
-            if ( correctAnswers.sort().toString() === chosenValues.sort().toString() ) {
-                score = block.value.score;
-            }
-        }
-
-        if ( fields && fields[0].value.toString() ) {
-            setAnswer(block.id, parseInt(score));
-        }
+        setFormFields(Object.assign([], currentFields));
     }
 }
 

@@ -9,7 +9,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 
-export default function ContentEditorFormula({ block, setBlock, removeBlock, noBtns, toolbar }) {
+export default function ContentEditorText({ block, setBlock, removeBlock, noBtns, toolbar }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
     const editorToolbar = toolbar || ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];

@@ -4,7 +4,6 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
 import ReactPlayer from 'react-player';
-import ContentEditor from "../UI/ContentEditor/ContentEditor";
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
@@ -14,11 +13,10 @@ import 'froala-editor/js/languages/ru.js';
 import { Editor } from '@tinymce/tinymce-react';
 
 export default function Article({content, type, finishQuestions, loading, onBlockClick}) {
-    const { lang } = useContext(siteSettingsContext);
+    const { translate, lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
     const [ answers, setAnswers ] = useState({
-        gotScore: 0,
         blocks: []
     });
     const [ size, setSize ] = useState({width: 0, height: 0});
@@ -56,6 +54,14 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                 loading ?
                     <div className="article__preloader">
                         <Preloader/>
+                    </div>
+                    :
+                    null
+            }
+            {
+                type === 'questions' ?
+                    <div className="article__submit">
+                        <span className="btn btn_primary" onClick={handleFinishQA} disabled={!checkIfAllAnswersGiven()}>{ translate('submit') }</span>
                     </div>
                     :
                     null
@@ -146,6 +152,22 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                         null
                 }
                 {
+                    block.type === 'video' && block.value.url ?
+                        <div className={'article__audio'}>
+                            {
+                                block.value.caption ?
+                                    <p>{ block.value.caption }</p>
+                                    :
+                                    null
+                            }
+                            <div className="article__video-holder">
+                                <iframe src={getPlayVideoLink(block.value.url)} allowFullScreen frameBorder/>
+                            </div>
+                        </div>
+                        :
+                        null
+                }
+                {
                     block.type === 'word' ?
                         <iframe
                             src={getWordURL(block.value)}
@@ -175,7 +197,7 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                 }
                 {
                     block.type === 'answers' ?
-                        <ArticleAnswer block={block} setContentPage={setContentPage} setAnswer={setAnswer} />
+                        <ArticleAnswer block={block} answers={answers} setContentPage={setContentPage} setAnswer={setAnswer} />
                         :
                         null
                 }
@@ -222,6 +244,10 @@ export default function Article({content, type, finishQuestions, loading, onBloc
         return newURL;
     }
 
+    function getPlayVideoLink(url) {
+        return url.replace('https://drive.google.com/open?id=', 'https://drive.google.com/file/d/') + '/preview';
+    }
+
     function changePage(index) {
         if ( index !== contentPage ) {
             window.scrollTo({
@@ -259,19 +285,26 @@ export default function Article({content, type, finishQuestions, loading, onBloc
         return pages;
     }
 
-    function setAnswer(block, score) {
-        answers.gotScore += score;
-        answers.blocks.push({
-            id: block,
-            score: score
-        });
-        if ( contentPage + 1 === pagifyContent().length ) {
-            finishQuestions(answers);
+    function setAnswer(blockID, value) {
+        if ( answers.blocks.find(block => block.id === blockID) ) {
+            answers.blocks.find(block => block.id === blockID).value = value;
         }
         else {
-            setContentPage(contentPage + 1);
-
-            setAnswers(answers);
+            answers.blocks.push({
+                id: blockID,
+                value: value
+            });
         }
+        setAnswers(Object.assign({}, answers));
+    }
+
+    function handleFinishQA() {
+        if ( checkIfAllAnswersGiven() ) {
+            finishQuestions(answers);
+        }
+    }
+
+    function checkIfAllAnswersGiven() {
+        return answers.blocks.length && answers.blocks.every(block => block.value && block.value.length && block.value[0].length) && answers.blocks.length === content.filter(item => item.type === 'answers').length;
     }
 }

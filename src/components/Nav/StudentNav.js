@@ -27,7 +27,7 @@ function StudentNav({nav, hideItems, classesList}) {
                 <div className="studentNav__user-role">
                     { translate(user.role) }
                     {
-                        classesList && classesList.length ?
+                        classesList && classesList.length && user.class ?
                             <div className="studentNav__user-class">
                                 {
                                     classesList.find(item => item.id === user.class).title[lang] ?
