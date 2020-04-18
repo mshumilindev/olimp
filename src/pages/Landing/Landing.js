@@ -111,8 +111,9 @@ function Landing({ logo, siteName, address, usersList }) {
                                 <div className="landing__block hasImage" style={{backgroundImage: 'url(' + img01 + ')'}} id="block0">
                                     <h2>Платформа дистанційного навчання<br/>Колегіуму "Олімп"</h2>
                                     {/* Placeholder */}
-                                    <p>Сюда пойдет короткое описание платформы. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer porttitor rutrum est id tempor. Vivamus sem ex, luctus vel nisi eget, ultricies faucibus lorem. Fusce metus lectus, sagittis et purus id, ullamcorper aliquet augue. Quisque eleifend lorem eu quam ultrices hendrerit. Nullam ac porttitor magna. Sed sed metus in velit laoreet fermentum. Quisque augue nisl, aliquet at nibh at, viverra venenatis enim.</p>
-                                    <p>Mauris ac sem erat. Aliquam in tincidunt ipsum. Aenean quis massa vitae odio pharetra vestibulum sed eu turpis.</p>
+                                    <p>Платформа використовує сучасну технологію ReactJS останньої версії, що дозволяє зробити сервіс швидким та легковісним. Вона підтримується мобільними пристроями та працює в усіх сучасних браузерах, тому не потребує ніяких додаткових маніпуляцій з програмним забезпеченням.</p>
+                                    <p>Система захищена та закрита для загального доступу; кожен користувач має свій унікальний профіль, який створюється адміністрацією для запобігання втручанню у робочий процес третіми особами.</p>
+                                    <p>Наша професійна IT команда швидкого реагування готова виправити будь-які можливі нагальні проблеми, що дозволяє нам надавати навчальні послуги безперервно і цілодобово. Цей проект створений від початку і до кінця нашими спеціалістами без використання вже реалізованих ідей, тому не має аналогів в Україні.</p>
                                     <div className="landing__scrollDown" onClick={() => setViewport(1)}>
                                         <TextTooltip position="top" text={ translate('scroll_down') } children={
                                             <i className="fas fa-chevron-down"/>
