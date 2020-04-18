@@ -23,7 +23,7 @@ $landingIndent: $pageIndent * 1.5;
     top: 0;
     right: 0;
     bottom: 0;
-    background: $baseColor;
+    background: $white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,6 +31,25 @@ $landingIndent: $pageIndent * 1.5;
       width: 150px;
       height: 150px;
     }
+  }
+  &__favicon {
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    background-position: 50% 50%;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &__scrollDown {
+    position: absolute !important;
+    left: 50%;
+    bottom: $pageIndent;
+    color: $white;
+    font-size: 30px;
+    transform: translateX(-50%);
+    cursor: pointer;
   }
   &__header {
     position: fixed;
@@ -107,9 +126,9 @@ $landingIndent: $pageIndent * 1.5;
   }
   &__address {
     position: fixed;
-    left: $landingIndent;
+    left: 0;
     height: $landingIndent;
-    right: $landingIndent;
+    right: 0;
     bottom: 0;
     background: $white;
     z-index: 2;
@@ -169,8 +188,10 @@ $landingIndent: $pageIndent * 1.5;
     height: calc(100vh - #{$pageIndent * 3});
     background-size: cover;
     background-position: 50% 50%;
-    position: relative;
     box-sizing: border-box;
+    background-color: $white;
+    position: sticky;
+    top: $landingIndent;
     &.hasImage {
       &:before {
         content: '';
@@ -235,7 +256,7 @@ $landingIndent: $pageIndent * 1.5;
     margin: $pageIndent / 2;
     text-align: center;
     width: calc(100% / 6 - #{$pageIndent / 2});
-    min-width: 130px;
+    min-width: 150px;
     max-width: 200px;
     box-sizing: border-box;
     &-avatar-inner {
@@ -321,6 +342,42 @@ $landingIndent: $pageIndent * 1.5;
   }
   @media screen and(max-width: $maxSmallMobile) {
     .landing {
+      &__scrollDown {
+        display: none;
+      }
+      &__block {
+        height: auto;
+        min-height: calc(100vh - #{$landingIndent * 2});
+        position: relative;
+        top: 0;
+      }
+      &__video,
+      &__contact {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+      &__users {
+        padding-left: 0;
+        .scrollbar__content {
+          flex-wrap: nowrap;
+          flex-direction: row;
+          overflow-x: auto !important;
+        }
+      }
+      &__user {
+        width: calc(100vw - #{$pageIndent});
+        max-width: calc(100vw - #{$pageIndent});
+        flex: 0 0 auto;
+        margin: $landingIndent / 2 0 $landingIndent;
+        padding: 0 $pageIndent / 2;
+        &-avatar {
+          max-width: 200px;
+          margin: 0 auto;
+        }
+      }
       &__header {
         background: $baseColor;
       }
@@ -336,8 +393,6 @@ $landingIndent: $pageIndent * 1.5;
         display: none;
       }
       &__address {
-        left: 0;
-        right: 0;
         flex-direction: column;
         background: $baseColor;
         color: $white;
@@ -348,10 +403,6 @@ $landingIndent: $pageIndent * 1.5;
       &__content {
         padding-left: 0;
         padding-right: 0;
-      }
-      &__user {
-        width: 100%;
-        max-width: 100%;
       }
     }
   }

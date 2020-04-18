@@ -6,7 +6,7 @@ const usersCollection = db.collection('users');
 export const FETCH_USERS_BEGIN = 'FETCH_USERS_BEGIN';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 
-export function fetchUsers() {
+export function fetchUsers(role) {
     const isAdmin = localStorage.getItem('user') ? (JSON.parse(localStorage.getItem('user')).role === 'admin' || JSON.parse(localStorage.getItem('user')).canSeeGuests === true) : false;
 
     return dispatch => {
@@ -17,21 +17,23 @@ export function fetchUsers() {
             snapshot.docs.forEach(doc => {
                 const docData = doc.data();
 
-                if ( !isAdmin ) {
-                    if ( docData.role !== 'guest' ) {
+                if ( (role && doc.data().role === role) || !role ) {
+                    if ( !isAdmin ) {
+                        if ( docData.role !== 'guest' ) {
+                            Object.assign(docData, {
+                                id: doc.id
+                            });
+
+                            usersList.push(docData);
+                        }
+                    }
+                    else {
                         Object.assign(docData, {
                             id: doc.id
                         });
 
                         usersList.push(docData);
                     }
-                }
-                else {
-                    Object.assign(docData, {
-                        id: doc.id
-                    });
-
-                    usersList.push(docData);
                 }
             });
             dispatch(fetchUsersSuccess(usersList));

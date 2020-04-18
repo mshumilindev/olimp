@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import TextTooltip from "../../components/UI/TextTooltip/TextTooltip";
 import DocumentTitle from "react-document-title";
 import img01 from './img/img01.jpg';
+import favicon from './img/favicon.png';
 import classNames from 'classnames';
 import {fetchUsers} from "../../redux/actions/usersActions";
 import {orderBy} from "natural-orderby";
@@ -61,11 +62,11 @@ function Landing({ logo, siteName, address, usersList }) {
         },
         {
             title: translate('process'),
-            icon: 'fas fa-chalkboard-teacher'
+            icon: 'fa fa-graduation-cap'
         },
         {
             title: translate('teachers'),
-            icon: 'fa fa-graduation-cap'
+            icon: 'fas fa-chalkboard-teacher'
         },
         {
             title: translate('gallery'),
@@ -86,7 +87,10 @@ function Landing({ logo, siteName, address, usersList }) {
             {
                 !logo || !siteName || !address ||
                 !usersList || !usersList.length ?
-                    <Preloader size={150} color={'#7f00a3'}/>
+                    <>
+                        <Preloader size={150} color={'#7f00a3'}/>
+                        <div className="landing__favicon" style={{backgroundImage: 'url(' + favicon + ')'}} />
+                    </>
                     :
                     <DocumentTitle title={ siteName[lang] ? siteName[lang] : siteName['ua'] }>
                         <>
@@ -107,9 +111,15 @@ function Landing({ logo, siteName, address, usersList }) {
                             { _renderSocial() }
                             <div className="landing__content">
                                 <div className="landing__block hasImage" style={{backgroundImage: 'url(' + img01 + ')'}} id="block0">
-                                    <h2>Платформа дистанційного навчання<br/>Колегіум "Олімп"</h2>
+                                    <h2>Платформа дистанційного навчання<br/>Колегіуму "Олімп"</h2>
+                                    {/* Placeholder */}
                                     <p>Сюда пойдет короткое описание платформы. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer porttitor rutrum est id tempor. Vivamus sem ex, luctus vel nisi eget, ultricies faucibus lorem. Fusce metus lectus, sagittis et purus id, ullamcorper aliquet augue. Quisque eleifend lorem eu quam ultrices hendrerit. Nullam ac porttitor magna. Sed sed metus in velit laoreet fermentum. Quisque augue nisl, aliquet at nibh at, viverra venenatis enim.</p>
                                     <p>Mauris ac sem erat. Aliquam in tincidunt ipsum. Aenean quis massa vitae odio pharetra vestibulum sed eu turpis.</p>
+                                    <div className="landing__scrollDown" onClick={() => setViewport(1)}>
+                                        <TextTooltip position="top" text={ translate('scroll_down') } children={
+                                            <i className="fas fa-chevron-down"/>
+                                        }/>
+                                    </div>
                                 </div>
                                 <div className="landing__block" id="block1">
                                     <h3>{ translate('process') }</h3>
@@ -260,20 +270,20 @@ function Landing({ logo, siteName, address, usersList }) {
     }
 
     function setViewport(index) {
-        const block = document.getElementById('block' + index);
+        const screenHeight = window.innerHeight - 120;
 
-        if ( block ) {
-            window.scrollTo({
-                top: block.offsetTop - 60,
-                behavior: 'smooth'
-            });
-        }
+        window.scrollTo({
+            top: screenHeight * index,
+            behavior: 'smooth'
+        });
     }
 
     function handleResize() {
         if ( document.getElementById('block' + currentScreen) ) {
+            const screenHeight = window.innerHeight - 120;
+
             window.scrollTo({
-                top: document.getElementById('block' + currentScreen).offsetTop - 60
+                top: screenHeight * currentScreen
             });
         }
     }
@@ -301,7 +311,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    fetchUsers: dispatch(fetchUsers()),
+    fetchUsers: dispatch(fetchUsers('teacher')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing);
