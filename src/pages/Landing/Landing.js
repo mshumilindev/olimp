@@ -359,12 +359,14 @@ function Landing({ logo, siteName, address, usersList }) {
     }
 
     function handleResize() {
-        if ( document.getElementById('block' + currentScreen) ) {
-            const screenHeight = window.innerHeight - 120;
+        if ( window.innerWidth > 768 ) {
+            if ( document.getElementById('block' + currentScreen) ) {
+                const screenHeight = window.innerHeight - 120;
 
-            window.scrollTo({
-                top: screenHeight * currentScreen
-            });
+                window.scrollTo({
+                    top: screenHeight * currentScreen
+                });
+            }
         }
     }
 
@@ -377,10 +379,6 @@ function Landing({ logo, siteName, address, usersList }) {
             currentScreenVar = increment;
             setCurrentScreen(increment);
         }
-    }
-
-    function handleSocialClick(type) {
-        handleMouseLeave();
     }
 }
 

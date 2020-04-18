@@ -240,6 +240,9 @@ $landingIndent: $pageIndent * 1.5;
           margin-bottom: 0;
         }
       }
+      @media screen and (max-width: $maxMobile) {
+        padding: $pageIndent 0;
+      }
     }
     &.isGrey {
       background: $lightColor;
@@ -297,16 +300,6 @@ $landingIndent: $pageIndent * 1.5;
     }
     @media screen and (max-width: $maxMobile) {
       padding: $pageIndent 0 $pageIndent / 2;
-      &-image-holder {
-        margin: 0 0 #{$pageIndent / 2};
-        width: 100%;
-      }
-      &-text {
-        font-size: 14px;
-      }
-    }
-    @media screen and (max-width: $maxSmallMobile) {
-      padding-top: $pageIndent / 2;
       .grid {
         &_col {
           width: 100%;
@@ -433,14 +426,12 @@ $landingIndent: $pageIndent * 1.5;
       background-repeat: no-repeat;
     }
     @media screen and (max-width: $maxMobile) {
-      width: 100%;
-    }
-    @media screen and (max-width: $maxSmallMobile) {
       position: absolute;
       left: 0;
       top: 0;
       right: 0;
       bottom: 0;
+      width: 100%;
       &-container {
         background-image: none !important;
         height: 100%;
@@ -512,7 +503,7 @@ $landingIndent: $pageIndent * 1.5;
       font-size: 30px;
     }
   }
-  @media screen and(max-width: $maxSmallMobile) {
+  @media screen and(max-width: $maxMobile) {
     .landing {
       &__scrollDown {
         display: none;
