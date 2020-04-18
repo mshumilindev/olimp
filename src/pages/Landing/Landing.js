@@ -150,9 +150,9 @@ function Landing({ logo, siteName, address, usersList }) {
                 {
                     landingNav.map((item, index) => {
                         return (
-                            <div className={classNames('landing__nav-item', {isActive: index === currentScreen})} key={item.title} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                            <div className={classNames('landing__nav-item', {isActive: index === currentScreen})} key={item.title}>
                                 <TextTooltip position="right" text={ item.title } children={
-                                    <span className="landing__nav-link" onClick={() => setViewport(index)}>
+                                    <span className="landing__nav-link" onClick={() => setViewport(index)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                                         <i className={ item.icon }/>
                                     </span>
                                 }/>

@@ -7,6 +7,7 @@ $landingIndent: $pageIndent * 1.5;
 .isNavOver {
   .landing {
     &__content {
+      filter: grayscale(100%) blur(3px);
       &:before {
         display: block;
       }
@@ -102,22 +103,25 @@ $landingIndent: $pageIndent * 1.5;
     flex-direction: column;
     z-index: 99999;
     background: $white;
-    .textTooltip__text {
-      margin-left: $pageIndent / 2;
-      letter-spacing: 1px;
-      color: $baseColor;
+    .textTooltip {
+      display: block;
+      &__trigger {
+        display: block;
+      }
+      &__text {
+        margin-left: $pageIndent / 2;
+        letter-spacing: 1px;
+        color: $baseColor;
+      }
     }
   }
   &__nav-item {
-    margin-top: $pageIndent;
-    &:first-child {
-      margin-top: 0;
-    }
     &.isActive {
       color: $purpleColor;
     }
   }
   &__nav-link {
+    display: block;
     cursor: pointer;
     padding: $pageIndent / 2;
     &:hover {
@@ -167,6 +171,8 @@ $landingIndent: $pageIndent * 1.5;
   }
   &__content {
     padding: $landingIndent;
+    filter: grayscale(0) blur(0);
+    transition: filter .15s ease-in-out;
     &:before {
       content: '';
       position: fixed;
@@ -176,7 +182,7 @@ $landingIndent: $pageIndent * 1.5;
       bottom: $landingIndent;
       z-index: 2;
       background: $white;
-      opacity: .85;
+      opacity: .75;
       display: none;
     }
   }
