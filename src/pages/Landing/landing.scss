@@ -340,6 +340,10 @@ $landingIndent: $pageIndent * 1.5;
     min-width: 150px;
     max-width: 200px;
     box-sizing: border-box;
+    &-avatar {
+      max-width: 150px;
+      margin: 0 auto;
+    }
     &-avatar-inner {
       border-radius: 100%;
       background-size: cover;
