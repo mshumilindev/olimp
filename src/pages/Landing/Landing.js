@@ -123,7 +123,7 @@ function Landing({ logo, siteName, address, usersList }) {
                                     <h3>{ translate('teachers') }</h3>
                                     { _renderUsers() }
                                 </div>
-                                <div className="landing__block" id="block3">
+                                <div className="landing__block isDark" id="block3">
                                     <h3>{ translate('gallery') }</h3>
                                 </div>
                                 <div className="landing__block" id="block5">

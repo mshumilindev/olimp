@@ -233,6 +233,11 @@ $landingIndent: $pageIndent * 1.5;
       background: $lightColor;
       padding: 0 #{$pageIndent / 2} #{$pageIndent / 2};
     }
+    &.isDark {
+      background: $baseColor;
+      color: $white;
+      padding: 0 #{$pageIndent / 2} #{$pageIndent / 2};
+    }
     > * {
       position: relative;
       z-index: 1;
