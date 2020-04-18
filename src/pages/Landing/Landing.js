@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import {fetchUsers} from "../../redux/actions/usersActions";
 import {orderBy} from "natural-orderby";
 import {Scrollbars} from "react-custom-scrollbars";
-import ReactPlayer from "react-player";
 import GoogleMapReact from "google-map-react";
 
 function Landing({ logo, siteName, address, usersList }) {
@@ -61,8 +60,8 @@ function Landing({ logo, siteName, address, usersList }) {
             icon: 'fas fa-home'
         },
         {
-            title: translate('process'),
-            icon: 'fa fa-graduation-cap'
+            title: translate('about_platform'),
+            icon: 'fa fa-laptop-code'
         },
         {
             title: translate('teachers'),
@@ -71,10 +70,6 @@ function Landing({ logo, siteName, address, usersList }) {
         {
             title: translate('gallery'),
             icon: 'far fa-images'
-        },
-        {
-            title: translate('model_lesson'),
-            icon: 'fab fa-youtube'
         },
         {
             title: translate('map'),
@@ -122,7 +117,7 @@ function Landing({ logo, siteName, address, usersList }) {
                                     </div>
                                 </div>
                                 <div className="landing__block" id="block1">
-                                    <h3>{ translate('process') }</h3>
+                                    <h3>{ translate('about_platform') }</h3>
                                 </div>
                                 <div className="landing__block isGrey" id="block2">
                                     <h3>{ translate('teachers') }</h3>
@@ -130,9 +125,6 @@ function Landing({ logo, siteName, address, usersList }) {
                                 </div>
                                 <div className="landing__block" id="block3">
                                     <h3>{ translate('gallery') }</h3>
-                                </div>
-                                <div className="landing__block" id="block4">
-                                    { _renderModelLesson() }
                                 </div>
                                 <div className="landing__block" id="block5">
                                     { _renderMap() }
@@ -252,15 +244,6 @@ function Landing({ logo, siteName, address, usersList }) {
         )
     }
 
-    function _renderModelLesson() {
-        return (
-            <div className="landing__video">
-                {/* Placeholder */}
-                <ReactPlayer url="https://www.youtube.com/watch?v=0bvZfJ8cjYc&feature=youtu.be" width={'100%'} height={'100%'} controls />
-            </div>
-        )
-    }
-
     function handleMouseEnter() {
         document.querySelector('body').classList.add('isNavOver');
     }
@@ -271,6 +254,8 @@ function Landing({ logo, siteName, address, usersList }) {
 
     function setViewport(index) {
         const screenHeight = window.innerHeight - 120;
+
+        document.querySelector('body').classList.remove('isNavOver');
 
         window.scrollTo({
             top: screenHeight * index,
