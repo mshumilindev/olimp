@@ -9,13 +9,16 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import TextTooltip from "../../components/UI/TextTooltip/TextTooltip";
 import DocumentTitle from "react-document-title";
-import img01 from './img/img01.jpg';
-import favicon from './img/favicon.png';
 import classNames from 'classnames';
 import {fetchUsers} from "../../redux/actions/usersActions";
 import {orderBy} from "natural-orderby";
 import {Scrollbars} from "react-custom-scrollbars";
 import GoogleMapReact from "google-map-react";
+import img01 from './img/img01.jpg';
+import favicon from './img/favicon.png';
+import about01 from './img/about01.png';
+import about02 from './img/about02.png';
+import about03 from './img/about03.png';
 
 function Landing({ logo, siteName, address, usersList }) {
     const { translate, lang } = useContext(SiteSettingsContext);
@@ -116,21 +119,10 @@ function Landing({ logo, siteName, address, usersList }) {
                                         }/>
                                     </div>
                                 </div>
-                                <div className="landing__block" id="block1">
-                                    <h3>{ translate('about_platform') }</h3>
-                                    <div className="grid">
-                                        <div className="grid_col col-4">
-                                            Реактивність
-                                        </div>
-                                        <div className="grid_col col-4">
-                                            Мобільність
-                                        </div>
-                                        <div className="grid_col col-4">
-                                            Інтерактивність
-                                        </div>
-                                    </div>
+                                <div className="landing__block isGrey" id="block1">
+                                    { _renderAbout() }
                                 </div>
-                                <div className="landing__block isGrey" id="block2">
+                                <div className="landing__block" id="block2">
                                     <h3>{ translate('teachers') }</h3>
                                     { _renderUsers() }
                                 </div>
@@ -190,6 +182,56 @@ function Landing({ logo, siteName, address, usersList }) {
                 </div>
                 <div className="landing__social-item">
                     <i className="fab fa-pinterest" />
+                </div>
+            </div>
+        )
+    }
+
+    function _renderAbout() {
+        return (
+            <div className="landing__about">
+                <div className="grid">
+                    <div className="grid_col col-6 tablet-col-4">
+                        <div className="landing__about-inner">
+                            <div className="landing__about-image-holder">
+                                <div className="landing__about-image" style={{backgroundImage: 'url(' + about01 + ')'}}/>
+                            </div>
+                            <div className="landing__about-heading">
+                                Реактивність
+                            </div>
+                            <div className="landing__about-text">
+                                <p>Платформа використовує сучасну технологію ReactJS останньої версії, що дозволяє зробити сервіс швидким та легковісним.</p>
+                                <p>Система захищена та закрита для загального доступу; кожен користувач має свій унікальний профіль, який створюється адміністрацією для запобігання втручанню у робочий процес третіми особами.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid_col col-6 tablet-col-4">
+                        <div className="landing__about-inner">
+                            <div className="landing__about-image-holder">
+                                <div className="landing__about-image" style={{backgroundImage: 'url(' + about02 + ')'}}/>
+                            </div>
+                            <div className="landing__about-heading">
+                                Мобільність
+                            </div>
+                            <div className="landing__about-text">
+                                <p>Платформа підтримується мобільними пристроями та працює в усіх сучасних браузерах, тому не потребує ніяких додаткових маніпуляцій з програмним забезпеченням.</p>
+                                <p>Ви можете навчатись будь-де і у будь-який час.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid_col col-6 tablet-col-4">
+                        <div className="landing__about-inner">
+                            <div className="landing__about-image-holder">
+                                <div className="landing__about-image" style={{backgroundImage: 'url(' + about03 + ')'}}/>
+                            </div>
+                            <div className="landing__about-heading">
+                                Інтерактивність
+                            </div>
+                            <div className="landing__about-text">
+                                <p>Робочий процесс на платформі Колегіуму "Олімп" - це інтерактивні відеоуроки; онлайн бібліотека з усіма навчальними матеріалами; домашні завдання з тестовими запитаннями, творами та вирішуванням математичних рівнянь &mdash; усе, що потрібно учню для отримання максимально широкого спектру знань.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )

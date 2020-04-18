@@ -243,6 +243,76 @@ $landingIndent: $pageIndent * 1.5;
       z-index: 1;
     }
   }
+  &__about {
+    width: calc(100% - #{$pageIndent});
+    max-width: 1600px;
+    box-sizing: border-box;
+    padding: $pageIndent / 2;
+    .grid {
+      &_col {
+        display: flex;
+      }
+    }
+    &-inner {
+      background: $white;
+      padding: $pageIndent / 2;
+      margin: #{-$pageIndent / 4};
+      box-shadow: 0 5px 5px 0 rgba(0,0,0,.05);
+    }
+    &-image-holder {
+      width: calc(100% + #{$pageIndent});
+      margin: #{-$pageIndent / 2} #{-$pageIndent / 2} #{$pageIndent / 2};
+    }
+    &-image {
+      padding-top: 56.25%;
+      background-size: contain;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+    }
+    &-heading {
+      text-transform: uppercase;
+      font-size: 20px;
+      letter-spacing: .5px;
+      font-family: $RobotoCondensed;
+      text-align: center;
+    }
+    &-text {
+      line-height: 1.25;
+      font-weight: 300;
+      p {
+        margin-top: $pageIndent / 2;
+      }
+    }
+    @media screen and (max-width: $maxMobile) {
+      padding: $pageIndent 0 $pageIndent / 2;
+      &-image-holder {
+        margin: 0 0 #{$pageIndent / 2};
+        width: 100%;
+      }
+      &-text {
+        font-size: 14px;
+      }
+    }
+    @media screen and (max-width: $maxSmallMobile) {
+      padding-top: $pageIndent / 2;
+      .grid {
+        &_col {
+          width: 100%;
+        }
+      }
+      &-inner {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      &-image-holder {
+        width: calc(100% + #{$pageIndent});
+        margin: #{-$pageIndent / 2} #{-$pageIndent / 2} #{$pageIndent / 2};
+      }
+      &-text {
+        font-size: initial;
+      }
+    }
+  }
   &__users {
     height: calc(100% - #{$pageIndent});
     padding: $pageIndent / 2;
@@ -371,7 +441,6 @@ $landingIndent: $pageIndent * 1.5;
         bottom: 0;
       }
       &__users {
-        padding-left: 0;
         .scrollbar__content {
           flex-wrap: nowrap;
           flex-direction: row;
