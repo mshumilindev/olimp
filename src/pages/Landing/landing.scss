@@ -158,10 +158,22 @@ $landingIndent: $pageIndent * 1.5;
     flex-direction: column;
     font-family: $RobotoCondensed;
     font-size: 20px;
+    .textTooltip {
+      display: block;
+      &__trigger {
+        display: block;
+      }
+      &__text {
+        margin-right: $pageIndent / 2;
+        letter-spacing: 1px;
+        color: $baseColor;
+      }
+    }
   }
   &__social-item {
     cursor: pointer;
     padding: $pageIndent / 2;
+    color: $baseColor;
     &:hover {
       color: $purpleColor;
     }
@@ -319,6 +331,8 @@ $landingIndent: $pageIndent * 1.5;
     box-sizing: border-box;
     width: 100%;
     font-family: $RobotoCondensed;
+    max-width: 1600px;
+    margin: 0 auto;
     > * {
       height: 100% !important;
       max-height: 100% !important;

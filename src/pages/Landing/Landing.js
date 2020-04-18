@@ -118,7 +118,6 @@ function Landing({ logo, siteName, address, usersList }) {
                             <div className="landing__content">
                                 <div className="landing__block hasImage" style={{backgroundImage: 'url(' + img01 + ')'}} id="block0">
                                     <h2>Платформа дистанційного навчання<br/>Колегіуму "Олімп"</h2>
-                                    {/* Placeholder */}
                                     <p>Платформа використовує сучасну технологію ReactJS останньої версії, що дозволяє зробити сервіс швидким та легковісним. Вона підтримується мобільними пристроями та працює в усіх сучасних браузерах, тому не потребує ніяких додаткових маніпуляцій з програмним забезпеченням.</p>
                                     <p>Система захищена та закрита для загального доступу; кожен користувач має свій унікальний профіль, який створюється адміністрацією для запобігання втручанню у робочий процес третіми особами.</p>
                                     <p>Наша професійна IT команда швидкого реагування готова виправити будь-які можливі нагальні проблеми, що дозволяє нам надавати навчальні послуги безперервно і цілодобово. Цей проект створений від початку і до кінця нашими спеціалістами без використання вже реалізованих ідей, тому не має аналогів в Україні.</p>
@@ -180,18 +179,20 @@ function Landing({ logo, siteName, address, usersList }) {
     function _renderSocial() {
         return (
             <div className="landing__social">
-                <div className="landing__social-item">
-                    <i className="fab fa-facebook-f" />
-                </div>
-                <div className="landing__social-item">
-                    <i className="fab fa-instagram" />
-                </div>
-                <div className="landing__social-item">
-                    <i className="fab fa-twitter" />
-                </div>
-                <div className="landing__social-item">
-                    <i className="fab fa-pinterest" />
-                </div>
+                <TextTooltip position="left" text="Facebook" children={
+                    <a href="https://www.facebook.com/collegiumolimp" target="_blank">
+                        <div className="landing__social-item" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                            <i className="fab fa-facebook-f"/>
+                        </div>
+                    </a>
+                }/>
+                <TextTooltip position="left" text="Instagram" children={
+                    <a href="https://www.instagram.com/olimp.collegium/" target="_blank">
+                        <div className="landing__social-item" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                            <i className="fab fa-instagram"/>
+                        </div>
+                    </a>
+                }/>
             </div>
         )
     }
@@ -272,10 +273,8 @@ function Landing({ logo, siteName, address, usersList }) {
                                         </div>
                                     </div>
                                     <div className="landing__user-name">{ userItem.name }</div>
-                                    <div className="landing__user-descr">
-                                        {/* Placeholder */}
-                                        Сюда идет описание учителя, например: предметы, которые он преподает, дополнительные уроки и т.д.
-                                    </div>
+                                    {/*<div className="landing__user-descr">*/}
+                                    {/*</div>*/}
                                 </div>
                             )
                         })
@@ -351,7 +350,7 @@ function Landing({ logo, siteName, address, usersList }) {
     function setViewport(index) {
         const screenHeight = window.innerHeight - 120;
 
-        document.querySelector('body').classList.remove('isNavOver');
+        handleMouseLeave();
 
         window.scrollTo({
             top: screenHeight * index,
@@ -378,6 +377,10 @@ function Landing({ logo, siteName, address, usersList }) {
             currentScreenVar = increment;
             setCurrentScreen(increment);
         }
+    }
+
+    function handleSocialClick(type) {
+        handleMouseLeave();
     }
 }
 
