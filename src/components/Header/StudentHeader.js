@@ -95,7 +95,7 @@ function StudentHeader({logo, siteName, history}) {
 
     function onConfirmLogout() {
         localStorage.removeItem('user');
-        window.location.replace('/');
+        window.location.replace('/landing');
     }
 
     function onHideMenu(e) {

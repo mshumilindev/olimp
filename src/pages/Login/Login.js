@@ -147,7 +147,12 @@ export default class Login extends React.Component {
                             scores: snapshot.docs[0].data().scores,
                             canSeeGuests: snapshot.docs[0].data().canSeeGuests
                         }));
-                        window.location.reload();
+                        if ( snapshot.docs[0].data().role === 'admin' || snapshot.docs[0].data().role === 'teacher' ) {
+                            window.location.replace('/admin');
+                        }
+                        else {
+                            window.location.replace('/');
+                        }
                     }
                 }
             }

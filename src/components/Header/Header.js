@@ -77,7 +77,7 @@ function Header({classesList, type, setUpdates}) {
 
     function onConfirmLogout() {
         localStorage.removeItem('user');
-        window.location.replace('/');
+        window.location.replace('/landing');
     }
 }
 const mapStateToProps = state => ({

@@ -40,6 +40,8 @@ const AdminTesting = React.lazy(() => import('./pages/AdminTesting/AdminTesting'
 
 const Guest = React.lazy(() => import('./pages/Guest/Guest'));
 
+const Landing = React.lazy(() => import('./pages/Landing/Landing'));
+
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound/PageNotFound'));
 
 export default function App() {
@@ -132,6 +134,8 @@ export default function App() {
                                 <Route path='/admin-tests' component={AdminTesting}/>
 
                                 <Route exact path='/guest' component={Guest} />
+
+                                <Route exact path='/landing' component={Landing} />
 
                                 <Route path="*" component={PageNotFound}/>
                             </Suspense>

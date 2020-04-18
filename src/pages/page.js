@@ -23,10 +23,7 @@ function Page(props) {
         prevLocation = location;
     });
 
-    if ( !localStorage.getItem('user') ) {
-        location.pathname = '/login';
-    }
-    else {
+    if ( localStorage.getItem('user') ) {
         if ( !location.pathname.includes('chat') ) {
             if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
                 history.push('/admin');
@@ -63,13 +60,15 @@ function Page(props) {
             });
         }
     }
+    else {
+        if ( location.pathname !== '/landing' && location.pathname !== '/login' ) {
+            history.push('/landing');
+        }
+    }
 
     useEffect(() => {
         const unlisten = history.listen(location => {
-            if ( !localStorage.getItem('user') && !location.pathname.includes('/login') ) {
-                history.push('/login');
-            }
-            else {
+            if ( !localStorage.getItem('user') && !location.pathname.includes('/login') && !location.pathname.includes('/landing') ) {
                 const profileRef = db.collection('users').where('login', '==', user.login);
 
                 profileRef.get().then(snapshot => {

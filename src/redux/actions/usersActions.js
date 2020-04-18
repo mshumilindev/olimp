@@ -7,7 +7,7 @@ export const FETCH_USERS_BEGIN = 'FETCH_USERS_BEGIN';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 
 export function fetchUsers() {
-    const isAdmin = JSON.parse(localStorage.getItem('user')).role === 'admin' || JSON.parse(localStorage.getItem('user')).canSeeGuests === true;
+    const isAdmin = localStorage.getItem('user') ? (JSON.parse(localStorage.getItem('user')).role === 'admin' || JSON.parse(localStorage.getItem('user')).canSeeGuests === true) : false;
 
     return dispatch => {
         dispatch(fetchUsersBegin());
