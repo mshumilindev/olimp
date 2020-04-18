@@ -73,6 +73,9 @@ export default function StudentLibraryListByCourse({courseItem, list}) {
     );
 
     function _renderLibraryItem(docItem) {
+        if ( !docItem ) {
+            return null;
+        }
         return(
             <div className="library__list-textbooksItem" key={docItem.id}>
                 <StudentTextbook docRef={docItem.ref} name={docItem.name} />
@@ -83,7 +86,9 @@ export default function StudentLibraryListByCourse({courseItem, list}) {
     function filterLibrary() {
         if ( currentCourse.textbook ) {
             if ( typeof currentCourse.textbook === 'object' ) {
-                return currentCourse.textbook.map(item => list.find(listItem => listItem.id === item))
+                return currentCourse.textbook.map(item => {
+                    return list.find(listItem => listItem.id === item)
+                })
             }
             else {
                 return list.find(listItem => listItem.id === currentCourse.textbook);
