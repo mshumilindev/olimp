@@ -118,6 +118,17 @@ function Landing({ logo, siteName, address, usersList }) {
                                 </div>
                                 <div className="landing__block" id="block1">
                                     <h3>{ translate('about_platform') }</h3>
+                                    <div className="grid">
+                                        <div className="grid_col col-4">
+                                            Реактивність
+                                        </div>
+                                        <div className="grid_col col-4">
+                                            Мобільність
+                                        </div>
+                                        <div className="grid_col col-4">
+                                            Інтерактивність
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="landing__block isGrey" id="block2">
                                     <h3>{ translate('teachers') }</h3>
@@ -175,7 +186,10 @@ function Landing({ logo, siteName, address, usersList }) {
                     <i className="fab fa-instagram" />
                 </div>
                 <div className="landing__social-item">
-                    <i className="fab fa-telegram-plane" />
+                    <i className="fab fa-twitter" />
+                </div>
+                <div className="landing__social-item">
+                    <i className="fab fa-pinterest" />
                 </div>
             </div>
         )
