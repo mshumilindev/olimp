@@ -19,11 +19,19 @@ import favicon from './img/favicon.png';
 import about01 from './img/about01.png';
 import about02 from './img/about02.png';
 import about03 from './img/about03.png';
+import galleryContainer from './img/galleryContainer.png';
+import gallery01 from './img/gallery01.jpg';
+import gallery02 from './img/gallery02.jpg';
+import gallery03 from './img/gallery03.jpg';
+import gallery04 from './img/gallery04.jpg';
+import gallery05 from './img/gallery05.jpg';
+import gallery06 from './img/gallery06.jpg';
 
 function Landing({ logo, siteName, address, usersList }) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ currentScreen, setCurrentScreen] = useState(0);
     const [ geolocation, setGeolocation ] = useState(null);
+    const [ currentSlide, setCurrentSlide ] = useState(0);
     const geocoder = new google.maps.Geocoder();
     let currentScreenVar = 0;
 
@@ -128,7 +136,7 @@ function Landing({ logo, siteName, address, usersList }) {
                                     { _renderUsers() }
                                 </div>
                                 <div className="landing__block isDark" id="block3">
-                                    <h3>{ translate('gallery') }</h3>
+                                    { _renderGallery() }
                                 </div>
                                 <div className="landing__block" id="block5">
                                     { _renderMap() }
@@ -273,6 +281,37 @@ function Landing({ logo, siteName, address, usersList }) {
                         })
                     }
                 </Scrollbars>
+            </div>
+        )
+    }
+
+    function _renderGallery() {
+        return (
+            <div className="landing__gallery">
+                <div className="landing__gallery-container" style={{backgroundImage: 'url(' + galleryContainer + ')'}}>
+                    <div className="landing__gallery-slider">
+                        <div className="landing__gallery-slider-inner" style={{transform: 'translateX(-' + currentSlide + '00%)'}}>
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery01 + ')'}} />
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery02 + ')'}} />
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery03 + ')'}} />
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery04 + ')'}} />
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery05 + ')'}} />
+                            <div className="landing__gallery-slide" style={{backgroundImage: 'url(' + gallery06 + ')'}} />
+                        </div>
+                    </div>
+                    <div className="landing__gallery-actions">
+                        <span className="landing__gallery-action isPrev" onClick={() => setCurrentSlide(currentSlide > 0 ?  currentSlide - 1 : currentSlide)}>
+                            <TextTooltip position="top" text={translate('prev')} children={
+                                <i className="fas fa-chevron-left"/>
+                            }/>
+                        </span>
+                        <span className="landing__gallery-action isNext" onClick={() => setCurrentSlide(currentSlide < 5 ?  currentSlide + 1 : currentSlide)}>
+                            <TextTooltip position="top" text={translate('next')} children={
+                                <i className="fas fa-chevron-right"/>
+                            }/>
+                        </span>
+                    </div>
+                </div>
             </div>
         )
     }
