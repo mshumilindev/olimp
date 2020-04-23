@@ -15,6 +15,8 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     const [ currentCourse, setCurrentCourse ] = useState(null);
     const [ startQuestions, setStartQuestions ] = useState(false);
     const [ currentUser, setCurrentUser ] = useState(null);
+    const [ answers, setAnswers ] = useState(null);
+    const [ allAnswersGiven, setAllAnswersGiven ] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -22,6 +24,17 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
             discardLesson();
         }
     }, []);
+
+    useEffect(() => {
+        if ( lesson && lesson['QA'] && !answers ) {
+            if ( getTest() ) {
+                setAnswers(Object.assign({}, {blocks: getTest().blocks}));
+            }
+            else {
+                setAnswers(Object.assign({}, {blocks: []}));
+            }
+        }
+    }, [lesson]);
 
     useEffect(() => {
         if ( allCoursesList ) {
@@ -83,7 +96,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                 </h2>
                 {
                     lesson && lesson.QA.length && !startQuestions ?
-                        !getTest() ?
+                        !getTest() || !getTest().isSent ?
                             <div className="content__title-actions">
                                 <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
                                     { translate('start_quiz') }
@@ -92,7 +105,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                             :
                             getTest().score ?
                                 <div className="content__title-actions">
-                                    <div className="studentLesson__score">
+                                    <div className="studentLesson__score" onClick={e => handleStartQuestions(e)}>
                                         <div className="studentLesson__score-item">
                                             <div>{ translate('score') }</div>
                                             <div className="studentLesson__score-num">{ getTest().score }</div>
@@ -108,7 +121,14 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                                     </div>
                                 </div>
                         :
-                        null
+                        lesson && lesson.QA.length && !getTest().score ?
+                            <div className="content__title-actions">
+                                <span className="btn btn_primary" onClick={saveProgress}>
+                                    { translate('save') }
+                                </span>
+                            </div>
+                            :
+                            null
                 }
             </div>
             {
@@ -121,6 +141,25 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     );
 
     function _renderLesson() {
+        const QABlocks = [];
+
+        if ( lesson['QA'] && getTest() && getTest().score ) {
+            lesson['QA'].forEach(item => {
+                if ( item.type !== 'answers' || !getTest() || !getTest().comments || !getTest().comments.find(comItem => comItem.id === 'comment_' + item.id) ) {
+                    QABlocks.push(item);
+                }
+                else {
+                    QABlocks.push(
+                        item,
+                        {
+                            type: 'comment',
+                            ...getTest().comments.find(comItem => comItem.id === 'comment_' + item.id)
+                        }
+                    );
+                }
+            });
+        }
+
         return (
             <>
                 {
@@ -131,7 +170,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                 }
                 {
                     lesson.QA.length && startQuestions ?
-                        <Article content={lesson['QA']} type={'questions'} finishQuestions={finishQuestions} loading={userLoading}/>
+                        <Article content={QABlocks} type={'questions'} answers={answers} setAnswers={setAnswers} finishQuestions={finishQuestions} loading={userLoading} allAnswersGiven={allAnswersGiven} setAllAnswersGiven={setAllAnswersGiven} readonly={getTest() && getTest().score}/>
                         :
                         null
                 }
@@ -145,14 +184,28 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
         setStartQuestions(true);
     }
 
-    function finishQuestions(answers) {
+    function finishQuestions() {
+        if ( allAnswersGiven ) {
+            const newAnswers = {
+                lesson: params,
+                blocks: answers.blocks,
+                userID: user.id,
+                isSent: true
+            };
+
+            setStartQuestions(false);
+            updateTest(newAnswers);
+        }
+    }
+
+    function saveProgress() {
         const newAnswers = {
             lesson: params,
             blocks: answers.blocks,
-            userID: user.id
+            userID: user.id,
+            isSent: false
         };
 
-        setStartQuestions(false);
         updateTest(newAnswers);
     }
 

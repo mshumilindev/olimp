@@ -55,10 +55,6 @@
   &__test-inner {
     display: flex;
     align-items: center;
-    &:hover {
-      opacity: .75;
-      cursor: pointer;
-    }
     i {
       width: 40px;
       height: 40px;
@@ -69,11 +65,30 @@
       font-size: 14px;
       background: $successColor;
       color: $white;
+      flex: 0 0 auto;
       &:not(.fa) {
         font-weight: bold;
         font-style: normal;
         font-size: 16px;
       }
+    }
+    [class$="__deleteTest"] {
+      &:hover {
+        opacity: .75;
+        cursor: pointer;
+      }
+      i {
+        background: none !important;
+        color: $errorColor !important;
+      }
+    }
+  }
+  &__test-content {
+    display: flex;
+    align-items: center;
+    &:hover {
+      opacity: .75;
+      cursor: pointer;
     }
   }
   hr {
@@ -85,5 +100,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .modal {
+    &__box {
+      max-width: 900px;
+    }
   }
 }

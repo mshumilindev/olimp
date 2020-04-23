@@ -14,6 +14,9 @@
     color: $white;
     height: 85px;
     box-sizing: border-box;
+    position: sticky;
+    top: 100px;
+    z-index: 2;
   }
   &__title {
     font-family: $RobotoCondensed;

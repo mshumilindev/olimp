@@ -32,6 +32,8 @@
     "react-full-screen": "^0.2.4",
     "react-google-maps": "^9.4.5",
     "react-image-file-resizer": "^0.2.1",
+    "react-mathjax": "^1.0.1",
+    "react-mathjax-preview": "^1.2.4",
     "react-media-recorder": "^1.2.0",
     "react-pdf": "^4.1.0",
     "react-pdf-js": "^5.1.0",

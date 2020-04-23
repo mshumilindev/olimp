@@ -4,33 +4,16 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import {Preloader} from "../UI/preloader";
 import ReactPlayer from 'react-player';
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import 'froala-editor/js/plugins/align.min.js';
-import 'froala-editor/js/plugins/paragraph_format.min.js';
-import 'froala-editor/js/languages/ru.js';
-import { Editor } from '@tinymce/tinymce-react';
+import MathJax from 'react-mathjax-preview'
+import Form from "../Form/Form";
+import userContext from "../../context/userContext";
 
-export default function Article({content, type, finishQuestions, loading, onBlockClick}) {
+export default function Article({content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
     const { translate, lang } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
-    const [ answers, setAnswers ] = useState({
-        blocks: []
-    });
     const [ size, setSize ] = useState({width: 0, height: 0});
-
-    const editorConfig = {
-        menubar: false,
-        language: 'uk',
-        plugins: [
-            'autoresize'
-        ],
-        external_plugins: {
-            'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
-        }
-    };
 
     useEffect(() => {
         const width = articleRef.current.offsetWidth;
@@ -59,9 +42,9 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                     null
             }
             {
-                type === 'questions' ?
+                type === 'questions' && !readonly ?
                     <div className="article__submit">
-                        <span className="btn btn_primary" onClick={handleFinishQA} disabled={!checkIfAllAnswersGiven()}>{ translate('submit') }</span>
+                        <span className="btn btn_primary" onClick={finishQuestions} disabled={!allAnswersGiven}>{ translate('submit') }</span>
                     </div>
                     :
                     null
@@ -96,11 +79,7 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                 }
                 {
                     block.type === 'formula' ?
-                        <Editor
-                            initialValue={block.value[lang]}
-                            init={editorConfig}
-                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-                        />
+                        <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
                         :
                         null
                 }
@@ -197,7 +176,24 @@ export default function Article({content, type, finishQuestions, loading, onBloc
                 }
                 {
                     block.type === 'answers' ?
-                        <ArticleAnswer block={block} answers={answers} setContentPage={setContentPage} setAnswer={setAnswer} />
+                        <ArticleAnswer block={block} answers={answers} setContentPage={setContentPage} setAnswer={setAnswer} readonly={readonly} />
+                        :
+                        null
+                }
+                {
+                    block.type === 'comment' ?
+                        user.role === 'teacher' ?
+                            <Form fields={[{type: 'editor', id: block.id, placeholder: translate('add_comment'), value: block.value['ua']}]} setFieldValue={setComment} />
+                            :
+                            block.value ?
+                                <div className="article__comment">
+                                    <div className="article__comment-heading">
+                                        { translate('comment_from_teacher') }
+                                    </div>
+                                    <div dangerouslySetInnerHTML={{__html: block.value}}/>
+                                </div>
+                                :
+                                null
                         :
                         null
                 }
@@ -296,15 +292,21 @@ export default function Article({content, type, finishQuestions, loading, onBloc
             });
         }
         setAnswers(Object.assign({}, answers));
-    }
 
-    function handleFinishQA() {
-        if ( checkIfAllAnswersGiven() ) {
-            finishQuestions(answers);
+        if ( type === 'questions' ) {
+            setAllAnswersGiven(checkIfAllAnswersGiven());
         }
     }
 
     function checkIfAllAnswersGiven() {
         return answers.blocks.length && answers.blocks.every(block => block.value && block.value.length && block.value[0].length) && answers.blocks.length === content.filter(item => item.type === 'answers').length;
+    }
+
+    function setComment(fieldID, value) {
+        const newComments = comments;
+
+        newComments.find(item => item.id === fieldID).value = value;
+
+        setComments(Object.assign([], newComments));
     }
 }

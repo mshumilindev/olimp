@@ -25,10 +25,10 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
             'autoresize fullscreen',
             'advlist lists image charmap anchor',
             'visualblocks',
-            'powerpaste'
+            'paste'
         ],
-        powerpaste_word_import: 'prompt',
-        powerpaste_html_import: 'prompt',
+        paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+        paste_retain_style_properties: "all",
         fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
         toolbar: editorToolbar,
     };
@@ -227,7 +227,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         <Editor
                             initialValue={field.value}
                             onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={editorConfig}
+                            init={{...editorConfig, placeholder: field.placeholder}}
                             apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>

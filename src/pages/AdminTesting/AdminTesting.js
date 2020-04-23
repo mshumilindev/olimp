@@ -12,8 +12,6 @@ function AdminTesting({loading, tests, coursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
 
-    // console.log(tests);
-
     return (
         <div className="adminTesting">
             <section className="section">

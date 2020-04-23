@@ -7,16 +7,24 @@ import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Article from "../../components/Article/Article";
 import Form from "../../components/Form/Form";
-import {updateTest} from "../../redux/actions/testsActions";
+import {updateTest, deleteTest} from "../../redux/actions/testsActions";
 import { connect } from 'react-redux';
+import Confirm from "../../components/UI/Confirm/Confirm";
 
 const db = firebase.firestore();
 
-function AdminTestingTest({test, userItem, lesson, updateTest}) {
+function AdminTestingTest({test, userItem, lesson, updateTest, deleteTest}) {
     const [ showModal, setShowModal ] = useState(false);
     const [ lessonQA, setLessonQA ] = useState(null);
     const { translate, lang } = useContext(siteSettingsContext);
     const [ score, setScore ] = useState(test.score);
+    const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
+    const [ comments, setComments] = useState(test.comments || test.blocks.map(item => {
+        return {
+            id: 'comment_' + item.id,
+            value: ''
+        }
+    }));
 
     useEffect(() => {
         if ( showModal && !lessonQA ) {
@@ -40,14 +48,19 @@ function AdminTestingTest({test, userItem, lesson, updateTest}) {
 
     return (
         <div className={classNames('adminTesting__test', {noScore: !test.score})}>
-            <div className="adminTesting__test-inner" onClick={() => setShowModal(!showModal)}>
-                {
-                    test.score ?
-                        <i className="content_title-icon">{ test.score }</i>
-                        :
-                        <i className="content_title-icon fa fa-hourglass-half" />
-                }
-                { userItem.name }
+            <div className="adminTesting__test-inner">
+                <div className="adminTesting__deleteTest" onClick={() => setShowConfirmDelete(true)}>
+                    <i className="fa fa-trash-alt"/>
+                </div>
+                <div className="adminTesting__test-content" onClick={() => setShowModal(!showModal)}>
+                    {
+                        test.score ?
+                            <i className="content_title-icon">{ test.score }</i>
+                            :
+                            <i className="content_title-icon fa fa-hourglass-half" />
+                    }
+                    { userItem.name }
+                </div>
             </div>
             {
                 showModal ?
@@ -55,11 +68,11 @@ function AdminTestingTest({test, userItem, lesson, updateTest}) {
                         {
                             lessonQA ?
                                 <>
-                                    <Article content={reworkQA(lessonQA)}/>
+                                    <Article content={reworkQA(lessonQA)} comments={comments} setComments={setComments}/>
                                     <hr/>
                                     <Form fields={[{type: 'text', placeholder: 'score', id: 'score', value: score}]} setFieldValue={(fieldID, value) => setScore(value)}/>
                                     <div className="adminTesting__btnScore">
-                                        <span className="btn btn_primary" disabled={!score} onClick={handleSetScore}>
+                                        <span className="btn btn_primary" onClick={handleSetScore}>
                                             { translate('set_score') }
                                         </span>
                                     </div>
@@ -68,6 +81,12 @@ function AdminTestingTest({test, userItem, lesson, updateTest}) {
                                 <Preloader/>
                         }
                     </Modal>
+                    :
+                    null
+            }
+            {
+                showConfirmDelete ?
+                    <Confirm message={translate('sure_to_delete_test')} cancelAction={() => setShowConfirmDelete(false)} confirmAction={handleDeleteTest} />
                     :
                     null
             }
@@ -82,13 +101,24 @@ function AdminTestingTest({test, userItem, lesson, updateTest}) {
                 newQA.push(item);
             }
             else {
-                newQA.push({
-                    ...item,
-                    type: item.value.type === 'formula' ? 'formula' : 'text',
-                    value: {
-                        ua: test.blocks.find(block => block.id === item.id).value.join(', ')
+                const currentComment = comments.find(comItem => comItem.id === 'comment_' + item.id);
+
+                newQA.push(
+                    {
+                        ...item,
+                        type: item.value.type === 'formula' ? 'formula' : 'text',
+                        value: {
+                            ua: test.blocks.find(block => block.id === item.id).value.join(', ')
+                        }
+                    },
+                    {
+                        type: 'comment',
+                        id: currentComment.id,
+                        value: {
+                            ua: currentComment.value
+                        }
                     }
-                });
+                );
             }
         });
 
@@ -96,18 +126,23 @@ function AdminTestingTest({test, userItem, lesson, updateTest}) {
     }
 
     function handleSetScore() {
-        if ( score ) {
-            updateTest({
-                ...test,
-                score: score
-            });
-            setShowModal(false);
-        }
+        updateTest({
+            ...test,
+            comments: comments,
+            score: score || ''
+        });
+        setShowModal(false);
+    }
+
+    function handleDeleteTest() {
+        setShowConfirmDelete(false);
+        deleteTest(test.id);
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    updateTest: (newTest) => dispatch(updateTest(newTest))
+    updateTest: (newTest) => dispatch(updateTest(newTest)),
+    deleteTest: (testID) => dispatch(deleteTest(testID))
 });
 
 export default connect(null, mapDispatchToProps)(AdminTestingTest);

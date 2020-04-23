@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
+import classNames from 'classnames';
 
-function ArticleAnswer({block, setAnswer, answers}) {
+function ArticleAnswer({block, setAnswer, answers, readonly}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const correctAnswers = block.value.correctAnswers.split(', ');
     const newFields = [{
@@ -15,14 +16,14 @@ function ArticleAnswer({block, setAnswer, answers}) {
 
     if ( block.value.type === 'text' ) {
         newFields[0].type = 'editor';
-        newFields[0].value = '';
+        newFields[0].value = checkForSavedAnswer()[0];
         newFields[0].name = translate('answer');
         delete newFields[0].options;
         delete newFields[0].variant;
     }
     else if ( block.value.type === 'formula' ) {
         newFields[0].type = 'formula';
-        newFields[0].value = '';
+        newFields[0].value = checkForSavedAnswer()[0];
         newFields[0].name = translate('answer');
         delete newFields[0].options;
         delete newFields[0].variant;
@@ -31,7 +32,7 @@ function ArticleAnswer({block, setAnswer, answers}) {
         if ( correctAnswers.length === 1 ) {
             block.value.answers.forEach((answer, index) => {
                 newFields[0].type = 'radio';
-                newFields[0].value = '';
+                newFields[0].value = checkForSavedAnswer()[0];
                 newFields[0].options.push({
                     id: index,
                     name: answer[lang] ? answer[lang] : answer['ua']
@@ -41,7 +42,7 @@ function ArticleAnswer({block, setAnswer, answers}) {
         else {
             block.value.answers.forEach((answer, index) => {
                 newFields[0].type = 'checkboxes';
-                newFields[0].value = [];
+                newFields[0].value = checkForSavedAnswer();
                 newFields[0].options.push({
                     id: index,
                     name: answer[lang] ? answer[lang] : answer['ua']
@@ -55,7 +56,7 @@ function ArticleAnswer({block, setAnswer, answers}) {
     }
 
     return (
-        <div className="article__answers">
+        <div className={classNames('article__answers', { isReadonly: readonly })}>
             {
                 formFields ?
                     <Form fields={formFields} setFieldValue={setFieldValue}/>
@@ -86,8 +87,6 @@ function ArticleAnswer({block, setAnswer, answers}) {
             setAnswer(fieldID, [value]);
         }
 
-        console.log(formFields);
-
         if ( correctAnswers.length === 1 ) {
             currentFields[0].value = value;
         }
@@ -101,6 +100,13 @@ function ArticleAnswer({block, setAnswer, answers}) {
         }
 
         setFormFields(Object.assign([], currentFields));
+    }
+
+    function checkForSavedAnswer() {
+        if ( answers && answers.blocks.find(item => item.id === block.id) ) {
+            return answers.blocks.find(item => item.id === block.id).value;
+        }
+        return [];
     }
 }
 

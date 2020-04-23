@@ -16,6 +16,10 @@
     align-items: center;
     text-align: center;
     font-size: 14px;
+    cursor: pointer;
+    &:hover {
+      opacity: .85;
+    }
   }
   &__score-item {
     margin-top: 5px;
@@ -63,9 +67,6 @@
       margin-top: 0;
       margin-left: 10px;
     }
-  }
-  .content__title-holder {
-    position: relative;
   }
 }
 .studentCourse {

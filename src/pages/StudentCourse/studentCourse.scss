@@ -109,6 +109,7 @@
     align-items: center;
     margin-right: 10px;
     font-size: 12px;
+    flex: 0 0 auto;
     &.hasScore {
       background-color: $successColor;
       color: $white;

@@ -33,6 +33,14 @@ export function updateTest(newTest) {
     }
 }
 
+export function deleteTest(testID) {
+    const testItemRef = db.collection('tests').doc(testID);
+
+    return dispatch => {
+        return testItemRef.delete();
+    }
+}
+
 export const TESTS_BEGIN = 'TESTS_BEGIN';
 export const TESTS_SUCCESS = 'TESTS_SUCCESS';
 
