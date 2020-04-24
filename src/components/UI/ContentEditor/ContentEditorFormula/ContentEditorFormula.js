@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
@@ -8,10 +8,13 @@ import 'froala-editor/js/languages/ru.js';
 import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
+import MathJax from "react-mathjax-preview";
 
 export default function ContentEditorFormula({ block, setBlock, removeBlock, noBtns }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
+    const [ showEditor, setShowEditor ] = useState(false);
+    const $wrapper = useRef(null);
     const editorToolbar = ['tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
 
     const editorConfig = {
@@ -25,6 +28,7 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
             'autoresize'
         ],
         toolbar: editorToolbar,
+        placeholder: translate('enter_formula')
     };
 
     block.value = block.value || {
@@ -33,14 +37,37 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
         en: ''
     };
 
+    useEffect(() => {
+        document.addEventListener('click', handleShowEditor);
+
+        return () => {
+            document.removeEventListener('click', handleShowEditor);
+        }
+    }, []);
+
     return (
-        <div className="contentEditor__block-text">
-            <Editor
-                initialValue={block.value[lang]}
-                onEditorChange={handleChange}
-                init={editorConfig}
-                apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-            />
+        <div className="contentEditor__block-text" ref={$wrapper}>
+            {
+                showEditor ?
+                    <Editor
+                        initialValue={block.value[lang]}
+                        onEditorChange={handleChange}
+                        init={editorConfig}
+                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                    />
+                    :
+                    <div className="contentEditor__block-text-holder">
+                        <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
+                        {
+                            block.value[lang] || block.value['ua'] ?
+                                null
+                                :
+                                <div className="contentEditor__block-text-placeholder">
+                                    { translate('enter_text') }
+                                </div>
+                        }
+                    </div>
+            }
             {
                 !noBtns ?
                     <>
@@ -64,6 +91,15 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
             }
         </div>
     );
+
+    function handleShowEditor(e) {
+        if ( e.target === $wrapper.current || $wrapper.current.contains(e.target) ) {
+            setShowEditor(true);
+        }
+        else {
+            setShowEditor(false);
+        }
+    }
 
     function onRemoveBlock(e) {
         e.preventDefault();

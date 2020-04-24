@@ -244,6 +244,17 @@
       }
     }
     &-text {
+      min-height: 120px;
+      &-holder {
+        padding: 20px 20px 0;
+        cursor: text;
+        min-height: 120px;
+        box-sizing: border-box;
+        border: 1px solid $mediumGreyColor;
+        p {
+          margin-bottom: 20px;
+        }
+      }
       .tox-statusbar {
         display: none !important;
       }
@@ -344,32 +355,6 @@
         bottom: 0;
       }
     }
-    //&-grid {
-    //  display: flex;
-    //  &-item {
-    //    margin-left: 20px;
-    //    width: 100%;
-    //    margin-top: -20px;
-    //    &:first-child {
-    //      margin-left: 0;
-    //    }
-    //  }
-    //  &.size-16x9 {
-    //    .form__file-trigger {
-    //      padding-top: 56.25%;
-    //    }
-    //  }
-    //  &.size-4x3 {
-    //    .form__file-trigger {
-    //      padding-top: 75%;
-    //    }
-    //  }
-    //  &.size-1x1 {
-    //    .form__file-trigger {
-    //      padding-top: 100%;
-    //    }
-    //  }
-    //}
     &-question {
       &-answers {
         border-bottom: 1px solid $lightGreyColor;
