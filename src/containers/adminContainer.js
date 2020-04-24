@@ -6,7 +6,7 @@ import { fetchTranslations } from '../redux/actions/translationsActions';
 import {fetchAllCourses} from "../redux/actions/coursesActions";
 import {fetchClasses} from "../redux/actions/classesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
-import { fetchEvents } from '../redux/actions/eventsActions';
+import { fetchEvents, fetchEventsOrganizer, fetchEventsParticipant } from '../redux/actions/eventsActions';
 import { fetchNotifications } from '../redux/actions/notificationsActions'
 
 const mapStateToProps = state => ({
@@ -28,7 +28,9 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses()),
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    fetchEvents: (userID, userRole) => dispatch(fetchEvents(userID, userRole)),
+    fetchEvents: () => dispatch(fetchEvents()),
+    fetchEventsOrganizer: (userID) => dispatch(fetchEventsOrganizer(userID)),
+    fetchEventsParticipant: (userID) => dispatch(fetchEventsParticipant(userID)),
     fetchNotifications: dispatch(fetchNotifications())
 });
 

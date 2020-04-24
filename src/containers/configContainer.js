@@ -6,7 +6,7 @@ import {fetchTranslations} from "../redux/actions/translationsActions";
 import {fetchAllCourses} from "../redux/actions/coursesActions";
 import {fetchClasses} from "../redux/actions/classesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
-import {fetchEvents} from "../redux/actions/eventsActions";
+import {fetchEventsParticipant} from "../redux/actions/eventsActions";
 import {fetchLibrary} from "../redux/actions/libraryActions";
 import {fetchNotifications} from "../redux/actions/notificationsActions";
 import {fetchTests} from "../redux/actions/testsActions";
@@ -17,8 +17,7 @@ const mapStateToProps = state => ({
     levelCoursesList: state.scheduleReducer.levelCoursesList,
     coursesList: state.scheduleReducer.coursesList,
     usersList: state.usersReducer.usersList,
-    translationsList: state.usersReducer.translationsList,
-    events: state.eventsReducer.events
+    translationsList: state.usersReducer.translationsList
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -32,7 +31,7 @@ const mapDispatchToProps = dispatch => ({
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
     fetchLibrary: dispatch(fetchLibrary()),
-    fetchEvents: (userID) => dispatch(fetchEvents(userID)),
+    fetchEventsParticipant: (userID) => dispatch(fetchEventsParticipant(userID)),
     fetchNotifications: dispatch(fetchNotifications()),
     fetchTests: dispatch(fetchTests())
 });

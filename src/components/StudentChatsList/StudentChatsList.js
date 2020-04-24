@@ -11,6 +11,8 @@ import '../../pages/AdminChats/adminChats.scss';
 function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
     const { translate } = useContext(siteSettingsContext);
 
+    console.log(events);
+
     return (
         <>
             {
@@ -23,11 +25,11 @@ function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
                     null
             }
             {
-                loading ?
+                loading || !events.participant ?
                     <Preloader/>
                     :
-                    joinByDate(splitEvents().oneTime).length ?
-                        joinByDate(splitEvents().oneTime).map(block => _renderBlockByDate(block))
+                    joinByDate(events.participant).length ?
+                        joinByDate(events.participant).map(block => _renderBlockByDate(block))
                         :
                         <div className="nothingFound">
                             {translate('no_videochats_yet')}
@@ -53,15 +55,6 @@ function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
         });
 
         return orderBy(newEventsArr.filter(block => showTodayOnly ? block.formattedDate === moment().format('DD MMMM YYYY') : true).filter(block => block.date > moment(moment().format('MM DD YYYY')).unix()), v => v.date);
-    }
-
-    function splitEvents() {
-        const newEvents = {};
-
-        newEvents.reccuring = events.filter(event => event.reccuring);
-        newEvents.oneTime = events.filter(event => !event.reccuring);
-
-        return newEvents;
     }
 
     function _renderBlockByDate(block) {

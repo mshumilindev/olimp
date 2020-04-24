@@ -11,10 +11,8 @@ function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
     const { user } = useContext(userContext);
 
     useEffect(() => {
-        if ( events.length ) {
-            fetchChat(params.chatID, user.id);
-        }
-    }, [events]);
+        fetchChat(params.chatID, user.id);
+    }, []);
 
     return (
         <div className="chatroom">

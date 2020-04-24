@@ -9,7 +9,7 @@ import {Preloader} from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
 import firebase from "../db/firestore";
 
-export default function Layout({children, location, events, fetchEvents, usersList}) {
+export default function Layout({children, location, events, fetchEventsParticipant, usersList}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -45,7 +45,7 @@ export default function Layout({children, location, events, fetchEvents, usersLi
     }, [location]);
 
     useEffect(() => {
-        fetchEvents(user.id);
+        fetchEventsParticipant(user.id);
     }, []);
 
     const studentNav = [

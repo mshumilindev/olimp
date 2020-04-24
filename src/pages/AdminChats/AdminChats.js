@@ -9,7 +9,7 @@ import Form from "../../components/Form/Form";
 import { generate } from "generate-password";
 import { updateEvent } from '../../redux/actions/eventsActions';
 import moment from "moment";
-import {orderBy} from "natural-orderby";
+import {Preloader} from "../../components/UI/preloader";
 
 function AdminChats({loading, events, usersList, updateEvent}) {
     const { translate } = useContext(SiteSettingsContext);
@@ -27,13 +27,6 @@ function AdminChats({loading, events, usersList, updateEvent}) {
                     id: 'name',
                     required: true
                 },
-                // {
-                //     type: 'checkbox',
-                //     label: translate('recurring'),
-                //     value: true,
-                //     checked: false,
-                //     id: 'recurring'
-                // },
                 {
                     type: 'datepicker',
                     value: moment().unix(),
@@ -109,7 +102,36 @@ function AdminChats({loading, events, usersList, updateEvent}) {
                     </span>
                 </div>
             </div>
-            <ChatList events={filteredEvents()} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} />
+            {
+                events.all || events.organizer || events.participant ?
+                    user.role === 'admin' ?
+                        <ChatList events={events.all} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} heading={translate('videochats')} />
+                        :
+                        <div className="grid">
+                            {
+                                events.organizer ?
+                                    <div className="grid_col col-12 desktop-col-6">
+                                        <ChatList events={events.organizer} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} heading={translate('organizer')} />
+                                    </div>
+                                    :
+                                    null
+                            }
+                            {
+                                events.participant ?
+                                    <div className="grid_col col-12 desktop-col-6">
+                                        <ChatList events={events.participant} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} heading={translate('participant')} />
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                    :
+                    <div className="grid">
+                        <div className="grid_col col-12">
+                            <Preloader/>
+                        </div>
+                    </div>
+            }
             {
                 showEditModal ?
                     <Modal
@@ -170,22 +192,15 @@ function AdminChats({loading, events, usersList, updateEvent}) {
         }
         newEvent.organizer = formFields.find(item => item.id === 'block_organizer').children[0].value;
         newEvent.participants = formFields.find(item => item.id === 'block_participants').children[0].value;
-        newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
+        if ( formFields.find(item => item.id === 'lesson').children[0].value ) {
+            newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
+        }
         newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
         newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
 
         updateEvent(newEvent.id, newEvent);
         setFormFields(Object.assign([], initialFormFields));
         setShowEditModal(false);
-    }
-
-    function filteredEvents() {
-        if ( user.role === 'admin' ) {
-            return orderBy(events, v => v.datetime);
-        }
-        else {
-            return orderBy(events.filter(event => user.role === 'admin' || event.organizer === user.id || event.participants.indexOf(user.id) !== -1));
-        }
     }
 }
 

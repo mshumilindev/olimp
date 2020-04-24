@@ -8,8 +8,9 @@ import ChatWidget from "../../components/ChatBox/ChatWidget";
 import '../../assets/scss/base/chatroom.scss';
 import firebase from "../../db/firestore";
 import classNames from 'classnames';
+import {fetchEventsOrganizer, fetchEventsParticipant} from "../../redux/actions/eventsActions";
 
-export default function Admin({children, location, params, isTeacher, fetchEvents}) {
+export default function Admin({children, location, params, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant}) {
     const { user } = useContext(userContext);
 
     useEffect(() => {
@@ -44,7 +45,13 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
     }, [location]);
 
     useEffect(() => {
-        fetchEvents(user.id, user.role);
+        if ( user.role === 'admin' ) {
+            fetchEvents();
+        }
+        else {
+            fetchEventsOrganizer(user.id);
+            fetchEventsParticipant(user.id);
+        }
     }, []);
 
     const adminNav = [
@@ -60,12 +67,6 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             icon: 'fa fa-user',
             name: 'profile'
         },
-        // {
-        //     id: 3,
-        //     url: '/admin-messages',
-        //     icon: 'fa fa-comments',
-        //     name: 'messages'
-        // },
         {
             id: 4,
             url: '/admin-users',

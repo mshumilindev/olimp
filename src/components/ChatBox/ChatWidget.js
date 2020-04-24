@@ -171,7 +171,7 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     }, [chat, location]);
 
     useEffect(() => {
-        if ( events.length ) {
+        if ( events ) {
             if ( getChatID() ) {
                 fetchChat(getChatID(), user.id);
             }
@@ -669,12 +669,16 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     }
 
     function checkForActiveChat() {
-        return (
-            events.find(eventItem => eventItem.started && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)) ?
-                events.find(eventItem => eventItem.started && (eventItem.organizer === user.id || eventItem.participants.indexOf(user.id) !== -1)).id
-                :
-                null
-        );
+        if ( events.all ) {
+            return events.all.find(eventItem => eventItem.started) ? events.all.find(eventItem => eventItem.started).id : null;
+        }
+        if ( events.organizer ) {
+            return events.organizer.find(eventItem => eventItem.started) ? events.organizer.find(eventItem => eventItem.started).id : null;
+        }
+        if ( events.participant ) {
+            return events.participant.find(eventItem => eventItem.started) ? events.participant.find(eventItem => eventItem.started).id : null;
+        }
+        return null;
     }
 
     function handleOpenLesson() {

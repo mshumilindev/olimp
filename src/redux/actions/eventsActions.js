@@ -2,32 +2,61 @@ import firebase from "../../db/firestore";
 import moment from 'moment';
 
 const db = firebase.firestore();
-const eventsCollection = db.collection('events');
 const events = [];
 
 export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 
-export function fetchEvents(userID, userRole) {
-    return dispatch => {
+export function fetchEvents() {
+    return async dispatch => {
+        const eventsCollection = db.collection('events').orderBy('datetime');
+
         dispatch(fetchEventsBegin());
         return eventsCollection.onSnapshot(snapshot => {
-            events.splice(0, events.length);
+            events.all = [];
             snapshot.docs.forEach(doc => {
-                if ( !events || !events.length || !events.find(eventItem => eventItem.id === doc.id ) ) {
-                    events.push({
-                        ...doc.data(),
-                        id: doc.id
-                    });
-                }
-                else {
-                    events[events.indexOf(events.find(eventItem => eventItem.id === doc.id ))] = {
-                        ...doc.data(),
-                        id: doc.id
-                    };
-                }
+                events.all.push({
+                    ...doc.data(),
+                    id: doc.id
+                });
             });
-            dispatch(fetchEventsSuccess(Object.assign([], events.filter(eventItem => (userRole && userRole === 'admin') || eventItem.organizer === userID || eventItem.participants.indexOf(userID) !== -1))));
+            dispatch(fetchEventsSuccess(Object.assign({}, events)));
+        });
+    }
+}
+
+export function fetchEventsOrganizer(userID) {
+    return async dispatch => {
+        const eventsCollection = db.collection('events').where('organizer', '==', userID);
+
+        dispatch(fetchEventsBegin());
+        return eventsCollection.onSnapshot(snapshot => {
+            events.organizer = [];
+            snapshot.docs.forEach(doc => {
+                events.organizer.push({
+                    ...doc.data(),
+                    id: doc.id
+                });
+            });
+            dispatch(fetchEventsSuccess(Object.assign({}, events)));
+        });
+    }
+}
+
+export function fetchEventsParticipant(userID) {
+    return async dispatch => {
+        const eventsCollection = db.collection('events').where('participants', 'array-contains', userID);
+
+        dispatch(fetchEventsBegin());
+        return eventsCollection.onSnapshot(snapshot => {
+            events.participant = [];
+            snapshot.docs.forEach(doc => {
+                events.participant.push({
+                    ...doc.data(),
+                    id: doc.id
+                });
+            });
+            dispatch(fetchEventsSuccess(Object.assign({}, events)));
         });
     }
 }
@@ -50,23 +79,28 @@ export const FETCH_CHAT_SUCCESS = 'FETCH_CHAT_SUCCESS';
 export const FETCH_CHAT_ERROR = 'FETCH_CHAT_ERROR';
 
 export function fetchChat(chatID, userID) {
+    const eventRef = db.collection('events').doc(chatID);
+
     return dispatch => {
         dispatch(fetchChatBegin());
-        const currentChat = events.find(eventItem => eventItem.id === chatID);
 
-        if ( !currentChat ) {
-            dispatch(fetchChatError('videochat_does_not_exist'));
-        }
-        else {
-            // === Check for time
-            if ( false ) {
-                return dispatch(fetchChatError('wrong_time_for_chat'));
+        eventRef.onSnapshot(doc => {
+            if ( !doc.exists ) {
+                dispatch(fetchChatError('videochat_does_not_exist'));
             }
-            if ( currentChat.organizer !== userID && currentChat.participants.indexOf(userID) === -1 ) {
-                return dispatch(fetchChatError('user_not_allowed_to_chat'));
+            else {
+                const currentChat = doc.data();
+
+                // === Check for time
+                if ( false ) {
+                    return dispatch(fetchChatError('wrong_time_for_chat'));
+                }
+                if ( currentChat.organizer !== userID && currentChat.participants.indexOf(userID) === -1 ) {
+                    return dispatch(fetchChatError('user_not_allowed_to_chat'));
+                }
+                return dispatch(fetchChatSuccess(currentChat));
             }
-            return dispatch(fetchChatSuccess(currentChat));
-        }
+        });
     }
 }
 

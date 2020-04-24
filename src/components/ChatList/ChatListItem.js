@@ -17,53 +17,51 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
     const { user } = useContext(userContext);
 
     return (
-        <div className="adminChats__event" key={event.id}>
-            <div className="adminChats__event-meta">
+        <div className={classNames('adminChats__event', {isActive: event.started})} key={event.id}>
+            <Link to={'/chat/' + event.id}>
                 <div className="adminChats__event-time">
                     { moment(event.datetime * 1000).format('HH:mm') }
+                    {
+                        event.started ?
+                            <span className="adminChats__event-status">{ translate('chat_active') }</span>
+                            :
+                            null
+                    }
                 </div>
-                <div className="adminChats__event-name">
-                    <span className={classNames('adminChats__event-status', {isActive: event.started})}/>
-                    <Link to={'/chat/' + event.id}>
-                        { event.name }
-                    </Link>
-                </div>
-            </div>
-            <div className="adminChats__event-info">
-                <div className="adminChats__event-info-row">
-                    <div className="adminChats__event-info-dt">{ translate('organizer') }: </div>
-                    <div className="adminChats__event-info-dd">
-                        <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login}>{ getUser(event.organizer).name }</Link>
+                <div className="adminChats__event-info">
+                    <div className="adminChats__event-name">{ event.name }</div>
+                    <div className="adminChats__event-info-row">
+                        <div className="adminChats__event-info-dt">{ translate('organizer') }: </div>
+                        <div className="adminChats__event-info-dd">
+                            <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login}>{ getUser(event.organizer).name }</Link>
+                        </div>
                     </div>
-                </div>
-                <div className="adminChats__event-info-row">
-                    <div className="adminChats__event-info-dt">{ translate('participants') }: </div>
-                    <div className="adminChats__event-info-dd">
-                        {
-                            typeof event.participants === 'object' ?
-                                event.participants.map(partItem => {
-                                    if ( getUser(partItem) ) {
-                                        return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>;
-                                    }
-                                    else {
-                                        return null;
-                                    }
-                                })
-                                :
-                                getUser(event.participants) ?
-                                    <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                    <div className="adminChats__event-info-row">
+                        <div className="adminChats__event-info-dt">{ translate('participants') }: </div>
+                        <div className="adminChats__event-info-dd">
+                            {
+                                typeof event.participants === 'object' ?
+                                    event.participants.map(partItem => {
+                                        if ( getUser(partItem) ) {
+                                            return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>;
+                                        }
+                                        else {
+                                            return null;
+                                        }
+                                    })
                                     :
-                                    null
-                        }
+                                    getUser(event.participants) ?
+                                        <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                                        :
+                                        null
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Link>
             {
                 (!noActions && user.id === event.organizer) || user.role === 'admin' ?
                     <div className="adminChats__event-actions">
-                        <Link to={'/chat/' + event.id} className="btn btn_primary round btn__xs">
-                            <i className="fa fa-link" />
-                        </Link>
                         <span className="btn btn_primary round btn__xs" onClick={() => mapEventToFormFields(event)}>
                             <i className="fa fa-pencil-alt" />
                         </span>

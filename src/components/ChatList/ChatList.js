@@ -9,67 +9,37 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import classNames from 'classnames';
 moment.locale('uk');
 
-export default function ChatList({events, usersList, loading, mapEventToFormFields}) {
+{/*<div className="grid_col col-12 desktop-col-6">*/}
+
+export default function ChatList({events, usersList, loading, mapEventToFormFields, heading}) {
     const { translate } = useContext(SiteSettingsContext);
 
     return (
-        <div className="adminChats grid">
-            {/*<div className="grid_col col-6">*/}
-            {/*    <div className="widget">*/}
-            {/*        <h3 className="widget__title">{ translate('recurring_videochats') }</h3>*/}
-            {/*        <Scrollbars*/}
-            {/*            autoHeight*/}
-            {/*            hideTracksWhenNotNeeded*/}
-            {/*            autoHeightMax={500}*/}
-            {/*            renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}*/}
-            {/*            renderView={props => <div {...props} className="scrollbar__content"/>}*/}
-            {/*        >*/}
-            {/*            {*/}
-            {/*                loading ?*/}
-            {/*                    <Preloader/>*/}
-            {/*                    :*/}
-            {/*                    <div className="adminChats__eventsList">*/}
-            {/*                        {*/}
-            {/*                            splitEvents().reccuring.length ?*/}
-            {/*                                joinByCalendar(splitEvents().reccuring).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)*/}
-            {/*                                :*/}
-            {/*                                <div className="nothingFound">*/}
-            {/*                                    { translate('no_recurring_videochats_yet') }*/}
-            {/*                                </div>*/}
-            {/*                        }*/}
-            {/*                    </div>*/}
-            {/*            }*/}
-            {/*        </Scrollbars>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-            <div className="grid_col col-12 desktop-col-6">
-                <div className="widget">
-                    <h3 className="widget__title">{ translate('one_time_videochats') }</h3>
-                    <Scrollbars
-                        autoHeight
-                        hideTracksWhenNotNeeded
-                        autoHeightMax={'calc(100vh - 112px - 85px - 65px)'}
-                        renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
-                        renderView={props => <div {...props} className="scrollbar__content"/>}
-                    >
-                        {
-                            loading ?
-                                <Preloader/>
-                                :
-                                <div className="adminChats__eventsList">
-                                    {
-                                        splitEvents().oneTime.length ?
-                                            joinByDate(splitEvents().oneTime).map(block => _renderBlockByDate(block))
-                                            :
-                                            <div className="nothingFound">
-                                                { translate('no_one_time_videochats_yet') }
-                                            </div>
-                                    }
-                                </div>
-                        }
-                    </Scrollbars>
-                </div>
-            </div>
+        <div className="adminChats widget">
+            <h3 className="widget__title">{ heading }</h3>
+            <Scrollbars
+                autoHeight
+                hideTracksWhenNotNeeded
+                autoHeightMax={'calc(100vh - 112px - 85px - 65px)'}
+                renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                renderView={props => <div {...props} className="scrollbar__content"/>}
+            >
+                {
+                    loading || !events ?
+                        <Preloader/>
+                        :
+                        <div className="adminChats__eventsList">
+                            {
+                                events.length ?
+                                    joinByDate(events).map(block => _renderBlockByDate(block))
+                                    :
+                                    <div className="nothingFound">
+                                        { translate('no_videochats') }
+                                    </div>
+                            }
+                        </div>
+                }
+            </Scrollbars>
         </div>
     );
 
@@ -80,19 +50,10 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
                     { block.formattedDate }
                 </div>
                 {
-                    block.children.map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
+                    orderBy(block.children, v => v.datetime).map(event => <ChatListItem key={event.id} event={event} usersList={usersList} mapEventToFormFields={mapEventToFormFields}/>)
                 }
             </div>
         )
-    }
-
-    function splitEvents() {
-        const newEvents = {};
-
-        newEvents.reccuring = events.filter(event => event.reccuring);
-        newEvents.oneTime = events.filter(event => !event.reccuring);
-
-        return newEvents;
     }
 
     function joinByDate(eventsArr) {
@@ -111,10 +72,6 @@ export default function ChatList({events, usersList, loading, mapEventToFormFiel
             newEventsArr.find(item => item.formattedDate === formattedDate).children.push(event);
         });
 
-        return orderBy(newEventsArr, v => v.date);
-    }
-
-    function joinByCalendar(eventsArr) {
-        return eventsArr;
+        return orderBy(newEventsArr, v => -v.date);
     }
 }
