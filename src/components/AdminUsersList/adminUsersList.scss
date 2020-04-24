@@ -2,31 +2,33 @@
 
 .adminUsersList {
   position: relative;
-  .table__body-cell {
-    min-height: 64px;
-    box-sizing: border-box;
-  }
-  .table__holder {
-    ~ .preloader {
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      &:before {
-        content: '';
+  .table {
+    &__body-cell {
+      min-height: 64px;
+      box-sizing: border-box;
+    }
+    &__holder {
+      ~ .preloader {
         position: absolute;
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
-        z-index: -1;
-        background: $white;
-        opacity: .75;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          z-index: -1;
+          background: $white;
+          opacity: .75;
+        }
       }
     }
   }
