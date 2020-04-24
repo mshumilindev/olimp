@@ -9,7 +9,7 @@ import userContext from "../../context/userContext";
 import classNames from 'classnames';
 import StudentTextbook from "../StudentTextbook/StudentTextbook";
 
-function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchModulesLessons, libraryList}) {
+function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchModulesLessons, libraryList, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
@@ -171,7 +171,7 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
                 {
                     checkIfHasScore(moduleID, lesson.id) ?
                         <div className="studentCourse__score">
-                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) } / { lesson.maxScore }</span>
+                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) }</span>
                         </div>
                         :
                         null
@@ -263,9 +263,10 @@ function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoadin
 
     function checkIfHasScore(moduleID, lessonID) {
         let hasScore = null;
+        const foundTest = tests.find(item => item.lesson.moduleID === moduleID && item.lesson.lessonID === lessonID && item.userID === user.id);
 
-        if ( user && user.scores && user.scores[params.subjectID] && user.scores[params.subjectID][params.courseID] && user.scores[params.subjectID][params.courseID][moduleID] && user.scores[params.subjectID][params.courseID][moduleID][lessonID] ) {
-            hasScore = user.scores[params.subjectID][params.courseID][moduleID][lessonID].gotScore;
+        if ( foundTest && foundTest.score ) {
+            hasScore = foundTest.score;
         }
 
         return hasScore;
@@ -283,7 +284,8 @@ const mapStateToProps = state => ({
     modulesLessonsLoading: state.coursesReducer.loading,
     libraryLoading: state.libraryReducer.loading,
     downloadedTextbook: state.libraryReducer.downloadedTextbook,
-    libraryList: state.libraryReducer.libraryList
+    libraryList: state.libraryReducer.libraryList,
+    tests: state.testsReducer.tests
 });
 
 const mapDispatchToProps = dispatch => ({

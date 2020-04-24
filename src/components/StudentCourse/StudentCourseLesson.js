@@ -103,7 +103,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                                 </a>
                             </div>
                             :
-                            getTest().score ?
+                            getTest() && getTest().score ?
                                 <div className="content__title-actions">
                                     <div className="studentLesson__score" onClick={e => handleStartQuestions(e)}>
                                         <div className="studentLesson__score-item">
@@ -121,7 +121,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                                     </div>
                                 </div>
                         :
-                        lesson && lesson.QA.length && !getTest().score ?
+                        lesson && lesson.QA.length && (!getTest() || !getTest().score) ?
                             <div className="content__title-actions">
                                 <span className="btn btn_primary" onClick={saveProgress}>
                                     { translate('save') }
@@ -143,7 +143,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     function _renderLesson() {
         const QABlocks = [];
 
-        if ( lesson['QA'] && getTest() && getTest().score ) {
+        if ( lesson['QA'] ) {
             lesson['QA'].forEach(item => {
                 if ( item.type !== 'answers' || !getTest() || !getTest().comments || !getTest().comments.find(comItem => comItem.id === 'comment_' + item.id) ) {
                     QABlocks.push(item);

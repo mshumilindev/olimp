@@ -1,5 +1,12 @@
 {
-  "name": "olimp",
+  "author": {
+    "name": "Mykola Lukianov",
+    "email": "nikolay.frankovich@gmail.com",
+    "url": "https://www.facebook.com/mykola.lukianov"
+  },
+  "license": "UNLICENSED",
+  "description": "Modern Ukrainian remote school platform",
+  "name": "ukrainianRemoteSchool",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
