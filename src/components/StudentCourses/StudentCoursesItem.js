@@ -20,9 +20,12 @@ function StudentCoursesItem({subjectID, courseID, currentUser, tests}) {
     }, [subjectID, courseID]);
 
     return (
-        <div className="studentCourse">
-            { _renderModules() }
-        </div>
+        tests ?
+            <div className="studentCourse">
+                { _renderModules() }
+            </div>
+            :
+            null
     );
 
     function _renderModules() {

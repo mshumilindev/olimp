@@ -108,27 +108,27 @@ function AdminProfile({profile, fetchProfile, params, loading, classesList, allC
                             }
                         </div>
                     </div>
-                    {
-                        JSON.parse(currentUser) && JSON.parse(currentUser).scores ?
-                            <div className="grid_col col-6">
-                                <div className="widget">
-                                    <div className="widget__title">
-                                        <i className="content_title-icon fa fa-check"/>
-                                        { translate('scores') }
-                                    </div>
-                                    {
-                                        currentClass ?
-                                            <>
-                                                { filterCourses().map(item => _renderCourse(item)) }
-                                            </>
-                                            :
-                                            <Preloader/>
-                                    }
-                                </div>
-                            </div>
-                            :
-                            null
-                    }
+                    {/*{*/}
+                    {/*    JSON.parse(currentUser) ?*/}
+                    {/*        <div className="grid_col col-6">*/}
+                    {/*            <div className="widget">*/}
+                    {/*                <div className="widget__title">*/}
+                    {/*                    <i className="content_title-icon fa fa-check"/>*/}
+                    {/*                    { translate('scores') }*/}
+                    {/*                </div>*/}
+                    {/*                {*/}
+                    {/*                    currentClass ?*/}
+                    {/*                        <>*/}
+                    {/*                            { filterCourses().map(item => _renderCourse(item)) }*/}
+                    {/*                        </>*/}
+                    {/*                        :*/}
+                    {/*                        <Preloader/>*/}
+                    {/*                }*/}
+                    {/*            </div>*/}
+                    {/*        </div>*/}
+                    {/*        :*/}
+                    {/*        null*/}
+                    {/*}*/}
                 </div>
             </section>
         </div>

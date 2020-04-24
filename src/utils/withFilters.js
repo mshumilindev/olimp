@@ -33,7 +33,8 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
                 sortByOptions.forEach(opt => {
                     options.push({
                         name: opt.title,
-                        icon: opt.icon
+                        icon: opt.icon,
+                        id: opt.title
                     });
                 });
 
