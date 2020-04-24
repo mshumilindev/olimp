@@ -66,4 +66,4 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
         </div>
     );
 }
-export default withPager(AdminLibraryList);
+export default withData(withPager(AdminLibraryList));
