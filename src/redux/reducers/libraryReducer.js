@@ -12,7 +12,7 @@ import {
 } from '../actions/libraryActions';
 
 const initialState = {
-    libraryList: [],
+    libraryList: null,
     textbook: null,
     loading: false,
     downloadedTextbook: null

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {connect} from "react-redux";
 import {fetchLibrary, deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -14,7 +14,7 @@ import './adminLibrary.scss';
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
-function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags}) {
+function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags, fetchLibrary}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const $fileRef = React.createRef();
@@ -27,6 +27,10 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
+
+    useEffect(() => {
+        fetchLibrary(showPerPage, searchQuery);
+    }, []);
 
     return (
         <div className="adminLibrary">
@@ -54,7 +58,7 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
                         </a>
                     </div>
                     {
-                        loading ?
+                        !list ?
                             <Preloader size={60}/>
                             :
                             null
@@ -129,7 +133,7 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
     }
 
     function filterList() {
-        return list
+        return !list ? null : list
             .filter(item => showOnlyMy ? user.role === 'teacher' ? item.teacher && (item.teacher === user.id || item.teacher.indexOf(user.id)) !== -1 : true : true)
             .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
@@ -140,7 +144,7 @@ const mapStateToProps = state => ({
     loading: state.libraryReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: dispatch(fetchLibrary()),
+    fetchLibrary: (showPerPage, searchQuery) => dispatch(fetchLibrary(showPerPage, searchQuery)),
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
     uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });

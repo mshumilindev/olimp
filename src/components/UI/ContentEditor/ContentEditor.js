@@ -16,8 +16,6 @@ import ContentEditorWord from "./ContentEditorWord/ContentEditorWord";
 import ContentEditorQuestion from './ContentEditorQuestion/ContentEditorQuestion';
 import ContentEditorDivider from './ContentEditorDivider/ContentEditorDivider';
 import ContentEditorPage from './ContentEditorPage/ContentEditorPage';
-// const ContentEditorTable = React.lazy(() => import('./ContentEditorTable/ContentEditorTable'));
-// const ContentEditorGrid = React.lazy(() => import('./ContentEditorGrid/ContentEditorGrid'));
 
 export default function ContentEditor({content, setUpdated, isUpdated, setLessonContent, loading, types, contentType}) {
     const { translate } = useContext(siteSettingsContext);
@@ -64,14 +62,6 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
             icon: 'fas fa-file-powerpoint',
             title: 'powerpoint'
         },
-        // {
-        //     type: 'table',
-        //     icon: 'fa fa-table'
-        // },
-        // {
-        //     type: 'grid',
-        //     icon: 'fa fa-stream'
-        // }
         {
             type: 'answers',
             icon: 'fa fa-question',
@@ -143,10 +133,6 @@ export default function ContentEditor({content, setUpdated, isUpdated, setLesson
                                         return <ContentEditorWord key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('powerpoint') :
                                         return <ContentEditorPowerpoint key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
-                                    // case ('table') :
-                                    //     return <ContentEditorTable key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
-                                    // case ('grid') :
-                                    //     return <ContentEditorGrid key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('answers') :
                                         return <ContentEditorQuestion key={block.id} block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
                                     case ('divider') :

@@ -50,12 +50,6 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
                                     }
                                     </tbody>
                                 </table>
-                                {
-                                    loading ?
-                                        <Preloader/>
-                                        :
-                                        null
-                                }
                             </div>
                             { pager }
                         </>
@@ -72,4 +66,4 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
         </div>
     );
 }
-export default withData(withPager(AdminLibraryList));
+export default withPager(AdminLibraryList);

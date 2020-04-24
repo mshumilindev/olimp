@@ -1,8 +1,6 @@
 import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
-const libraryCollection = db.collection('library');
-const libraryList = [];
 
 const storage = firebase.storage();
 const storageRef = storage.ref();
@@ -10,27 +8,22 @@ const storageRef = storage.ref();
 export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN';
 export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
 
-export function fetchLibrary(showForID, role) {
+export function fetchLibrary(showPerPage, searchQuery) {
+    const libraryCollection = db.collection('library');
+
     return dispatch => {
         dispatch(fetchLibraryBegin());
 
         return libraryCollection.onSnapshot(snapshot => {
-            libraryList.splice(0, libraryList.length);
+            const libraryList = [];
+
             snapshot.docs.forEach(doc => {
                 libraryList.push({
                     ...doc.data(),
                     id: doc.id
                 });
             });
-            dispatch(fetchLibrarySuccess(libraryList.sort((a, b) => {
-                if ( a.name < b.name ) {
-                    return -1;
-                }
-                if ( a.name > b.name ) {
-                    return 1;
-                }
-                return 0;
-            })));
+            dispatch(fetchLibrarySuccess(libraryList));
         });
     }
 }

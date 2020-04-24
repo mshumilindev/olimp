@@ -1,10 +1,4 @@
 import React, { useContext, useState } from 'react';
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import 'froala-editor/js/plugins/align.min.js';
-import 'froala-editor/js/plugins/paragraph_format.min.js';
-import 'froala-editor/js/languages/ru.js';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
 import ContentEditorInstructions from "../ContentEditorActions/ContentEditorInstructions";
