@@ -96,6 +96,8 @@ function AdminTestingTest({test, userItem, lesson, updateTest, deleteTest}) {
     function reworkQA() {
         const newQA = [];
 
+        console.log(test);
+
         lessonQA.forEach(item => {
             if ( item.type !== 'answers' ) {
                 newQA.push(item);

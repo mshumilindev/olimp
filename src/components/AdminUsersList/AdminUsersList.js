@@ -6,10 +6,10 @@ import classNames from 'classnames';
 import AdminUsersListModal from './AdminUsersListModal';
 import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import withPager from "../../utils/withPager";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
-import withData from '../../utils/withData';
+import {orderBy} from "natural-orderby";
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
@@ -89,44 +89,34 @@ class AdminUsersList extends React.Component {
                     }
                 </div>
                 { filters }
-                <div className="adminUsersList widget">
-                    { totalItems }
-                    {
-                        list && list.length ?
-                            <>
-                                <div className="table__holder">
-                                    <table className="adminUsersList__table table">
-                                        <colgroup>
-                                            { this.cols.map((col, index) => <col width={col.width} key={index}/>) }
-                                        </colgroup>
-                                        <thead>
-                                        <tr className="table__head-row">
-                                            { this.cols.map((col, index) => <th className="table__head-cell" key={index}>{ translate(col.title) }</th>) }
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            { this._renderUsers(list.find(user => user.id === currentUser.id), true) }
-                                            { list.filter(user => user.id !== currentUser.id && user.status === 'active').map(user => this._renderUsers(user)) }
-                                            { list.filter(user => user.status === 'suspended').map(user => this._renderUsers(user)) }
-                                        </tbody>
-                                    </table>
-                                </div>
-                                { pager }
-                            </>
-                            :
-                            loading ?
+                <div className="adminUsersList grid">
+                    <div className="grid_col col-12">
+                        { totalItems }
+                        {
+                            list && list.length ?
+                                <>
+                                    <div className="adminUsersList__list">
+                                        { this._renderUsers(list.find(user => user.id === currentUser.id), true) }
+                                        { list.filter(user => user.id !== currentUser.id && user.status === 'active').map(user => this._renderUsers(user)) }
+                                        { list.filter(user => user.status === 'suspended').map(user => this._renderUsers(user)) }
+                                    </div>
+                                    { pager }
+                                </>
+                                :
+                                loading ?
+                                    <Preloader/>
+                                    :
+                                    <div className="nothingFound">
+                                        { translate('nothing_found') }
+                                    </div>
+                        }
+                        {
+                            list && list.length && loading ?
                                 <Preloader/>
                                 :
-                                <div className="nothingFound">
-                                    { translate('nothing_found') }
-                                </div>
-                    }
-                    {
-                        list && list.length && loading ?
-                            <Preloader/>
-                            :
-                            null
-                    }
+                                null
+                        }
+                    </div>
                 </div>
                 {
                     this.state.showConfirmRemove ?
@@ -139,6 +129,8 @@ class AdminUsersList extends React.Component {
     }
 
     _renderUsers(user, isCurrentUser) {
+        const { history } = this.props;
+
         if ( !user ) {
             return null;
         }
@@ -164,71 +156,122 @@ class AdminUsersList extends React.Component {
         }
 
         return (
-            <tr className={classNames('table__body-row', { disabled: user.status !== 'active', prominent: isCurrentUser })} key={user.id}>
-                <td className="table__body-cell">
-                    <div className={'status status__' + user.status} title={translate(user.status)}/>
-                </td>
-                <td className="table__body-cell">
-                    {
-                        user.avatar ?
-                            <div className="table__img" style={{backgroundImage: 'url(' + user.avatar + ')'}}/>
-                            :
-                            <div className="table__img">
-                                <i className={'table__img-icon fa fa-user'} />
+            <div className={classNames('adminUsersList__user', {nonActive: user.status !== 'active'})} key={user.id}>
+                <div className="adminUsersList__user-inner" onClick={() => history.push(user.id !== JSON.parse(localStorage.getItem('user')).id ? '/admin-users/' + user.login : '/admin-profile')}>
+                    <div className="adminUsersList__user-status">
+                        <div className={'status status__' + user.status} title={translate(user.status)}/>
+                    </div>
+                    <div className="adminUsersList__user-avatarHolder">
+                        <div className="adminUsersList__user-avatar" style={{backgroundImage: 'url(' + user.avatar + ')'}}>
+                            {
+                                !user.avatar ?
+                                    <div className="adminUsersList__user-avatar-placeholder">
+                                        <i className={'fa fa-user'}/>
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                    </div>
+                    <div className="adminUsersList__user-info">
+                        <div className="adminUsersList__user-info-personal">
+                            <div className="adminUsersList__user-name">
+                                { user.name }
                             </div>
-                    }
-                </td>
-                <td className="table__body-cell">
-                    <span><Link to={user.id !== JSON.parse(localStorage.getItem('user')).id ? '/admin-users/' + user.login : '/admin-profile'}>{ user.name }</Link></span>
-                </td>
-                <td className="table__body-cell">
-                    <span>{ translate(user.role) }</span>
-                </td>
-                <td className="table__body-cell" style={{lineHeight: '20px'}}>
-                    {
-                        selectedCourses.length ? selectedCourses.map(course => {
-                            return (
-                                <span key={course.courseName}>
-                                <i className="fa fa-graduation-cap" style={{marginRight: 5, fontSize: 12, marginTop: -3, display: 'inline-block', verticalAlign: 'middle'}} />
-                                    <Link to={'/admin-courses/' + course.link}>{ course.courseName }</Link>
-                                    <br/>
-                                </span>
-                            );
-                        }) : null
-                    }
-                </td>
-                <td className="table__body-cell">
-                    {
-                        user.class && selectedClass ?
-                            <>
-                                <i className="fa fa-graduation-cap" style={{marginRight: 5, fontSize: 12, marginTop: -3, display: 'inline-block', verticalAlign: 'middle'}} />
-                                <Link to={'/admin-classes/' + selectedClass.id}>{ selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] }</Link>
-                            </>
-                            :
-                            null
-                    }
-                </td>
+                            <div className="adminUsersList__user-role">
+                                { translate(user.role) }
+                            </div>
+                            {
+                                user.email || user.tel || user.skype ?
+                                    <div className="adminUsersList__user-contacts">
+                                        {
+                                            user.email ?
+                                                <div className="adminUsersList__user-contact">
+                                                    <i className="far fa-envelope"/>
+                                                    <a href={'mailto:' + user.email}>{ user.email }</a>
+                                                </div>
+                                                :
+                                                null
+                                        }
+                                        {
+                                            user.tel ?
+                                                <div className="adminUsersList__user-contact">
+                                                    <i className="fas fa-mobile-alt"/>
+                                                    <a href={'tel:' + user.tel}>{ user.tel }</a>
+                                                </div>
+                                                :
+                                                null
+                                        }
+                                        {
+                                            user.skype ?
+                                                <div className="adminUsersList__user-contact">
+                                                    <i className="fab fa-skype"/>
+                                                    <a href={'skype:' + user.skype}>{ user.skype }</a>
+                                                </div>
+                                                :
+                                                null
+                                        }
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                        {
+                            selectedCourses.length ?
+                                <div className="adminUsersList__user-courses">
+                                    {
+                                        orderBy(selectedCourses, v => v.courseName).map(course => {
+                                            return (
+                                                <div className="adminUsersList__user-courses-item" key={course.courseName}>
+                                                    <i className="fa fa-book" />
+                                                    <Link to={'/admin-courses/' + course.link}>{ course.courseName }</Link>
+                                                </div>
+                                            );
+                                        })
+                                    }
+                                </div>
+                                :
+                                null
+                        }
+                        {
+                            user.class && selectedClass ?
+                                <div className="adminUsersList__user-classes">
+                                    <div className="adminUsersList__user-classes-item">
+                                        <i className="fa fa-graduation-cap" />
+                                        <Link to={'/admin-classes/' + selectedClass.id}>{ selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] }</Link>
+                                    </div>
+                                </div>
+                                :
+                                null
+                        }
+                    </div>
+                </div>
                 {
                     currentUser.role === 'admin' ?
-                        <td className="table__body-cell">
-                            <div className="table__actions">
-                                <AdminUsersListModal user={user} usersList={list} loading={loading} modalTrigger={<a href="/" className="table__actions-btn"><i className={'content_title-icon fa fa-user-edit'} />{ translate('edit') }</a>} />
-                                {
-                                    user.id !== JSON.parse(localStorage.getItem('user')).id ?
-                                        <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => this.deleteUser(e, user.id)}>
-                                            <i className={'content_title-icon fa fa-user-times'} />
-                                            { translate('delete') }
-                                        </a>
-                                        :
-                                        null
-                                }
-                            </div>
-                        </td>
+                        <div className="adminUsersList__user-actions">
+                            <AdminUsersListModal
+                                user={user}
+                                usersList={list}
+                                loading={loading}
+                                modalTrigger={
+                                    <a href="/" className="btn btn_primary round btn__xs">
+                                        <i className={'fa fa-user-edit'}/>
+                                    </a>
+                                } />
+                            {
+                                user.id !== JSON.parse(localStorage.getItem('user')).id ?
+                                    <a href="/" className="btn btn__error round btn__xs" onClick={e => this.deleteUser(e, user.id)}>
+                                        <i className={'fa fa-user-times'} />
+                                    </a>
+                                    :
+                                    null
+                            }
+                        </div>
                         :
                         null
                 }
-            </tr>
-        )
+            </div>
+        );
     }
 
     deleteUser(e, userID) {
@@ -267,4 +310,4 @@ const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withData(withPager(AdminUsersList)));
+export default connect(mapStateToProps, mapDispatchToProps)(withPager(withRouter(AdminUsersList)));

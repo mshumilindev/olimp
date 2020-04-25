@@ -1,34 +1,131 @@
 @import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
 
 .adminUsersList {
   position: relative;
-  .table {
-    &__body-cell {
-      min-height: 64px;
-      box-sizing: border-box;
+  &__list {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  &__user {
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: $RobotoCondensed;
+    position: relative;
+    &.nonActive {
+      *:not(i):not(.btn) {
+        color: $mediumGreyColor;
+      }
     }
-    &__holder {
-      ~ .preloader {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        &:before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          z-index: -1;
-          background: $white;
-          opacity: .75;
+    &-inner {
+      background: $white;
+      box-shadow: 0 2px 5px 0 rgba(0,0,0,.15);
+      padding: 10px 10px 10px 15px;
+      display: flex;
+      cursor: pointer;
+      transition: background-color .15s ease-in-out;
+      &:hover {
+        background: $lightColor;
+      }
+    }
+    &-status {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      bottom: 10px;
+      .status {
+        height: 100%;
+        border-radius: 0;
+        width: 5px;
+      }
+    }
+    &-avatar {
+      width: 100px;
+      padding-top: 100%;
+      position: relative;
+      background-size: cover;
+      background-position: 50% 50%;
+      background-color: $lightGreyColor;
+      flex: 0 0 auto;
+    }
+    &-avatar-placeholder {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $mediumGreyColor;
+      font-size: 24px;
+    }
+    &-info {
+      padding-left: 20px;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    &-info-personal {
+      height: 100%;
+      font-weight: 300;
+    }
+    &-name {
+      margin-bottom: 5px;
+      font-size: 20px;
+    }
+    &-role {
+      color: $greyColor;
+    }
+    &-contacts {
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    &-contact {
+      display: flex;
+      margin-top: 10px;
+      a {
+        color: $baseColor;
+        letter-spacing: .5px;
+        &:hover {
+          color: $linkHoverColor;
         }
+      }
+      i {
+        font-size: 14px;
+        width: 20px;
+        margin-right: 5px;
+        text-align: center;
+      }
+    }
+    &-courses,
+    &-classes {
+      margin-top: 10px;
+      &-item {
+        margin-top: 10px;
+        display: flex;
+        align-items: flex-start;
+        i {
+          margin-right: 5px;
+          font-size: 14px;
+          width: 20px;
+          flex: 0 0 auto;
+          text-align: center;
+        }
+      }
+    }
+    &-actions {
+      position: absolute;
+      right: 20px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .btn {
+        margin: 5px 0;
       }
     }
   }

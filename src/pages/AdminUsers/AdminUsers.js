@@ -1,8 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import withFilters from "../../utils/withFilters";
-
-const AdminUsersList = React.lazy(() => import('../../components/AdminUsersList/AdminUsersList'));
+import AdminUsersList from '../../components/AdminUsersList/AdminUsersList';
 
 const sortByOptions = [
     {
