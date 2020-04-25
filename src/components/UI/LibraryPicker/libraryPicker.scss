@@ -37,6 +37,10 @@
     padding: 10px;
     overflow: hidden;
     box-sizing: border-box;
+    cursor: pointer;
+    &:hover {
+      background: $lightBlueColor;
+    }
     &.selected {
       background: $greenColor;
     }

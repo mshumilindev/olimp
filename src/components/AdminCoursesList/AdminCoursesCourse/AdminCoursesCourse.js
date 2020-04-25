@@ -10,12 +10,14 @@ import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import {compose} from "redux";
 import { withRouter } from 'react-router-dom';
+import userContext from "../../../context/userContext";
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
+function AdminCoursesCourse({fetchLibrary, subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
     const { lang, translate } = useContext(siteSettingsContext);
+    const { user } = useContext(userContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -44,6 +46,15 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
             id: 3
         }
     ];
+
+    useEffect(() => {
+        if ( user.role === 'admin' ) {
+            fetchLibrary();
+        }
+        else {
+            fetchLibrary(user.id);
+        }
+    }, []);
 
     useEffect(() => {
         if ( checkIfIsOpen() ) {
@@ -102,7 +113,7 @@ function AdminCoursesCourse({subjectID, course, params, loading, fetchModules, d
                             }
                         </span>
                         {
-                            libraryList.length ?
+                            libraryList && libraryList.length ?
                                 <span className="adminCourses__list-item-textbooks">
                                     {
                                         typeof course.textbook === 'object' ?
@@ -218,7 +229,7 @@ const mapStateToProps = state => ({
     modulesList: state.coursesReducer.modulesList
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: dispatch(fetchLibrary()),
+    fetchLibrary: (userID) => dispatch(fetchLibrary(userID)),
     fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
     deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID))
 });

@@ -10,14 +10,14 @@ function AdminLibraryList({loading, setTags, onDeleteDoc, list, users, pager, se
 
     return (
         <div className="adminLibrary__list widget">
+            <div className="section__data">
+                { selectedTags }
+                { totalItems }
+            </div>
             {
                 list ?
                     list.length ?
                         <>
-                            <div className="section__data">
-                                { selectedTags }
-                                { totalItems }
-                            </div>
                             <div className="table__holder">
                                 <table className="table">
                                     <colgroup>

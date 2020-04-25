@@ -8,8 +8,12 @@ const storageRef = storage.ref();
 export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN';
 export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
 
-export function fetchLibrary(showPerPage, searchQuery) {
-    const libraryCollection = db.collection('library');
+export function fetchLibrary(userID) {
+    let libraryCollection = db.collection('library');
+
+    if ( userID ) {
+        libraryCollection = libraryCollection.where('teacher', 'array-contains', userID);
+    }
 
     return dispatch => {
         dispatch(fetchLibraryBegin());

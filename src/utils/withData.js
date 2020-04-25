@@ -8,13 +8,10 @@ const withData = WrappedComponent => {
         return <WrappedComponent {...props} totalItems={props.loading ? null : _renderTotalItems()} />;
 
         function _renderTotalItems() {
-            if ( !props.list ) {
-                return null;
-            }
             return (
                 <div className="totalItems">
                     { translate('total') }:&nbsp;
-                    { props.list.length }
+                    { props.list ? props.list.length : 0 }
                 </div>
             );
         }

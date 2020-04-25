@@ -34,21 +34,16 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
                 { _renderTeachers() }
             </td>
             <td className="table__body-cell">
-                {
-                    item.teacher && item.teacher !== user.id && user.role !== 'admin' ?
-                        null
-                        :
-                        <div className="table__actions">
-                            <a href="/" className="table__actions-btn" onClick={e => onSetShowModal(e)}>
-                                <i className="content_title-icon fa fa-pencil-alt" />
-                                { translate('edit') }
-                            </a>
-                            <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => handleDeleteFile(e)}>
-                                <i className="content_title-icon fa fa-trash-alt" />
-                                { translate('delete') }
-                            </a>
-                        </div>
-                }
+                <div className="table__actions">
+                    <a href="/" className="table__actions-btn" onClick={e => onSetShowModal(e)}>
+                        <i className="content_title-icon fa fa-pencil-alt" />
+                        { translate('edit') }
+                    </a>
+                    <a href="/" className="table__actions-btn table__actions-btn-error" onClick={e => handleDeleteFile(e)}>
+                        <i className="content_title-icon fa fa-trash-alt" />
+                        { translate('delete') }
+                    </a>
+                </div>
                 {
                     showModal ?
                         <>
@@ -123,14 +118,20 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
 
     function handleUpdateFile() {
         const newFile = item;
+        const teacher = itemFields.find(newFieldItem => newFieldItem.id === 'teacher_block').children[0].value;
 
         if ( !newFile.teacher ) {
-            newFile.teacher = '';
+            newFile.teacher = [];
         }
 
         newFile.name = itemFields.find(fieldItem => fieldItem.id === 'name').value;
         newFile.tags = itemFields.find(fieldItem => fieldItem.id === 'tags').value;
-        newFile.teacher = itemFields.find(newFieldItem => newFieldItem.id === 'teacher_block').children[0].value;
+        if ( typeof teacher === 'string' ) {
+            newFile.teacher = [teacher];
+        }
+        else {
+            newFile.teacher = teacher;
+        }
 
         delete newFile.updated;
 

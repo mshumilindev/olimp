@@ -10,13 +10,19 @@ import withFilters from "../../../utils/withFilters";
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function LibraryPicker({multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
+function LibraryPicker({fetchLibrary, multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
     const [ selectedBooks, setSelectedBooks ] = useState(selectedList);
     const { user } = useContext(userContext);
 
     useEffect(() => {
+        if ( user.role === 'admin' ) {
+            fetchLibrary();
+        }
+        else {
+            fetchLibrary(user.id);
+        }
         return () => {
             setShowLibraryListModal(false);
         }
@@ -86,8 +92,15 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                                 renderView={props => <div {...props} className="scrollbar__content"/>}
                             >
                                 {
-                                    libraryList && libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(item => user.role === 'admin' || item.teacher === user.id).length ?
-                                        libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(item => user.role === 'admin' || item.teacher === user.id).map(item => _renderLibraryItem(item))
+                                    libraryList && libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())).length ?
+                                        <>
+                                            {
+                                                filterLibraryList().filter(item => selectedList.includes(item.id)).map(item => _renderLibraryItem(item))
+                                            }
+                                            {
+                                                filterLibraryList().filter(item => !selectedList.includes(item.id)).map(item => _renderLibraryItem(item))
+                                            }
+                                        </>
                                         :
                                         <div className="nothingFound">
                                             { translate('nothing_found') }
@@ -144,18 +157,16 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
     }
 
     function _renderLibraryItem(book) {
-        const booksList = selectedBooks;
-
         return (
-            <div className={classNames('libraryPicker__list-item', {selected: booksList.some(item => item === book.id)})} onClick={() => chooseBook(book.id)} key={book.id}>
+            <div className={classNames('libraryPicker__list-item', {selected: selectedBooks.some(item => item === book.id)})} onClick={() => chooseBook(book.id)} key={book.id}>
                 {
                     multiple ?
-                        booksList.some(item => item === book.id) ?
+                        selectedBooks.some(item => item === book.id) ?
                             <i className="libraryPicker__list-item-check far fa-check-square selected" />
                             :
                             <i className="libraryPicker__list-item-check far fa-square" />
                         :
-                        booksList.some(item => item === book.id) ?
+                        selectedBooks.some(item => item === book.id) ?
                             <i className="libraryPicker__list-item-check far fa-dot-circle selected" />
                             :
                             <i className="libraryPicker__list-item-check far fa-circle" />
@@ -165,6 +176,10 @@ function LibraryPicker({multiple, libraryList, addBooks, selectedList, placehold
                 </div>
             </div>
         )
+    }
+
+    function filterLibraryList() {
+        return libraryList.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
     function quickRemoveBook(bookID) {
@@ -209,6 +224,6 @@ const mapStateToProps = state => ({
     loading: state.libraryReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: dispatch(fetchLibrary())
+    fetchLibrary: (userID) => dispatch(fetchLibrary(userID))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withFilters(LibraryPicker, true));

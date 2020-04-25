@@ -22,15 +22,28 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
     const [ newFile, setFile ] = useState({
         name: '',
         tags: [],
-        teacher: user.role ==='teacher' ? user.id : ''
+        teacher: user.role ==='teacher' ? [user.id] : []
     });
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
 
     useEffect(() => {
-        fetchLibrary(showPerPage, searchQuery);
+        if ( user.role === 'admin' ) {
+            fetchLibrary();
+        }
     }, []);
+
+    useEffect(() => {
+        if ( user.role !== 'admin' ) {
+            if ( showOnlyMy ) {
+                fetchLibrary(user.id);
+            }
+            else {
+                fetchLibrary();
+            }
+        }
+    }, [showOnlyMy]);
 
     return (
         <div className="adminLibrary">
@@ -134,7 +147,6 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
 
     function filterList() {
         return !list ? null : list
-            .filter(item => showOnlyMy ? user.role === 'teacher' ? item.teacher && (item.teacher === user.id || item.teacher.indexOf(user.id)) !== -1 : true : true)
             .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
     }
 }

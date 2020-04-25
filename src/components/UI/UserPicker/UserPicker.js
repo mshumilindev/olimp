@@ -132,7 +132,14 @@ function UserPicker(
                             >
                                 {
                                     usersList && filterUsers().length ?
-                                        filterUsers().map(user => _renderUser(user))
+                                        <>
+                                            {
+                                                filterUsers().filter(item => selectedList.includes(item.id)).map(user => _renderUser(user))
+                                            }
+                                            {
+                                                filterUsers().filter(item => !selectedList.includes(item.id)).map(user => _renderUser(user))
+                                            }
+                                        </>
                                         :
                                         <div className="nothingFound">
                                             { translate('nothing_found') }
