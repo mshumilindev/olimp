@@ -6,9 +6,9 @@ import Modal from "../UI/Modal/Modal";
 import Form from "../Form/Form";
 import Confirm from "../UI/Confirm/Confirm";
 import {generate} from "generate-password";
-import { updateNotification, removeNotification } from '../../redux/actions/notificationsActions';
+import {updateNotification, removeNotification, fetchNotifications} from '../../redux/actions/notificationsActions';
 
-function AdminPanelNotifications({loading, notificationsList, updateNotification, removeNotification}) {
+function AdminPanelNotifications({fetchNotifications, loading, notificationsList, updateNotification, removeNotification}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ formUpdated, setFormUpdated ] = useState(false);
@@ -159,6 +159,10 @@ function AdminPanelNotifications({loading, notificationsList, updateNotification
     const [ notificationToEdit, setNotificationToEdit ] = useState(null);
     const [ showRemoveConfirm, setShowRemoveConfirm ] = useState(false);
     const [ notificationToRemove, setNotificationToRemove ] = useState(null);
+
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
 
     useEffect(() => {
         if ( notificationToEdit ) {
@@ -403,6 +407,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    fetchNotifications: (userID) => dispatch(fetchNotifications(userID)),
     updateNotification: (notification) => dispatch(updateNotification(notification)),
     removeNotification: (notificationID) => dispatch(removeNotification(notificationID))
 });

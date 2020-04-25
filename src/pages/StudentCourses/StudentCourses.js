@@ -1,25 +1,16 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import StudentCoursesItem from '../../components/StudentCourses/StudentCoursesItem';
 import {Preloader} from "../../components/UI/preloader";
-import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import './studentCourses.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentCourses({classesList, allCoursesList}) {
+function StudentCourses({classData, allCoursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
-    const [ currentClass, setCurrentClass ] = useState(null);
     const [ showIndex, setShowIndex ] = useState(false);
-
-    useEffect(() => {
-        if ( classesList && allCoursesList ) {
-            setCurrentClass(classesList.find(item => item.id === user.class));
-        }
-    }, [classesList, allCoursesList]);
 
     return (
         <div className={classNames('studentCourses', {blurred: showIndex})}>
@@ -32,8 +23,8 @@ function StudentCourses({classesList, allCoursesList}) {
             <Notifications/>
             <div className="studentCourses__list">
                 {
-                    classesList && allCoursesList ?
-                        classesList.length && allCoursesList.length ?
+                    classData && allCoursesList ?
+                        allCoursesList.length ?
                             <>
                                 { filterCourses().map(item => _renderCourse(item)) }
                             </>
@@ -46,7 +37,7 @@ function StudentCourses({classesList, allCoursesList}) {
                 }
             </div>
             {
-                classesList && allCoursesList && classesList.length && allCoursesList.length && filterCourses().length > 1 ?
+                classData && allCoursesList && allCoursesList.length && filterCourses().length > 1 ?
                     _renderIndex()
                     :
                     null
@@ -107,8 +98,8 @@ function StudentCourses({classesList, allCoursesList}) {
     function filterCourses() {
         const selectedCourses = [];
 
-        if ( currentClass ) {
-            currentClass.courses.forEach(item => {
+        if ( classData ) {
+            classData.courses.forEach(item => {
                 const selectedSubject = allCoursesList.find(subject => subject.id === item.subject);
                 const selectedCourse = selectedSubject.coursesList.find(course => course.id === item.course);
 
@@ -123,7 +114,7 @@ function StudentCourses({classesList, allCoursesList}) {
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList,
+    classData: state.classesReducer.classData,
     allCoursesList: state.coursesReducer.coursesList
 });
 

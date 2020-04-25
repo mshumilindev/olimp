@@ -10,7 +10,7 @@ import generator from "generate-password";
 import './studentProfile.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentProfile({profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
+function StudentProfile({profile, fetchProfile, params, loading, classData, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ profileUpdated, setProfileUpdated ] = useState(false);
@@ -28,17 +28,17 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
     }, [params]);
 
     useEffect(() => {
-        if ( profile && classesList && allCoursesList ) {
+        if ( profile && classData && allCoursesList ) {
             setCurrentUser(JSON.stringify(profile));
             setInitialCurrentUser(JSON.stringify(profile));
         }
-    }, [params, classesList, allCoursesList, profile]);
+    }, [params, classData, allCoursesList, profile]);
 
     useEffect(() => {
-        if ( classesList && allCoursesList && JSON.parse(initialCurrentUser) ) {
+        if ( classData && allCoursesList && JSON.parse(initialCurrentUser) ) {
             setFormFields(getUserFields());
         }
-    }, [params, classesList, allCoursesList, initialCurrentUser]);
+    }, [params, classData, allCoursesList, initialCurrentUser]);
 
     useEffect(() => {
         if ( currentUser !== initialCurrentUser ) {
@@ -75,7 +75,7 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
                         <Preloader color={'#7f00a3'}/>
                         :
                         user.role !== 'admin' && params ?
-                            <Profile user={JSON.parse(currentUser)} allCoursesList={allCoursesList} classesList={classesList}/>
+                            <Profile user={JSON.parse(currentUser)} allCoursesList={allCoursesList} classesList={[classData]}/>
                             :
                             <Form fields={formFields} loading={loading} setFieldValue={setFieldValue} />
                 }
@@ -167,8 +167,8 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
         const useProfile = newProfile || JSON.parse(currentUser);
         const formFields = getUserFormFields(useProfile, generatePassword, true);
 
-        if ( useProfile.role === 'student' && classesList ) {
-            formFields.splice(2, 0, insertClass(newProfile));
+        if ( useProfile.role === 'student' && classData ) {
+            formFields.splice(2, 0, insertClass());
         }
         if ( useProfile.role === 'teacher' && allCoursesList ) {
             formFields.splice(2, 0, insertCourse())
@@ -177,32 +177,12 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
         return formFields;
     }
 
-    function insertClass(newProfile) {
+    function insertClass() {
         const opts = [];
-        const profileClass = newProfile ? newProfile.class : JSON.parse(currentUser).class;
-        const selectedClass = classesList.find(item => item.id === profileClass);
 
-        classesList.sort((a, b) => {
-            const aTitle = a.title[lang] || a.title['ua'];
-            const bTitle = b.title[lang] || b.title['ua'];
-
-            if ( aTitle < bTitle ) {
-                return -1;
-            }
-            else if ( aTitle > bTitle ) {
-                return 1;
-            }
-            return 0;
-        }).sort((a, b) => {
-            const aTitle = parseInt(a.title[lang]) || parseInt(a.title['ua']);
-            const bTitle = parseInt(b.title[lang]) || parseInt(b.title['ua']);
-
-            return aTitle - bTitle;
-        }).forEach(item => {
-            opts.push({
-                id: item.id,
-                title: item.title[lang] ? item.title[lang] : item.title['ua']
-            });
+        opts.push({
+            id: classData.id,
+            title: classData.title[lang] ? classData.title[lang] : classData.title['ua']
         });
 
         return {
@@ -211,8 +191,8 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
             name: 'class',
             placeholder: 'class',
             hasErrors: false,
-            value: JSON.parse(currentUser) && selectedClass ? selectedClass.title[lang] ? selectedClass.title[lang] : selectedClass.title['ua'] : '',
-            storedValue: JSON.parse(currentUser) && selectedClass ? selectedClass.id : '',
+            value: JSON.parse(currentUser) && classData.title[lang] ? classData.title[lang] : classData.title['ua'],
+            storedValue: JSON.parse(currentUser) && classData ? classData.id : '',
             updated: false,
             readonly: true,
             options: [
@@ -257,7 +237,7 @@ function StudentProfile({profile, fetchProfile, params, loading, classesList, al
 const mapStateToProps = state => ({
     profile: state.usersReducer.profile,
     loading: state.usersReducer.loading,
-    classesList: state.classesReducer.classesList,
+    classData: state.classesReducer.classData,
     allCoursesList: state.coursesReducer.coursesList,
     usersList: state.usersReducer.usersList
 });

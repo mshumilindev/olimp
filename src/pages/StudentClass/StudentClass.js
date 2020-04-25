@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {connect} from "react-redux";
 import {Preloader} from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -7,16 +7,9 @@ import { Link } from 'react-router-dom';
 import './studentClass.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentClass({classesList, allCoursesList, usersList}) {
+function StudentClass({classData, allCoursesList, usersList}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
-    const [ currentClass, setCurrentClass ] = useState(null);
-
-    useEffect(() => {
-        if ( classesList ) {
-            setCurrentClass(classesList.find(item => item.id === user.class));
-        }
-    }, [classesList, user.class]);
 
     return (
         <div className="studentClass">
@@ -28,39 +21,33 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                             { translate('class') }
                         </span>
                         {
-                            !classesList ?
+                            !classData ?
                                 <Preloader size={20} color="#fff"/>
                                 :
-                                !classesList.length ?
-                                    null
+                                classData.title[lang] ?
+                                    classData.title[lang]
                                     :
-                                    currentClass ?
-                                        currentClass.title[lang] ?
-                                            currentClass.title[lang]
-                                            :
-                                            currentClass.title['ua']
-                                        :
-                                        <Preloader size={20} color="#fff"/>
+                                    classData.title['ua']
                         }
                     </div>
                 </h2>
             </div>
             <Notifications/>
             {
-                !classesList || !allCoursesList || !usersList.length || !currentClass ?
+                !classData || !allCoursesList || !usersList.length ?
                     <Preloader/>
                     :
                     <>
                         {
-                            currentClass.info[lang] || currentClass.info['ua'] ?
+                            classData.info[lang] || classData.info['ua'] ?
                                 <div className="block studentClass__description">
                                     <h2 className="block__heading">{ translate('description') }</h2>
                                     <div className="studentClass__description-text">
                                         {
-                                            currentClass.info[lang] ?
-                                                currentClass.info[lang]
+                                            classData.info[lang] ?
+                                                classData.info[lang]
                                                 :
-                                                currentClass.info['ua']
+                                                classData.info['ua']
                                         }
                                     </div>
                                 </div>
@@ -71,7 +58,7 @@ function StudentClass({classesList, allCoursesList, usersList}) {
                             <div className="grid_col col-12 tablet-col-6">
                                 <div className="block studentClass__courses">
                                     <h2 className="block__heading">{ translate('courses') }</h2>
-                                    { currentClass.courses.sort((a, b) => {
+                                    { classData.courses.sort((a, b) => {
                                         if ( a.subject < b.subject ) {
                                             return -1;
                                         }
@@ -166,7 +153,7 @@ function StudentClass({classesList, allCoursesList, usersList}) {
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList,
+    classData: state.classesReducer.classData,
     allCoursesList: state.coursesReducer.coursesList,
     usersList: state.usersReducer.usersList
 });

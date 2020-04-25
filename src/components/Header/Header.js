@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 import { fetchClasses } from "../../redux/actions/classesActions";
 import { setUpdates } from '../../redux/actions/updatesActions';
 
-function Header({classesList, type, setUpdates}) {
+function Header({classesList, setUpdates}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);

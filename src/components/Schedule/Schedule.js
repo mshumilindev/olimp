@@ -1,21 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
-import userContext from "../../context/userContext";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import './nextSchedule.scss';
 
-function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses}) {
+function Schedule({classData, allCoursesList, loadingClasses, loadingCourses}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
-    const [ currentClass, setCurrentClass ] = useState(null);
-    
-    useEffect(() => {
-        if ( classesList ) {
-            setCurrentClass(classesList.find(item => item.id === user.class));
-        }
-    }, [classesList, user.class]);
 
     return (
         <div className="block nextSchedule allSchedule">
@@ -23,14 +14,14 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
                 loadingClasses || loadingCourses ?
                     <Preloader/>
                     :
-                    !currentClass || !allCoursesList ?
+                    !classData || !allCoursesList ?
                         <div className="nothingFound">
                             { translate('nothing_found') }
                         </div>
                         :
                         <div className="nextSchedule__list">
                             {
-                                currentClass.schedule.map(day => _renderDay(day))
+                                classData.schedule.map(day => _renderDay(day))
                             }
                         </div>
             }
@@ -45,7 +36,7 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
                 </div>
                 <div className="nextSchedule__list-courses">
                     {
-                        currentClass.courses.length && day.lessons.length ?
+                        classData.courses.length && day.lessons.length ?
                             day.lessons.sort((a, b) => {
                                 if ( a.time && b.time ) {
                                     if ( a.time.start < b.time.start ) {
@@ -103,7 +94,7 @@ function Schedule({classesList, allCoursesList, loadingClasses, loadingCourses})
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList,
+    classData: state.classesReducer.classData,
     loadingClasses: state.classesReducer.loading,
     allCoursesList: state.coursesReducer.coursesList,
     loadingCourses: state.coursesReducer.loading

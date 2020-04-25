@@ -4,21 +4,26 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 import LanguageSelect from '../language/languageSelect';
 import Confirm from '../UI/Confirm/Confirm';
 import {connect} from "react-redux";
-import { fetchClasses } from "../../redux/actions/classesActions";
+import { fetchClass } from "../../redux/actions/classesActions";
 import { withRouter, Link } from 'react-router-dom';
 import {Preloader} from "../UI/preloader";
 import classNames from 'classnames';
+import userContext from "../../context/userContext";
 
-function StudentHeader({logo, siteName, history}) {
+function StudentHeader({fetchClass, logo, siteName, history}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
     const [ showMobileMenu, toggleMobileMenu ] = useState(false);
+    const { user } = useContext(userContext);
     let touchStart = null;
 
     useEffect(() => {
         document.addEventListener('click', e => onHideMenu(e));
         document.addEventListener('touchstart', e => onTouchStart(e));
         document.addEventListener('touchend', e => onTouchEnd(e));
+        if ( user.class ) {
+            fetchClass(user.class);
+        }
     }, []);
 
     useEffect(() => {
@@ -126,12 +131,11 @@ function StudentHeader({logo, siteName, history}) {
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList,
     logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null,
     siteName: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.siteName : null
 });
 const mapDispatchToProps = dispatch => ({
-    fetchClasses: dispatch(fetchClasses())
+    fetchClass: (classID) => dispatch(fetchClass(classID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(StudentHeader));

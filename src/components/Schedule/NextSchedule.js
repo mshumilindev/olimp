@@ -1,21 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import {connect} from "react-redux";
 import {Preloader} from "../UI/preloader";
-import userContext from "../../context/userContext";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import './nextSchedule.scss';
 
-function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCourses}) {
+function NextSchedule({classData, allCoursesList, loadingClasses, loadingCourses}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
-    const [ currentClass, setCurrentClass ] = useState(null);
-    
-    useEffect(() => {
-        if ( classesList ) {
-            setCurrentClass(classesList.find(item => item.id === user.class));
-        }
-    }, [classesList, user.class]);
 
     return (
         <div className="block nextSchedule">
@@ -27,7 +18,7 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                 loadingClasses || loadingCourses ?
                     <Preloader/>
                     :
-                    !currentClass || !allCoursesList ?
+                    !classData || !allCoursesList ?
                         <div className="nothingFound">{ translate('nothing_found') }</div>
                         :
                         <div className="nextSchedule__list">
@@ -47,7 +38,7 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
                 </div>
                 <div className="nextSchedule__list-courses">
                     {
-                        currentClass.courses.length && day.lessons.length ?
+                        classData.courses.length && day.lessons.length ?
                             day.lessons.sort((a, b) => {
                                 if ( a.time && b.time ) {
                                     if ( a.time.start < b.time.start ) {
@@ -110,28 +101,28 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
 
         if ( today === 6 || today === 0 ) {
             nextDaysList.push({
-                ...currentClass.schedule[0]
+                ...classData.schedule[0]
             });
             nextDaysList.push({
-                ...currentClass.schedule[1]
+                ...classData.schedule[1]
             });
         }
         else if ( today === 5 ) {
             nextDaysList.push({
-                ...currentClass.schedule[today - 1],
+                ...classData.schedule[today - 1],
                 title: 'today'
             });
             nextDaysList.push({
-                ...currentClass.schedule[0]
+                ...classData.schedule[0]
             });
         }
         else {
             nextDaysList.push({
-                ...currentClass.schedule[today - 1],
+                ...classData.schedule[today - 1],
                 title: 'today'
             });
             nextDaysList.push({
-                ...currentClass.schedule[today],
+                ...classData.schedule[today],
                 title: 'tomorrow'
             });
         }
@@ -140,7 +131,7 @@ function NextSchedule({classesList, allCoursesList, loadingClasses, loadingCours
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList,
+    classData: state.classesReducer.classData,
     loadingClasses: state.classesReducer.loading,
     allCoursesList: state.coursesReducer.coursesList,
     loadingCourses: state.coursesReducer.loading

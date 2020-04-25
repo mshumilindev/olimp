@@ -4,11 +4,9 @@ import Layout from '../pages/layout';
 import {fetchUsers} from "../redux/actions/usersActions";
 import {fetchTranslations} from "../redux/actions/translationsActions";
 import {fetchAllCourses} from "../redux/actions/coursesActions";
-import {fetchClasses} from "../redux/actions/classesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
 import {fetchEventsParticipant} from "../redux/actions/eventsActions";
 import {fetchLibrary} from "../redux/actions/libraryActions";
-import {fetchNotifications} from "../redux/actions/notificationsActions";
 import {fetchTests} from "../redux/actions/testsActions";
 
 const mapStateToProps = state => ({
@@ -28,11 +26,9 @@ const mapDispatchToProps = dispatch => ({
     fetchUsers: dispatch(fetchUsers()),
     fetchTranslations: dispatch(fetchTranslations()),
     fetchAllCourses: dispatch(fetchAllCourses()),
-    fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
     fetchLibrary: dispatch(fetchLibrary()),
     fetchEventsParticipant: (userID, date) => dispatch(fetchEventsParticipant(userID, date)),
-    fetchNotifications: dispatch(fetchNotifications()),
     fetchTests: dispatch(fetchTests())
 });
 

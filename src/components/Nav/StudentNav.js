@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import userContext from "../../context/userContext";
 import {connect} from "react-redux";
 
-function StudentNav({nav, hideItems, classesList}) {
+function StudentNav({nav, hideItems, classData}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -27,13 +27,10 @@ function StudentNav({nav, hideItems, classesList}) {
                 <div className="studentNav__user-role">
                     { translate(user.role) }
                     {
-                        classesList && classesList.length && user.class ?
+                        classData && user.class ?
                             <div className="studentNav__user-class">
                                 {
-                                    classesList.find(item => item.id === user.class).title[lang] ?
-                                        classesList.find(item => item.id === user.class).title[lang]
-                                        :
-                                        classesList.find(item => item.id === user.class).title['ua']
+                                    classData.title['ua']
                                 }
                             </div>
                         :
@@ -65,7 +62,7 @@ function StudentNav({nav, hideItems, classesList}) {
 }
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
-    classesList: state.classesReducer.classesList
+    classData: state.classesReducer.classData
 });
 
 export default connect(mapStateToProps)(StudentNav)

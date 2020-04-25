@@ -2,9 +2,13 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 
-const notificationsCollection = db.collection('notifications');
+export function fetchNotifications(userID) {
+    let notificationsCollection = db.collection('notifications');
 
-export function fetchNotifications() {
+    if ( userID )  {
+        notificationsCollection = notificationsCollection.where('targetUsers', 'array-contains', userID);
+    }
+
     return dispatch => {
         dispatch(fetchNotificationsBegin());
         return notificationsCollection.onSnapshot(snapshot => {

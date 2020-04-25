@@ -1,14 +1,19 @@
-import React, {useContext } from 'react';
+import React, {useContext, useEffect} from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import userContext from "../../context/userContext";
+import {fetchNotifications} from "../../redux/actions/notificationsActions";
 
 /**
  * @return {null}
  */
-function Notifications({notificationsList}) {
+function Notifications({fetchNotifications, notificationsList}) {
     const { lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
+
+    useEffect(() => {
+        fetchNotifications(user.id);
+    }, []);
 
     if ( notificationsList && filteredNotifications().length ) {
         return (
@@ -19,7 +24,7 @@ function Notifications({notificationsList}) {
 
     function _renderNotification(notification) {
         return (
-            <div className={'notification ' + notification.type}>
+            <div className={'notification ' + notification.type} key={notification.id}>
                 <div className="notification__icon">
                     {
                         notification.type === 'message' ?
@@ -75,4 +80,9 @@ const mapStateToProps = state => ({
     notificationsList: state.notificationsReducer.notificationsList,
     loading: state.usersReducer.loading
 });
-export default connect(mapStateToProps)(Notifications);
+
+const mapDispatchToProps = dispatch => ({
+    fetchNotifications: (userID) => dispatch(fetchNotifications(userID))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
