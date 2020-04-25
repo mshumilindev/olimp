@@ -1,3 +1,16 @@
-.dashboard {
+@import '../../assets/scss/utils/colors';
 
+.dashboard {
+  .adminChats {
+    &__event {
+      border: none !important;
+      background: none !important;
+      &:nth-child(2n) {
+        background: $lightColor !important;
+      }
+      &:hover {
+        background: $lightBlueColor !important;
+      }
+    }
+  }
 }

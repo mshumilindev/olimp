@@ -8,7 +8,6 @@ import ChatWidget from "../../components/ChatBox/ChatWidget";
 import '../../assets/scss/base/chatroom.scss';
 import firebase from "../../db/firestore";
 import classNames from 'classnames';
-import {fetchEventsOrganizer, fetchEventsParticipant} from "../../redux/actions/eventsActions";
 
 export default function Admin({children, location, params, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant}) {
     const { user } = useContext(userContext);

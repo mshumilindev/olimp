@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import moment from "moment";
 import 'moment/locale/uk';
 import SiteSettingsContext from "../../context/siteSettingsContext";
-import {Link} from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { deleteEvent } from '../../redux/actions/eventsActions';
 import Confirm from "../UI/Confirm/Confirm";
@@ -11,14 +11,14 @@ import classNames from 'classnames';
 
 moment.locale('uk');
 
-function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
+function ChatListItem({history, event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
     const { translate } = useContext(SiteSettingsContext);
     const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
     const { user } = useContext(userContext);
 
     return (
         <div className={classNames('adminChats__event', {isActive: event.started})} key={event.id}>
-            <Link to={'/chat/' + event.id}>
+            <span onClick={() => history.push('/chat/' + event.id)}>
                 <div className="adminChats__event-time">
                     { moment(event.datetime * 1000).format('HH:mm') }
                     {
@@ -33,7 +33,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                     <div className="adminChats__event-info-row">
                         <div className="adminChats__event-info-dt">{ translate('organizer') }: </div>
                         <div className="adminChats__event-info-dd">
-                            <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login}>{ getUser(event.organizer).name }</Link>
+                            <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login} onClick={e => e.stopPropagation()}>{ getUser(event.organizer).name }</Link>
                         </div>
                     </div>
                     <div className="adminChats__event-info-row">
@@ -43,7 +43,7 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                                 typeof event.participants === 'object' ?
                                     event.participants.map(partItem => {
                                         if ( getUser(partItem) ) {
-                                            return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem}>{ getUser(partItem).name }</Link>;
+                                            return <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(partItem).login} key={partItem} onClick={e => e.stopPropagation()}>{ getUser(partItem).name }</Link>;
                                         }
                                         else {
                                             return null;
@@ -51,14 +51,14 @@ function ChatListItem({event, usersList, deleteEvent, mapEventToFormFields, noAc
                                     })
                                     :
                                     getUser(event.participants) ?
-                                        <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants}>{ getUser(event.participants).name }</Link>
+                                        <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.participants).login} key={event.participants} onClick={e => e.stopPropagation()}>{ getUser(event.participants).name }</Link>
                                         :
                                         null
                             }
                         </div>
                     </div>
                 </div>
-            </Link>
+            </span>
             {
                 (!noActions && user.id === event.organizer) || user.role === 'admin' ?
                     <div className="adminChats__event-actions">
@@ -98,4 +98,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ChatListItem));

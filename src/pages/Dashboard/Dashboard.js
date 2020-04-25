@@ -9,7 +9,7 @@ function Dashboard() {
     const { translate } = useContext(siteSettingsContext);
 
     return (
-        <>
+        <div className="dashboard">
             <div className="content__title-holder">
                 <h2 className="content__title">
                     <i className="content_title-icon fa fa-home" />
@@ -23,7 +23,7 @@ function Dashboard() {
             <section className="section">
                 <StudentChatsList showTodayOnly />
             </section>
-        </>
+        </div>
     )
 }
 export default Dashboard;

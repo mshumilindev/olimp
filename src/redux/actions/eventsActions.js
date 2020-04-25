@@ -43,9 +43,13 @@ export function fetchEventsOrganizer(userID) {
     }
 }
 
-export function fetchEventsParticipant(userID) {
+export function fetchEventsParticipant(userID, date) {
     return async dispatch => {
-        const eventsCollection = db.collection('events').where('participants', 'array-contains', userID);
+        let eventsCollection = db.collection('events').where('participants', 'array-contains', userID);
+
+        if ( date ) {
+            eventsCollection = eventsCollection.where('datetime', '>=', date);
+        }
 
         dispatch(fetchEventsBegin());
         return eventsCollection.onSnapshot(snapshot => {

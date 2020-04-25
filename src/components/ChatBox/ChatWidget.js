@@ -463,60 +463,63 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     }
 
     function _renderStoppedChatActions() {
-        if ( user.id === chat.organizer ) {
-            return (
-                <>
-                    <div className="chatroom__message-holder" style={chat.chalkBoardOpen ? {zIndex: 100} : null}>
-                        <ChatInfo isStatic={true} chat={chat} />
-                        <div className="chatroom__info">
-                            { _renderUnconditionally() }
-                            <span>
+        if ( isChatPage ) {
+            if ( user.id === chat.organizer ) {
+                return (
+                    <>
+                        <div className="chatroom__message-holder" style={chat.chalkBoardOpen ? {zIndex: 100} : null}>
+                            <ChatInfo isStatic={true} chat={chat} />
+                            <div className="chatroom__info">
+                                { _renderUnconditionally() }
+                                <span>
                                 <i className="fas fa-eye-slash"/>
-                                { translate('you_can_start_chat') }
+                                    { translate('you_can_start_chat') }
                             </span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="chatroom__btnsHolder">
-                        <TextTooltip position="top" text={translate('prepare_chalkboard')} children={
-                            <span
-                                className={classNames('btn round', {
-                                    btn_primary: !chat.chalkBoardOpen,
-                                    'btn__success btn__working': chat.chalkBoardOpen
-                                })}
-                                onClick={handleChalkBoard}
-                            >
+                        <div className="chatroom__btnsHolder">
+                            <TextTooltip position="top" text={translate('prepare_chalkboard')} children={
+                                <span
+                                    className={classNames('btn round', {
+                                        btn_primary: !chat.chalkBoardOpen,
+                                        'btn__success btn__working': chat.chalkBoardOpen
+                                    })}
+                                    onClick={handleChalkBoard}
+                                >
                                 <i className="fas fa-pencil-alt"/>
                             </span>
-                        }/>
-                        <span className="btn btn__success round" onClick={startChat}><i className="fas fa-phone" /></span>
-                    </div>
-                </>
-            )
-        }
-        else {
-            return (
-                <div className="chatroom__message-holder">
-                    <ChatInfo isStatic={true} chat={chat} />
-                    <div className="chatroom__info">
-                        {
-                            chat.datetime - moment().unix() > 3600 ?
-                                <span>
+                            }/>
+                            <span className="btn btn__success round" onClick={startChat}><i className="fas fa-phone" /></span>
+                        </div>
+                    </>
+                )
+            }
+            else {
+                return (
+                    <div className="chatroom__message-holder">
+                        <ChatInfo isStatic={true} chat={chat} />
+                        <div className="chatroom__info">
+                            {
+                                chat.datetime - moment().unix() > 3600 ?
+                                    <span>
                                     <i className="far fa-clock"/>
                                     <span>
                                         { translate('videochat_will_start_at') }
                                         { moment(chat.datetime * 1000).format(' HH:mm, DD MMMM YYYY') }
                                     </span>
                                 </span>
-                                :
-                                <span>
+                                    :
+                                    <span>
                                     <i className="fas fa-eye-slash"/>
-                                    { translate('chat_will_start_soon') }
+                                        { translate('chat_will_start_soon') }
                                 </span>
-                        }
+                            }
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            }
         }
+        return null;
     }
 
     function _renderUnconditionally() {

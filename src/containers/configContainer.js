@@ -31,7 +31,7 @@ const mapDispatchToProps = dispatch => ({
     fetchClasses: dispatch(fetchClasses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
     fetchLibrary: dispatch(fetchLibrary()),
-    fetchEventsParticipant: (userID) => dispatch(fetchEventsParticipant(userID)),
+    fetchEventsParticipant: (userID, date) => dispatch(fetchEventsParticipant(userID, date)),
     fetchNotifications: dispatch(fetchNotifications()),
     fetchTests: dispatch(fetchTests())
 });

@@ -8,8 +8,9 @@ import userContext from "../context/userContext";
 import {Preloader} from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
 import firebase from "../db/firestore";
+import moment from "moment";
 
-export default function Layout({children, location, events, fetchEventsParticipant, usersList}) {
+export default function Layout({children, location, fetchEventsParticipant}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -45,7 +46,7 @@ export default function Layout({children, location, events, fetchEventsParticipa
     }, [location]);
 
     useEffect(() => {
-        fetchEventsParticipant(user.id);
+        fetchEventsParticipant(user.id, moment(moment().format('MM DD YYYY')).unix());
     }, []);
 
     const studentNav = [
