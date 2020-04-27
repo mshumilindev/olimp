@@ -1,11 +1,10 @@
 import React, {useContext} from 'react';
 import Form from "../Form/Form";
 import SiteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
+import { connect } from 'react-redux';
 
-export default function FiltersShowOnlyMy({showOnlyMyChecked, filterChanged}) {
+function FiltersShowOnlyMy({user, showOnlyMyChecked, filterChanged}) {
     const { translate } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
 
     const showOnlyMyFields = [
         {
@@ -24,3 +23,11 @@ export default function FiltersShowOnlyMy({showOnlyMyChecked, filterChanged}) {
             null
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(FiltersShowOnlyMy);

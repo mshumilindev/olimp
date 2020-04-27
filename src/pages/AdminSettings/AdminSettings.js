@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {fetchContact, updateContact} from "../../redux/actions/contactActions";
 import {fetchSiteSettings, updateSiteSettings} from "../../redux/actions/siteSettingsActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import generator from "generate-password";
 import './adminSettings.scss';
 import AdminSettingsContact from '../../components/AdminSettings/AdminSettingsContact';

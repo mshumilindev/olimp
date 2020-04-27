@@ -6,15 +6,14 @@ import Confirm from '../UI/Confirm/Confirm';
 import {connect} from "react-redux";
 import { fetchClass } from "../../redux/actions/classesActions";
 import { withRouter, Link } from 'react-router-dom';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import classNames from 'classnames';
-import userContext from "../../context/userContext";
+import { logoutUser } from '../../redux/actions/authActions';
 
-function StudentHeader({fetchClass, logo, siteName, history}) {
+function StudentHeader({user, fetchClass, logo, siteName, history, logoutUser}) {
     const { translate, lang } = useContext(SiteSettingsContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
     const [ showMobileMenu, toggleMobileMenu ] = useState(false);
-    const { user } = useContext(userContext);
     let touchStart = null;
 
     useEffect(() => {
@@ -99,8 +98,7 @@ function StudentHeader({fetchClass, logo, siteName, history}) {
     }
 
     function onConfirmLogout() {
-        localStorage.removeItem('user');
-        window.location.replace('/landing');
+        logoutUser(user.id);
     }
 
     function onHideMenu(e) {
@@ -132,10 +130,12 @@ function StudentHeader({fetchClass, logo, siteName, history}) {
 }
 const mapStateToProps = state => ({
     logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null,
-    siteName: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.siteName : null
+    siteName: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.siteName : null,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
-    fetchClass: (classID) => dispatch(fetchClass(classID))
+    fetchClass: (classID) => dispatch(fetchClass(classID)),
+    logoutUser: (userID) => dispatch(logoutUser(userID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(StudentHeader));

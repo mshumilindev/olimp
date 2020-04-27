@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import ChatListItem from "./ChatListItem";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import moment from "moment";

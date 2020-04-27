@@ -3,15 +3,13 @@ import Header from '../../components/Header/Header';
 import Nav from '../../components/Nav/Nav';
 import DocumentTitle from "react-document-title";
 import SiteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import ChatWidget from "../../components/ChatBox/ChatWidget";
 import '../../assets/scss/base/chatroom.scss';
 import firebase from "../../db/firestore";
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
-export default function Admin({children, location, params, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant}) {
-    const { user } = useContext(userContext);
-
+function Admin({user, children, location, params, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant}) {
     useEffect(() => {
         const db = firebase.firestore();
         const updatesCollection = db.collection('updates');
@@ -217,3 +215,11 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
         </DocumentTitle>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(Admin);

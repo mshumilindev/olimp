@@ -1,17 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {connect} from "react-redux";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import {downloadDoc, discardDoc} from "../../redux/actions/libraryActions";
 import {fetchModulesLessons} from "../../redux/actions/coursesActions";
-import userContext from "../../context/userContext";
 import classNames from 'classnames';
 import StudentTextbook from "../StudentTextbook/StudentTextbook";
+import authReducer from "../../redux/reducers/authReducer";
 
-function StudentCourseItem({allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchModulesLessons, libraryList, tests}) {
+function StudentCourseItem({user, allCoursesList, modulesLessons, modulesLessonsLoading, usersList, params, fetchModulesLessons, libraryList, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
     let currentTeacher = null;
 
@@ -285,7 +284,8 @@ const mapStateToProps = state => ({
     libraryLoading: state.libraryReducer.loading,
     downloadedTextbook: state.libraryReducer.downloadedTextbook,
     libraryList: state.libraryReducer.libraryList,
-    tests: state.testsReducer.tests
+    tests: state.testsReducer.tests,
+    user: state.authReducer.currentUser
 });
 
 const mapDispatchToProps = dispatch => ({

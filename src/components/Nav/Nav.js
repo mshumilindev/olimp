@@ -5,14 +5,11 @@ import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
 import {connect} from "react-redux";
 import withFilters from "../../utils/withFilters";
-import {Preloader} from "../UI/preloader";
-import userContext from "../../context/userContext";
+import Preloader from "../UI/preloader";
 import favicon from '../../assets/img/favicon.png';
-import TextTooltip from '../../components/UI/TextTooltip/TextTooltip';
 
-function Nav({nav, prefix, showLogo, hideItems, logo}) {
+function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
     const [ isNavCollapsed, setIsNavCollapsed ] = useState(localStorage.getItem('isNavCollapsed'));
 
     useEffect(() => {
@@ -95,6 +92,7 @@ function Nav({nav, prefix, showLogo, hideItems, logo}) {
     }
 }
 const mapStateToProps = state => ({
-    logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null
+    logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null,
+    user: state.authReducer.currentUser
 });
 export default connect(mapStateToProps)(withFilters(Nav, true));

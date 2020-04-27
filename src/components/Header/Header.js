@@ -1,16 +1,15 @@
 import React, {useContext, useState} from 'react';
 import './header.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import LanguageSelect from '../language/languageSelect';
 import Confirm from '../UI/Confirm/Confirm';
 import {connect} from "react-redux";
 import { fetchClasses } from "../../redux/actions/classesActions";
 import { setUpdates } from '../../redux/actions/updatesActions';
+import { logoutUser } from '../../redux/actions/authActions';
 
-function Header({classesList, setUpdates}) {
+function Header({user, classesList, setUpdates, logoutUser}) {
     const { translate, lang } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showConfirmLogout, setShowConfirmLogout ] = useState(false);
 
     return (
@@ -76,16 +75,17 @@ function Header({classesList, setUpdates}) {
     }
 
     function onConfirmLogout() {
-        localStorage.removeItem('user');
-        window.location.replace('/landing');
+        logoutUser(user.id);
     }
 }
 const mapStateToProps = state => ({
-    classesList: state.classesReducer.classesList
+    classesList: state.classesReducer.classesList,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchClasses: dispatch(fetchClasses()),
-    setUpdates: (type) => dispatch(setUpdates(type))
+    setUpdates: (type) => dispatch(setUpdates(type)),
+    logoutUser: (userID) => dispatch(logoutUser(userID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

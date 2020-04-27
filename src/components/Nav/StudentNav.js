@@ -3,12 +3,10 @@ import './studentNav.scss';
 import { Link } from 'react-router-dom';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
-import userContext from "../../context/userContext";
 import {connect} from "react-redux";
 
-function StudentNav({nav, hideItems, classData}) {
-    const { translate, lang } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
+function StudentNav({user, nav, hideItems, classData}) {
+    const { translate } = useContext(SiteSettingsContext);
 
     return (
         <nav className="studentNav">
@@ -62,7 +60,8 @@ function StudentNav({nav, hideItems, classData}) {
 }
 const mapStateToProps = state => ({
     loading: state.configReducer.loading,
-    classData: state.classesReducer.classData
+    classData: state.classesReducer.classData,
+    user: state.authReducer.currentUser
 });
 
 export default connect(mapStateToProps)(StudentNav)

@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import './chalkBoard.scss';
-import {Preloader} from "../../UI/preloader";
+import Preloader from "../../UI/preloader";
 import TextTooltip from "../../UI/TextTooltip/TextTooltip";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import ChalkBoardGraph from "./ChalkBoardGraph";

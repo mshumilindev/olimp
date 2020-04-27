@@ -4,7 +4,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import './landing.scss';
 import { connect } from 'react-redux';
 import {fetchSiteSettings} from "../../redux/actions/siteSettingsActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import TextTooltip from "../../components/UI/TextTooltip/TextTooltip";

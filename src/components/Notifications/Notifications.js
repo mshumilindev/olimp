@@ -1,15 +1,13 @@
 import React, {useContext, useEffect} from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import {fetchNotifications} from "../../redux/actions/notificationsActions";
 
 /**
  * @return {null}
  */
-function Notifications({fetchNotifications, notificationsList}) {
+function Notifications({user, fetchNotifications, notificationsList}) {
     const { lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         fetchNotifications(user.id);
@@ -78,7 +76,8 @@ function Notifications({fetchNotifications, notificationsList}) {
 
 const mapStateToProps = state => ({
     notificationsList: state.notificationsReducer.notificationsList,
-    loading: state.usersReducer.loading
+    loading: state.usersReducer.loading,
+    user: state.authReducer.currentUser
 });
 
 const mapDispatchToProps = dispatch => ({

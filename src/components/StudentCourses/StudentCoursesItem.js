@@ -1,18 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import firebase from "../../db/firestore";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import '../../pages/StudentCourse/studentCourse.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import classNames from "classnames";
 import {Link} from "react-router-dom";
-import userContext from "../../context/userContext";
 import { connect } from 'react-redux';
 
 const db = firebase.firestore();
 
-function StudentCoursesItem({subjectID, courseID, currentUser, tests}) {
+function StudentCoursesItem({user, subjectID, courseID, currentUser, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ modulesLessons, setModulesLessons ] = useState(null);
 
     useEffect(() => {
@@ -194,7 +192,8 @@ function StudentCoursesItem({subjectID, courseID, currentUser, tests}) {
 
 const mapStateToProps = state => {
     return {
-        tests: state.testsReducer.tests
+        tests: state.testsReducer.tests,
+        user: state.authReducer.currentUser
     }
 };
 

@@ -1,9 +1,13 @@
-import React, { useContext } from 'react';
-import userContext from "../../context/userContext";
+import React from 'react';
+import { connect } from 'react-redux';
 
-export const Preloader = ({size = 100, color}) => {
-    const { user } = useContext(userContext);
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
 
+export default connect(mapStateToProps)(function Preloader({user, size = 100, color}) {
     return (
         <div className="preloader">
             <svg width={size} height={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
@@ -14,4 +18,4 @@ export const Preloader = ({size = 100, color}) => {
             </svg>
         </div>
     )
-};
+});

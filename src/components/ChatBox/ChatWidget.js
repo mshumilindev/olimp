@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import {fetchChat, setChatStart, setStopChat, discardChat, setOnACall, toggleChalkBoard, toggleLesson} from "../../redux/actions/eventsActions";
 import {Link, withRouter} from 'react-router-dom';
-import userContext from '../../context/userContext';
 import Fullscreen from 'react-full-screen';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ChatContainer from "./ChatContainer";
@@ -27,8 +26,7 @@ const db = firebase.firestore();
 let mediaRecorder = null;
 let chunks = [];
 
-function ChatWidget({location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard, toggleLesson}) {
-    const { user } = useContext(userContext);
+function ChatWidget({user, location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard, toggleLesson}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ isFullScreen, setIsFullScreen ] = useState(false);
     const [ isHidden, setIsHidden ] = useState(false);
@@ -696,7 +694,8 @@ const mapStateToProps = state => {
         events: state.eventsReducer.events,
         usersList: state.usersReducer.usersList,
         chat: state.eventsReducer.chat,
-        onACall: state.eventsReducer.onACall
+        onACall: state.eventsReducer.onACall,
+        user: state.authReducer.currentUser
     }
 };
 

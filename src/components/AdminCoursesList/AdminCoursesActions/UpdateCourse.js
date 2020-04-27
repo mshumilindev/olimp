@@ -18,11 +18,11 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function UpdateCourse({history, params, subjectID, course, loading, setShowUpdateCourse, updateCourse}) {
+function UpdateCourse({user, history, params, subjectID, course, loading, setShowUpdateCourse, updateCourse}) {
     const { translate, getCourseFields, getCourseModel, identify, transliterize } = useContext(siteSettingsContext);
     const currentCourse = course ? course : getCourseModel();
     const [ formUpdated, setFormUpdated ] = useState(false);
-    const [ courseFields, setCourseFields ] = useState(JSON.stringify(getCourseFields(currentCourse)));
+    const [ courseFields, setCourseFields ] = useState(JSON.stringify(getCourseFields(user, currentCourse)));
     const prevLoading = usePrevious(loading);
 
     useEffect(() => {
@@ -85,7 +85,10 @@ function UpdateCourse({history, params, subjectID, course, loading, setShowUpdat
         setCourseFields(JSON.stringify(newCourseFields));
     }
 }
+const mapStateToProps = state => ({
+    user: state.authReducer.currentUser
+});
 const mapDispatchToProps = dispatch => ({
     updateCourse: (subjectID, course) => dispatch(updateCourse(subjectID, course))
 });
-export default connect(null, mapDispatchToProps)(withRouter(UpdateCourse));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UpdateCourse));

@@ -13,7 +13,7 @@ class AdminUsersListModal extends React.Component {
 
         this.state = {
             showModal: false,
-            userFields: this.getUserFields(props.user, context, props.classesList, props.allCoursesList, []),
+            userFields: this.getUserFields(props.currentUser, props.user, context, props.classesList, props.allCoursesList, []),
             formUpdated: false
         };
 
@@ -44,10 +44,10 @@ class AdminUsersListModal extends React.Component {
         );
     }
 
-    getUserFields(user, context, classesList, allCoursesList, userFields) {
+    getUserFields(currentUser, user, context, classesList, allCoursesList, userFields) {
         const { translate, getUserFormFields } = context;
 
-        const formFields = getUserFormFields(user, this.generatePassword);
+        const formFields = getUserFormFields(currentUser, user, this.generatePassword);
 
         if ( user.role === 'student' && classesList ) {
             formFields.splice(2, 0, this.insertClass(context, classesList, user, userFields));
@@ -94,7 +94,7 @@ class AdminUsersListModal extends React.Component {
             };
 
             if ( !state.showModal ) {
-                newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
+                newState.userFields = this.getUserFields(this.props.currentUser, this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
             }
 
             return {
@@ -108,7 +108,7 @@ class AdminUsersListModal extends React.Component {
         this.setState(() => {
             const newState = {};
 
-            newState.userFields = this.getUserFields(this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
+            newState.userFields = this.getUserFields(this.props.currentUser, this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
 
             return {
                 ...newState,
@@ -385,7 +385,8 @@ AdminUsersListModal.contextType = siteSettingsContext;
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,
     allCoursesList: state.coursesReducer.coursesList,
-    loading: state.classesReducer.loading
+    loading: state.classesReducer.loading,
+    currentUser: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     updateUser: (id, data) => dispatch(updateUser(id, data))

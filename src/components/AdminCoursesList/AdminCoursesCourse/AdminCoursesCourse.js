@@ -10,14 +10,12 @@ import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import {compose} from "redux";
 import { withRouter } from 'react-router-dom';
-import userContext from "../../../context/userContext";
 
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 
-function AdminCoursesCourse({fetchLibrary, subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
+function AdminCoursesCourse({user, fetchLibrary, subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
     const { lang, translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -226,7 +224,8 @@ function AdminCoursesCourse({fetchLibrary, subjectID, course, params, loading, f
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
     libraryList: state.libraryReducer.libraryList,
-    modulesList: state.coursesReducer.modulesList
+    modulesList: state.coursesReducer.modulesList,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: (userID) => dispatch(fetchLibrary(userID)),

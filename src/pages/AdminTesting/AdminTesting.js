@@ -1,16 +1,14 @@
 import React, {useContext} from 'react';
 import { connect } from 'react-redux';
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import {orderBy} from "natural-orderby";
 import AdminTestingSubject from "./AdminTestingSubject";
 import './adminTesting.scss';
 import {fetchTests} from "../../redux/actions/testsActions";
 
-function AdminTesting({coursesList, tests}) {
+function AdminTesting({user, coursesList, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="adminTesting">
@@ -50,7 +48,8 @@ function AdminTesting({coursesList, tests}) {
 const mapStateToProps = state => {
     return {
         coursesList: state.coursesReducer.coursesList,
-        tests: state.testsReducer.tests
+        tests: state.testsReducer.tests,
+        user: state.authReducer.currentUser
     }
 };
 

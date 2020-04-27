@@ -5,7 +5,6 @@ import {fetchUsers} from "../redux/actions/usersActions";
 import {fetchTranslations} from "../redux/actions/translationsActions";
 import {fetchAllCourses} from "../redux/actions/coursesActions";
 import {fetchSiteSettings} from "../redux/actions/siteSettingsActions";
-import {fetchEventsParticipant} from "../redux/actions/eventsActions";
 import {fetchLibrary} from "../redux/actions/libraryActions";
 
 const mapStateToProps = state => ({
@@ -26,8 +25,7 @@ const mapDispatchToProps = dispatch => ({
     fetchTranslations: dispatch(fetchTranslations()),
     fetchAllCourses: dispatch(fetchAllCourses()),
     fetchSiteSettings: dispatch(fetchSiteSettings()),
-    fetchLibrary: dispatch(fetchLibrary()),
-    fetchEventsParticipant: (userID, date) => dispatch(fetchEventsParticipant(userID, date))
+    fetchLibrary: dispatch(fetchLibrary())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Layout)

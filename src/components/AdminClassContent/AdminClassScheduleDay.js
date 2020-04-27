@@ -2,18 +2,16 @@ import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
-import {Preloader} from "../UI/preloader";
-import userContext from "../../context/userContext";
+import Preloader from "../UI/preloader";
 import AdminClassScheduleDayCourse from "./AdminClassScheduleDayCourse";
 import AdminClassScheduleDayLesson from "./AdminClassScheduleDayLesson";
 
 const Modal = React.lazy(() => import('../UI/Modal/Modal'));
 
-function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSchedule}) {
+function AdminClassScheduleDay({user, day, selectedCourses, coursesList, handleAddSchedule}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ selectedLessons, setSelectedLessons ] = useState(JSON.stringify([]));
-    const { user } = useContext(userContext);
 
     if ( day.lessons.length ) {
         day.lessons.forEach(item => {
@@ -128,7 +126,8 @@ function AdminClassScheduleDay({day, selectedCourses, coursesList, handleAddSche
 }
 const mapStateToProps = state => ({
     coursesList: state.coursesReducer.coursesList,
-    loading: state.coursesReducer.loading
+    loading: state.coursesReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses())

@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { fetchPage } from "../../redux/actions/staticInfoActions";
 import {connect} from "react-redux";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import Article from '../../components/Article/Article';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import './studentPage.scss';

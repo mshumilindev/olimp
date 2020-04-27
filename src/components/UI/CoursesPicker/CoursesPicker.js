@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import {connect} from "react-redux";
 import {fetchAllCourses} from "../../../redux/actions/coursesActions";
-import {Preloader} from "../preloader";
+import Preloader from "../preloader";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import './coursesPicker.scss';
 import classNames from 'classnames';

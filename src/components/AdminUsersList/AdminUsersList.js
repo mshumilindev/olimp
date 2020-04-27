@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
-import { Preloader } from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import classNames from 'classnames';
 import AdminUsersListModal from './AdminUsersListModal';
 import {deleteUser} from "../../redux/actions/usersActions";
@@ -10,13 +10,11 @@ import { Link, withRouter } from 'react-router-dom';
 import withPager from "../../utils/withPager";
 import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {orderBy} from "natural-orderby";
-import userContext from "../../context/userContext";
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
-function AdminUsersList({history, deleteUser, loading, filters, pager, list, totalItems, classesList, allCoursesList}) {
+function AdminUsersList({user, history, deleteUser, loading, filters, pager, list, totalItems, classesList, allCoursesList}) {
     const { translate, lang, getUserModel } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ userToDelete, setUserToDelete ] = useState(null);
     const userModel = getUserModel();
@@ -280,7 +278,8 @@ function AdminUsersList({history, deleteUser, loading, filters, pager, list, tot
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,
     allCoursesList: state.coursesReducer.coursesList,
-    loading: state.classesReducer.loading
+    loading: state.classesReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     deleteUser: (id) => dispatch(deleteUser(id)),

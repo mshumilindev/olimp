@@ -6,17 +6,15 @@ import Modal from '../../components/UI/Modal/Modal';
 import Form from '../../components/Form/Form';
 import generator from "generate-password";
 import AdminLibraryList from "../../components/AdminLibraryList/AdminLibraryList";
-import userContext from "../../context/userContext";
 import withFilters from "../../utils/withFilters";
 import withTags from "../../utils/withTags";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import './adminLibrary.scss';
 
 const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
 
-function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags, fetchLibrary}) {
+function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags, fetchLibrary}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const $fileRef = React.createRef();
     const [ showModal, setShowModal ] = useState(false);
     const [ newFile, setFile ] = useState({
@@ -153,7 +151,8 @@ function AdminLibrary({loading, list, setTags, searchQuery, deleteDoc, uploadDoc
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
     list: state.libraryReducer.libraryList,
-    loading: state.libraryReducer.loading
+    loading: state.libraryReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: (showPerPage, searchQuery) => dispatch(fetchLibrary(showPerPage, searchQuery)),

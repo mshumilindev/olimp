@@ -2,9 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import {fetchLesson, updateLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
-import userContext from "../../context/userContext";
 import Breadcrumbs from "../../components/UI/Breadcrumbs/Breadcrumbs";
 import './adminLesson.scss';
 import Modal from "../../components/UI/Modal/Modal";
@@ -13,9 +12,8 @@ import { withRouter, Prompt } from 'react-router-dom';
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
-function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCoursesList, discardLesson}) {
+function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, allCoursesList, discardLesson}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
@@ -283,7 +281,8 @@ function AdminLesson({fetchLesson, updateLesson, params, lesson, loading, allCou
 const mapStateToProps = state => ({
     lesson: state.coursesReducer.lesson,
     loading: state.coursesReducer.loading,
-    allCoursesList: state.coursesReducer.coursesList
+    allCoursesList: state.coursesReducer.coursesList,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),

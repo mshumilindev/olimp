@@ -1,18 +1,16 @@
 import React, { useContext, useState } from 'react';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import UserPicker from '../UI/UserPicker/UserPicker';
 import CoursesPicker from '../UI/CoursesPicker/CoursesPicker';
 import {connect} from "react-redux";
 import AdminClassScheduleDay from './AdminClassScheduleDay';
-import userContext from "../../context/userContext";
 
-function AdminClassContent({content, loading, setContent, usersList}) {
+function AdminClassContent({user, content, loading, setContent, usersList}) {
     const { translate } = useContext(siteSettingsContext);
     const [ students, setStudents ] = useState(null);
     const [ courses, setCourses ] = useState(JSON.stringify([]));
     const [ schedule, setSchedule ] = useState(JSON.stringify([]));
-    const { user } = useContext(userContext);
 
     const parsedContent = JSON.parse(content);
 
@@ -125,6 +123,7 @@ function AdminClassContent({content, loading, setContent, usersList}) {
 
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
-    loading: state.usersReducer.loading
+    loading: state.usersReducer.loading,
+    user: state.authReducer.currentUser
 });
 export default connect(mapStateToProps)(AdminClassContent);

@@ -1,12 +1,11 @@
 import React, {useContext} from 'react';
 import {orderBy} from "natural-orderby";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import AdminTestingCourse from "./AdminTestingCourse";
+import { connect } from 'react-redux';
 
-export default function AdminTestingSubject({subjectItem, tests}) {
+function AdminTestingSubject({user, subjectItem, tests}) {
     const { lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="adminTesting__subject widget">
@@ -29,3 +28,11 @@ export default function AdminTestingSubject({subjectItem, tests}) {
         return subjectItem.coursesList.filter(courseItem => courseItem.teacher === user.id).filter(courseItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id && testItem.lesson.courseID === courseItem.id));
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(AdminTestingSubject);

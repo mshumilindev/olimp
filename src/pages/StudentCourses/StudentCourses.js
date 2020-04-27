@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import StudentCoursesItem from '../../components/StudentCourses/StudentCoursesItem';
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import './studentCourses.scss';

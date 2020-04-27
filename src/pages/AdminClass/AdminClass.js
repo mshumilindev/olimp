@@ -3,15 +3,13 @@ import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {fetchClass, updateClass} from "../../redux/actions/classesActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import Form from '../../components/Form/Form';
 import './adminClass.scss';
 import AdminClassContent from '../../components/AdminClassContent/AdminClassContent';
-import userContext from "../../context/userContext";
 
-function AdminClass({fetchClass, params, classData, updateClass, loading}) {
+function AdminClass({user, fetchClass, params, classData, updateClass, loading}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ classInfoFields, setClassInfoFields ] = useState(null);
     const [ classDescrFields, setClassDescrFields ] = useState(null);
     const [ classUpdated, setClassUpdated ] = useState(false);
@@ -228,7 +226,8 @@ function AdminClass({fetchClass, params, classData, updateClass, loading}) {
 }
 const mapStateToProps = state => ({
     classData: state.classesReducer.classData,
-    loading: state.classesReducer.loading
+    loading: state.classesReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchClass: classID => dispatch(fetchClass(classID)),

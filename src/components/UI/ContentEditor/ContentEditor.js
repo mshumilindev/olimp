@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import './contentEditor.scss';
-import {Preloader} from "../preloader";
+import Preloader from "../preloader";
 import generator from 'generate-password';
 import Modal from '../Modal/Modal';
 

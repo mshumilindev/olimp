@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import './adminClassesList.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import AdminClassesListItem from './AdminClassesListItem';
 import withData from "../../utils/withData";
 

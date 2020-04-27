@@ -1,14 +1,12 @@
 import React, { useEffect, useContext } from 'react';
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import { fetchChat } from '../../redux/actions/eventsActions';
 import { connect } from 'react-redux';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import '../../assets/scss/base/chatroom.scss';
-import userContext from "../../context/userContext";
 
-function Chatroom({events, params, fetchChat, loading, chat, chatError}) {
+function Chatroom({user, events, params, fetchChat, loading, chat, chatError}) {
     const { translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         fetchChat(params.chatID, user.id);
@@ -91,7 +89,8 @@ const mapStateToProps = state => {
         loading: state.eventsReducer.loading,
         chat: state.eventsReducer.chat,
         events: state.eventsReducer.events,
-        chatError: state.eventsReducer.chatError
+        chatError: state.eventsReducer.chatError,
+        user: state.authReducer.currentUser
     }
 };
 

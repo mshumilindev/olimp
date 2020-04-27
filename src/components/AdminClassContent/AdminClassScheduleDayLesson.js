@@ -1,10 +1,9 @@
 import React, {useContext} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
+import { connect } from 'react-redux';
 
-export default function AdminClassScheduleDayLesson({coursesList, quickRemoveLesson, lesson}) {
+function AdminClassScheduleDayLesson({user, coursesList, quickRemoveLesson, lesson}) {
     const { lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const currentSubject = coursesList.find(subject => subject.id === lesson.subject);
     const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
 
@@ -44,3 +43,11 @@ export default function AdminClassScheduleDayLesson({coursesList, quickRemoveLes
         </div>
     );
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(AdminClassScheduleDayLesson);

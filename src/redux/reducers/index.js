@@ -12,6 +12,7 @@ import siteSettingsReducer from './siteSettingsReducer';
 import notificationsReducer from './notificationsReducer';
 import eventsReducer from './eventsReducer';
 import testsReducer from "./testsReducer";
+import authReducer from "./authReducer";
 
 export default combineReducers({
     configReducer: configReducer,
@@ -26,5 +27,6 @@ export default combineReducers({
     siteSettingsReducer: siteSettingsReducer,
     notificationsReducer: notificationsReducer,
     eventsReducer: eventsReducer,
-    testsReducer: testsReducer
+    testsReducer: testsReducer,
+    authReducer: authReducer
 });

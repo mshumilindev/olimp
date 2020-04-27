@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import AdminPanelTeachers from '../../components/AdminPanel/AdminPanelTeachers';
 import AdminPanelStudents from '../../components/AdminPanel/AdminPanelStudents';
 import AdminPanelCourses from '../../components/AdminPanel/AdminPanelCourses';
@@ -9,10 +8,10 @@ import AdminPanelNotifications from '../../components/AdminPanel/AdminPanelNotif
 import Notifications from '../../components/Notifications/Notifications';
 import AdminPanelTeachersCourses from '../../components/AdminPanel/AdminPanelTeachersCourses';
 import './adminPanel.scss';
+import { connect } from 'react-redux';
 
-function AdminPanel({loading}) {
+function AdminPanel({user, loading}) {
     const { translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="adminDashboard">
@@ -68,4 +67,11 @@ function AdminPanel({loading}) {
         </div>
     )
 }
-export default AdminPanel;
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(AdminPanel);

@@ -7,11 +7,9 @@ import Form from "../Form/Form";
 import {updateDoc, downloadDoc} from "../../redux/actions/libraryActions";
 import {connect} from "react-redux";
 import classNames from "classnames";
-import userContext from "../../context/userContext";
 
-function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc, users, isCurrent}) {
+function AdminLibraryListItem({user, item, setTags, onDeleteDoc, loading, updateDoc, downloadDoc, users, isCurrent}) {
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ isUsed, setIsUsed ] = useState(false);
     const [ formUpdated, setFormUpdated ] = useState(false);
@@ -157,8 +155,14 @@ function AdminLibraryListItem({item, setTags, onDeleteDoc, loading, updateDoc, d
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
 const mapDispatchToProps = dispatch => ({
     updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
     downloadDoc: (ref, isNew) => dispatch(downloadDoc(ref, isNew))
 });
-export default connect(null, mapDispatchToProps)(AdminLibraryListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminLibraryListItem);

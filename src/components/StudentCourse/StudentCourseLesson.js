@@ -2,16 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import './studentLesson.scss';
 import {fetchLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Article from '../Article/Article';
-import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import {updateTest} from "../../redux/actions/testsActions";
 
-function StudentCourseLesson({params, lesson, loading, testsLoading, fetchLesson, allCoursesList, discardLesson, tests, updateTest}) {
+function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetchLesson, allCoursesList, discardLesson, tests, updateTest}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
     const [ startQuestions, setStartQuestions ] = useState(false);
     const [ answers, setAnswers ] = useState(null);
@@ -223,7 +221,8 @@ const mapStateToProps = state => ({
     lesson: state.coursesReducer.lesson,
     loading: state.coursesReducer.loading,
     tests: state.testsReducer.tests,
-    testsLoading: state.testsReducer.loading
+    testsLoading: state.testsReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),

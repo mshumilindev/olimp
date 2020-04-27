@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import {connect} from "react-redux";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
-import userContext from "../../context/userContext";
 
-function AdminPanelTeachersCourses({loading, usersList, allCoursesList}) {
+function AdminPanelTeachersCourses({user, loading, usersList, allCoursesList}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="widget">
@@ -77,6 +75,7 @@ function AdminPanelTeachersCourses({loading, usersList, allCoursesList}) {
 const mapStateToProps = state => ({
     allCoursesList: state.coursesReducer.coursesList,
     usersList: state.usersReducer.usersList,
-    loading: state.usersReducer.loading
+    loading: state.usersReducer.loading,
+    user: state.authReducer.currentUser
 });
 export default connect(mapStateToProps)(AdminPanelTeachersCourses);

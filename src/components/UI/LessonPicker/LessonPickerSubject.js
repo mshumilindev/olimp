@@ -2,11 +2,10 @@ import React, {useContext} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import LessonPickerCourse from "./LessonPickerCourse";
 import {orderBy} from "natural-orderby";
-import userContext from "../../../context/userContext";
+import { connect } from 'react-redux';
 
-export default function LessonPickerSubject({subject, setLesson, pickedLesson}) {
+function LessonPickerSubject({user, subject, setLesson, pickedLesson}) {
     const { lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="lessonPicker__subject">
@@ -31,3 +30,11 @@ export default function LessonPickerSubject({subject, setLesson, pickedLesson}) 
         </div>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(LessonPickerSubject);

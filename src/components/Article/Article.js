@@ -2,15 +2,14 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import classNames from "classnames";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import ReactPlayer from 'react-player';
 import MathJax from 'react-mathjax-preview'
 import Form from "../Form/Form";
-import userContext from "../../context/userContext";
+import { connect } from 'react-redux';
 
-export default function Article({content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
+function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
     const [ size, setSize ] = useState({width: 0, height: 0});
@@ -310,3 +309,11 @@ export default function Article({content, type, finishQuestions, loading, onBloc
         setComments(Object.assign([], newComments));
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(Article);

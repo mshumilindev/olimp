@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import {connect} from "react-redux";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import './nextSchedule.scss';

@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {createClass} from "../../redux/actions/classesActions";
 import generator from "generate-password";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 
 const AdminClassesList = React.lazy(() => import('../../components/AdminClassesList/AdminClassesList'));
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));

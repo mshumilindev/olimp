@@ -2,18 +2,16 @@ import React, {useContext, useState} from 'react';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import { connect } from 'react-redux';
 import ChatList from "../../components/ChatList/ChatList";
-import userContext from "../../context/userContext";
 import './adminChats.scss';
 import Modal from "../../components/UI/Modal/Modal";
 import Form from "../../components/Form/Form";
 import { generate } from "generate-password";
 import { updateEvent } from '../../redux/actions/eventsActions';
 import moment from "moment";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 
-function AdminChats({loading, events, usersList, updateEvent}) {
+function AdminChats({user, loading, events, usersList, updateEvent}) {
     const { translate } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
     const initialFormFields = [
         {
             type: 'block',
@@ -212,7 +210,8 @@ const mapStateToProps = state => {
     return {
         loading: state.eventsReducer.loading,
         events: state.eventsReducer.events,
-        usersList: state.usersReducer.usersList
+        usersList: state.usersReducer.usersList,
+        user: state.authReducer.currentUser
     }
 };
 

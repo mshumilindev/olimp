@@ -6,15 +6,13 @@ import { Link, withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { deleteEvent } from '../../redux/actions/eventsActions';
 import Confirm from "../UI/Confirm/Confirm";
-import userContext from "../../context/userContext";
 import classNames from 'classnames';
 
 moment.locale('uk');
 
-function ChatListItem({history, event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
+function ChatListItem({user, history, event, usersList, deleteEvent, mapEventToFormFields, noActions, isStudent}) {
     const { translate } = useContext(SiteSettingsContext);
     const [ showConfirmDelete, setShowConfirmDelete ] = useState(false);
-    const { user } = useContext(userContext);
 
     return (
         <div className={classNames('adminChats__event', {isActive: event.started})} key={event.id}>
@@ -88,7 +86,8 @@ function ChatListItem({history, event, usersList, deleteEvent, mapEventToFormFie
 
 const mapStateToProps = state => {
     return {
-        classesList: state.classesReducer.classesList
+        classesList: state.classesReducer.classesList,
+        user: state.authReducer.currentUser
     }
 };
 

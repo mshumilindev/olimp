@@ -1,17 +1,15 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import MainContainer from "../containers/configContainer";
 import AdminContainer from '../containers/adminContainer';
-import {Provider} from "react-redux";
-import {mainStore} from "../redux/stores/mainStore";
-import userContext from "../context/userContext";
+import {connect} from "react-redux";
 import { withRouter } from 'react-router-dom';
 import firebase from "../db/firestore";
+import { checkIfLoggedin } from '../redux/actions/authActions';
 
 const db = firebase.firestore();
 
 function Page(props) {
-    const { user } = useContext(userContext);
-    const {location, children, history} = props;
+    const {location, children, history, checkIfLoggedin, user} = props;
 
     let prevLocation = {};
     history.listen(location => {
@@ -23,41 +21,9 @@ function Page(props) {
         prevLocation = location;
     });
 
-    if ( localStorage.getItem('user') ) {
-        if ( !location.pathname.includes('chat') ) {
-            if ( user.role === 'admin' && !location.pathname.includes('admin') ) {
-                history.push('/admin');
-            }
-            else if ( user.role === 'teacher' && !location.pathname.includes('admin') ) {
-                history.push('/admin');
-            }
-            else if ( user.role === 'student' && location.pathname.includes('admin') ) {
-                history.push('/');
-            }
-            else if ( user.role === 'guest' && !location.pathname.includes('/guest') ) {
-                history.push('/guest');
-            }
-        }
-
-        const profileRef = db.collection('users').where('login', '==', user.login);
-        let profileCheckI = 0;
-        // checkProfileStatus();
-
-        function checkProfileStatus() {
-            profileCheckI ++;
-            profileRef.get().then(snapshot => {
-                if ( !snapshot.docs.length && profileCheckI < 10 ) {
-                    setTimeout(() => {
-                        checkProfileStatus();
-                    }, 1000);
-                }
-                else {
-                    if ( snapshot.docs[0] && snapshot.docs[0].data().status === 'suspended' ) {
-                        localStorage.removeItem('user');
-                        history.push('/suspended');
-                    }
-                }
-            });
+    if ( localStorage.getItem('token') ) {
+        if ( !user ) {
+            checkIfLoggedin(localStorage.getItem('token'));
         }
     }
     else {
@@ -67,41 +33,52 @@ function Page(props) {
     }
 
     useEffect(() => {
-        const unlisten = history.listen(location => {
-            if ( !localStorage.getItem('user') && !location.pathname.includes('/login') && !location.pathname.includes('/landing') ) {
-                const profileRef = db.collection('users').where('login', '==', user.login);
-
-                profileRef.get().then(snapshot => {
-                    if ( !snapshot.docs.length || snapshot.docs[0].data().status === 'suspended' ) {
-                        localStorage.removeItem('user');
-                        history.push('/suspended');
-                    }
-                });
+        if ( user ) {
+            if ( !location.pathname.includes('chat') ) {
+                if ( user.role === 'admin' && (!location.pathname.includes('admin') || location.pathname.includes('login') || location.pathname.includes('landing')) ) {
+                    history.push('/admin');
+                }
+                else if ( user.role === 'teacher' && (!location.pathname.includes('admin') || location.pathname.includes('login') || location.pathname.includes('landing')) ) {
+                    history.push('/admin');
+                }
+                else if ( user.role === 'student' && (location.pathname.includes('admin') || location.pathname.includes('login') || location.pathname.includes('landing')) ) {
+                    history.push('/');
+                }
+                else if ( user.role === 'guest' && (!location.pathname.includes('guest') || location.pathname.includes('login') || location.pathname.includes('landing')) ) {
+                    history.push('/guest');
+                }
             }
-        });
-        return () => {
-            unlisten();
         }
-    }, [history.location.key]);
+    }, [user]);
 
     return (
-        <Provider store={mainStore}>
-            {
-                localStorage.getItem('user') ?
-                    user.role === 'student' || user.role === 'guest' ?
-                        <MainContainer location={location} children={children}/>
-                        :
-                        user.role === 'admin' ?
-                            <AdminContainer location={location} children={children}/>
-                            :
-                            user.role === 'teacher' ?
-                                <AdminContainer location={location} children={children} isTeacher/>
-                                :
-                                null
+        user ?
+            user.role === 'student' || user.role === 'guest' ?
+                <MainContainer location={location} children={children}/>
+                :
+                user.role === 'admin' ?
+                    <AdminContainer location={location} children={children}/>
                     :
-                    children
-            }
-        </Provider>
+                    user.role === 'teacher' ?
+                        <AdminContainer location={location} children={children} isTeacher/>
+                        :
+                        null
+            :
+            location.pathname.includes('landing') || location.pathname.includes('login') ?
+                children
+                :
+                null
     )
 }
-export default withRouter(Page);
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+const mapDispatchToProps = dispatch => ({
+    checkIfLoggedin: (token) => dispatch(checkIfLoggedin(token))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Page));

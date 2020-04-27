@@ -4,17 +4,15 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import classNames from 'classnames';
 import {fetchLibrary} from "../../../redux/actions/libraryActions";
-import userContext from "../../../context/userContext";
 import { Scrollbars } from 'react-custom-scrollbars';
 import withFilters from "../../../utils/withFilters";
 
 const Modal = React.lazy(() => import('../Modal/Modal'));
 
-function LibraryPicker({fetchLibrary, multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
+function LibraryPicker({user, fetchLibrary, multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
     const [ selectedBooks, setSelectedBooks ] = useState(selectedList);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         if ( user.role === 'admin' ) {
@@ -221,7 +219,8 @@ function LibraryPicker({fetchLibrary, multiple, libraryList, addBooks, selectedL
 
 const mapStateToProps = state => ({
     libraryList: state.libraryReducer.libraryList,
-    loading: state.libraryReducer.loading
+    loading: state.libraryReducer.loading,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     fetchLibrary: (userID) => dispatch(fetchLibrary(userID))

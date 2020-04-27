@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {fetchStaticInfo, removePage, createPage} from "../../redux/actions/staticInfoActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import Confirm from '../../components/UI/Confirm/Confirm';
 import './adminPages.scss';
 import generator from "generate-password";

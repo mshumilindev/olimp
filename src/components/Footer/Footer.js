@@ -3,7 +3,7 @@ import './footer.scss';
 import {connect} from "react-redux";
 import {fetchStaticInfo} from "../../redux/actions/staticInfoActions";
 import {fetchContact} from "../../redux/actions/contactActions";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import Contact from '../../components/Contact/Contact';
 import '../../pages/StudentContact/studentContact.scss';
 import { Link } from 'react-router-dom';

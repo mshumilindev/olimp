@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './map.scss';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import GoogleMapReact from 'google-map-react';
 
 function MapContainer({address}) {

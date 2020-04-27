@@ -8,7 +8,7 @@ import AdminCoursesLesson from '../AdminCoursesLesson/AdminCoursesLesson';
 import UpdateModule from "../AdminCoursesActions/UpdateModule";
 import UpdateLesson from "../AdminCoursesActions/UpdateLesson";
 import {sortableContainer, sortableElement, arrayMove } from 'react-sortable-hoc';
-import {Preloader} from "../../UI/preloader";
+import Preloader from "../../UI/preloader";
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 

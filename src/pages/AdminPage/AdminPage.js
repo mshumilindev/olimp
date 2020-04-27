@@ -3,7 +3,7 @@ import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import {fetchPage, updatePage} from "../../redux/actions/staticInfoActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import ContentEditor from "../../components/UI/ContentEditor/ContentEditor";
 import Form from '../../components/Form/Form';
 

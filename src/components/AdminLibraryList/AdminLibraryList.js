@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import AdminLibaryListItem from './AdminLibraryListItem';
 import withPager from "../../utils/withPager";

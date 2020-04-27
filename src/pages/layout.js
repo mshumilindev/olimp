@@ -4,17 +4,17 @@ import StudentHeader from "../components/Header/StudentHeader";
 import StudentNav from "../components/Nav/StudentNav";
 import Footer from '../components/Footer/Footer';
 import SiteSettingsContext from "../context/siteSettingsContext";
-import userContext from "../context/userContext";
-import {Preloader} from "../components/UI/preloader";
+import Preloader from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
 import firebase from "../db/firestore";
 import moment from "moment";
 import { connect } from 'react-redux';
 import {fetchTests} from "../redux/actions/testsActions";
+import {fetchEventsParticipant} from "../redux/actions/eventsActions";
+import {checkIfLoggedin} from "../redux/actions/authActions";
 
-function Layout({children, location, fetchEventsParticipant, fetchTests}) {
+function Layout({user, children, location, fetchEventsParticipant, fetchTests, checkIfLoggedin}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         const db = firebase.firestore();
@@ -48,9 +48,17 @@ function Layout({children, location, fetchEventsParticipant, fetchTests}) {
     }, [location]);
 
     useEffect(() => {
-        fetchEventsParticipant(user.id, moment(moment().format('MM DD YYYY')).unix());
-        fetchTests(user.id);
+        if ( !user ) {
+            checkIfLoggedin(localStorage.getItem('token'));
+        }
     }, []);
+
+    useEffect(() => {
+        if ( user ) {
+            fetchEventsParticipant(user.id, moment(moment().format('MM DD YYYY')).unix());
+            fetchTests(user.id);
+        }
+    }, [user]);
 
     const studentNav = [
         {
@@ -107,6 +115,10 @@ function Layout({children, location, fetchEventsParticipant, fetchTests}) {
 
     const docTitle = siteName + ' | ' + (user.role === 'student' ? (currentPage ? translate(currentPage) : 'Завантаження...') : translate('guest'));
 
+    if ( !user ) {
+        return null;
+    }
+
     return (
         <DocumentTitle title={ docTitle }>
             {
@@ -155,8 +167,16 @@ function Layout({children, location, fetchEventsParticipant, fetchTests}) {
     );
 }
 
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
 const mapDispatchToProps = dispatch => ({
-    fetchTests: (userID) => dispatch(fetchTests(userID))
+    fetchEventsParticipant: (userID, date) => dispatch(fetchEventsParticipant(userID, date)),
+    fetchTests: (userID) => dispatch(fetchTests(userID)),
+    checkIfLoggedin: (token) => dispatch(checkIfLoggedin(token))
 });
 
-export default connect(null, mapDispatchToProps)(Layout);
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);

@@ -4,15 +4,13 @@ import Modal from "../Modal/Modal";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import LessonPickerSubject from "./LessonPickerSubject";
 import {orderBy} from "natural-orderby";
-import userContext from "../../../context/userContext";
 import './lessonPicker.scss';
 import {Scrollbars} from "react-custom-scrollbars";
 
-function LessonPicker({coursesList, setLesson, selectedLesson}) {
+function LessonPicker({user, coursesList, setLesson, selectedLesson}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showModal, setShowModal ] = useState(false);
     const [ pickedLesson, setPickedLesson ] = useState(selectedLesson ? selectedLesson : null);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         if ( !showModal ) {
@@ -106,7 +104,8 @@ function LessonPicker({coursesList, setLesson, selectedLesson}) {
 
 const mapStateToProps = state => {
     return {
-        coursesList: state.coursesReducer.coursesList
+        coursesList: state.coursesReducer.coursesList,
+        user: state.authReducer.currentUser
     }
 };
 

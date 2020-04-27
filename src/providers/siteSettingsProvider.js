@@ -6,7 +6,7 @@ const db = firebase.firestore();
 
 // === Methods must be moved to redux, properties must be moved to context to make stateless components
 
-export default class SiteSettingsProvider extends React.Component{
+export default class SiteSettingsProvider extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -27,8 +27,8 @@ export default class SiteSettingsProvider extends React.Component{
                 return this.transliterize(value);
             },
             // === Need to optimize model and formfields functions, replace it with a single function
-            getUserFormFields: (user, passwordAction, isStudent) => {
-                return this.getUserFormFields(user, passwordAction, isStudent);
+            getUserFormFields: (currentUser, user, passwordAction, isStudent) => {
+                return this.getUserFormFields(currentUser, user, passwordAction, isStudent);
             },
             getUserModel: (role, id) => {
                 return this.getUserModel(role, id);
@@ -299,9 +299,8 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
-    getCourseFields(course) {
+    getCourseFields(currentUser, course) {
         const { translate } = this.state;
-        const currentUser = JSON.parse(localStorage.getItem('user'));
 
         return [
             {
@@ -492,7 +491,7 @@ export default class SiteSettingsProvider extends React.Component{
         }
     }
 
-    getUserFormFields(user, passwordAction, isStudent) {
+    getUserFormFields(currentUser, user, passwordAction, isStudent) {
         const { translate } = this.state;
 
         // === Need to move this to json file
@@ -552,7 +551,7 @@ export default class SiteSettingsProvider extends React.Component{
                         value: user ? user.status : '',
                         checked: 'active',
                         unchecked: 'suspended',
-                        readonly: user.id === JSON.parse(localStorage.getItem('user')).id
+                        readonly: user.id === currentUser.id
                     },
                 ]
             },
@@ -564,7 +563,7 @@ export default class SiteSettingsProvider extends React.Component{
                 value: user ? user.canSeeGuests : '',
                 checked: true,
                 unchecked: false,
-                hidden: JSON.parse(localStorage.getItem('user')).role !== 'admin'
+                hidden: currentUser.role !== 'admin'
             },
             {
                 type: 'tabs',

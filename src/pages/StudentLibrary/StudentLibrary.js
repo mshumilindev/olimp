@@ -1,16 +1,14 @@
 import React, {useContext, useEffect} from 'react';
 import { connect } from 'react-redux';
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import { fetchClass } from '../../redux/actions/classesActions';
 import StudentLibraryList from "../../components/StudentLibraryList/StudentLibraryList";
 import './studentLibrary.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentLibrary({ loading, libraryList, classData, fetchClass }) {
+function StudentLibrary({ user, loading, libraryList, classData, fetchClass }) {
     const { translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     useEffect(() => {
         if ( user.class ) {
@@ -43,7 +41,8 @@ const mapStateToProps = state => {
     return {
         libraryList: state.libraryReducer.libraryList,
         loading: state.libraryReducer.loading,
-        classData: state.classesReducer.classData
+        classData: state.classesReducer.classData,
+        user: state.authReducer.currentUser
     }
 };
 

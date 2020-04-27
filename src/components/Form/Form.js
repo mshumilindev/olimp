@@ -1,21 +1,20 @@
-import React, {useRef, useState, useContext, useEffect} from 'react';
+import React, {useRef, useState, useContext} from 'react';
 import './form.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
 import CustomSelect from '../UI/CustomSelect/CustomSelect';
-import { Preloader } from '../UI/preloader';
+import Preloader from '../UI/preloader';
 import TextTooltip from '../UI/TextTooltip/TextTooltip';
 import Tabs from '../UI/Tabs/Tabs';
 import Resizer from 'react-image-file-resizer';
 import UserPicker from "../UI/UserPicker/UserPicker";
 import LibraryPicker from "../UI/LibraryPicker/LibraryPicker";
-import userContext from "../../context/userContext";
 import Datepicker from "../Datepicker/Datepicker";
 import LessonPicker from "../UI/LessonPicker/LessonPicker";
 import {Editor} from "@tinymce/tinymce-react";
-import MathJax from 'react-mathjax-preview';
+import { connect } from 'react-redux';
 
-export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
+function Form({user, fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
     const editorToolbar = ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry |image'];
 
     const editorConfig = {
@@ -38,7 +37,6 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
     };
 
     const $form = useRef(null);
-    const { user } = useContext(userContext);
     const [ hasErrors, setHasErrors ] = useState(false);
     const { translate } = useContext(SiteSettingsContext);
     const [ showPassword, setShowPassword ] = useState(false);
@@ -655,3 +653,11 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         }
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(Form);

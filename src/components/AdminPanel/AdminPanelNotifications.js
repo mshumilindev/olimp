@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {connect} from "react-redux";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from "../UI/Modal/Modal";
 import Form from "../Form/Form";

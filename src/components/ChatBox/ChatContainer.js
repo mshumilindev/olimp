@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import Jitsi from "./jitsi";
-import userContext from "../../context/userContext";
 import Form from "../Form/Form";
 import siteSettingsContext from "../../context/siteSettingsContext";
+import { connect } from 'react-redux';
 
-export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, setUsersLength, onDisplayNameChange}) {
+function ChatContainer({user, chat, usersList, setIsFullScreen, setIsHidden, muteChat, shareScreen, setShareScreen, setUsersLength, onDisplayNameChange}) {
     const [ organizerChatID, setOrganizerChatID ] = useState(null);
     const $localTracksContainer = useRef(null);
     const $remoteTracksContainer = useRef(null);
@@ -12,7 +12,6 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
     const $mainContainer = useRef(null);
     const [ videoDevices, setVideoDevices ] = useState(null);
     const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(localStorage.getItem('videoDevice') ? JSON.parse(localStorage.getItem('videoDevice')) : null);
-    const { user } = useContext(userContext);
     const { translate } = useContext(siteSettingsContext);
     let jitsi = new Jitsi();
     const [ classes, setClasses ] = useState('chatroom__remoteTracks');
@@ -168,3 +167,11 @@ export default function ChatContainer({chat, usersList, setIsFullScreen, setIsHi
         });
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(ChatContainer);

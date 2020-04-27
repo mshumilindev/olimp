@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import moment from "moment";
 import {orderBy} from "natural-orderby";
 import classNames from "classnames";

@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import {updateTranslation} from "../../redux/actions/translationsActions";
 import {setUpdates} from "../../redux/actions/updatesActions";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 
 const AdminTranslationsList = React.lazy(() => import('../../components/AdminTranslationsList/AdminTranslationsList'));
 

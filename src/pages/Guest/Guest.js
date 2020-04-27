@@ -1,11 +1,10 @@
 import React, {useContext} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import './guest.scss';
+import { connect } from 'react-redux';
 
-export default function Guest() {
+function Guest({user}) {
     const { translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="guestPage">
@@ -19,3 +18,11 @@ export default function Guest() {
         </div>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(Guest);

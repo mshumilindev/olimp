@@ -7,7 +7,6 @@ import {connect} from "react-redux";
 import classNames from 'classnames';
 import UpdateSubject from '../AdminCoursesActions/UpdateSubject';
 import UpdateCourse from '../AdminCoursesActions/UpdateCourse';
-import userContext from "../../../context/userContext";
 import { orderBy } from 'natural-orderby';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
@@ -15,9 +14,8 @@ import { compose } from 'redux';
 const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
 const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
 
-function AdminCoursesSubject({loading, subject, params, fetchCoursesList, deleteSubject, location, subjectCoursesList}) {
+function AdminCoursesSubject({user, loading, subject, params, fetchCoursesList, deleteSubject, location, subjectCoursesList}) {
     const { lang, translate } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ showUpdateSubject, setShowUpdateSubject ] = useState(false);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -132,7 +130,8 @@ function AdminCoursesSubject({loading, subject, params, fetchCoursesList, delete
 
 const mapStateToProps = state => {
     return {
-        subjectCoursesList: state.coursesReducer.subjectCoursesList
+        subjectCoursesList: state.coursesReducer.subjectCoursesList,
+        user: state.authReducer.currentUser
     }
 };
 

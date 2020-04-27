@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Modal from "../../components/UI/Modal/Modal";
 import firebase from "firebase";
 import {orderBy} from "natural-orderby";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Article from "../../components/Article/Article";
 import Form from "../../components/Form/Form";

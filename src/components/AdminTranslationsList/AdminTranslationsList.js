@@ -1,6 +1,6 @@
 import React from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../UI/preloader";
+import Preloader from "../UI/preloader";
 import AdminTranslationsListItem from './AdminTranslationsListItem';
 import './adminTranslationsList.scss';
 import withPager from "../../utils/withPager";

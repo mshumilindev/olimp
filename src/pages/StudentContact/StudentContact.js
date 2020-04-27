@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {fetchContact} from "../../redux/actions/contactActions";
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import './studentContact.scss';
 import Contact from '../../components/Contact/Contact';
 import Map from '../../components/Map/Map';

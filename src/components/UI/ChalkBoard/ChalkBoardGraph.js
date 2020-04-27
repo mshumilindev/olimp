@@ -1,10 +1,9 @@
-import React, {useRef, useState, useEffect, useContext} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import CanvasDraw from 'react-canvas-draw';
-import userContext from "../../../context/userContext";
+import { connect } from 'react-redux';
 
-export default function ChalkBoardGraph ({chat, saveBoard}) {
+function ChalkBoardGraph({user, chat, saveBoard}) {
     const $canvas = useRef(null);
-    const { user } = useContext(userContext);
     const [ canvasConfig, setCanvasConfig ] = useState({
         immediateLoading: true,
         onChange: handleChalkBoard,
@@ -50,3 +49,11 @@ export default function ChalkBoardGraph ({chat, saveBoard}) {
         saveBoard(value.getSaveData());
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(ChalkBoardGraph);

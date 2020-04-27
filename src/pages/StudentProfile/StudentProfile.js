@@ -2,17 +2,15 @@ import React, { useContext, useState, useEffect } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { connect } from "react-redux";
 import {fetchProfile, updateUser} from '../../redux/actions/usersActions';
-import userContext from "../../context/userContext";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import Form from '../../components/Form/Form';
 import Profile from '../../components/Profile/Profile';
 import generator from "generate-password";
 import './studentProfile.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentProfile({profile, fetchProfile, params, loading, classData, allCoursesList, updateUser}) {
+function StudentProfile({user, profile, fetchProfile, params, loading, classData, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
     const [ profileUpdated, setProfileUpdated ] = useState(false);
     const [ formFields, setFormFields ] = useState(null);
     const [ currentUser, setCurrentUser ] = useState(JSON.stringify(null));
@@ -165,7 +163,7 @@ function StudentProfile({profile, fetchProfile, params, loading, classData, allC
 
     function getUserFields(newProfile) {
         const useProfile = newProfile || JSON.parse(currentUser);
-        const formFields = getUserFormFields(useProfile, generatePassword, true);
+        const formFields = getUserFormFields(user, useProfile, generatePassword, true);
 
         if ( useProfile.role === 'student' && classData ) {
             formFields.splice(2, 0, insertClass());
@@ -239,7 +237,8 @@ const mapStateToProps = state => ({
     loading: state.usersReducer.loading,
     classData: state.classesReducer.classData,
     allCoursesList: state.coursesReducer.coursesList,
-    usersList: state.usersReducer.usersList
+    usersList: state.usersReducer.usersList,
+    user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
     updateUser: (id, data) => dispatch(updateUser(id, data)),

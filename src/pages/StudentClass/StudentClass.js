@@ -1,15 +1,13 @@
 import React, { useContext } from 'react';
 import {connect} from "react-redux";
-import {Preloader} from "../../components/UI/preloader";
+import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import './studentClass.scss';
 import Notifications from "../../components/Notifications/Notifications";
 
-function StudentClass({classData, allCoursesList, usersList}) {
+function StudentClass({user, classData, allCoursesList, usersList}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const { user } = useContext(userContext);
 
     return (
         <div className="studentClass">
@@ -155,7 +153,8 @@ function StudentClass({classData, allCoursesList, usersList}) {
 const mapStateToProps = state => ({
     classData: state.classesReducer.classData,
     allCoursesList: state.coursesReducer.coursesList,
-    usersList: state.usersReducer.usersList
+    usersList: state.usersReducer.usersList,
+    user: state.authReducer.currentUser
 });
 
 export default connect(mapStateToProps)(StudentClass);
