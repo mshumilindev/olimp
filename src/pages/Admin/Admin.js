@@ -125,12 +125,6 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             url: '/admin-info/videochats',
             icon: 'fa fa-info',
             name: 'info'
-        },
-        {
-            id: 14,
-            url: '/admin-updates',
-            icon: 'fa fa-list-ol',
-            name: 'updates'
         }
     ];
 
@@ -194,12 +188,6 @@ export default function Admin({children, location, params, isTeacher, fetchEvent
             url: '/admin-info/videochats',
             icon: 'fa fa-info',
             name: 'info'
-        },
-        {
-            id: 12,
-            url: '/admin-updates',
-            icon: 'fa fa-list-ol',
-            name: 'updates'
         }
     ];
 

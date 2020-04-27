@@ -181,6 +181,10 @@ function AdminChats({loading, events, usersList, updateEvent}) {
 
     function onUpdateEvent() {
         let newEvent = {};
+
+        const organizerField = formFields.find(item => item.id === 'block_organizer').children[0];
+        const participantsField = formFields.find(item => item.id === 'block_participants').children[0];
+
         if ( !showEditModal.id ) {
             newEvent.id = generate({
                 length: 20,
@@ -190,8 +194,8 @@ function AdminChats({loading, events, usersList, updateEvent}) {
         else {
             newEvent.id = showEditModal.id;
         }
-        newEvent.organizer = formFields.find(item => item.id === 'block_organizer').children[0].value;
-        newEvent.participants = formFields.find(item => item.id === 'block_participants').children[0].value;
+        newEvent.organizer = organizerField.value;
+        newEvent.participants = typeof participantsField.value === 'object' ? participantsField.value : [participantsField.value];
         if ( formFields.find(item => item.id === 'lesson').children[0].value ) {
             newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
         }

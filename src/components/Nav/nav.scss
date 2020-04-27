@@ -27,6 +27,19 @@ $navIndent: 20px;
   &_logo {
     max-width: 100%;
   }
+  &__collapse {
+    border-top: 1px solid $lightGreyColor;
+    margin: 0 #{-$navIndent};
+    padding: $navIndent;
+    &-inner {
+      cursor: pointer;
+      color: $baseColor;
+      transition: color .15s ease-in-out;
+      &:hover {
+        color: $linkHoverColor;
+      }
+    }
+  }
   &_item {
     margin: $navIndent 0;
   }

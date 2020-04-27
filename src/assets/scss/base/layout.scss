@@ -176,3 +176,27 @@
     visibility: visible;
   }
 }
+
+.isNavCollapsed {
+  .main--nav {
+    width: $navCollapsedWidth;
+    [class$="_text"] {
+      display: none;
+    }
+    i {
+      margin-right: 0;
+    }
+  }
+  .page {
+    padding-left: #{$navCollapsedWidth + $pageIndent};
+  }
+  .header {
+    left: $navCollapsedWidth;
+  }
+  .section__title-holder {
+    left: $navCollapsedWidth;
+  }
+  .filters {
+    left: $navCollapsedWidth;
+  }
+}
