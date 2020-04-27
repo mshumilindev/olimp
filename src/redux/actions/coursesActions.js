@@ -150,7 +150,7 @@ export function fetchCoursesList(subjectID, userID) {
         if ( unsubscribe ) {
             unsubscribe();
         }
-        unsubscribe = courseListRef.onSnapshot(snapshot => {
+        unsubscribe = courseListRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
             const modulesList = [];
             snapshot.docs.forEach(doc => {
                 modulesList.push({
@@ -186,7 +186,7 @@ export function fetchLessons(subjectID, courseID, moduleID) {
 
     return dispatch => {
         dispatch(lessonsBegin());
-        return lessonsRef.onSnapshot(snapshot => {
+        return lessonsRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
             const lessonsList = [];
 
             snapshot.docs.forEach(doc => {

@@ -41,7 +41,7 @@ function Page(props) {
 
         const profileRef = db.collection('users').where('login', '==', user.login);
         let profileCheckI = 0;
-        checkProfileStatus();
+        // checkProfileStatus();
 
         function checkProfileStatus() {
             profileCheckI ++;

@@ -11,7 +11,7 @@ export function fetchUsers(role) {
 
     return dispatch => {
         dispatch(fetchUsersBegin());
-        return usersCollection.onSnapshot(snapshot => {
+        return usersCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
             const usersList = [];
 
             snapshot.docs.forEach(doc => {
