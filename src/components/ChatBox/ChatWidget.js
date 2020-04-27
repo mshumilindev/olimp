@@ -672,16 +672,18 @@ function ChatWidget({location, history, events, usersList, fetchChat, chat, setC
     }
 
     function checkForActiveChat() {
-        if ( events.all ) {
-            return events.all.find(eventItem => eventItem.started) ? events.all.find(eventItem => eventItem.started).id : null;
+        let chatID = null;
+
+        if ( events.all && events.all.find(eventItem => eventItem.started) ) {
+            chatID = events.all.find(eventItem => eventItem.started).id;
         }
-        if ( events.organizer ) {
-            return events.organizer.find(eventItem => eventItem.started) ? events.organizer.find(eventItem => eventItem.started).id : null;
+        if ( events.organizer && events.organizer.find(eventItem => eventItem.started) ) {
+            chatID = events.organizer.find(eventItem => eventItem.started).id;
         }
-        if ( events.participant ) {
-            return events.participant.find(eventItem => eventItem.started) ? events.participant.find(eventItem => eventItem.started).id : null;
+        if ( events.participant && events.participant.find(eventItem => eventItem.started) ) {
+            chatID = events.participant.find(eventItem => eventItem.started).id;
         }
-        return null;
+        return chatID;
     }
 
     function handleOpenLesson() {

@@ -9,12 +9,11 @@ import userContext from "../../context/userContext";
 import { Link } from 'react-router-dom';
 import {updateTest} from "../../redux/actions/testsActions";
 
-function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userLoading, discardLesson, tests, updateTest}) {
+function StudentCourseLesson({params, lesson, loading, testsLoading, fetchLesson, allCoursesList, discardLesson, tests, updateTest}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
     const [ currentCourse, setCurrentCourse ] = useState(null);
     const [ startQuestions, setStartQuestions ] = useState(false);
-    const [ currentUser, setCurrentUser ] = useState(null);
     const [ answers, setAnswers ] = useState(null);
     const [ allAnswersGiven, setAllAnswersGiven ] = useState(false);
 
@@ -26,13 +25,14 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     }, []);
 
     useEffect(() => {
-        if ( lesson && lesson['QA'] && !answers ) {
+        if ( lesson && lesson['QA'] && !answers && tests ) {
+            let blocks = [];
+
             if ( getTest() ) {
-                setAnswers(Object.assign({}, {blocks: getTest().blocks}));
+                blocks = Object.assign([], JSON.parse(JSON.stringify(getTest().blocks)));
             }
-            else {
-                setAnswers(Object.assign({}, {blocks: []}));
-            }
+
+            setAnswers(Object.assign({}, {blocks: blocks}));
         }
     }, [lesson]);
 
@@ -52,16 +52,6 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     useEffect(() => {
         fetchLesson(params.subjectID, params.courseID, params.moduleID, params.lessonID);
     }, [params]);
-
-    useEffect(() => {
-        if ( !currentUser ) {
-            setCurrentUser(JSON.stringify(user));
-        }
-    }, [user]);
-
-    useEffect(() => {
-        setStartQuestions(false);
-    }, [currentUser]);
 
     return (
         <div className="studentLesson">
@@ -123,12 +113,18 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                         :
                         lesson && lesson.QA.length && (!getTest() || !getTest().score) ?
                             <div className="content__title-actions">
-                                <span className="btn btn_primary" onClick={saveProgress}>
+                                <span className="btn btn_primary" disabled={!isTestUpdated()} onClick={saveProgress}>
                                     { translate('save') }
                                 </span>
                             </div>
                             :
                             null
+                }
+                {
+                    loading || testsLoading ?
+                        <Preloader size={50}/>
+                        :
+                        null
                 }
             </div>
             {
@@ -170,7 +166,7 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
                 }
                 {
                     lesson.QA.length && startQuestions ?
-                        <Article content={QABlocks} type={'questions'} answers={answers} setAnswers={setAnswers} finishQuestions={finishQuestions} loading={userLoading} allAnswersGiven={allAnswersGiven} setAllAnswersGiven={setAllAnswersGiven} readonly={getTest() && getTest().score}/>
+                        <Article content={QABlocks} type={'questions'} answers={answers} setAnswers={setAnswers} finishQuestions={finishQuestions} loading={loading} allAnswersGiven={allAnswersGiven} setAllAnswersGiven={setAllAnswersGiven} readonly={getTest() && getTest().score}/>
                         :
                         null
                 }
@@ -199,27 +195,35 @@ function StudentCourseLesson({params, lesson, fetchLesson, allCoursesList, userL
     }
 
     function saveProgress() {
-        const newAnswers = {
-            lesson: params,
-            blocks: answers.blocks,
-            userID: user.id,
-            isSent: false
-        };
+        if ( isTestUpdated() ) {
+            const newAnswers = {
+                lesson: params,
+                blocks: answers.blocks,
+                userID: user.id,
+                isSent: false
+            };
 
-        updateTest(newAnswers);
+            updateTest(newAnswers);
+        }
     }
 
     function getTest() {
-        return tests.find(item => item.id === params.lessonID + '_' + user.id);
+        if ( !tests || !tests.length ) {
+            return null;
+        }
+        return tests.find(item => item.lesson.subjectID === params.subjectID && item.lesson.courseID === params.courseID && item.lesson.moduleID === params.moduleID && item.lesson.lessonID === params.lessonID && item.userID === user.id);
+    }
+
+    function isTestUpdated() {
+        return !getTest() || !getTest().blocks || JSON.stringify(getTest().blocks) !== JSON.stringify(answers.blocks);
     }
 }
 
 const mapStateToProps = state => ({
     lesson: state.coursesReducer.lesson,
     loading: state.coursesReducer.loading,
-    userLoading: state.usersReducer.loading,
-    usersList: state.usersReducer.usersList,
-    tests: state.testsReducer.tests
+    tests: state.testsReducer.tests,
+    testsLoading: state.testsReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
     fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),

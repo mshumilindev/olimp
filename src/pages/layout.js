@@ -9,8 +9,10 @@ import {Preloader} from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
 import firebase from "../db/firestore";
 import moment from "moment";
+import { connect } from 'react-redux';
+import {fetchTests} from "../redux/actions/testsActions";
 
-export default function Layout({children, location, fetchEventsParticipant}) {
+function Layout({children, location, fetchEventsParticipant, fetchTests}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -47,6 +49,7 @@ export default function Layout({children, location, fetchEventsParticipant}) {
 
     useEffect(() => {
         fetchEventsParticipant(user.id, moment(moment().format('MM DD YYYY')).unix());
+        fetchTests(user.id);
     }, []);
 
     const studentNav = [
@@ -151,3 +154,9 @@ export default function Layout({children, location, fetchEventsParticipant}) {
         </DocumentTitle>
     );
 }
+
+const mapDispatchToProps = dispatch => ({
+    fetchTests: (userID) => dispatch(fetchTests(userID))
+});
+
+export default connect(null, mapDispatchToProps)(Layout);

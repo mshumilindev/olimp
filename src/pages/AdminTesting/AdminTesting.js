@@ -8,7 +8,7 @@ import AdminTestingSubject from "./AdminTestingSubject";
 import './adminTesting.scss';
 import {fetchTests} from "../../redux/actions/testsActions";
 
-function AdminTesting({loading, tests, coursesList}) {
+function AdminTesting({coursesList, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const { user } = useContext(userContext);
 
@@ -20,22 +20,16 @@ function AdminTesting({loading, tests, coursesList}) {
                         <i className={'content_title-icon fas fa-clipboard-check'} />
                         { translate('testing') }
                     </h2>
-                    {
-                        loading ?
-                            <Preloader size={60}/>
-                            :
-                            null
-                    }
                 </div>
                 <div className="grid">
                     <div className="grid_col col-12">
                         {
-                            loading || !tests || !coursesList ?
+                            !coursesList || !tests ?
                                 <Preloader />
                                 :
                                 filterCourses().length ?
                                     <div className="adminTesting__subjectsList">
-                                        { filterCourses().map(subjectItem => <AdminTestingSubject subjectItem={subjectItem} tests={tests} key={subjectItem.id} />) }
+                                        { filterCourses().map(subjectItem => <AdminTestingSubject subjectItem={subjectItem} key={subjectItem.id} tests={tests} />) }
                                     </div>
                                     :
                                     <div className="nothingFound">
@@ -55,9 +49,8 @@ function AdminTesting({loading, tests, coursesList}) {
 
 const mapStateToProps = state => {
     return {
-        loading: state.testsReducer.loading,
-        tests: state.testsReducer.tests,
-        coursesList: state.coursesReducer.coursesList
+        coursesList: state.coursesReducer.coursesList,
+        tests: state.testsReducer.tests
     }
 };
 

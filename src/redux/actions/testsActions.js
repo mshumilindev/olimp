@@ -1,9 +1,14 @@
 import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
-const testsRef = db.collection('tests');
 
-export function fetchTests() {
+export function fetchTests(userID) {
+    let testsRef = db.collection('tests');
+
+    if ( userID ) {
+        testsRef = testsRef.where('userID', '==', userID);
+    }
+
     return dispatch => {
         dispatch(testsBegin());
         testsRef.onSnapshot(snapshot => {
@@ -22,9 +27,10 @@ export function fetchTests() {
 }
 
 export function updateTest(newTest) {
-    const id = newTest.lesson.lessonID + '_' + newTest.userID;
+    const id = newTest.lesson.subjectID + '_' + newTest.lesson.courseID + '_' + newTest.lesson.moduleID + '_' + newTest.lesson.lessonID + '_' + newTest.userID;
 
     return dispatch => {
+        dispatch(testsBegin());
         const testItemRef = db.collection('tests').doc(id);
 
         testItemRef.set({

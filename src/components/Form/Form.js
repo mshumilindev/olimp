@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, {useRef, useState, useContext, useEffect} from 'react';
 import './form.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
@@ -13,9 +13,10 @@ import userContext from "../../context/userContext";
 import Datepicker from "../Datepicker/Datepicker";
 import LessonPicker from "../UI/LessonPicker/LessonPicker";
 import {Editor} from "@tinymce/tinymce-react";
+import MathJax from 'react-mathjax-preview';
 
 export default function Form({fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
-    const editorToolbar = ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];
+    const editorToolbar = ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry |image'];
 
     const editorConfig = {
         menubar: false,
@@ -30,22 +31,10 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
         paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
         paste_retain_style_properties: "all",
         fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
-        toolbar: editorToolbar,
-    };
-
-    const formulaToolbar = ['tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
-
-    const formulaConfig = {
-        menubar: false,
-        language: 'uk',
-        max_height: 550,
         external_plugins: {
             'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
         },
-        plugins: [
-            'autoresize'
-        ],
-        toolbar: formulaToolbar,
+        toolbar: editorToolbar,
     };
 
     const $form = useRef(null);
@@ -239,7 +228,7 @@ export default function Form({fields, heading, setFieldValue, formAction, formEr
                         <Editor
                             initialValue={field.value}
                             onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={formulaConfig}
+                            init={{...editorConfig, placeholder: field.placeholder}}
                             apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>

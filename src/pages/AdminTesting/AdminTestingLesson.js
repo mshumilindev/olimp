@@ -16,8 +16,8 @@ function AdminTestingLesson({lesson, tests, usersList}) {
                 {
                     tests.length ?
                         <>
-                            { tests.filter(testItem => testItem.score).map(test => <AdminTestingTest test={test} key={test.id} userItem={usersList.filter(userItem => userItem.role === 'student' && userItem.id === test.userID)[0]} lesson={lesson} />) }
-                            { tests.filter(testItem => !testItem.score).map(test => <AdminTestingTest test={test} key={test.id} userItem={usersList.filter(userItem => userItem.role === 'student' && userItem.id === test.userID)[0]} lesson={lesson} />) }
+                            { tests.filter(testItem => testItem.isSent !== false && testItem.score).map(test => <AdminTestingTest test={test} key={test.id} userItem={usersList.filter(userItem => userItem.role === 'student' && userItem.id === test.userID)[0]} lesson={lesson} />) }
+                            { tests.filter(testItem => testItem.isSent !== false && !testItem.score).map(test => <AdminTestingTest test={test} key={test.id} userItem={usersList.filter(userItem => userItem.role === 'student' && userItem.id === test.userID)[0]} lesson={lesson} />) }
                         </>
                         :
                         <div className="adminTesting__test no-test">

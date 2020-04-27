@@ -26,6 +26,6 @@ export default function AdminTestingSubject({subjectItem, tests}) {
     );
 
     function filterCourses() {
-        return subjectItem.coursesList.filter(courseItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id && testItem.lesson.courseID === courseItem.id));
+        return subjectItem.coursesList.filter(courseItem => courseItem.teacher === user.id).filter(courseItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id && testItem.lesson.courseID === courseItem.id));
     }
 }
