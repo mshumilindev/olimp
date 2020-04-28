@@ -57,7 +57,7 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
                                 null
                                 :
                                 <div className="contentEditor__block-text-placeholder">
-                                    { translate('enter_text') }
+                                    { translate('enter_formula') }
                                 </div>
                         }
                     </div>
@@ -91,7 +91,9 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
             setShowEditor(true);
         }
         else {
-            setShowEditor(false);
+            if ( !e.target.classList.contains('wrs_stack') && !e.target.closest('.wrs_stack') ) {
+                setShowEditor(false);
+            }
         }
     }
 
