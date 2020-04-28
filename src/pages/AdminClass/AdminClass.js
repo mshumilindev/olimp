@@ -2,90 +2,34 @@ import React, { useContext, useState, useEffect } from 'react';
 import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {fetchClass, updateClass} from "../../redux/actions/classesActions";
+import {fetchClass, updateClass, discardClass} from "../../redux/actions/classesActions";
 import Preloader from "../../components/UI/preloader";
-import Form from '../../components/Form/Form';
 import './adminClass.scss';
 import AdminClassContent from '../../components/AdminClassContent/AdminClassContent';
+import AdminClassInfo from "./AdminClassInfo";
+import AdminClassDescr from "./AdminClassDescr";
+import AdminClassCurator from "./AdminClassCurator";
 
-function AdminClass({user, fetchClass, params, classData, updateClass, loading}) {
+function AdminClass({user, fetchClass, params, classData, updateClass, loading, discardClass}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const [ classInfoFields, setClassInfoFields ] = useState(null);
-    const [ classDescrFields, setClassDescrFields ] = useState(null);
     const [ classUpdated, setClassUpdated ] = useState(false);
-    const [ initialCurrentClass, setInitialCurrentClass ] = useState(null);
     const [ currentClass, setCurrentClass ] = useState(null);
 
-    if ( !classData || classData.id !== params.classID ) {
+    useEffect(() => {
         fetchClass(params.classID);
-    }
-    else {
-        if ( !classInfoFields ) {
-            setClassInfoFields(JSON.stringify([
-                {
-                    value: classData.title.ua,
-                    id: 'title_ua',
-                    placeholder: translate('title') + ' ' + translate('in_ua'),
-                    type: 'text',
-                    updated: false
-                },
-                {
-                    value: classData.title.ru,
-                    id: 'title_ru',
-                    placeholder: translate('title') + ' ' + translate('in_ru'),
-                    type: 'text',
-                    updated: false
-                },
-                {
-                    value: classData.title.en,
-                    id: 'title_en',
-                    placeholder: translate('title') + ' ' + translate('in_en'),
-                    type: 'text',
-                    updated: false
-                }
-            ]));
+
+        return () => {
+            discardClass();
+            setCurrentClass(null);
+            setClassUpdated(false);
         }
-        if ( !classDescrFields ) {
-            setClassDescrFields(JSON.stringify([
-                {
-                    value: classData.info.ua,
-                    id: 'info_ua',
-                    placeholder: translate('description') + ' ' + translate('in_ua'),
-                    type: 'textarea',
-                    updated: false
-                },
-                {
-                    value: classData.info.ru,
-                    id: 'info_ru',
-                    placeholder: translate('description') + ' ' + translate('in_ru'),
-                    type: 'textarea',
-                    updated: false
-                },
-                {
-                    value: classData.info.en,
-                    id: 'info_en',
-                    placeholder: translate('description') + ' ' + translate('in_en'),
-                    type: 'textarea',
-                    updated: false
-                }
-            ]));
-        }
-    }
-    if ( classData && JSON.stringify(classData) !== initialCurrentClass ) {
-        setCurrentClass(JSON.stringify(classData));
-        setInitialCurrentClass(JSON.stringify(classData));
-    }
+    }, []);
 
     useEffect(() => {
-        if ( currentClass ) {
-            if ( JSON.stringify(classData) !== currentClass ) {
-                setClassUpdated(true);
-            }
-            else {
-                setClassUpdated(false);
-            }
+        if ( classData && !currentClass ) {
+            setCurrentClass(Object.assign({}, classData));
         }
-    });
+    }, [classData]);
 
     return (
         <div className="adminClass">
@@ -93,18 +37,18 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading})
                 <div className="section__title-holder">
                     <h2 className="section__title">
                         {
-                            JSON.parse(currentClass) ?
+                            currentClass ?
                                 <>
                                     <i className={'content_title-icon fa fa-graduation-cap'} />
                                     <span className="section__title-separator">{ translate('classes') }</span>
-                                    { JSON.parse(currentClass).title[lang] ? JSON.parse(currentClass).title[lang] : JSON.parse(currentClass).title.ua }
+                                    { currentClass.title[lang] ? currentClass.title[lang] : currentClass.title.ua }
                                 </>
                                 :
                                 null
                         }
                     </h2>
                     {
-                        user.role === 'admin' ?
+                        canEdit() ?
                             <div className="section__title-actions">
                                 <span>
                                     <a href="/" className="btn btn__success" onClick={e => onUpdateClass(e)} disabled={!classUpdated}>
@@ -125,103 +69,81 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading})
                 </div>
                 <div className="grid">
                     <div className="grid_col col-8">
-                        <AdminClassContent content={currentClass} loading={loading} setContent={handleSetContent} />
+                        <AdminClassContent content={currentClass} loading={loading} setContent={handleSetContent} canEdit={canEdit} />
                     </div>
                     <div className="grid_col col-4">
-                        <div className="widget">
-                            <div className="widget__title">
-                                <i className="content_title-icon fa fa-info"/>
-                                { translate('info') }
-                            </div>
-                            {
-                                JSON.parse(currentClass) ?
-                                    user.role === 'admin' ?
-                                        <Form fields={JSON.parse(classInfoFields)} setFieldValue={setInfoFields} loading={loading} />
-                                        :
-                                        JSON.parse(currentClass).title[lang] ? JSON.parse(currentClass).title[lang] : JSON.parse(currentClass).title['ua']
-                                    :
-                                    loading ?
-                                        <Preloader/>
-                                        :
-                                        null
-                            }
-                        </div>
-                        <div className="widget">
-                            <div className="widget__title">
-                                <i className="content_title-icon fa fa-question"/>
-                                { translate('description') }
-                            </div>
-                            {
-                                JSON.parse(currentClass) ?
-                                    user.role === 'admin' ?
-                                        <Form fields={JSON.parse(classDescrFields)} setFieldValue={setDescrFields} loading={loading} />
-                                        :
-                                        JSON.parse(currentClass).info[lang] ? JSON.parse(currentClass).info[lang] : JSON.parse(currentClass).info['ua']
-                                    :
-                                    loading ?
-                                        <Preloader/>
-                                        :
-                                        null
-                            }
-                        </div>
+                        <AdminClassInfo classData={currentClass} loading={loading} setInfo={setInfo} canEdit={canEdit} />
+                        <AdminClassCurator classData={currentClass} loading={loading} setCurator={setCurator} canEdit={canEdit} />
+                        <AdminClassDescr classData={currentClass} loading={loading} setDescr={setDescr} canEdit={canEdit} />
                     </div>
                 </div>
             </section>
         </div>
     );
 
+    function canEdit() {
+        return user.role === 'admin' || (currentClass && currentClass.curator === user.id);
+    }
+
     function handleSetContent(newContent) {
-        setCurrentClass(JSON.stringify(newContent));
+        setCurrentClass(Object.assign({}, newContent));
     }
 
     function onUpdateClass(e) {
         e.preventDefault();
 
         if ( classUpdated ) {
-            updateClass(JSON.parse(currentClass).id, JSON.parse(currentClass));
+            updateClass(currentClass.id, currentClass);
+            setClassUpdated(false);
         }
     }
 
-    function setInfoFields(fieldID, value) {
-        const tempFields = JSON.parse(classInfoFields);
-        const tempModel = JSON.parse(currentClass);
-
-        tempFields.find(item => item.id === fieldID).updated = tempFields.find(item => item.id === fieldID).value !== value;
-        tempFields.find(item => item.id === fieldID).value = value;
-        setClassInfoFields(JSON.stringify(tempFields));
+    function setInfo(fieldID, value) {
+        const newValue = currentClass.title;
 
         if ( fieldID === 'title_ua' ) {
-            tempModel.title.ua = value;
-        }
-        if ( fieldID === 'title_ru' ) {
-            tempModel.title.ru = value;
+            newValue.ua = value;
         }
         if ( fieldID === 'title_en' ) {
-            tempModel.title.en = value;
+            newValue.en = value;
+        }
+        if ( fieldID === 'title_ru' ) {
+            newValue.ru = value;
         }
 
-        setCurrentClass(JSON.stringify(tempModel));
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            title: newValue
+        }));
+        setClassUpdated(true);
     }
 
-    function setDescrFields(fieldID, value) {
-        const tempFields = JSON.parse(classDescrFields);
-        const tempModel = JSON.parse(currentClass);
+    function setDescr(fieldID, value) {
+        const newValue = currentClass.info;
 
-        tempFields.find(item => item.id === fieldID).updated = tempFields.find(item => item.id === fieldID).value !== value;
-        tempFields.find(item => item.id === fieldID).value = value;
-        setClassDescrFields(JSON.stringify(tempFields));
-
-        if ( fieldID === 'info_ua' ) {
-            tempModel.info.ua = value;
+        if ( fieldID === 'descr_ua' ) {
+            newValue.ua = value;
         }
-        if ( fieldID === 'info_ru' ) {
-            tempModel.info.ru = value;
+        if ( fieldID === 'descr_en' ) {
+            newValue.en = value;
         }
-        if ( fieldID === 'info_en' ) {
-            tempModel.info.en = value;
+        if ( fieldID === 'descr_ru' ) {
+            newValue.ru = value;
         }
 
-        setCurrentClass(JSON.stringify(tempModel));
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            info: newValue
+        }));
+        setClassUpdated(true);
+    }
+
+    function setCurator(type, value) {
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            curator: value[0]
+        }));
+        setClassUpdated(true);
     }
 }
 const mapStateToProps = state => ({
@@ -231,6 +153,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     fetchClass: classID => dispatch(fetchClass(classID)),
-    updateClass: (classID, classData) => dispatch(updateClass(classID, classData))
+    updateClass: (classID, classData) => dispatch(updateClass(classID, classData)),
+    discardClass: () => dispatch(discardClass())
 });
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminClass));

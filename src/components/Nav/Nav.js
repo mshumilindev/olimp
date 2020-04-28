@@ -87,8 +87,13 @@ function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
     }
 
     function collapseNav() {
-      localStorage.setItem('isNavCollapsed', !isNavCollapsed);
-      setIsNavCollapsed(!isNavCollapsed);
+        if ( !isNavCollapsed ) {
+            localStorage.setItem('isNavCollapsed', true);
+        }
+        else {
+            localStorage.removeItem('isNavCollapsed');
+        }
+        setIsNavCollapsed(!isNavCollapsed);
     }
 }
 const mapStateToProps = state => ({

@@ -8,7 +8,7 @@ import AdminClassScheduleDayLesson from "./AdminClassScheduleDayLesson";
 
 const Modal = React.lazy(() => import('../UI/Modal/Modal'));
 
-function AdminClassScheduleDay({user, day, selectedCourses, coursesList, handleAddSchedule}) {
+function AdminClassScheduleDay({canEdit, day, selectedCourses, coursesList, handleAddSchedule}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showAddModal, setShowAddModal ] = useState(false);
     const [ selectedLessons, setSelectedLessons ] = useState(JSON.stringify([]));
@@ -44,13 +44,13 @@ function AdminClassScheduleDay({user, day, selectedCourses, coursesList, handleA
                                 }
                             }
                             return 0;
-                        }).map((lesson, index) => <AdminClassScheduleDayLesson lesson={lesson} index={index} coursesList={coursesList} quickRemoveLesson={quickRemoveLesson} key={index + lesson.course} />)
+                        }).map((lesson, index) => <AdminClassScheduleDayLesson lesson={lesson} index={index} coursesList={coursesList} quickRemoveLesson={quickRemoveLesson} key={index + lesson.course} canEdit={canEdit} />)
                         :
                         null
                 }
             </div>
             {
-                user.role === 'admin' ?
+                canEdit() ?
                     <div className="adminClass__schedule-item-add" onClick={() => setShowAddModal(true)}>
                         <i className="fa fa-plus" />
                     </div>
@@ -126,8 +126,7 @@ function AdminClassScheduleDay({user, day, selectedCourses, coursesList, handleA
 }
 const mapStateToProps = state => ({
     coursesList: state.coursesReducer.coursesList,
-    loading: state.coursesReducer.loading,
-    user: state.authReducer.currentUser
+    loading: state.coursesReducer.loading
 });
 const mapDispatchToProps = dispatch => ({
     fetchAllCourses: dispatch(fetchAllCourses())

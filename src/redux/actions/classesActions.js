@@ -110,10 +110,17 @@ export function fetchClass(classID) {
     }
 }
 
+export function discardClass() {
+    return dispatch => {
+        dispatch(discardClassSuccess());
+    }
+}
+
 export const CLASSES_BEGIN = 'CLASSES_BEGIN';
 export const CLASSES_SUCCESS = 'CLASSES_SUCCESS';
 export const CLASS_BEGIN = 'CLASS_BEGIN';
 export const CLASS_SUCCESS = 'CLASS_SUCCESS';
+export const DISCARD_CLASS = 'DISCARD_CLASS';
 
 export const classesBegin = () => {
     return {
@@ -135,5 +142,10 @@ export const classSuccess = classData => {
     return {
         type: CLASS_SUCCESS,
         payload: { classData }
+    }
+};
+export const discardClassSuccess = () => {
+    return {
+        type: DISCARD_CLASS
     }
 };

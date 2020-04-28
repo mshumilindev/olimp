@@ -1,8 +1,7 @@
 import React, {useContext} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import { connect } from 'react-redux';
 
-function AdminClassScheduleDayLesson({user, coursesList, quickRemoveLesson, lesson}) {
+export default function AdminClassScheduleDayLesson({canEdit, coursesList, quickRemoveLesson, lesson}) {
     const { lang } = useContext(siteSettingsContext);
     const currentSubject = coursesList.find(subject => subject.id === lesson.subject);
     const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
@@ -33,7 +32,7 @@ function AdminClassScheduleDayLesson({user, coursesList, quickRemoveLesson, less
                 }
             </div>
             {
-                user.role === 'admin' ?
+                canEdit() ?
                     <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveLesson(lesson)}>
                         <i className="fa fa-trash-alt"/>
                     </span>
@@ -43,11 +42,3 @@ function AdminClassScheduleDayLesson({user, coursesList, quickRemoveLesson, less
         </div>
     );
 }
-
-const mapStateToProps = state => {
-    return {
-        user: state.authReducer.currentUser
-    }
-};
-
-export default connect(mapStateToProps)(AdminClassScheduleDayLesson);

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import UserPicker from '../UI/UserPicker/UserPicker';
@@ -6,25 +6,20 @@ import CoursesPicker from '../UI/CoursesPicker/CoursesPicker';
 import {connect} from "react-redux";
 import AdminClassScheduleDay from './AdminClassScheduleDay';
 
-function AdminClassContent({user, content, loading, setContent, usersList}) {
+function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
     const { translate } = useContext(siteSettingsContext);
     const [ students, setStudents ] = useState(null);
-    const [ courses, setCourses ] = useState(JSON.stringify([]));
-    const [ schedule, setSchedule ] = useState(JSON.stringify([]));
+    const [ courses, setCourses ] = useState([]);
+    const [ schedule, setSchedule ] = useState([]);
 
-    const parsedContent = JSON.parse(content);
+    useEffect(() => {
+        if ( content ) {
+            setStudents(Object.assign([], filterStudents()));
+            setCourses(Object.assign([], content.courses));
+            setSchedule(Object.assign([], content.schedule));
+        }
+    }, [content]);
 
-    if ( parsedContent ) {
-        if ( JSON.stringify(filterStudents()) !== students ) {
-            setStudents(JSON.stringify(filterStudents()));
-        }
-        if ( JSON.stringify(parsedContent.courses) !== courses ) {
-            setCourses(JSON.stringify(parsedContent.courses));
-        }
-        if ( JSON.stringify(parsedContent.schedule) !== schedule ) {
-            setSchedule(JSON.stringify(parsedContent.schedule));
-        }
-    }
 
     return (
         <>
@@ -34,7 +29,7 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
                     { translate('courses') }
                 </div>
                 {
-                    <CoursesPicker selectedCourses={courses} handleAddCourses={handleAddCourses} noControls={user.role !== 'admin'}/>
+                    <CoursesPicker selectedCourses={JSON.stringify(courses)} handleAddCourses={handleAddCourses} noControls={!canEdit()}/>
                 }
             </div>
             <div className="widget">
@@ -43,8 +38,8 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
                     { translate('schedule') }
                 </div>
                 {
-                    parsedContent ?
-                        JSON.parse(courses).length ?
+                    content ?
+                        courses.length ?
                             _renderSchedule()
                             :
                             <div className="nothingFound">
@@ -63,8 +58,8 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
                     { translate('students') }
                 </div>
                 {
-                    parsedContent ?
-                        <UserPicker type="student" noneditable selectedList={JSON.parse(students) ? JSON.parse(students) : []} />
+                    content ?
+                        <UserPicker type="student" noneditable selectedList={students ? students : []} />
                         :
                         loading ?
                             <Preloader/>
@@ -76,19 +71,19 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
     );
 
     function _renderSchedule() {
-        const parsedSchedule = JSON.parse(schedule);
+        const parsedSchedule = schedule;
 
         return (
             <div className="adminClass__schedule">
                 {
-                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={JSON.parse(courses)} content={content} handleAddSchedule={handleAddSchedule}/>)
+                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={courses} content={content} handleAddSchedule={handleAddSchedule} canEdit={canEdit}/>)
                 }
             </div>
         )
     }
 
     function filterStudents() {
-        const newUsersList = usersList.filter(user => user.role === 'student' && user.class && user.class === parsedContent.id && user.status === 'active');
+        const newUsersList = usersList.filter(user => user.role === 'student' && user.class && user.class === content.id && user.status === 'active');
         const idList = [];
 
         if ( newUsersList.length ) {
@@ -101,12 +96,12 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
     }
 
     function handleAddSchedule(newDay) {
-        const newSchedule = JSON.parse(schedule);
+        const newSchedule = schedule;
 
         newSchedule.find(item => item.title === newDay.title).lessons = newDay.lessons;
 
         setContent({
-            ...JSON.parse(content),
+            ...content,
             schedule: [
                 ...newSchedule
             ]
@@ -115,7 +110,7 @@ function AdminClassContent({user, content, loading, setContent, usersList}) {
 
     function handleAddCourses(selectedCourses) {
         setContent({
-            ...JSON.parse(content),
+            ...content,
             courses: JSON.parse(selectedCourses)
         });
     }
