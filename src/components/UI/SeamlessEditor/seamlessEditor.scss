@@ -39,12 +39,51 @@ $editorBackground: $lightGreyColor;
     bottom: 0;
     background: $white;
     z-index: 99999;
-    padding: $editorIndent;
+    display: flex;
+    flex-direction: column;
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    &-body {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    &-title {
+      z-index: 1;
+      height: $actionsSize;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $pageIndent $pageIndent $pageIndent 0;
+      box-sizing: border-box;
+      &-inner {
+        font-family: $RobotoCondensed;
+        letter-spacing: .5px;
+      }
+      span {
+        display: block;
+        color: $greyColor;
+        text-transform: uppercase;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+      i {
+        width: $actionsSize;
+        height: $actionsSize;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        margin-right: $pageIndent;
+        background: $baseColor;
+        color: $white;
+        flex: 0 0 auto;
+      }
+    }
     &-actions {
-      position: absolute;
-      right: 0;
-      top: 0;
-      left: 0;
       text-transform: uppercase;
       font-family: $RobotoCondensed;
       letter-spacing: 1px;
@@ -64,15 +103,12 @@ $editorBackground: $lightGreyColor;
     }
     &-types {
       background: $white;
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       width: $actionsSize;
+      flex: 0 0 auto;
       &-item {
         width: $actionsSize;
         height: $actionsSize;
@@ -83,6 +119,18 @@ $editorBackground: $lightGreyColor;
         &:first-child {
           border-top: none;
         }
+      }
+    }
+    &-type {
+      width: $actionsSize;
+      flex: 0 0 auto;
+      background: $anchorColor;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      [class$="-btn"] {
+        color: $white;
       }
     }
     &-btn {
@@ -110,54 +158,57 @@ $editorBackground: $lightGreyColor;
           color: $successColor;
         }
       }
+      &.active {
+        background: $anchorColor;
+        color: $white;
+      }
       i {
         margin-bottom: 10px;
         font-size: 20px;
       }
     }
-    &-title {
-      position: absolute;
-      left: 0;
-      top: 0;
-      z-index: 1;
-      height: $actionsSize;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: $pageIndent $pageIndent $pageIndent 0;
-      box-sizing: border-box;
-      font-family: $RobotoCondensed;
-      letter-spacing: .5px;
-      i {
-        width: $actionsSize;
-        height: $actionsSize;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: $greyColor;
-        font-size: 24px;
-        margin-right: $pageIndent;
-      }
-    }
-    &.typesOpen {
-      + [class$="-blocks-holder"] {
-        left: $actionsSize * 2;
-      }
-    }
     &-blocks-holder {
       background: $editorBackground;
-      position: absolute;
-      left: $actionsSize;
-      top: $actionsSize;
-      right: 0;
-      bottom: 0;
       padding: $pageIndent;
+      width: 100%;
+      box-sizing: border-box;
     }
     &-blocks {
       background: $white;
       max-width: 800px;
       margin: 0 auto;
       padding: $pageIndent;
+    }
+    &-block {
+      min-height: 120px;
+      display: flex;
+      &:hover {
+        [class$="-block-inner"] {
+          border-color: $anchorColor;
+        }
+      }
+      &.active {
+        [class$="-block-inner"] {
+          border-color: $greenColor;
+        }
+      }
+      &.isNew {
+        font-family: $RobotoCondensed;
+        color: $mediumGreyColor;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        cursor: default;
+        user-select: none;
+        [class$="-block-inner"] {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      &-inner {
+        border: 1px solid $lightGreyColor;
+        width: 100%;
+      }
     }
   }
 }
