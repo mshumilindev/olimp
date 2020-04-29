@@ -4,18 +4,21 @@ import Article from "../../Article/Article";
 import TextTooltip from "../TextTooltip/TextTooltip";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import SeamlessEditorEditor from "./SeamlessEditorEditor";
+import { generate } from "generate-password";
+import {orderBy} from "natural-orderby";
 
 export default function SeamlessEditor({title, type, content}) {
     const { translate } = useContext(siteSettingsContext);
     const [ isEdited, setIsEdited ] = useState(true);
+    const [ currentContent, setCurrentContent ] = useState(Object.assign([], orderBy(content, v => v.order)));
 
     return (
         <div className="seamlessEditor">
             {
                 isEdited ?
-                    <SeamlessEditorEditor content={content} title={title} type={type} />
+                    <SeamlessEditorEditor content={currentContent} title={title} type={type} addBlock={addBlock} />
                     :
-                    !content.length ?
+                    !currentContent.length ?
                         _renderNoContent()
                         :
                         _renderContent()
@@ -40,7 +43,7 @@ export default function SeamlessEditor({title, type, content}) {
                 {
                     _renderToolbar()
                 }
-                <Article content={content} />
+                <Article content={currentContent} />
             </div>
         )
     }
@@ -60,5 +63,21 @@ export default function SeamlessEditor({title, type, content}) {
                 }/>
             </div>
         )
+    }
+
+    function addBlock(block, index) {
+        const newContent = [
+            ...currentContent.slice(0, index),
+            block,
+            ...currentContent.slice(index)
+        ];
+
+        setCurrentContent(newContent.map((item, index) => {
+            return {
+                ...item,
+                index: index,
+                id: generate({length: 20, numbers: true})
+            }
+        }));
     }
 }

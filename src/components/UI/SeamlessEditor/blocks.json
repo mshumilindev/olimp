@@ -1,0 +1,24 @@
+{
+  "placeholder": {
+    "type": "placeholder"
+  },
+  "text": {
+    "type": "text",
+    "value": {
+      "en": "",
+      "ru": "",
+      "ua": ""
+    }
+  },
+  "image": {
+    "type": "media",
+    "value": {
+      "image": "",
+      "caption": {
+        "en": "",
+        "ru": "",
+        "ua": ""
+      }
+    }
+  }
+}

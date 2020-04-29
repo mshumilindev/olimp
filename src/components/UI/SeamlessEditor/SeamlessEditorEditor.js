@@ -1,10 +1,17 @@
 import React, {useContext, useState} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import classNames from 'classnames';
+import * as blocksJSON from './blocks';
+import SeamlessEditorText from "./blocks/SeamlessEditorText";
 
-export default function SeamlessEditorEditor({title, type, content}) {
+const blocksData = blocksJSON.default;
+
+export default function SeamlessEditorEditor({title, type, addBlock, content}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
+    const [ dragBlock, setDragBlock ] = useState(null);
+    const [ dragOverBlock, setDragOverBlock ] = useState(null);
+    const [ dragOverBlockPosition, setDragOverBlockPosition ] = useState(null);
     const types = [
         {
             icon: 'fas fa-font',
@@ -23,6 +30,52 @@ export default function SeamlessEditorEditor({title, type, content}) {
             type: 'other',
         }
     ];
+    const typeBlocks = {
+        text: [
+            {
+                icon: 'fas fa-font',
+                block: 'text'
+            }
+        ],
+        media: [
+            {
+                icon: 'fas fa-image',
+                block: 'image'
+            },
+            {
+                icon: 'fas fa-headphones',
+                block: 'audio'
+            },
+            {
+                icon: 'fas fa-video',
+                block: 'video'
+            },
+            {
+                icon: 'fab fa-youtube',
+                block: 'youtube'
+            }
+        ],
+        document: [
+            {
+                icon: 'fas fa-file-word',
+                block: 'word'
+            },
+            {
+                icon: 'fas fa-file-powerpoint',
+                block: 'powerpoint'
+            }
+        ],
+        other: [
+            {
+                icon: 'fa fa-divide',
+                block: 'divider'
+            },
+            {
+                icon: 'fa fa-file',
+                block: 'page'
+            }
+        ]
+    };
 
     return (
         <div className="seamlessEditor__editor">
@@ -63,26 +116,8 @@ export default function SeamlessEditorEditor({title, type, content}) {
                     { types.map(item => _renderType(item)) }
                 </div>
                 {
-                    showType === 'text' ?
-                        _renderTypeText()
-                        :
-                        null
-                }
-                {
-                    showType === 'media' ?
-                        _renderTypeMedia()
-                        :
-                        null
-                }
-                {
-                    showType === 'document' ?
-                        _renderTypeDocument()
-                        :
-                        null
-                }
-                {
-                    showType === 'other' ?
-                        _renderTypeOther()
+                    showType ?
+                        _renderTypeBlocks()
                         :
                         null
                 }
@@ -92,7 +127,7 @@ export default function SeamlessEditorEditor({title, type, content}) {
 
     function _renderType(item) {
         return (
-            <div className="seamlessEditor__editor-types-item">
+            <div className="seamlessEditor__editor-types-item" key={'type' + item.type}>
                 <div className={classNames('seamlessEditor__editor-btn', {active: showType === item.type})} onClick={() => setShowType(showType === item.type ? null : item.type)}>
                     <i className={item.icon} />
                     { translate(item.type) }
@@ -101,53 +136,22 @@ export default function SeamlessEditorEditor({title, type, content}) {
         )
     }
 
-    function _renderTypeText() {
+    function _renderTypeBlocks() {
         return (
             <div className="seamlessEditor__editor-type">
-                <div className="seamlessEditor__editor-types-item">
-                    <div className="seamlessEditor__editor-btn">
-                        <i className="fas fa-font" />
-                        { translate('text') }
-                    </div>
-                </div>
+                {
+                    typeBlocks[showType].map(item => _renderTypeBlock(item))
+                }
             </div>
         )
     }
 
-    function _renderTypeMedia() {
+    function _renderTypeBlock(item) {
         return (
-            <div className="seamlessEditor__editor-type">
-                <div className="seamlessEditor__editor-types-item">
-                    <div className="seamlessEditor__editor-btn">
-                        <i className="fas fa-font" />
-                        { translate('text') }
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    function _renderTypeDocument() {
-        return (
-            <div className="seamlessEditor__editor-type">
-                <div className="seamlessEditor__editor-types-item">
-                    <div className="seamlessEditor__editor-btn">
-                        <i className="fas fa-font" />
-                        { translate('text') }
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    function _renderTypeOther() {
-        return (
-            <div className="seamlessEditor__editor-type">
-                <div className="seamlessEditor__editor-types-item">
-                    <div className="seamlessEditor__editor-btn">
-                        <i className="fas fa-font" />
-                        { translate('text') }
-                    </div>
+            <div className="seamlessEditor__editor-type-item" key={'typeBlock' + item.block} draggable onDragStart={() => setDragBlock(item.block)} onDragEnd={handleDragEnd}>
+                <div className="seamlessEditor__editor-btn" onClick={() => addBlock(blocksData[item.block], content.length)}>
+                    <i className={item.icon} />
+                    { translate(item.block) }
                 </div>
             </div>
         )
@@ -173,7 +177,7 @@ export default function SeamlessEditorEditor({title, type, content}) {
                         !content.length ?
                             _renderNewBlock()
                             :
-                            content.map(item => _renderBlock(item))
+                            content.map((item, index) => _renderBlock(item, index))
                     }
                 </div>
             </div>
@@ -190,13 +194,76 @@ export default function SeamlessEditorEditor({title, type, content}) {
         )
     }
 
-    function _renderBlock() {
+    function _renderBlock(item, index) {
         return (
-            <div className="seamlessEditor__editor-block">
+            <div className="seamlessEditor__editor-block-holder" onDragEnter={() => setDragOverBlock(item.id)} key={'block' + item.id}>
+                {
+                    dragBlock && index === 0 ?
+                        _renderDropArea(item.id, 'before')
+                        :
+                        null
+                }
+                { getBlock(item) }
+                {
+                    dragBlock ?
+                        _renderDropArea(item.id, 'after')
+                        :
+                        null
+                }
+            </div>
+        )
+    }
+
+    function _renderDropArea(blockID, position) {
+        return (
+            <div className={classNames('seamlessEditor__editor-block dropArea', {isOver: dragOverBlock === blockID && dragOverBlockPosition === position})} onDragEnter={() => setDragOverBlockPosition(position)}>
                 <div className="seamlessEditor__editor-block-inner">
-                    This is old block
+                    { translate('drop_block_here') }
                 </div>
             </div>
         )
+    }
+
+    function getBlock(block) {
+        switch (block.type) {
+            case 'text':
+                return <SeamlessEditorText block={block} setBlock={setBlock} removeBlock={removeBlock}/>
+        }
+    }
+
+    function handleDragEnd() {
+        if ( dragBlock && dragOverBlock && dragOverBlockPosition ) {
+            const index = content.indexOf(content.find(item => item.id === dragOverBlock));
+            let newPosition = null;
+
+            if ( dragOverBlockPosition === 'before' ) {
+                if ( index === 0 ) {
+                    newPosition = 0;
+                }
+                else {
+                    newPosition = index - 1;
+                }
+            }
+            else {
+                if ( index === content.length - 1 ) {
+                    newPosition = content.length;
+                }
+                else {
+                    newPosition = index + 1;
+                }
+            }
+
+            addBlock(blocksData[dragBlock], newPosition);
+        }
+        setDragBlock(null);
+        setDragOverBlock(null);
+    }
+
+    function setBlock() {
+        console.log('set block');
+    }
+
+    function removeBlock() {
+        console.log('remove block');
     }
 }

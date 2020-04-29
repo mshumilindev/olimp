@@ -50,6 +50,7 @@ $editorBackground: $lightGreyColor;
       display: flex;
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
     &-title {
       z-index: 1;
@@ -104,8 +105,6 @@ $editorBackground: $lightGreyColor;
     &-types {
       background: $white;
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
       width: $actionsSize;
       flex: 0 0 auto;
@@ -115,10 +114,7 @@ $editorBackground: $lightGreyColor;
         display: flex;
         justify-content: center;
         align-items: center;
-        border-top: 5px solid $editorBackground;
-        &:first-child {
-          border-top: none;
-        }
+        border-bottom: 1px solid $white;
       }
     }
     &-type {
@@ -126,14 +122,33 @@ $editorBackground: $lightGreyColor;
       flex: 0 0 auto;
       background: $anchorColor;
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
-      box-shadow: inset 5px 0 5px 0 rgba(0,0,0,.15);
+      box-shadow: inset 2px 0 10px 0 rgba(0,0,0,.15);
       animation: typeAnimation .15s linear;
       overflow: hidden;
+      &-item {
+        width: $actionsSize;
+        height: $actionsSize;
+        border-bottom: 1px solid $white;
+      }
       [class$="-btn"] {
         color: $white;
+        position: relative;
+        z-index: 1;
+        &:hover {
+          color: $white;
+          &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: $baseColor;
+            z-index: -1;
+            opacity: .15;
+          }
+        }
       }
     }
     &-btn {
@@ -175,12 +190,19 @@ $editorBackground: $lightGreyColor;
       padding: $pageIndent;
       width: 100%;
       box-sizing: border-box;
+      overflow: auto;
     }
     &-blocks {
       background: $white;
       max-width: 800px;
       margin: 0 auto;
       padding: $pageIndent;
+    }
+    &-block-holder {
+      margin-bottom: 20px;
+      &:last-child {
+        margin-bottom:  0;
+      }
     }
     &-block {
       min-height: 120px;
@@ -203,14 +225,49 @@ $editorBackground: $lightGreyColor;
         cursor: default;
         user-select: none;
         [class$="-block-inner"] {
-          display: flex;
           justify-content: center;
           align-items: center;
+        }
+      }
+      &.dropArea {
+        min-height: 0;
+        height: 40px;
+        transition: height .15s ease-in-out;
+        [class$="-block-inner"] {
+          border: none;
+          background: $lightColor;
+          justify-content: center;
+          align-items: center;
+          color: $mediumGreyColor;
+        }
+        &.isOver {
+          height: 120px;
+          [class$="-block-inner"] {
+            background: $lightBlueColor;
+            color: $anchorColor;
+          }
+        }
+        &:first-child {
+          margin-bottom: 20px;
+        }
+        &:last-child {
+          margin-top: 20px;
         }
       }
       &-inner {
         border: 1px solid $lightGreyColor;
         width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+      }
+      &-actions {
+        a {
+          color: $baseColor;
+          &:hover {
+            color: $linkHoverColor;
+          }
+        }
       }
     }
   }
