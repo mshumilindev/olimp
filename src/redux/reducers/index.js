@@ -13,6 +13,7 @@ import notificationsReducer from './notificationsReducer';
 import eventsReducer from './eventsReducer';
 import testsReducer from "./testsReducer";
 import authReducer from "./authReducer";
+import lessonReducer from "./lessonReducer";
 
 export default combineReducers({
     configReducer: configReducer,
@@ -28,5 +29,6 @@ export default combineReducers({
     notificationsReducer: notificationsReducer,
     eventsReducer: eventsReducer,
     testsReducer: testsReducer,
-    authReducer: authReducer
+    authReducer: authReducer,
+    lessonReducer: lessonReducer
 });

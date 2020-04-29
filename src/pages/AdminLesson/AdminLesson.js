@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {fetchLesson, updateLesson, discardLesson} from "../../redux/actions/coursesActions";
+import {updateLesson, discardLesson} from "../../redux/actions/coursesActions";
+import { fetchLessonMeta } from '../../redux/actions/lessonActions';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Preloader from "../../components/UI/preloader";
@@ -9,10 +10,12 @@ import './adminLesson.scss';
 import Modal from "../../components/UI/Modal/Modal";
 import Article from "../../components/Article/Article";
 import { withRouter, Prompt } from 'react-router-dom';
+import withAdminLesson from "./withAdminLesson";
+import AdminLessonContent from "../../components/AdminLesson/AdminLessonContent";
 
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
-function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, allCoursesList, discardLesson}) {
+function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, loading, allCoursesList, discardLesson}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
@@ -28,7 +31,7 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
     ];
 
     useEffect(() => {
-        fetchLesson(subjectID, courseID, moduleID, lessonID);
+        fetchLessonMeta(subjectID, courseID, moduleID, lessonID);
         return () => {
             discardLesson();
         }
@@ -39,33 +42,31 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
     });
 
     useEffect(() => {
-        if ( lesson ) {
+        if ( lessonMeta ) {
             if ( !lessonInfoFields ) {
-                setLessonInfoFields(getLessonFields(lesson, false));
+                setLessonInfoFields(getLessonFields(lessonMeta, false));
             }
-            if ( !content ) {
-                if ( lesson.content ) {
-                    setContent(Object.assign([], lesson.content));
-                }
-                else {
-                    setContent(Object.assign([], []));
-                }
-                if ( lesson.QA ) {
-                    setQA(Object.assign([], lesson.QA));
-                }
-                else {
-                    setQA(Object.assign([], []));
-                }
-            }
+            // if ( !content ) {
+            //     if ( lesson.content ) {
+            //         setContent(Object.assign([], lesson.content));
+            //     }
+            //     else {
+            //         setContent(Object.assign([], []));
+            //     }
+            //     if ( lesson.QA ) {
+            //         setQA(Object.assign([], lesson.QA));
+            //     }
+            //     else {
+            //         setQA(Object.assign([], []));
+            //     }
+            // }
             setLessonUpdated(false);
-            setLessonInfoFields(Object.assign([], getLessonFields(lesson, false)));
+            setLessonInfoFields(Object.assign([], getLessonFields(lessonMeta, false)));
         }
-    }, [lesson]);
-
-    checkIfEditable();
+    }, [lessonMeta]);
 
     return (
-        lesson ?
+        lessonMeta && allCoursesList ?
             <div className="adminLesson section">
                 <div className="section__title-holder">
                     <h2 className="section__title">
@@ -95,39 +96,22 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
                     }
                 </div>
                 <div className="grid">
-                    <div className="grid_col col-8">
-                        <div className="widget">
-                            <div className="widget__title">
-                                <i className="content_title-icon fa fa-file-alt"/>
-                                { translate('content') }
-                            </div>
-                            <div className="widget__descr">
-                                <h3>Активні елементи:</h3>
-                                <p><i className="content_title-icon fas fa-question-circle"/> - інформація, щодо використання блоку</p>
-                                <p><i className="content_title-icon fa fa-cog"/> - налаштування блоку</p>
-                                <p><i className="content_title-icon fa fa-trash-alt"/> - видалити блок</p>
-                            </div>
-                            {
-                                content ?
-                                    <ContentEditor contentType="content" content={content} types={[['text', 'formula', 'media', 'word', 'powerpoint'], ['youtube', 'video', 'audio'], ['divider', 'page']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newContent) => setContent(Object.assign([], newContent))} loading={loading} />
-                                    :
-                                    null
-                            }
-                        </div>
-                        <div className="widget">
-                            <div className="widget__title">
-                                <i className="content_title-icon fa fa-question"/>
-                                { translate('control_questions') }
-                            </div>
-                            {
-                                QA ?
-                                    <ContentEditor contentType="questions" content={QA} types={[['text', 'formula', 'media'], ['youtube', 'audio'], ['answers'], ['divider']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQA(Object.assign([], newQuestions))} loading={loading} />
-                                    :
-                                    null
-                            }
-                        </div>
+                    <div className="grid_col col-8" style={{maxWidth: 880}}>
+                        <AdminLessonContent subjectID={subjectID} courseID={courseID} moduleID={moduleID} lessonID={lessonMeta.id} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} />
+                        {/*<div className="widget">*/}
+                        {/*    <div className="widget__title">*/}
+                        {/*        <i className="content_title-icon fa fa-question"/>*/}
+                        {/*        { translate('control_questions') }*/}
+                        {/*    </div>*/}
+                        {/*    {*/}
+                        {/*        QA ?*/}
+                        {/*            <ContentEditor contentType="questions" content={QA} types={[['text', 'formula', 'media'], ['youtube', 'audio'], ['answers'], ['divider']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQA(Object.assign([], newQuestions))} loading={loading} />*/}
+                        {/*            :*/}
+                        {/*            null*/}
+                        {/*    }*/}
+                        {/*</div>*/}
                     </div>
-                    <div className="grid_col col-4">
+                    <div className="grid_col col-4" style={{maxWidth: 500}}>
                         <div className="widget sticky">
                             <div className="widget__title">
                                 <i className="content_title-icon fa fa-info"/>
@@ -137,15 +121,15 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
                                 checkIfEditable() ?
                                     <Form fields={lessonInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
                                     :
-                                    lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']
+                                    lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']
                             }
                         </div>
                     </div>
                 </div>
                 {
                     showPreview ?
-                        <Modal className="adminLesson__previewModal" heading={lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']} onHideModal={() => setShowPreview(false)}>
-                            <Article content={lesson['content']} type={'content'} />
+                        <Modal className="adminLesson__previewModal" heading={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} onHideModal={() => setShowPreview(false)}>
+                            <Article content={lessonMeta['content']} type={'content'} />
                         </Modal>
                         :
                         null
@@ -190,7 +174,7 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
         }
 
         breadcrumbs.push({
-            name: `<span class="breadcrumbs__modifier">${translate('lesson')}: </span>${lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']}`,
+            name: `<span class="breadcrumbs__modifier">${translate('lesson')}: </span>${lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']}`,
             url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + params.lessonID
         });
 
@@ -230,19 +214,19 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
         setLessonUpdated(false);
 
         if ( fieldID === 'lessonName_ua' ) {
-            if ( lesson.name.ua !== value ) {
+            if ( lessonMeta.name.ua !== value ) {
                 newLessonInfoFields.find(field => field.id === fieldID).updated = true;
                 setLessonUpdated(true);
             }
         }
         if ( fieldID === 'lessonName_ru' ) {
-            if ( lesson.name.ru !== value ) {
+            if ( lessonMeta.name.ru !== value ) {
                 newLessonInfoFields.find(field => field.id === fieldID).updated = true;
                 setLessonUpdated(true);
             }
         }
         if ( fieldID === 'lessonName_en' ) {
-            if ( lesson.name.en !== value ) {
+            if ( lessonMeta.name.en !== value ) {
                 newLessonInfoFields.find(field => field.id === fieldID).updated = true;
                 setLessonUpdated(true);
             }
@@ -257,7 +241,7 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
         if ( lessonUpdated ) {
             const updatedLessonFields = lessonInfoFields;
             const newLesson = {
-                ...lesson,
+                ...lessonMeta,
                 name: {
                     ua: updatedLessonFields.find(field => field.id === 'lessonName_ua').value,
                     ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
@@ -279,15 +263,15 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
     }
 }
 const mapStateToProps = state => ({
-    lesson: state.coursesReducer.lesson,
-    loading: state.coursesReducer.loading,
-    allCoursesList: state.coursesReducer.coursesList,
-    user: state.authReducer.currentUser
+    lessonMeta: state.lessonReducer.lessonMeta,
+    loading: state.lessonReducer.loading,
+    user: state.authReducer.currentUser,
+    allCoursesList: state.coursesReducer.coursesList
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLesson: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLesson(subjectID, courseID, moduleID, lessonID)),
+    fetchLessonMeta: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLessonMeta(subjectID, courseID, moduleID, lessonID)),
     updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson)),
     discardLesson: () => dispatch(discardLesson())
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AdminLesson));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withAdminLesson(AdminLesson)));
