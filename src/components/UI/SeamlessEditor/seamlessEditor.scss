@@ -129,6 +129,9 @@ $editorBackground: $lightGreyColor;
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      box-shadow: inset 5px 0 5px 0 rgba(0,0,0,.15);
+      animation: typeAnimation .15s linear;
+      overflow: hidden;
       [class$="-btn"] {
         color: $white;
       }
@@ -210,5 +213,13 @@ $editorBackground: $lightGreyColor;
         width: 100%;
       }
     }
+  }
+}
+@keyframes typeAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: $actionsSize;
   }
 }

@@ -5,6 +5,24 @@ import classNames from 'classnames';
 export default function SeamlessEditorEditor({title, type, content}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
+    const types = [
+        {
+            icon: 'fas fa-font',
+            type: 'text',
+        },
+        {
+            icon: 'fas fa-images',
+            type: 'media',
+        },
+        {
+            icon: 'fas fa-file',
+            type: 'document',
+        },
+        {
+            icon: 'fas fa-infinity',
+            type: 'other',
+        }
+    ];
 
     return (
         <div className="seamlessEditor__editor">
@@ -42,30 +60,7 @@ export default function SeamlessEditorEditor({title, type, content}) {
         return (
             <>
                 <div className="seamlessEditor__editor-types">
-                    <div className="seamlessEditor__editor-types-item">
-                        <div className={classNames('seamlessEditor__editor-btn', {active: showType === 'text'})} onClick={() => setShowType(showType === 'text' ? null : 'text')}>
-                            <i className="fas fa-font" />
-                            { translate('text') }
-                        </div>
-                    </div>
-                    <div className="seamlessEditor__editor-types-item">
-                        <div className="seamlessEditor__editor-btn">
-                            <i className="far fa-images" />
-                            { translate('media') }
-                        </div>
-                    </div>
-                    <div className="seamlessEditor__editor-types-item">
-                        <div className="seamlessEditor__editor-btn">
-                            <i className="fas fa-file" />
-                            { translate('document') }
-                        </div>
-                    </div>
-                    <div className="seamlessEditor__editor-types-item">
-                        <div className="seamlessEditor__editor-btn">
-                            <i className="fas fa-infinity" />
-                            { translate('other') }
-                        </div>
-                    </div>
+                    { types.map(item => _renderType(item)) }
                 </div>
                 {
                     showType === 'text' ?
@@ -73,11 +68,79 @@ export default function SeamlessEditorEditor({title, type, content}) {
                         :
                         null
                 }
+                {
+                    showType === 'media' ?
+                        _renderTypeMedia()
+                        :
+                        null
+                }
+                {
+                    showType === 'document' ?
+                        _renderTypeDocument()
+                        :
+                        null
+                }
+                {
+                    showType === 'other' ?
+                        _renderTypeOther()
+                        :
+                        null
+                }
             </>
         )
     }
 
+    function _renderType(item) {
+        return (
+            <div className="seamlessEditor__editor-types-item">
+                <div className={classNames('seamlessEditor__editor-btn', {active: showType === item.type})} onClick={() => setShowType(showType === item.type ? null : item.type)}>
+                    <i className={item.icon} />
+                    { translate(item.type) }
+                </div>
+            </div>
+        )
+    }
+
     function _renderTypeText() {
+        return (
+            <div className="seamlessEditor__editor-type">
+                <div className="seamlessEditor__editor-types-item">
+                    <div className="seamlessEditor__editor-btn">
+                        <i className="fas fa-font" />
+                        { translate('text') }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    function _renderTypeMedia() {
+        return (
+            <div className="seamlessEditor__editor-type">
+                <div className="seamlessEditor__editor-types-item">
+                    <div className="seamlessEditor__editor-btn">
+                        <i className="fas fa-font" />
+                        { translate('text') }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    function _renderTypeDocument() {
+        return (
+            <div className="seamlessEditor__editor-type">
+                <div className="seamlessEditor__editor-types-item">
+                    <div className="seamlessEditor__editor-btn">
+                        <i className="fas fa-font" />
+                        { translate('text') }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    function _renderTypeOther() {
         return (
             <div className="seamlessEditor__editor-type">
                 <div className="seamlessEditor__editor-types-item">
