@@ -585,7 +585,7 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                 )
             }
             else {
-                const maxSize = 1000;
+                const maxSize = 500;
                 if ( file.size / 1024 > maxSize ) {
                     Resizer.imageFileResizer(
                         file,

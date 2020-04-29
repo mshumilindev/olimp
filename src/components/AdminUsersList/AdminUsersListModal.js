@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import generator from 'generate-password';
 import { updateUser } from "../../redux/actions/usersActions";
@@ -7,53 +7,37 @@ import {connect} from "react-redux";
 const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
 const Form = React.lazy(() => import('../../components/Form/Form'));
 
-class AdminUsersListModal extends React.Component {
-    constructor(props, context) {
-        super();
+function AdminUsersListModal({loading, usersList, currentUser, user, classesList, allCoursesList, modalTrigger, onToggleModal, updateUser}) {
+    const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
+    const [ showModal, setShowModal ] = useState(false);
+    const [ userFields, setUserFields ] = useState(getUserFields(currentUser, user, classesList, allCoursesList, []));
+    const [ formUpdated, setFormUpdated ] = useState(false);
 
-        this.state = {
-            showModal: false,
-            userFields: this.getUserFields(props.currentUser, props.user, context, props.classesList, props.allCoursesList, []),
-            formUpdated: false
-        };
+    return (
+        <>
+            <span onClick={e => { e.preventDefault(); toggleModal() } }>
+                { modalTrigger }
+            </span>
+            {
+                showModal ?
+                    <Modal onHideModal={() => toggleModal()}>
+                        <Form formUpdated={formUpdated} loading={loading} heading={translate('editing_user')} fields={userFields} setFieldValue={setFieldValue} formAction={handleUpdateUser} formReset={resetUser}/>
+                    </Modal>
+                    :
+                    null
+            }
+        </>
+    );
 
-        this.getUserFields = this.getUserFields.bind(this);
-        this.updateUser = this.updateUser.bind(this);
-        this.setFieldValue = this.setFieldValue.bind(this);
-        this.generatePassword = this.generatePassword.bind(this);
-        this.resetUser = this.resetUser.bind(this);
-    }
+    function getUserFields(currentUser, user, classesList, allCoursesList, userFields) {
 
-    render() {
-        const { translate } = this.context;
-
-        return (
-            <>
-                <span onClick={e => { e.preventDefault(); this.toggleModal() } }>
-                    { this.props.modalTrigger }
-                </span>
-                {
-                    this.state.showModal ?
-                        <Modal onHideModal={() => this.toggleModal()}>
-                            <Form formUpdated={this.state.formUpdated} loading={this.props.loading} heading={translate('editing_user')} fields={this.state.userFields} setFieldValue={this.setFieldValue} formAction={this.updateUser} formReset={this.resetUser}/>
-                        </Modal>
-                        :
-                        null
-                }
-            </>
-        );
-    }
-
-    getUserFields(currentUser, user, context, classesList, allCoursesList, userFields) {
-        const { translate, getUserFormFields } = context;
-
-        const formFields = getUserFormFields(currentUser, user, this.generatePassword);
+        const formFields = getUserFormFields(currentUser, user, generatePassword);
 
         if ( user.role === 'student' && classesList ) {
-            formFields.splice(2, 0, this.insertClass(context, classesList, user, userFields));
+            formFields.splice(2, 0, insertClass(classesList, user, userFields));
         }
         if ( user.role === 'teacher' && allCoursesList ) {
-            formFields.splice(2, 0, this.insertCourse(context, allCoursesList, user, userFields))
+            formFields.splice(2, 0, insertCourse(allCoursesList, user, userFields))
         }
 
         formFields.push(
@@ -78,46 +62,30 @@ class AdminUsersListModal extends React.Component {
         return formFields;
     }
 
-    toggleModal() {
-        if ( this.state.showModal && this.props.onToggleModal ) {
-            this.props.onToggleModal();
+    function toggleModal() {
+        if ( showModal && onToggleModal ) {
+            onToggleModal();
         }
-        if ( this.state.showModal ) {
+        if ( showModal ) {
             document.querySelector('.section__title-holder').style.zIndex = 10;
         }
         else {
             document.querySelector('.section__title-holder').style.zIndex = 9999;
         }
-        this.setState(state => {
-            const newState = {
-                showModal: !state.showModal
-            };
 
-            if ( !state.showModal ) {
-                newState.userFields = this.getUserFields(this.props.currentUser, this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
-            }
-
-            return {
-                ...newState,
-                formUpdated: false
-            }
-        });
+        if ( !showModal ) {
+            setUserFields(Object.assign([], getUserFields(currentUser, user, classesList, allCoursesList, userFields)));
+        }
+        setFormUpdated(false);
+        setShowModal(!showModal);
     }
 
-    resetUser() {
-        this.setState(() => {
-            const newState = {};
-
-            newState.userFields = this.getUserFields(this.props.currentUser, this.props.user, this.context, this.props.classesList, this.props.allCoursesList, this.state.userFields);
-
-            return {
-                ...newState,
-                formUpdated: false
-            }
-        });
+    function resetUser() {
+        setUserFields(Object.assign([], getUserFields(currentUser, user, classesList, allCoursesList, userFields)));
+        setFormUpdated(false);
     }
 
-    findFieldInBlock(item, fieldID) {
+    function findFieldInBlock(item, fieldID) {
         return item.children.find(child => {
             if ( child.id === fieldID ) {
                 return child;
@@ -126,11 +94,7 @@ class AdminUsersListModal extends React.Component {
         });
     }
 
-    setFieldValue(fieldID, value) {
-        const { userFields } = this.state;
-        const { user, usersList, classesList, allCoursesList } = this.props;
-        const { translate, lang } = this.context;
-
+    function setFieldValue(fieldID, value) {
         let field = null;
 
         userFields.find(fieldItem => {
@@ -138,7 +102,7 @@ class AdminUsersListModal extends React.Component {
                 fieldItem.tabs.find(tabItem => {
                     tabItem.content.find(item => {
                         if ( item.type === 'block' || item.type === 'cols' ) {
-                            field = this.findFieldInBlock(item, fieldID);
+                            field = findFieldInBlock(item, fieldID);
                         }
                         else {
                             if ( item.id === fieldID ) {
@@ -151,7 +115,7 @@ class AdminUsersListModal extends React.Component {
                 });
             }
             else if ( fieldItem.type === 'block' || fieldItem.type === 'cols' ) {
-                field = this.findFieldInBlock(fieldItem, fieldID);
+                field = findFieldInBlock(fieldItem, fieldID);
             }
             else {
                 if ( fieldItem.id === fieldID ) {
@@ -191,10 +155,10 @@ class AdminUsersListModal extends React.Component {
 
         if ( fieldID === 'role' ) {
             if ( value === 'student' ) {
-                userFields.splice(2, 0, this.insertClass(this.context, classesList, user, userFields));
+                userFields.splice(2, 0, insertClass(classesList, user, userFields));
             }
             else if ( value === 'teacher' ) {
-                userFields.splice(2, 0, this.insertCourse(this.context, allCoursesList, user, userFields));
+                userFields.splice(2, 0, insertCourse(allCoursesList, user, userFields));
             }
             else {
                 if ( userFields.some(item => item.id === 'class') ) {
@@ -203,16 +167,11 @@ class AdminUsersListModal extends React.Component {
             }
         }
 
-        this.setState(() => {
-            return {
-                userFields: userFields,
-                formUpdated: true
-            }
-        });
+        setUserFields(Object.assign([], userFields));
+        setFormUpdated(true);
     }
 
-    insertClass(context, classesList, user, userFields) {
-        const { lang } = context;
+    function insertClass(classesList, user, userFields) {
         const opts = [];
         const selectedClass = classesList.find(item => item.id === user.class);
 
@@ -261,8 +220,7 @@ class AdminUsersListModal extends React.Component {
         };
     }
 
-    insertCourse(context, allCoursesList, user, userFields) {
-        const { translate, lang } = context;
+    function insertCourse(allCoursesList, user, userFields) {
         const selectedCourses = [];
 
         if ( userFields.some(item => item.id === 'class') ) {
@@ -292,45 +250,39 @@ class AdminUsersListModal extends React.Component {
         }
     }
 
-    generatePassword(fieldID) {
+    function generatePassword(fieldID) {
         const newPassword = generator.generate({
             length: 16,
             symbols: true,
             strict: true
         });
 
-        this.setFieldValue(fieldID, newPassword);
+        setFieldValue(fieldID, newPassword);
     }
 
-    updateUser() {
-        const { user, updateUser } = this.props;
+    function handleUpdateUser() {
         let userID = user.id;
 
-        const updatedFields = this.getUpdatedFields();
+        const updatedFields = getUpdatedFields();
 
         if ( user.id ) {
             delete updatedFields.id;
         }
         else {
-            userID = this.generateID();
+            userID = generateID();
         }
 
-        this.setState({
-            showModal: false
-        });
+        setShowModal(false);
         updateUser(userID, updatedFields);
     }
 
-    generateID() {
+    function generateID() {
         return generator.generate({
             length: 16
         });
     }
 
-    getUpdatedFields() {
-        const { userFields } = this.state;
-        const { user } = this.props;
-
+    function getUpdatedFields() {
         const updatedFields = {};
 
         userFields.forEach(field => {
@@ -380,7 +332,6 @@ class AdminUsersListModal extends React.Component {
         return updatedFields;
     }
 }
-AdminUsersListModal.contextType = siteSettingsContext;
 
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,
