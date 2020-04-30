@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
+import React, {useContext, useState, useRef} from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Confirm from '../../Confirm/Confirm';
@@ -41,9 +41,6 @@ export default function SeamlessEditorText({ block, setBlock, removeBlock, noBtn
                 !noBtns ?
                     <>
                         <div className="seamlessEditor__editor-block-actions">
-                            {/*<span className="seamlessEditor__block-actions-sort">*/}
-                            {/*    <i className="content_title-icon fa fa-sort"/>*/}
-                            {/*</span>*/}
                             <a href="/" onClick={e => onRemoveBlock(e)} className="seamlessEditor__editor-block-actions-remove">
                                 <i className="content_title-icon fa fa-trash-alt"/>
                             </a>

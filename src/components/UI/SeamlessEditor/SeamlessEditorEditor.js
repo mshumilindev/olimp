@@ -3,10 +3,11 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import classNames from 'classnames';
 import * as blocksJSON from './blocks';
 import SeamlessEditorText from "./blocks/SeamlessEditorText";
+import SeamlessEditorImage from "./blocks/SeamlessEditorImage";
 
 const blocksData = blocksJSON.default;
 
-export default function SeamlessEditorEditor({title, type, addBlock, content}) {
+export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, content}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
     const [ dragBlock, setDragBlock ] = useState(null);
@@ -149,7 +150,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, content}) {
     function _renderTypeBlock(item) {
         return (
             <div className="seamlessEditor__editor-type-item" key={'typeBlock' + item.block} draggable onDragStart={() => setDragBlock(item.block)} onDragEnd={handleDragEnd}>
-                <div className="seamlessEditor__editor-btn" onClick={() => addBlock(blocksData[item.block], content.length)}>
+                <div className="seamlessEditor__editor-btn" onClick={() => addBlock(getNewBlock(item.block), content.length)}>
                     <i className={item.icon} />
                     { translate(item.block) }
                 </div>
@@ -227,7 +228,11 @@ export default function SeamlessEditorEditor({title, type, addBlock, content}) {
     function getBlock(block) {
         switch (block.type) {
             case 'text':
-                return <SeamlessEditorText block={block} setBlock={setBlock} removeBlock={removeBlock}/>
+                return <SeamlessEditorText block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+
+            case 'media':
+            case 'image':
+                return <SeamlessEditorImage block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
         }
     }
 
@@ -253,17 +258,13 @@ export default function SeamlessEditorEditor({title, type, addBlock, content}) {
                 }
             }
 
-            addBlock(blocksData[dragBlock], newPosition);
+            addBlock(getNewBlock(dragBlock), newPosition);
         }
         setDragBlock(null);
         setDragOverBlock(null);
     }
 
-    function setBlock() {
-        console.log('set block');
-    }
-
-    function removeBlock() {
-        console.log('remove block');
+    function getNewBlock(type) {
+        return JSON.parse(JSON.stringify(blocksData[type]));
     }
 }

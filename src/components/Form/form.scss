@@ -445,6 +445,16 @@
         margin: 20px;
       }
     }
+    &.customSize {
+      padding-top: 0;
+      min-height: 120px;
+      img {
+        width: 100%;
+        height: auto;
+        position: relative;
+        vertical-align: top;
+      }
+    }
     &.PNG {
       [class$="__file-image"] {
         background-color: $white;

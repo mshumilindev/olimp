@@ -16,7 +16,7 @@ export default function SeamlessEditor({title, type, content}) {
         <div className="seamlessEditor">
             {
                 isEdited ?
-                    <SeamlessEditorEditor content={currentContent} title={title} type={type} addBlock={addBlock} />
+                    <SeamlessEditorEditor content={currentContent} title={title} type={type} addBlock={addBlock} setBlock={setBlock} removeBlock={removeBlock} />
                     :
                     !currentContent.length ?
                         _renderNoContent()
@@ -65,19 +65,44 @@ export default function SeamlessEditor({title, type, content}) {
         )
     }
 
-    function addBlock(block, index) {
-        const newContent = [
-            ...currentContent.slice(0, index),
-            block,
-            ...currentContent.slice(index)
-        ];
+    function setBlock(block) {
+        let newContent = currentContent;
+        const index = newContent.indexOf(block);
 
-        setCurrentContent(newContent.map((item, index) => {
-            return {
-                ...item,
-                index: index,
-                id: generate({length: 20, numbers: true})
-            }
-        }));
+        newContent[index] = block;
+
+        newContent.forEach((item, itemIndex) => {
+            item.index = itemIndex;
+        });
+
+        setCurrentContent(Object.assign([], newContent));
+    }
+
+    function addBlock(block, index) {
+        let newContent = currentContent;
+
+        newContent.splice(index, 0, {
+            ...block,
+            id: generate({length: 20, numbers: true})
+        });
+
+        newContent.forEach((item, itemIndex) => {
+            item.index = itemIndex;
+        });
+
+        setCurrentContent(Object.assign([], newContent));
+    }
+
+    function removeBlock(block) {
+        let newContent = currentContent;
+        const index = newContent.indexOf(block);
+
+        newContent.splice(index, 1);
+
+        newContent.forEach((item, itemIndex) => {
+            item.index = itemIndex;
+        });
+
+        setCurrentContent(Object.assign([], newContent));
     }
 }

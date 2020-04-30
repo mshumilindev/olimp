@@ -443,11 +443,14 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                 return (
                     <div className={classNames('form__file-holder', {isUpdated: field.updated})} style={{width: field.size, maxWidth: field.maxSize ? field.maxSize : '100%'}}>
                         <TextTooltip text={translate(field.label)} position="left">
-                            <span className={imageClasses}>
+                            <span className={classNames(imageClasses, {customSize: field.customSize})}>
                                 <i className={field.icon ? field.icon + ' form__file-icon' : 'form__file-icon'} />
                                 {
                                     field.value ?
-                                        <span className="form__file-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
+                                        field.customSize ?
+                                            <img src={field.value}/>
+                                            :
+                                            <span className="form__file-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
                                         :
                                         null
                                 }
