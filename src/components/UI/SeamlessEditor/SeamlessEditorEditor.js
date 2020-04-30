@@ -4,15 +4,20 @@ import classNames from 'classnames';
 import * as blocksJSON from './blocks';
 import SeamlessEditorText from "./blocks/SeamlessEditorText";
 import SeamlessEditorImage from "./blocks/SeamlessEditorImage";
+import SeamlessEditorPreview from "./SeamlessEditorPreview";
+import {Scrollbars} from "react-custom-scrollbars";
+import { Editor } from "@tinymce/tinymce-react";
 
 const blocksData = blocksJSON.default;
 
-export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, content}) {
-    const { translate } = useContext(siteSettingsContext);
+export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock}) {
+    const { translate, lang } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
     const [ dragBlock, setDragBlock ] = useState(null);
     const [ dragOverBlock, setDragOverBlock ] = useState(null);
     const [ dragOverBlockPosition, setDragOverBlockPosition ] = useState(null);
+    const [ textEditorValue, setTextEditorValue ] = useState('');
+    const [ dragOverNew, setDragOverNew ] = useState(false);
     const types = [
         {
             icon: 'fas fa-font',
@@ -87,6 +92,12 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
             <div className="seamlessEditor__editor-body">
                 { _renderTypes() }
                 { _renderBlocks() }
+                {
+                    content.length ?
+                        <SeamlessEditorPreview content={content} scrollToBlock={scrollToBlock} moveBlock={moveBlock} removeBlock={removeBlock}/>
+                        :
+                        null
+                }
             </div>
         </div>
     );
@@ -173,21 +184,37 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
     function _renderBlocks() {
         return (
             <div className="seamlessEditor__editor-blocks-holder">
-                <div className="seamlessEditor__editor-blocks">
-                    {
-                        !content.length ?
-                            _renderNewBlock()
-                            :
-                            content.map((item, index) => _renderBlock(item, index))
-                    }
-                </div>
+                <Scrollbars
+                    autoHeight
+                    hideTracksWhenNotNeeded
+                    autoHeightMax={'100%'}
+                    renderTrackVertical={props => <div {...props} className="scrollbar__track"/>}
+                    renderView={props => <div {...props} className="scrollbar__content"/>}
+                >
+                    <div className="seamlessEditor__editor-blocks-inner">
+                        <div className="seamlessEditor__editor-blocks">
+                            {
+                                !content.length ?
+                                    _renderNewBlock()
+                                    :
+                                    content.map((item, index) => _renderBlock(item, index))
+                            }
+                        </div>
+                    </div>
+                </Scrollbars>
+                {
+                    textEditorValue ?
+                        _renderTextEditor()
+                        :
+                        null
+                }
             </div>
         )
     }
 
     function _renderNewBlock() {
         return (
-            <div className="seamlessEditor__editor-block isNew">
+            <div className={classNames('seamlessEditor__editor-block isNew', {isOver: dragOverNew})} onDragLeave={() => setTimeout(() => { setDragOverNew(false)}, 0)} onDragEnter={() => setDragOverNew(true)}>
                 <div className="seamlessEditor__editor-block-inner">
                     { translate('seamlessEditor_drag_block_here') }
                 </div>
@@ -197,7 +224,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
     function _renderBlock(item, index) {
         return (
-            <div className="seamlessEditor__editor-block-holder" onDragEnter={() => setDragOverBlock(item.id)} key={'block' + item.id}>
+            <div className="seamlessEditor__editor-block-holder" onDragEnter={() => setDragOverBlock(item.id)} key={'block' + item.id} id={'block' + item.id}>
                 {
                     dragBlock && index === 0 ?
                         _renderDropArea(item.id, 'before')
@@ -217,7 +244,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
     function _renderDropArea(blockID, position) {
         return (
-            <div className={classNames('seamlessEditor__editor-block dropArea', {isOver: dragOverBlock === blockID && dragOverBlockPosition === position})} onDragEnter={() => setDragOverBlockPosition(position)}>
+            <div className={classNames('seamlessEditor__editor-block dropArea', {isOver: dragOverBlock === blockID && dragOverBlockPosition === position})} onDragLeave={() => setTimeout(() => { setDragOverBlockPosition(null)}, 0)} onDragEnter={() => setDragOverBlockPosition(position)}>
                 <div className="seamlessEditor__editor-block-inner">
                     { translate('drop_block_here') }
                 </div>
@@ -225,46 +252,102 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         )
     }
 
+    function _renderTextEditor() {
+        const editorToolbar = ['undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
+
+        const editorConfig = {
+            menubar: false,
+            language: 'uk',
+            max_height: 300,
+            plugins: [
+                'autoresize fullscreen',
+                'advlist lists image charmap anchor',
+                'visualblocks',
+                'paste'
+            ],
+            external_plugins: {
+                'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
+            },
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+            paste_retain_style_properties: "all",
+            fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
+            toolbar: editorToolbar,
+            placeholder: translate('enter_text')
+        };
+
+        return (
+            <div className="seamlessEditor__textEditor-holder">
+                <div className="seamlessEditor__textEditor">
+                    <Editor
+                        value={textEditorValue.value[lang]}
+                        onEditorChange={textEditorChange}
+                        init={editorConfig}
+                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                    />
+                </div>
+                <div className="seamlessEditor__textEditor-close" onClick={() => setTextEditorValue(null)}>
+                    <i className="fas fa-check" />
+                </div>
+            </div>
+        )
+    }
+
+    function textEditorChange(value) {
+        textEditorValue.value[lang] = value;
+        setBlock(textEditorValue);
+    }
+
     function getBlock(block) {
         switch (block.type) {
             case 'text':
-                return <SeamlessEditorText block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                return <SeamlessEditorText block={block} openTextEditor={openTextEditor}/>;
 
             case 'media':
             case 'image':
-                return <SeamlessEditorImage block={block} setBlock={setBlock} removeBlock={removeBlock}/>;
+                return <SeamlessEditorImage block={block} setBlock={setBlock}/>;
         }
     }
 
     function handleDragEnd() {
-        if ( dragBlock && dragOverBlock && dragOverBlockPosition ) {
-            const index = content.indexOf(content.find(item => item.id === dragOverBlock));
-            let newPosition = null;
+        if ( dragOverNew ) {
+            addBlock(getNewBlock(dragBlock), 0);
+        }
+        else {
+            if ( dragBlock && dragOverBlock && dragOverBlockPosition ) {
+                const index = content.indexOf(content.find(item => item.id === dragOverBlock));
+                let newPosition = null;
 
-            if ( dragOverBlockPosition === 'before' ) {
-                if ( index === 0 ) {
-                    newPosition = 0;
+                if ( dragOverBlockPosition === 'before' ) {
+                    if ( index === 0 ) {
+                        newPosition = 0;
+                    }
+                    else {
+                        newPosition = index - 1;
+                    }
                 }
                 else {
-                    newPosition = index - 1;
+                    if ( index === content.length - 1 ) {
+                        newPosition = content.length;
+                    }
+                    else {
+                        newPosition = index + 1;
+                    }
                 }
-            }
-            else {
-                if ( index === content.length - 1 ) {
-                    newPosition = content.length;
-                }
-                else {
-                    newPosition = index + 1;
-                }
-            }
 
-            addBlock(getNewBlock(dragBlock), newPosition);
+                addBlock(getNewBlock(dragBlock), newPosition);
+            }
         }
         setDragBlock(null);
         setDragOverBlock(null);
+        setDragOverBlockPosition(null);
+        setDragOverNew(false);
     }
 
     function getNewBlock(type) {
         return JSON.parse(JSON.stringify(blocksData[type]));
+    }
+
+    function openTextEditor(block) {
+        setTextEditorValue(Object.assign({}, block));
     }
 }

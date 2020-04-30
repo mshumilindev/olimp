@@ -12,7 +12,14 @@
   }
   &__block {
     margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &.type-formula,
     &.type-text {
+      position: relative;
+      user-select: none;
+      overflow: hidden;
       h1 {
         text-align: center;
         font-size: 24px;
@@ -49,17 +56,6 @@
         font-size: 10px;
         vertical-align: top;
       }
-    }
-    &:last-child {
-      margin-bottom: 0;
-    }
-    &.type-formula {
-      position: relative;
-      user-select: none;
-      background: $lightColor;
-      padding: 20px;
-      overflow: hidden;
-      font-size: 20px;
       .tox-editor-header {
         display: none !important;
       }
@@ -71,15 +67,6 @@
         right: 0;
         bottom: 0;
         z-index: 1;
-      }
-      script {
-        display: block;
-        height: 0;
-        overflow: hidden;
-        margin-bottom: 20px;
-      }
-      .MathJax {
-        margin-left: 10px;
       }
     }
   }

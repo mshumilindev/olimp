@@ -8,7 +8,7 @@ import MathJax from 'react-mathjax-preview'
 import Form from "../Form/Form";
 import { connect } from 'react-redux';
 
-function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
+function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly, isCanvas}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
@@ -72,7 +72,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
             <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick ? onBlockClick(index) : null}>
                 {
                     block.type === 'text' ?
-                        <div dangerouslySetInnerHTML={{__html: block.value[lang] ? block.value[lang] : block.value['ua']}}/>
+                        <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
                         :
                         null
                 }

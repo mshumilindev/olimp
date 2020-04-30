@@ -16,7 +16,16 @@ export default function SeamlessEditor({title, type, content}) {
         <div className="seamlessEditor">
             {
                 isEdited ?
-                    <SeamlessEditorEditor content={currentContent} title={title} type={type} addBlock={addBlock} setBlock={setBlock} removeBlock={removeBlock} />
+                    <SeamlessEditorEditor
+                        content={currentContent}
+                        title={title}
+                        type={type}
+                        addBlock={addBlock}
+                        setBlock={setBlock}
+                        removeBlock={removeBlock}
+                        scrollToBlock={scrollToBlock}
+                        moveBlock={moveBlock}
+                    />
                     :
                     !currentContent.length ?
                         _renderNoContent()
@@ -80,10 +89,11 @@ export default function SeamlessEditor({title, type, content}) {
 
     function addBlock(block, index) {
         let newContent = currentContent;
+        const id = generate({length: 20, numbers: true});
 
         newContent.splice(index, 0, {
             ...block,
-            id: generate({length: 20, numbers: true})
+            id: id
         });
 
         newContent.forEach((item, itemIndex) => {
@@ -91,6 +101,10 @@ export default function SeamlessEditor({title, type, content}) {
         });
 
         setCurrentContent(Object.assign([], newContent));
+
+        setTimeout(() => {
+            scrollToBlock(id);
+        }, 100);
     }
 
     function removeBlock(block) {
@@ -104,5 +118,39 @@ export default function SeamlessEditor({title, type, content}) {
         });
 
         setCurrentContent(Object.assign([], newContent));
+    }
+
+    function moveBlock(prevIndex, newIndex) {
+        let newContent = Object.assign([], currentContent);
+
+        const block = newContent[prevIndex];
+
+        if ( newIndex !== prevIndex ) {
+            if ( newIndex > prevIndex ) {
+                newContent.splice(newIndex, 0, block);
+                newContent.splice(prevIndex, 1);
+            }
+            else {
+                newContent.splice(prevIndex, 1);
+                newContent.splice(newIndex, 0, block);
+            }
+
+            newContent.forEach((item, itemIndex) => {
+                item.index = itemIndex;
+            });
+
+            setCurrentContent(newContent);
+        }
+    }
+
+    function scrollToBlock(blockID) {
+        const block = document.querySelector('#block' + blockID);
+        const scrollTop = block.offsetTop - 40;
+        const container = document.querySelector('.seamlessEditor__editor-blocks-holder .scrollbar__content');
+
+        container.scrollTo({
+            top: scrollTop,
+            behavior: 'smooth'
+        });
     }
 }

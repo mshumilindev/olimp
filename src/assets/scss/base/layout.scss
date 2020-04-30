@@ -208,3 +208,13 @@
   display: none;
   z-index: -99999;
 }
+.MathJax {
+  font-size: 20px !important;
+  .math > * > * {
+    position: static !important;
+  }
+  .mspace {
+    display: block !important;
+    height: 60px !important;
+  }
+}

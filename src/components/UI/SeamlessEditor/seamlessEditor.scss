@@ -31,6 +31,142 @@ $editorBackground: $lightGreyColor;
       margin: 0 5px;
     }
   }
+  &__textEditor-holder {
+    animation: textEditorAnimation .15s linear;
+    height: 33.33333%;
+    min-height: 300px;
+    padding: 0 $pageIndent $pageIndent;
+    z-index: 99999;
+    position: relative;
+  }
+  &__textEditor {
+    height: 100%;
+    padding: $editorIndent;
+    background: $white;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    max-width: 880px;
+    margin: 0 auto;
+    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
+    position: relative;
+    z-index: 1;
+    > * {
+      height: 100% !important;
+    }
+  }
+  &__textEditor-close {
+    position: absolute;
+    left: 50%;
+    transform: translateX(440px);
+    top: 0;
+    bottom: $pageIndent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $pageIndent;
+    background: $greyColor;
+    color: $white;
+    font-size: 14px;
+    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
+    cursor: pointer;
+    transition: background .15s ease-in-out;
+    &:hover {
+      background: $anchorColor;
+    }
+    @media screen and (max-width: 1360px) {
+      left: auto;
+      transform: none;
+      right: 0;
+    }
+  }
+  &__preview-holder {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    > *:first-child {
+      height: 100% !important;
+      > * {
+        height: 100% !important;
+      }
+    }
+  }
+  &__preview-delete {
+    height: #{9 * $actionsSize * 2 / 16};
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: $RobotoCondensed;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 12px;
+    background: $lightColor;
+    color: $greyColor;
+    &.isOver {
+      background: $lightRedColor;
+      color: $errorColor;
+    }
+    i {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+  }
+  &__preview {
+    background: $white;
+    overflow-x: hidden !important;
+    &-list {
+      padding: $editorIndent / 2;
+    }
+    &-item-holder {
+      margin-bottom: $editorIndent / 2;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    &-item {
+      height: #{9 * $actionsSize * 2 / 16};
+      overflow: hidden;
+      border: 1px solid $mediumGreyColor;
+      padding: $editorIndent / 2;
+      box-sizing: border-box;
+      user-select: none;
+      cursor: pointer;
+      &:hover {
+        border-color: $anchorColor;
+      }
+    }
+    &-item-inner {
+      height: 200%;
+      width: 200%;
+      transform: scale(0.5) translate(-50%, -50%);
+    }
+    .article {
+      height: 100%;
+      overflow: hidden;
+      > * {
+        height: 100%;
+        overflow: hidden;
+      }
+    }
+    &-dropArea {
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $white;
+      font-size: 14px;
+      transition: height .15s ease-in-out;
+      position: relative;
+      z-index: 1;
+      margin: -20px 0;
+      opacity: 0;
+      &.isOver {
+        height: #{9 * $actionsSize * 2 / 16 + 50};
+        opacity: 1;
+      }
+    }
+  }
   &__editor {
     position: fixed;
     left: 0;
@@ -45,12 +181,20 @@ $editorBackground: $lightGreyColor;
       display: flex;
       justify-content: space-between;
       width: 100%;
+      box-shadow: 0 0 10px 0 rgba(0,0,0,.15);
+      position: relative;
+      z-index: 1;
     }
     &-body {
       display: flex;
       width: 100%;
       height: 100%;
       overflow: hidden;
+      > *:last-child:not(:nth-child(2)):not(.seamlessEditor__editor-blocks-holder) {
+        flex: 0 0 auto;
+        width: $actionsSize * 2 !important;
+        height: 100% !important;
+      }
     }
     &-title {
       z-index: 1;
@@ -96,7 +240,6 @@ $editorBackground: $lightGreyColor;
       &-item {
         height: $actionsSize;
         width: $actionsSize;
-        border-left: 5px solid $editorBackground;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -187,10 +330,20 @@ $editorBackground: $lightGreyColor;
     }
     &-blocks-holder {
       background: $editorBackground;
-      padding: $pageIndent;
       width: 100%;
       box-sizing: border-box;
-      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      > *:first-child {
+        height: 100% !important;
+        > * {
+          height: 100% !important;
+          overflow-x: hidden !important;
+        }
+      }
+    }
+    &-blocks-inner {
+      padding: $pageIndent;
     }
     &-blocks {
       background: $white;
@@ -207,16 +360,7 @@ $editorBackground: $lightGreyColor;
     &-block {
       min-height: 120px;
       display: flex;
-      &:hover {
-        [class$="-block-inner"] {
-          border-color: $anchorColor;
-        }
-      }
-      &.active {
-        [class$="-block-inner"] {
-          border-color: $greenColor;
-        }
-      }
+      line-height: 1.5;
       &.isNew {
         font-family: $RobotoCondensed;
         color: $mediumGreyColor;
@@ -224,9 +368,15 @@ $editorBackground: $lightGreyColor;
         letter-spacing: .5px;
         cursor: default;
         user-select: none;
+        background: $lightColor;
         [class$="-block-inner"] {
           justify-content: center;
           align-items: center;
+          border: none;
+        }
+        &.isOver {
+          background: $lightBlueColor;
+          color: $anchorColor;
         }
       }
       &.dropArea {
@@ -269,11 +419,8 @@ $editorBackground: $lightGreyColor;
           }
         }
       }
-      &-content {
-        width: 100%;
-        .form {
-          margin-top: -20px;
-        }
+      .form {
+        margin-top: -20px;
       }
     }
   }
@@ -284,5 +431,15 @@ $editorBackground: $lightGreyColor;
   }
   100% {
     width: $actionsSize;
+  }
+}
+@keyframes textEditorAnimation {
+  0% {
+    height: 0;
+    min-height: 0;
+  }
+  100% {
+    height: 33.33333%;
+    min-height: 300px;
   }
 }

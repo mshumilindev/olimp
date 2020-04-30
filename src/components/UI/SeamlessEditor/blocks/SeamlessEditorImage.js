@@ -1,12 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Form from '../../../../components/Form/Form';
-import Confirm from "../../Confirm/Confirm";
-import classNames from 'classnames';
 
-export default function SeamlessEditorImage({ block, setBlock, removeBlock }) {
+export default function SeamlessEditorImage({ block, setBlock }) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
     block.value = block.value || {};
     block.value.image = block.value.image || '';
     block.value.caption = block.value.caption || {
@@ -32,31 +29,14 @@ export default function SeamlessEditorImage({ block, setBlock, removeBlock }) {
     ];
 
     return (
-        <div className="seamlessEditor__editor-block-inner seamlessEditor__editor-block-media">
-            <div className="seamlessEditor__editor-block-actions">
-                <a href="/" onClick={e => onRemoveBlock(e)} className="seamlessEditor__editor-block-actions-remove">
-                    <i className="content_title-icon fa fa-trash-alt"/>
-                </a>
-            </div>
-            <div className="seamlessEditor__editor-block-content">
+        <div className="seamlessEditor__editor-block">
+            <div className="seamlessEditor__editor-block-inner seamlessEditor__editor-block-media">
                 <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
             </div>
-            {
-                showRemoveBlock ?
-                    <Confirm message={translate('sure_to_remove_block')} confirmAction={() => removeBlock(block)} cancelAction={() => setShowRemoveBlock(false)} />
-                    :
-                    null
-            }
         </div>
     );
 
-    function onRemoveBlock(e) {
-        e.preventDefault();
-
-        setShowRemoveBlock(true);
-    }
-
-    function handleChange(id, value, size) {
+    function handleChange(id, value) {
         let newValue = {
             value: block.value
         };
