@@ -11,7 +11,6 @@ class Jitsi {
     constructor() {
         this.connection = null;
         this.isJoined = false;
-        this.room = null;
         this.localTracks = [];
         this.remoteTracks = {};
         window.addEventListener('beforeunload', this.stop);
@@ -44,13 +43,15 @@ class Jitsi {
         onShareScreen = (tracks) => {
             shareScreenTrack = tracks[0];
 
-            if ( localTracks.find(item => item.type === 'video') ) {
-                localTracks.find(item => item.type === 'video').dispose();
-                room.replaceTrack(localTracks.find(item => item.type === 'video'), shareScreenTrack);
-                containers.remote.querySelector(`.localVideo`).remove();
-            }
-            else {
-                self.room.addTrack(tracks[0]);
+            if ( room ) {
+                if ( localTracks.find(item => item.type === 'video') ) {
+                    localTracks.find(item => item.type === 'video').dispose();
+                    room.replaceTrack(localTracks.find(item => item.type === 'video'), shareScreenTrack);
+                    containers.remote.querySelector(`.localVideo`).remove();
+                }
+                else {
+                    room.addTrack(tracks[0]);
+                }
             }
         };
 
@@ -88,7 +89,7 @@ class Jitsi {
                         if ( shareScreenTrack ) {
                             shareScreenTrack.dispose();
                         }
-                        self.room.addTrack(self.localTracks[i]);
+                        room.addTrack(self.localTracks[i]);
                     }
                 }
             }
@@ -236,10 +237,10 @@ class Jitsi {
         }
 
         function onConferenceJoined() {
-            self.room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
+            room.sendTextMessage(JSON.stringify({name: user.name, avatar: user.avatar}));
             self.isJoined = true;
             for (let i = 0; i < self.localTracks.length; i++) {
-                self.room.addTrack(self.localTracks[i]);
+                room.addTrack(self.localTracks[i]);
             }
         }
 
@@ -266,14 +267,14 @@ class Jitsi {
         }
 
         function onConnectionSuccess() {
-            room = self.room = self.connection.initJitsiConference(('olimp_remote_school' + roomName).toLowerCase(), chatConfig.confOptions);
-            self.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
-            self.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
-            self.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-            self.room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {});
-            self.room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-            self.room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, track => {});
-            self.room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text) => {
+            room = self.connection.initJitsiConference(('olimp_remote_school' + roomName).toLowerCase(), chatConfig.confOptions);
+            room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
+            room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {});
+            room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+            room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {});
+            room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
+            room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, track => {});
+            room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text) => {
                 const newText = JSON.parse(text);
 
                 if ( newText.event ) {
@@ -292,7 +293,7 @@ class Jitsi {
                     onDisplayNameChange(id, newText.name);
                 }
             });
-            self.room.join();
+            room.join();
         }
 
         function onConnectionFailed() {
@@ -382,8 +383,12 @@ class Jitsi {
         if ( shareScreenTrack ) {
             shareScreenTrack.dispose();
         }
-        room.leave();
-        connection.disconnect();
+        if ( room ) {
+            room.leave();
+        }
+        if ( connection ) {
+            connection.disconnect();
+        }
     }
 
     toggleMute(value) {
