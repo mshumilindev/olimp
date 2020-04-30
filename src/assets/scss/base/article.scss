@@ -59,7 +59,6 @@
       background: $lightColor;
       padding: 20px;
       overflow: hidden;
-      font-size: 20px;
       .tox-editor-header {
         display: none !important;
       }
@@ -72,14 +71,16 @@
         bottom: 0;
         z-index: 1;
       }
-      script {
-        display: block;
-        height: 0;
-        overflow: hidden;
-        margin-bottom: 20px;
-      }
       .MathJax {
         margin-left: 10px;
+        font-size: 20px;
+        .math > * > * {
+          position: static !important;
+        }
+        .mspace {
+          display: block !important;
+          height: 60px !important;
+        }
       }
     }
   }
