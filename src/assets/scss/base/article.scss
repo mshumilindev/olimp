@@ -71,6 +71,12 @@
         bottom: 0;
         z-index: 1;
       }
+      script {
+        display: block;
+        height: 0;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
       .MathJax {
         margin-left: 10px;
         font-size: 20px;
@@ -79,7 +85,7 @@
         }
         .mspace {
           display: block !important;
-          height: 60px !important;
+          height: 20px !important;
         }
       }
     }
