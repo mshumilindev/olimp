@@ -8,6 +8,7 @@ import Page from './pages/page';
 import firebase from "./db/firestore";
 import {Provider} from "react-redux";
 import {mainStore} from "./redux/stores/mainStore";
+import {Editor} from "@tinymce/tinymce-react";
 
 const Login  = React.lazy(() => import('./pages/Login/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
@@ -76,6 +77,28 @@ export default function App() {
         });
     }, []);
 
+
+    const editorToolbar = ['undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
+
+    const editorConfig = {
+        menubar: false,
+        language: 'uk',
+        max_height: 550,
+        plugins: [
+            'autoresize fullscreen',
+            'advlist lists image charmap anchor',
+            'visualblocks',
+            'paste'
+        ],
+        external_plugins: {
+            'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
+        },
+        paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+        paste_retain_style_properties: "all",
+        fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
+        toolbar: editorToolbar
+    };
+
     if ( !checkedForUpdates ) {
         return null;
     }
@@ -86,6 +109,12 @@ export default function App() {
                     <Switch>
                         <Provider store={mainStore}>
                             <Page>
+                                <div className="tinymcePreloader">
+                                    <Editor
+                                        init={editorConfig}
+                                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                                    />
+                                </div>
                                 <Suspense fallback={_renderLoader()}>
                                     <Route exact path='/' component={Dashboard}/>
                                     <Route path='/login' component={Login}/>
