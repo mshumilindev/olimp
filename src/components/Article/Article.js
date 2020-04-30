@@ -85,7 +85,12 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                 {
                     block.type === 'media' ?
                         <>
-                            <div className={'article__image size-' + block.value.size} style={{backgroundImage: 'url(' + block.value.image + ')'}}/>
+                            {
+                                block.value.size ?
+                                    <div className={'article__image size-' + block.value.size} style={{backgroundImage: 'url(' + block.value.image + ')'}}/>
+                                    :
+                                    <img src={block.value.image} />
+                            }
                             {
                                 block.value.caption[lang] || block.value.caption['ua'] ?
                                     <div className="article__image-caption">

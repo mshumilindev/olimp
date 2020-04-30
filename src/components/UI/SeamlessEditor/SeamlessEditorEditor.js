@@ -10,7 +10,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 const blocksData = blocksJSON.default;
 
-export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock}) {
+export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock, setIsEdited}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
     const [ dragBlock, setDragBlock ] = useState(null);
@@ -106,15 +106,9 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         return (
             <div className="seamlessEditor__editor-actions">
                 <div className="seamlessEditor__editor-actions-item">
-                    <div className="seamlessEditor__editor-btn btn-success">
-                        <i className="fas fa-save" />
-                        { translate('save') }
-                    </div>
-                </div>
-                <div className="seamlessEditor__editor-actions-item">
-                    <div className="seamlessEditor__editor-btn btn-error">
+                    <div className="seamlessEditor__editor-btn" onClick={() => setIsEdited(false)}>
                         <i className="fas fa-times" />
-                        { translate('cancel') }
+                        { translate('close') }
                     </div>
                 </div>
             </div>

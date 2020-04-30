@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './seamlessEditor.scss';
 import Article from "../../Article/Article";
 import TextTooltip from "../TextTooltip/TextTooltip";
@@ -7,10 +7,19 @@ import SeamlessEditorEditor from "./SeamlessEditorEditor";
 import { generate } from "generate-password";
 import {orderBy} from "natural-orderby";
 
-export default function SeamlessEditor({title, type, content}) {
+export default function SeamlessEditor({title, type, content, setUpdated}) {
     const { translate } = useContext(siteSettingsContext);
-    const [ isEdited, setIsEdited ] = useState(true);
-    const [ currentContent, setCurrentContent ] = useState(Object.assign([], orderBy(content, v => v.order)));
+    const [ isEdited, setIsEdited ] = useState(false);
+    const [ currentContent, setCurrentContent ] = useState(JSON.parse(JSON.stringify(orderBy(content, v => v.order))));
+
+    useEffect(() => {
+        if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(content, v => v.order)) ) {
+            setUpdated(true);
+        }
+        else {
+            setUpdated(false);
+        }
+    }, [currentContent]);
 
     return (
         <div className="seamlessEditor">
@@ -25,6 +34,7 @@ export default function SeamlessEditor({title, type, content}) {
                         removeBlock={removeBlock}
                         scrollToBlock={scrollToBlock}
                         moveBlock={moveBlock}
+                        setIsEdited={setIsEdited}
                     />
                     :
                     !currentContent.length ?
@@ -66,7 +76,7 @@ export default function SeamlessEditor({title, type, content}) {
                 </span>
                 }/>
                 <TextTooltip position="top" text={translate('clear')} children={
-                    <span className="seamlessEditor__toolbar-btn btn btn__error round btn__xs">
+                    <span className="seamlessEditor__toolbar-btn btn btn__error round btn__xs" onClick={() => setCurrentContent([])}>
                         <i className="fas fa-eraser" />
                     </span>
                 }/>

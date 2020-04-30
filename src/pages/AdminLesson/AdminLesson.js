@@ -4,7 +4,6 @@ import { fetchLessonMeta } from '../../redux/actions/lessonActions';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Preloader from "../../components/UI/preloader";
-import ContentEditor from '../../components/UI/ContentEditor/ContentEditor';
 import Breadcrumbs from "../../components/UI/Breadcrumbs/Breadcrumbs";
 import './adminLesson.scss';
 import Modal from "../../components/UI/Modal/Modal";
@@ -18,6 +17,7 @@ const Form = React.lazy(() => import('../../components/Form/Form'));
 function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, loading, allCoursesList, discardLesson}) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
+    const [ contentUpdated, setContentUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
     const [ content, setContent ] = useState(null);
@@ -38,7 +38,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
     }, []);
 
     useEffect(() => {
-        window.onbeforeunload = lessonUpdated && (() => translate('save_before_leaving'));
+        window.onbeforeunload = lessonUpdated && contentUpdated && (() => translate('save_before_leaving'));
     });
 
     useEffect(() => {
@@ -60,7 +60,6 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
             //         setQA(Object.assign([], []));
             //     }
             // }
-            setLessonUpdated(false);
             setLessonInfoFields(Object.assign([], getLessonFields(lessonMeta, false)));
         }
     }, [lessonMeta]);
@@ -76,11 +75,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                     {
                         checkIfEditable() ?
                             <div className="section__title-actions">
-                                <a href="/" className="btn btn_primary" disabled={lessonUpdated} onClick={previewLesson}>
-                                    <i className="content_title-icon fa fa-eye" />
-                                    { translate('preview') }
-                                </a>
-                                <a href="/" className="btn btn__success" disabled={!lessonUpdated} onClick={saveLesson}>
+                                <a href="/" className="btn btn__success" disabled={!lessonUpdated && !contentUpdated} onClick={saveLesson}>
                                     <i className="content_title-icon fa fa-save" />
                                     { translate('save') }
                                 </a>
@@ -97,7 +92,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                 </div>
                 <div className="grid">
                     <div className="grid_col col-8" style={{maxWidth: 880}}>
-                        <AdminLessonContent subjectID={subjectID} courseID={courseID} moduleID={moduleID} lessonID={lessonMeta.id} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} />
+                        <AdminLessonContent subjectID={subjectID} courseID={courseID} moduleID={moduleID} lessonID={lessonMeta.id} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} setUpdated={setContentUpdated} />
                         {/*<div className="widget">*/}
                         {/*    <div className="widget__title">*/}
                         {/*        <i className="content_title-icon fa fa-question"/>*/}
@@ -134,7 +129,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                         :
                         null
                 }
-                <Prompt when={lessonUpdated} message={translate('save_before_leaving')} />
+                <Prompt when={lessonUpdated && contentUpdated} message={translate('save_before_leaving')} />
             </div>
             :
             <Preloader/>
@@ -238,7 +233,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
     function saveLesson(e) {
         e.preventDefault();
 
-        if ( lessonUpdated ) {
+        if ( lessonUpdated || contentUpdated ) {
             const updatedLessonFields = lessonInfoFields;
             const newLesson = {
                 ...lessonMeta,
@@ -251,14 +246,6 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                 QA: QA
             };
             updateLesson(subjectID, courseID, moduleID, newLesson);
-        }
-    }
-
-    function previewLesson(e) {
-        e.preventDefault();
-
-        if ( !lessonUpdated ) {
-            setShowPreview(true);
         }
     }
 }
