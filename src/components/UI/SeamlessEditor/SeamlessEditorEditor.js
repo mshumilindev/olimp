@@ -12,6 +12,7 @@ import SeamlessEditorVideo from "./blocks/SeamlessEditorVideo";
 import SeamlessEditorYoutube from "./blocks/SeamlessEditorYoutube";
 import SeamlessEditorDivider from "./blocks/SeamlessEditorDivider";
 import SeamlessEditorGoogleWord from "./blocks/SeamlessEditorGoogleWord";
+import SeamlessEditorGoogleExcel from "./blocks/SeamlessEditorGoogleExcel";
 import SeamlessEditorGooglePowerpoint from "./blocks/SeamlessEditorGooglePowerpoint";
 import SeamlessEditorWord from "./blocks/SeamlessEditorWord";
 
@@ -82,6 +83,10 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
             {
                 icon: 'fas fa-file-word',
                 block: 'googleWord'
+            },
+            {
+                icon: 'fas fa-file-excel',
+                block: 'googleExcel'
             },
             {
                 icon: 'fas fa-file-powerpoint',
@@ -264,7 +269,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
     }
 
     function _renderTextEditor() {
-        const editorToolbar = ['undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
+        const editorToolbar = ['undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | table tabledelete tableprops tablerowprops tablecellprops tableinsertrowbefore tableinsertrowafter tabledeleterow tableinsertcolbefore tableinsertcolafter tabledeletecol | tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
 
         const editorConfig = {
             menubar: false,
@@ -274,7 +279,8 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
                 'autoresize fullscreen',
                 'advlist lists image charmap anchor',
                 'visualblocks',
-                'paste'
+                'paste',
+                'table'
             ],
             external_plugins: {
                 'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
@@ -337,6 +343,9 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
             // === Google Drive
             case 'googleWord':
                 return <SeamlessEditorGoogleWord block={block} setBlock={setBlock}/>;
+
+            case 'googleExcel':
+                return <SeamlessEditorGoogleExcel block={block} setBlock={setBlock}/>;
 
             case 'googlePowerpoint':
                 return <SeamlessEditorGooglePowerpoint block={block} setBlock={setBlock}/>;

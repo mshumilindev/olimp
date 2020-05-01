@@ -162,6 +162,17 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
                 {
+                    block.type === 'googleExcel' ?
+                        <iframe
+                            src={getExcelURL(block.value)}
+                            style={{width: '100%', height: size.width * 141 / 100, border: '1px solid grey'}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                        :
+                        null
+                }
+                {
                     block.type === 'powerpoint' || block.type === 'googlePowerpoint' ?
                         <iframe
                             src={getPowerpointURL(block.value)}
@@ -206,6 +217,16 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
     }
 
     function getWordURL(url) {
+        let newURL = url;
+
+        if ( newURL.length ) {
+            newURL = newURL += '?embedded=true&widget=false&headers=false&chrome=false';
+        }
+
+        return newURL;
+    }
+
+    function getExcelURL(url) {
         let newURL = url;
 
         if ( newURL.length ) {

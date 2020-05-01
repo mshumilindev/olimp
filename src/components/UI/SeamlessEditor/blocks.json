@@ -51,6 +51,10 @@
     "type": "googleWord",
     "value": ""
   },
+  "googleExcel": {
+    "type": "googleExcel",
+    "value": ""
+  },
   "googlePowerpoint": {
     "type": "googlePowerpoint",
     "value": ""
