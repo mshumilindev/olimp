@@ -39,15 +39,17 @@ $editorBackground: $lightGreyColor;
     z-index: 99999;
     position: relative;
   }
-  &__textEditor {
+  &__textEditor-box {
+    display: flex;
+    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
     height: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  &__textEditor {
     padding: $editorIndent;
     background: $white;
     box-sizing: border-box;
-    flex: 0 0 auto;
-    max-width: 880px;
-    margin: 0 auto;
-    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
     position: relative;
     z-index: 1;
     > * {
@@ -55,11 +57,6 @@ $editorBackground: $lightGreyColor;
     }
   }
   &__textEditor-close {
-    position: absolute;
-    left: 50%;
-    transform: translateX(440px);
-    top: 0;
-    bottom: $pageIndent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,16 +64,11 @@ $editorBackground: $lightGreyColor;
     background: $greyColor;
     color: $white;
     font-size: 14px;
-    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
     cursor: pointer;
     transition: background .15s ease-in-out;
+    flex: 0 0 auto;
     &:hover {
       background: $anchorColor;
-    }
-    @media screen and (max-width: 1260px) {
-      left: auto;
-      transform: none;
-      right: 0;
     }
   }
   &__preview-holder {

@@ -271,16 +271,18 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
         return (
             <div className="seamlessEditor__textEditor-holder">
-                <div className="seamlessEditor__textEditor">
-                    <Editor
-                        value={textEditorValue.value[lang]}
-                        onEditorChange={textEditorChange}
-                        init={editorConfig}
-                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-                    />
-                </div>
-                <div className="seamlessEditor__textEditor-close" onClick={() => setTextEditorValue(null)}>
-                    <i className="fas fa-check" />
+                <div className="seamlessEditor__textEditor-box">
+                    <div className="seamlessEditor__textEditor">
+                        <Editor
+                            value={textEditorValue.value[lang]}
+                            onEditorChange={textEditorChange}
+                            init={editorConfig}
+                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                        />
+                    </div>
+                    <div className="seamlessEditor__textEditor-close" onClick={() => setTextEditorValue(null)}>
+                        <i className="fas fa-check" />
+                    </div>
                 </div>
             </div>
         )

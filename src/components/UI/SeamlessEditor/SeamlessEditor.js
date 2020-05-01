@@ -9,7 +9,7 @@ import {orderBy} from "natural-orderby";
 
 export default function SeamlessEditor({title, type, content, setUpdated}) {
     const { translate } = useContext(siteSettingsContext);
-    const [ isEdited, setIsEdited ] = useState(false);
+    const [ isEdited, setIsEdited ] = useState(true);
     const [ currentContent, setCurrentContent ] = useState(JSON.parse(JSON.stringify(orderBy(content, v => v.order))));
 
     useEffect(() => {
