@@ -15,6 +15,8 @@ import {Editor} from "@tinymce/tinymce-react";
 import { connect } from 'react-redux';
 
 function Form({user, fields, heading, setFieldValue, formAction, formError, formReset, loading, formUpdated}) {
+    const { translate } = useContext(SiteSettingsContext);
+
     const editorToolbar = ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry |image'];
 
     const editorConfig = {
@@ -34,11 +36,11 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
             'tiny_mce_wiris' : 'https://cdn.jsdelivr.net/npm/@wiris/mathtype-tinymce4@7.17.0/plugin.min.js'
         },
         toolbar: editorToolbar,
+        placeholder: translate('enter_text')
     };
 
     const $form = useRef(null);
     const [ hasErrors, setHasErrors ] = useState(false);
-    const { translate } = useContext(SiteSettingsContext);
     const [ showPassword, setShowPassword ] = useState(false);
 
     return (
@@ -214,7 +216,7 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                         <Editor
                             initialValue={field.value}
                             onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={{...editorConfig, placeholder: field.placeholder}}
+                            init={{...editorConfig}}
                             apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>
@@ -226,7 +228,7 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                         <Editor
                             initialValue={field.value}
                             onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={{...editorConfig, placeholder: field.placeholder}}
+                            init={{...editorConfig}}
                             apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>

@@ -8,7 +8,7 @@ import * as typeBlocksJSON from './typeBlocks';
 const typeBlocks = typeBlocksJSON.default;
 
 export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock, removeBlock}) {
-    const { translate, lang } = useContext(siteSettingsContext);
+    const { translate } = useContext(siteSettingsContext);
     const [ dragBlock, setDragBlock ] = useState(null);
     const [ dragOverBlock, setDragOverBlock ] = useState(null);
     const [ dragOverBlockPosition, setDragOverBlockPosition ] = useState(null);
@@ -50,7 +50,7 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
                 <div className="seamlessEditor__preview-item" onClick={() => scrollToBlock(item.id)} draggable onDragStart={() => setDragBlock(item.id)} onDragEnd={handleDragEnd}>
                     <div className="seamlessEditor__preview-item-inner">
                         {
-                            !item.value || !hasValue(item) ?
+                            item.type === 'answers' || !item.value || !hasValue(item) ?
                                 <div className="seamlessEditor__preview-placeholder">
                                     <i className={getType(item.type).icon}/>
                                     { translate(getType(item.type).block) }
@@ -114,7 +114,14 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
         let type = null;
 
         Object.keys(typeBlocks).forEach(key => {
-            const parsedType = itemType === 'media' ? 'image' : itemType;
+            let parsedType = itemType;
+
+            if ( itemType === 'media' ) {
+                parsedType = 'image';
+            }
+            if ( itemType === 'formula' ) {
+                parsedType = 'text';
+            }
 
             if ( typeBlocks[key].find(item => item.block === parsedType) ) {
                 type = typeBlocks[key].find(item => item.block === parsedType);

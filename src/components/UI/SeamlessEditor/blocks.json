@@ -59,6 +59,19 @@
     "type": "googlePowerpoint",
     "value": ""
   },
+  "answers": {
+    "type": "answers",
+    "value": {
+      "correctAnswers": "",
+      "answers": [
+        {
+          "ua": "",
+          "ru": "",
+          "en": ""
+        }
+      ]
+    }
+  },
   "divider": {
     "type": "divider"
   }

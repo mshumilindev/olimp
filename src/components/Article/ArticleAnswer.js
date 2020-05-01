@@ -59,7 +59,12 @@ function ArticleAnswer({block, setAnswer, answers, readonly}) {
         <div className={classNames('article__answers', { isReadonly: readonly })}>
             {
                 formFields ?
-                    <Form fields={formFields} setFieldValue={setFieldValue}/>
+                    (block.value.type === 'text' || block.value.type === 'formula') && readonly && !checkForSavedAnswer()[0] ?
+                        <div className="article__block-placeholder">
+                            { translate('text_will_be_shown') }
+                        </div>
+                        :
+                        <Form fields={formFields} setFieldValue={setFieldValue}/>
                     :
                     null
             }

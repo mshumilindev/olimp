@@ -18,6 +18,14 @@
     &:last-child {
       margin-bottom: 0;
     }
+    &-placeholder {
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: $lightColor;
+      color: $mediumGreyColor;
+    }
     &.type-formula,
     &.type-text {
       position: relative;

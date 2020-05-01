@@ -1,32 +1,30 @@
 import React, {useContext, useEffect, useState} from 'react';
 import './seamlessEditor.scss';
 import Article from "../../Article/Article";
-import TextTooltip from "../TextTooltip/TextTooltip";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import SeamlessEditorEditor from "./SeamlessEditorEditor";
 import { generate } from "generate-password";
-import {orderBy} from "natural-orderby";
+import Preloader from "../preloader";
 
-export default function SeamlessEditor({title, type, content, setUpdated}) {
+export default function SeamlessEditor({loading, title, type, content, updateContent, types}) {
     const { translate } = useContext(siteSettingsContext);
-    const [ isEdited, setIsEdited ] = useState(true);
-    const [ currentContent, setCurrentContent ] = useState(JSON.parse(JSON.stringify(orderBy(content, v => v.order))));
+    const [ isEdited, setIsEdited ] = useState(false);
 
     useEffect(() => {
-        if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(content, v => v.order)) ) {
-            setUpdated(true);
+        if ( isEdited ) {
+            document.querySelector('body').classList.add('overflow');
         }
         else {
-            setUpdated(false);
+            document.querySelector('body').classList.remove('overflow');
         }
-    }, [currentContent]);
+    }, [isEdited]);
 
     return (
         <div className="seamlessEditor">
             {
                 isEdited ?
                     <SeamlessEditorEditor
-                        content={currentContent}
+                        content={content}
                         title={title}
                         type={type}
                         addBlock={addBlock}
@@ -35,9 +33,10 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
                         scrollToBlock={scrollToBlock}
                         moveBlock={moveBlock}
                         setIsEdited={setIsEdited}
+                        types={types}
                     />
                     :
-                    !currentContent.length ?
+                    !content.length ?
                         _renderNoContent()
                         :
                         _renderContent()
@@ -62,7 +61,13 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
                 {
                     _renderToolbar()
                 }
-                <Article content={currentContent} />
+                <Article content={content} readonly />
+                {
+                    loading ?
+                        <Preloader/>
+                        :
+                        null
+                }
             </div>
         )
     }
@@ -70,35 +75,31 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
     function _renderToolbar() {
         return (
             <div className="seamlessEditor__toolbar">
-                <TextTooltip position="top" text={translate('edit')} children={
-                    <span className="seamlessEditor__toolbar-btn btn btn_primary round btn__xs" onClick={() => setIsEdited(!isEdited)}>
+                <span className="seamlessEditor__toolbar-btn btn btn_primary round btn__xs" onClick={() => setIsEdited(!isEdited)}>
                     <i className="fa fa-pencil-alt" />
                 </span>
-                }/>
-                <TextTooltip position="top" text={translate('clear')} children={
-                    <span className="seamlessEditor__toolbar-btn btn btn__error round btn__xs" onClick={() => setCurrentContent([])}>
-                        <i className="fas fa-eraser" />
-                    </span>
-                }/>
+                <span className="seamlessEditor__toolbar-btn btn btn__error round btn__xs" onClick={() => updateContent(type, [])}>
+                    <i className="fas fa-eraser" />
+                </span>
             </div>
         )
     }
 
     function setBlock(block) {
-        let newContent = currentContent;
+        let newContent = content;
         const index = newContent.indexOf(newContent.find(item => item.id === block.id));
 
         newContent[index] = block;
 
         newContent.forEach((item, itemIndex) => {
-            item.index = itemIndex;
+            item.order = itemIndex;
         });
 
-        setCurrentContent(Object.assign([], newContent));
+        updateContent(type, newContent);
     }
 
     function addBlock(block, index) {
-        let newContent = currentContent;
+        let newContent = content;
         const id = generate({length: 20, numbers: true});
 
         newContent.splice(index, 0, {
@@ -107,10 +108,10 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
         });
 
         newContent.forEach((item, itemIndex) => {
-            item.index = itemIndex;
+            item.order = itemIndex;
         });
 
-        setCurrentContent(Object.assign([], newContent));
+        updateContent(type, newContent);
 
         setTimeout(() => {
             scrollToBlock(id);
@@ -118,20 +119,20 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
     }
 
     function removeBlock(block) {
-        let newContent = currentContent;
+        let newContent = content;
         const index = newContent.indexOf(block);
 
         newContent.splice(index, 1);
 
         newContent.forEach((item, itemIndex) => {
-            item.index = itemIndex;
+            item.order = itemIndex;
         });
 
-        setCurrentContent(Object.assign([], newContent));
+        updateContent(type, newContent);
     }
 
     function moveBlock(prevIndex, newIndex) {
-        let newContent = Object.assign([], currentContent);
+        let newContent = content;
 
         const block = newContent[prevIndex];
 
@@ -146,10 +147,10 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
             }
 
             newContent.forEach((item, itemIndex) => {
-                item.index = itemIndex;
+                item.order = itemIndex;
             });
 
-            setCurrentContent(newContent);
+            updateContent(type, newContent);
         }
     }
 

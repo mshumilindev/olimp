@@ -43,6 +43,12 @@
       "block": "googlePowerpoint"
     }
   ],
+  "answers": [
+    {
+      "icon": "fas fa-question",
+      "block": "answers"
+    }
+  ],
   "other": [
     {
       "icon": "fa fa-divide",

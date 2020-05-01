@@ -16,11 +16,12 @@ import SeamlessEditorGoogleWord from "./blocks/SeamlessEditorGoogleWord";
 import SeamlessEditorGoogleExcel from "./blocks/SeamlessEditorGoogleExcel";
 import SeamlessEditorGooglePowerpoint from "./blocks/SeamlessEditorGooglePowerpoint";
 import SeamlessEditorWord from "./blocks/SeamlessEditorWord";
+import SeamlessEditorQuestion from "./blocks/SeamlessEditorQuestion/SeamlessEditorQuestion";
 
 const blocksData = blocksJSON.default;
 const typeBlocks = typeBlocksJSON.default;
 
-export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock, setIsEdited}) {
+export default function SeamlessEditorEditor({title, types, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock, setIsEdited}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showType, setShowType ] = useState(null);
     const [ dragBlock, setDragBlock ] = useState(null);
@@ -28,7 +29,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
     const [ dragOverBlockPosition, setDragOverBlockPosition ] = useState(null);
     const [ textEditorValue, setTextEditorValue ] = useState('');
     const [ dragOverNew, setDragOverNew ] = useState(false);
-    const types = [
+    const availableTypes = [
         {
             icon: 'fas fa-font',
             type: 'text',
@@ -44,6 +45,10 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         {
             icon: 'fab fa-google-drive',
             type: 'googleDrive',
+        },
+        {
+            icon: 'fas fa-question',
+            type: 'answers',
         },
         {
             icon: 'fas fa-infinity',
@@ -87,7 +92,9 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         return (
             <>
                 <div className="seamlessEditor__editor-types">
-                    { types.map(item => _renderType(item)) }
+                    {
+                        Object.keys(types).map(key => _renderType(availableTypes.find(item => item.type === key)))
+                    }
                 </div>
                 {
                     showType ?
@@ -114,7 +121,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         return (
             <div className="seamlessEditor__editor-type">
                 {
-                    typeBlocks[showType].map(item => _renderTypeBlock(item))
+                    types[showType].map(type => _renderTypeBlock(typeBlocks[showType].find(item => item.block === type)))
                 }
             </div>
         )
@@ -274,6 +281,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         switch (block.type) {
             // === Text
             case 'text':
+            case 'formula':
                 return <SeamlessEditorText block={block} openTextEditor={openTextEditor}/>;
 
             // === Media
@@ -302,6 +310,9 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
             case 'googlePowerpoint':
                 return <SeamlessEditorGooglePowerpoint block={block} setBlock={setBlock}/>;
+
+            case 'answers':
+                return <SeamlessEditorQuestion block={block} setBlock={setBlock}/>;
 
             // === Other
             case 'divider':
@@ -356,7 +367,14 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         let type = null;
 
         Object.keys(typeBlocks).forEach(key => {
-            const parsedType = itemType === 'media' ? 'image' : itemType;
+            let parsedType = itemType;
+
+            if ( itemType === 'media' ) {
+                parsedType = 'image';
+            }
+            if ( itemType === 'formula' ) {
+                parsedType = 'text';
+            }
 
             if ( typeBlocks[key].find(item => item.block === parsedType) ) {
                 type = typeBlocks[key].find(item => item.block === parsedType);

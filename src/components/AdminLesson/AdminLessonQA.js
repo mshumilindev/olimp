@@ -4,31 +4,30 @@ import { connect } from 'react-redux';
 import Preloader from "../UI/preloader";
 import SeamlessEditor from "../UI/SeamlessEditor/SeamlessEditor";
 
-function AdminLessonContent({title, contentLoading, content, setUpdated, updateContent}) {
+function AdminLessonQA({title, QALoading, content, setUpdated, updateContent}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
         <div className="widget">
             <div className="widget__title">
                 <i className="content_title-icon fa fa-file-alt"/>
-                { translate('content') }
+                { translate('QA') }
             </div>
             {
-                contentLoading || !content ?
+                QALoading || !content ?
                     <Preloader/>
                     :
                     <SeamlessEditor
                         content={content}
                         title={title}
-                        type={'content'}
+                        type={'QA'}
                         setUpdated={setUpdated}
                         updateContent={updateContent}
-                        loading={contentLoading}
+                        loading={QALoading}
                         types={{
                             text: ['text'],
                             media: ['image', 'audio', 'video', 'youtube'],
-                            document: ['word'],
-                            googleDrive: ['googleWord', 'googleExcel', 'googlePowerpoint'],
+                            answers: ['answers'],
                             other: ['divider']
                         }}
                     />
@@ -39,8 +38,8 @@ function AdminLessonContent({title, contentLoading, content, setUpdated, updateC
 
 const mapStateToProps = state => {
     return {
-        contentLoading: state.lessonReducer.contentLoading
+        QALoading: state.lessonReducer.QALoading
     }
 };
 
-export default connect(mapStateToProps)(AdminLessonContent);
+export default connect(mapStateToProps)(AdminLessonQA);

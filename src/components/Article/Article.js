@@ -8,7 +8,7 @@ import MathJax from 'react-mathjax-preview'
 import Form from "../Form/Form";
 import { connect } from 'react-redux';
 
-function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly, isCanvas}) {
+function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
@@ -282,7 +282,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
     function pagifyContent() {
         const pages = [];
         let pageI = 0;
-        const sortedContent = content.sort((a, b) => a.order - b.order);
+        const sortedContent = content.sort((a, b) => a.index - b.index);
 
         Array.from(Array(sortedContent.filter(item => item.type === 'page').length + 1)).forEach((page, index) => {
             let isPage = false;

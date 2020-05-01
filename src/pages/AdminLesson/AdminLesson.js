@@ -1,6 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {updateLesson, discardLesson} from "../../redux/actions/coursesActions";
-import { fetchLessonMeta } from '../../redux/actions/lessonActions';
+import {
+    fetchLessonContent,
+    fetchLessonMeta,
+    fetchLessonQA,
+    updateLessonMeta,
+    updateLessonContent,
+    updateLessonQA
+} from '../../redux/actions/lessonActions';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Preloader from "../../components/UI/preloader";
@@ -11,17 +17,35 @@ import Article from "../../components/Article/Article";
 import { withRouter, Prompt } from 'react-router-dom';
 import withAdminLesson from "./withAdminLesson";
 import AdminLessonContent from "../../components/AdminLesson/AdminLessonContent";
+import AdminLessonQA from "../../components/AdminLesson/AdminLessonQA";
+import {orderBy} from "natural-orderby";
+import Form from '../../components/Form/Form';
 
-const Form = React.lazy(() => import('../../components/Form/Form'));
-
-function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, loading, allCoursesList, discardLesson}) {
+function AdminLesson(
+    {
+        user,
+        fetchLessonMeta,
+        fetchLessonContent,
+        fetchLessonQA,
+        params,
+        lessonMeta,
+        lessonContent,
+        lessonQA,
+        loading,
+        allCoursesList,
+        updateLessonMeta,
+        updateLessonContent,
+        updateLessonQA
+    }
+) {
     const { translate, lang, getLessonFields } = useContext(siteSettingsContext);
     const [ lessonUpdated, setLessonUpdated ] = useState(false);
     const [ contentUpdated, setContentUpdated ] = useState(false);
+    const [ QAUpdated, setQAUpdated ] = useState(false);
     const [ lessonInfoFields, setLessonInfoFields ] = useState(null);
     const { subjectID, courseID, moduleID, lessonID } = params;
-    const [ content, setContent ] = useState(null);
-    const [ QA, setQA ] = useState(null);
+    const [ currentContent, setCurrentContent ] = useState(null);
+    const [ currentQA, setCurrentQA ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
     const breadcrumbs = [
         {
@@ -32,36 +56,43 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
 
     useEffect(() => {
         fetchLessonMeta(subjectID, courseID, moduleID, lessonID);
-        return () => {
-            discardLesson();
-        }
+        fetchLessonContent(subjectID, courseID, moduleID, lessonID);
+        fetchLessonQA(subjectID, courseID, moduleID, lessonID);
     }, []);
 
     useEffect(() => {
-        window.onbeforeunload = lessonUpdated && contentUpdated && (() => translate('save_before_leaving'));
+        setCurrentContent(JSON.parse(JSON.stringify(orderBy(lessonContent, v => v.order))));
+    }, [lessonContent]);
+
+    useEffect(() => {
+        if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(lessonContent, v => v.order)) ) {
+            setContentUpdated(true);
+        }
+        else {
+            setContentUpdated(false);
+        }
+    }, [currentContent]);
+
+    useEffect(() => {
+        setCurrentQA(JSON.parse(JSON.stringify(orderBy(lessonQA, v => v.order))));
+    }, [lessonQA]);
+
+    useEffect(() => {
+        if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.order)) ) {
+            setQAUpdated(true);
+        }
+        else {
+            setQAUpdated(false);
+        }
+    }, [currentQA]);
+
+    useEffect(() => {
+        window.onbeforeunload = (lessonUpdated || contentUpdated || QAUpdated) && (() => translate('save_before_leaving'));
     });
 
     useEffect(() => {
-        if ( lessonMeta ) {
-            if ( !lessonInfoFields ) {
-                setLessonInfoFields(getLessonFields(lessonMeta, false));
-            }
-            // if ( !content ) {
-            //     if ( lesson.content ) {
-            //         setContent(Object.assign([], lesson.content));
-            //     }
-            //     else {
-            //         setContent(Object.assign([], []));
-            //     }
-            //     if ( lesson.QA ) {
-            //         setQA(Object.assign([], lesson.QA));
-            //     }
-            //     else {
-            //         setQA(Object.assign([], []));
-            //     }
-            // }
-            setLessonInfoFields(Object.assign([], getLessonFields(lessonMeta, false)));
-        }
+        setLessonInfoFields(Object.assign([], getLessonFields(lessonMeta, false)));
+        setLessonUpdated(false);
     }, [lessonMeta]);
 
     return (
@@ -75,7 +106,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                     {
                         checkIfEditable() ?
                             <div className="section__title-actions">
-                                <a href="/" className="btn btn__success" disabled={!lessonUpdated && !contentUpdated} onClick={saveLesson}>
+                                <a href="/" className="btn btn__success" disabled={!lessonUpdated && !contentUpdated && !QAUpdated} onClick={saveLesson}>
                                     <i className="content_title-icon fa fa-save" />
                                     { translate('save') }
                                 </a>
@@ -92,19 +123,8 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                 </div>
                 <div className="grid">
                     <div className="grid_col col-8" style={{maxWidth: 880}}>
-                        <AdminLessonContent subjectID={subjectID} courseID={courseID} moduleID={moduleID} lessonID={lessonMeta.id} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} setUpdated={setContentUpdated} />
-                        {/*<div className="widget">*/}
-                        {/*    <div className="widget__title">*/}
-                        {/*        <i className="content_title-icon fa fa-question"/>*/}
-                        {/*        { translate('control_questions') }*/}
-                        {/*    </div>*/}
-                        {/*    {*/}
-                        {/*        QA ?*/}
-                        {/*            <ContentEditor contentType="questions" content={QA} types={[['text', 'formula', 'media'], ['youtube', 'audio'], ['answers'], ['divider']]} setUpdated={value => setLessonUpdated(value)} isUpdated={lessonUpdated} setLessonContent={(newQuestions) => setQA(Object.assign([], newQuestions))} loading={loading} />*/}
-                        {/*            :*/}
-                        {/*            null*/}
-                        {/*    }*/}
-                        {/*</div>*/}
+                        <AdminLessonContent updateContent={updateContent} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} setUpdated={setContentUpdated} content={currentContent} />
+                        <AdminLessonQA updateContent={updateContent} title={lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']} setUpdated={setQAUpdated} content={currentQA} />
                     </div>
                     <div className="grid_col col-4" style={{maxWidth: 500}}>
                         <div className="widget sticky">
@@ -129,7 +149,7 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
                         :
                         null
                 }
-                <Prompt when={lessonUpdated && contentUpdated} message={translate('save_before_leaving')} />
+                <Prompt when={lessonUpdated || contentUpdated || QAUpdated} message={translate('save_before_leaving')} />
             </div>
             :
             <Preloader/>
@@ -230,35 +250,55 @@ function AdminLesson({user, fetchLessonMeta, updateLesson, params, lessonMeta, l
         setLessonInfoFields(Object.assign([], newLessonInfoFields));
     }
 
+    function updateContent(type, newContent) {
+        if ( type === 'content' ) {
+            setCurrentContent(Object.assign([], newContent));
+        }
+        if ( type === 'QA' ) {
+            setCurrentQA(Object.assign([], newContent));
+        }
+    }
+
     function saveLesson(e) {
         e.preventDefault();
 
-        if ( lessonUpdated || contentUpdated ) {
+        if ( lessonUpdated ) {
             const updatedLessonFields = lessonInfoFields;
-            const newLesson = {
+            const newMeta = {
                 ...lessonMeta,
                 name: {
                     ua: updatedLessonFields.find(field => field.id === 'lessonName_ua').value,
                     ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
                     en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
-                },
-                content: content,
-                QA: QA
+                }
             };
-            updateLesson(subjectID, courseID, moduleID, newLesson);
+            updateLessonMeta(subjectID, courseID, moduleID, lessonID, newMeta);
+        }
+
+        if ( contentUpdated ) {
+            updateLessonContent(subjectID, courseID, moduleID, lessonID, currentContent);
+        }
+
+        if ( QAUpdated ) {
+            updateLessonQA(subjectID, courseID, moduleID, lessonID, currentQA);
         }
     }
 }
 const mapStateToProps = state => ({
-    lessonMeta: state.lessonReducer.lessonMeta,
     loading: state.lessonReducer.loading,
+    lessonMeta: state.lessonReducer.lessonMeta,
+    lessonContent: state.lessonReducer.lessonContent,
+    lessonQA: state.lessonReducer.lessonQA,
     user: state.authReducer.currentUser,
     allCoursesList: state.coursesReducer.coursesList
 });
 const mapDispatchToProps = dispatch => ({
     fetchLessonMeta: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLessonMeta(subjectID, courseID, moduleID, lessonID)),
-    updateLesson: (subjectID, courseID, moduleID, lesson) => dispatch(updateLesson(subjectID, courseID, moduleID, lesson)),
-    discardLesson: () => dispatch(discardLesson())
+    fetchLessonContent: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLessonContent(subjectID, courseID, moduleID, lessonID)),
+    fetchLessonQA: (subjectID, courseID, moduleID, lessonID) => dispatch(fetchLessonQA(subjectID, courseID, moduleID, lessonID)),
+    updateLessonMeta: (subjectID, courseID, moduleID, lessonID, newMeta) => dispatch(updateLessonMeta(subjectID, courseID, moduleID, lessonID, newMeta)),
+    updateLessonContent: (subjectID, courseID, moduleID, lessonID, newContent) => dispatch(updateLessonContent(subjectID, courseID, moduleID, lessonID, newContent)),
+    updateLessonQA: (subjectID, courseID, moduleID, lessonID, newQA) => dispatch(updateLessonQA(subjectID, courseID, moduleID, lessonID, newQA))
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withAdminLesson(AdminLesson)));
