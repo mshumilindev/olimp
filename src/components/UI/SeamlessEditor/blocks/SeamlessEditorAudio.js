@@ -25,7 +25,9 @@ export default function SeamlessEditorAudio({ block, setBlock }) {
                         <source src={getPlayLink(block.value.url)}/>
                     </audio>
                     :
-                    null
+                    <div className="seamlessEditor__editor-block-placeholder">
+                        { translate('audio_will_be_here') }
+                    </div>
             }
         </div>
     );

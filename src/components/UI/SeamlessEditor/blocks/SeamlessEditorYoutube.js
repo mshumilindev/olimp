@@ -20,7 +20,9 @@ export default function SeamlessEditorYoutube({ block, setBlock }) {
                         <ReactPlayer url={block.value} width={'auto'} height={'auto'} />
                     </div>
                     :
-                    null
+                    <div className="seamlessEditor__editor-block-placeholder">
+                        { translate('video_will_be_here') }
+                    </div>
             }
         </div>
     );

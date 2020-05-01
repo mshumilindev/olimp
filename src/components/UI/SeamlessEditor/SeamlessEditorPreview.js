@@ -3,9 +3,12 @@ import Article from "../../Article/Article";
 import {Scrollbars} from "react-custom-scrollbars";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import classNames from "classnames";
+import * as typeBlocksJSON from './typeBlocks';
+
+const typeBlocks = typeBlocksJSON.default;
 
 export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock, removeBlock}) {
-    const { translate } = useContext(siteSettingsContext);
+    const { translate, lang } = useContext(siteSettingsContext);
     const [ dragBlock, setDragBlock ] = useState(null);
     const [ dragOverBlock, setDragOverBlock ] = useState(null);
     const [ dragOverBlockPosition, setDragOverBlockPosition ] = useState(null);
@@ -46,7 +49,14 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
                 }
                 <div className="seamlessEditor__preview-item" onClick={() => scrollToBlock(item.id)} draggable onDragStart={() => setDragBlock(item.id)} onDragEnd={handleDragEnd}>
                     <div className="seamlessEditor__preview-item-inner">
-                        <Article content={[item]} isCanvas/>
+                        {
+                            !item.value || !hasValue(item) ?
+                                <div className="seamlessEditor__preview-placeholder">
+                                    <i className={getIcon(item.type)}/>
+                                </div>
+                                :
+                                <Article content={[item]} isCanvas/>
+                        }
                     </div>
                 </div>
                 {
@@ -97,5 +107,40 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
         setDragOverBlock(null);
         setDragOverBlockPosition(null);
         setIsToDelete(false);
+    }
+
+    function getIcon(itemType) {
+        let icon = null;
+
+        Object.keys(typeBlocks).forEach(key => {
+            const parsedType = itemType === 'media' ? 'image' : itemType;
+
+            if ( typeBlocks[key].find(item => item.block === parsedType) ) {
+                icon = typeBlocks[key].find(item => item.block === parsedType).icon;
+            }
+        });
+
+        return icon;
+    }
+
+    function hasValue(item) {
+        let hasValue = false;
+
+        Object.keys(item.value).forEach(key => {
+            if ( key !== 'caption' ) {
+                if ( item.value[key] ) {
+                    hasValue = true;
+                }
+            }
+            else {
+                Object.keys(item.value.caption).forEach(capKey => {
+                    if ( item.value.caption[capKey] ) {
+                        hasValue = true;
+                    }
+                });
+            }
+        });
+
+        return hasValue;
     }
 }

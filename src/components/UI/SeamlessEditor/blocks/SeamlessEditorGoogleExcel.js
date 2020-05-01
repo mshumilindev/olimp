@@ -39,7 +39,7 @@ export default function SeamlessEditorGoogleExcel({ block, setBlock }) {
                     </div>
                     :
                     <div className="seamlessEditor__editor-block-placeholder">
-                        { translate('word_will_be_here') }
+                        { translate('excel_will_be_here') }
                     </div>
             }
         </div>

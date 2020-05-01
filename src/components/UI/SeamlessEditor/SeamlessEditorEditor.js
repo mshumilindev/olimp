@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import classNames from 'classnames';
 import * as blocksJSON from './blocks';
+import * as typeBlocksJSON from './typeBlocks';
 import SeamlessEditorPreview from "./SeamlessEditorPreview";
 import {Scrollbars} from "react-custom-scrollbars";
 import { Editor } from "@tinymce/tinymce-react";
@@ -17,6 +18,7 @@ import SeamlessEditorGooglePowerpoint from "./blocks/SeamlessEditorGooglePowerpo
 import SeamlessEditorWord from "./blocks/SeamlessEditorWord";
 
 const blocksData = blocksJSON.default;
+const typeBlocks = typeBlocksJSON.default;
 
 export default function SeamlessEditorEditor({title, type, addBlock, setBlock, removeBlock, moveBlock, content, scrollToBlock, setIsEdited}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -48,58 +50,6 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
             type: 'other',
         }
     ];
-    const typeBlocks = {
-        text: [
-            {
-                icon: 'fas fa-font',
-                block: 'text'
-            }
-        ],
-        media: [
-            {
-                icon: 'fas fa-image',
-                block: 'image'
-            },
-            {
-                icon: 'fas fa-headphones',
-                block: 'audio'
-            },
-            {
-                icon: 'fas fa-video',
-                block: 'video'
-            },
-            {
-                icon: 'fab fa-youtube',
-                block: 'youtube'
-            }
-        ],
-        document: [
-            {
-                icon: 'fas fa-file-word',
-                block: 'word'
-            }
-        ],
-        googleDrive: [
-            {
-                icon: 'fas fa-file-word',
-                block: 'googleWord'
-            },
-            {
-                icon: 'fas fa-file-excel',
-                block: 'googleExcel'
-            },
-            {
-                icon: 'fas fa-file-powerpoint',
-                block: 'googlePowerpoint'
-            }
-        ],
-        other: [
-            {
-                icon: 'fa fa-divide',
-                block: 'divider'
-            }
-        ]
-    };
 
     return (
         <div className="seamlessEditor__editor">
@@ -269,7 +219,7 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
     }
 
     function _renderTextEditor() {
-        const editorToolbar = ['undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | table tabledelete tableprops tablerowprops tablecellprops tableinsertrowbefore tableinsertrowafter tabledeleterow tableinsertcolbefore tableinsertcolafter tabledeletecol | tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
+        const editorToolbar = ['fullscreen | undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | table tabledelete tableprops tablerowprops tablecellprops tableinsertrowbefore tableinsertrowafter tabledeleterow tableinsertcolbefore tableinsertcolafter tabledeletecol | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry'];
 
         const editorConfig = {
             menubar: false,
@@ -324,7 +274,6 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
             // === Media
             case 'media':
-            case 'image':
                 return <SeamlessEditorImage block={block} setBlock={setBlock}/>;
 
             case 'audio':

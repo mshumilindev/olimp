@@ -27,14 +27,16 @@ export default function SeamlessEditorWord({ block, setBlock, openTextEditor }) 
     return (
         <div className="seamlessEditor__editor-block-word">
             <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
+            <br/>
             {
                 block.value && block.value[lang] ?
                     <div className="seamlessEditor__editor-block-text" onClick={() => openTextEditor(block)}>
-                        <br/>
                         <MathJax math={block.value[lang]}/>
                     </div>
                     :
-                    null
+                    <div className="seamlessEditor__editor-block-placeholder">
+                        { translate('word_will_be_here') }
+                    </div>
             }
         </div>
     );

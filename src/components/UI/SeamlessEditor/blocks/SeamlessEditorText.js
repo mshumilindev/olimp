@@ -8,7 +8,7 @@ export default function SeamlessEditorText({ block, openTextEditor }) {
 
     return (
         <div className="seamlessEditor__editor-block-text" onClick={() => openTextEditor(block)}>
-            <MathJax math={block.value[lang] ? block.value[lang] : translate('enter_text') }/>
+            <MathJax math={block.value[lang] ? block.value[lang] : `<div class="seamlessEditor__editor-block-placeholder">${translate('enter_text')}</div>` }/>
         </div>
     );
 }

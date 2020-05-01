@@ -1,0 +1,52 @@
+{
+  "text": [
+    {
+      "icon": "fas fa-font",
+      "block": "text"
+    }
+  ],
+  "media": [
+    {
+      "icon": "fas fa-image",
+      "block": "image"
+    },
+    {
+      "icon": "fas fa-headphones",
+      "block": "audio"
+    },
+    {
+      "icon": "fas fa-video",
+      "block": "video"
+    },
+    {
+      "icon": "fab fa-youtube",
+      "block": "youtube"
+    }
+  ],
+  "document": [
+    {
+      "icon": "fas fa-file-word",
+      "block": "word"
+    }
+  ],
+  "googleDrive": [
+    {
+      "icon": "fas fa-file-word",
+      "block": "googleWord"
+    },
+    {
+      "icon": "fas fa-file-excel",
+      "block": "googleExcel"
+    },
+    {
+      "icon": "fas fa-file-powerpoint",
+      "block": "googlePowerpoint"
+    }
+  ],
+  "other": [
+    {
+      "icon": "fa fa-divide",
+      "block": "divider"
+    }
+  ]
+}

@@ -25,7 +25,9 @@ export default function SeamlessEditorVideo({ block, setBlock }) {
                         <iframe src={getPlayLink(block.value.url)} allowFullScreen frameBorder/>
                     </div>
                     :
-                    null
+                    <div className="seamlessEditor__editor-block-placeholder">
+                        { translate('video_will_be_here') }
+                    </div>
             }
         </div>
     );
