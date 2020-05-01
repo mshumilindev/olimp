@@ -401,6 +401,11 @@ $blockMinHeight: 100px;
       display: flex;
       line-height: 1.5;
       position: relative;
+      #react-mathjax-preview {
+        cursor: pointer;
+        position: relative;
+        height: 100%;
+      }
       img {
         max-width: 100%;
       }
@@ -412,6 +417,7 @@ $blockMinHeight: 100px;
         background: $lightGreyColor;
         color: $mediumGreyColor;
         height: $blockMinHeight - 25;
+        user-select: none;
       }
       &-type {
         position: absolute;
