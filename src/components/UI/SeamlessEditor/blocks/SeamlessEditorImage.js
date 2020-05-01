@@ -29,10 +29,8 @@ export default function SeamlessEditorImage({ block, setBlock }) {
     ];
 
     return (
-        <div className="seamlessEditor__editor-block">
-            <div className="seamlessEditor__editor-block-inner seamlessEditor__editor-block-media">
-                <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
-            </div>
+        <div className="seamlessEditor__editor-block-media">
+            <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
         </div>
     );
 

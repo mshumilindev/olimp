@@ -71,7 +71,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
         return (
             <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick ? onBlockClick(index) : null}>
                 {
-                    block.type === 'text' ?
+                    block.type === 'text' || block.type === 'word' ?
                         <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
                         :
                         null
@@ -151,7 +151,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
                 {
-                    block.type === 'word' ?
+                    block.type === 'googleWord' ?
                         <iframe
                             src={getWordURL(block.value)}
                             style={{width: '100%', height: size.width * 141 / 100, border: '1px solid grey'}} frameBorder="0"
@@ -162,7 +162,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
                 {
-                    block.type === 'powerpoint' ?
+                    block.type === 'powerpoint' || block.type === 'googlePowerpoint' ?
                         <iframe
                             src={getPowerpointURL(block.value)}
                             style={{width: '100%', height: size.height}} frameBorder="0"

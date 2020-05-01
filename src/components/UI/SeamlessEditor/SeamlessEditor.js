@@ -86,7 +86,7 @@ export default function SeamlessEditor({title, type, content, setUpdated}) {
 
     function setBlock(block) {
         let newContent = currentContent;
-        const index = newContent.indexOf(block);
+        const index = newContent.indexOf(newContent.find(item => item.id === block.id));
 
         newContent[index] = block;
 

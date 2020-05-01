@@ -5,6 +5,7 @@
 $editorIndent: 20px;
 $actionsSize: 100px;
 $editorBackground: $lightGreyColor;
+$blockMinHeight: 100px;
 
 .seamlessEditor {
   position: relative;
@@ -12,7 +13,7 @@ $editorBackground: $lightGreyColor;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 120px;
+    min-height: $blockMinHeight;
   }
   &__content {
     margin-top: -10px;
@@ -124,8 +125,18 @@ $editorBackground: $lightGreyColor;
       box-sizing: border-box;
       user-select: none;
       cursor: pointer;
+      position: relative;
       &:hover {
         border-color: $anchorColor;
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
       }
     }
     &-item-inner {
@@ -157,6 +168,15 @@ $editorBackground: $lightGreyColor;
         height: #{9 * $actionsSize * 2 / 16 + 50};
         opacity: 1;
       }
+    }
+    .type-word,
+    .type-powerpoint {
+      overflow: hidden;
+      height: 100%;
+    }
+    iframe {
+      height: 100% !important;
+      overflow: hidden;
     }
   }
   &__editor {
@@ -350,7 +370,7 @@ $editorBackground: $lightGreyColor;
       }
     }
     &-block {
-      min-height: 120px;
+      min-height: $blockMinHeight;
       display: flex;
       line-height: 1.5;
       &.isNew {
@@ -383,7 +403,7 @@ $editorBackground: $lightGreyColor;
           color: $mediumGreyColor;
         }
         &.isOver {
-          height: 120px;
+          height: $blockMinHeight;
           [class$="-block-inner"] {
             background: $lightBlueColor;
             color: $anchorColor;
@@ -402,6 +422,9 @@ $editorBackground: $lightGreyColor;
         padding: 10px;
         box-sizing: border-box;
         display: flex;
+        > * {
+          width: 100%;
+        }
       }
       &-actions {
         a {
@@ -413,6 +436,32 @@ $editorBackground: $lightGreyColor;
       }
       .form {
         margin-top: -20px;
+      }
+      &-youtube-holder {
+        padding-top: 56.25%;
+        position: relative;
+        iframe {
+          vertical-align: top;
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+      &-divider {
+        hr {
+          height: 1px;
+          background: $mediumGreyColor;
+          border: none;
+          margin: 40px 0;
+        }
+      }
+      &-word-holder,
+      &-powerpoint-holder {
+        border: 1px solid $mediumGreyColor;
       }
     }
   }

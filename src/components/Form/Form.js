@@ -426,6 +426,29 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                     </div>
                 );
 
+            case 'file':
+                const $fileItem = React.createRef(null);
+
+                return (
+                    <div className={classNames('form__fileItem-holder', {isUpdated: field.updated})}>
+                        <TextTooltip text={translate(field.label)} position="left">
+                            <span className="form__fileItem-trigger">
+                                <i className={field.icon ? field.icon + ' form__fileItem-icon' : 'form__fileItem-icon'} />
+                                {
+                                    field.value ?
+                                        field.customSize ?
+                                            <img src={field.value}/>
+                                            :
+                                            <span className="form__fileItem-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
+                                        :
+                                        null
+                                }
+                            </span>
+                            <input type="file" ref={$fileItem} className="form__fileItem" accept={field.ext} onChange={() => getFileValue(field.id, $fileItem.current)} id={'file-' + field.id}/>
+                        </TextTooltip>
+                    </div>
+                );
+
             case 'image':
                 const $file = React.createRef(null);
                 let imageClasses = 'form__file-trigger';
@@ -566,6 +589,12 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
         else {
             file = $input.files[0];
             resizeImageValue(fieldID, file, fieldSize, fieldExt, rotation);
+        }
+    }
+
+    function getFileValue(fieldID, $input) {
+        if ( $input.files[0] ) {
+            handleFieldChange(fieldID, $input.files[0]);
         }
     }
 

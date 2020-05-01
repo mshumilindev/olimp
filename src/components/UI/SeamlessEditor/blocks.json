@@ -20,5 +20,42 @@
         "ua": ""
       }
     }
+  },
+  "audio": {
+    "type": "audio",
+    "value": {
+      "caption": "",
+      "url": ""
+    }
+  },
+  "video": {
+    "type": "video",
+    "value": {
+      "caption": "",
+      "url": ""
+    }
+  },
+  "youtube": {
+    "type": "youtube",
+    "value": ""
+  },
+  "word": {
+    "type": "word",
+    "value": {
+      "ua": "",
+      "ru": "",
+      "en": ""
+    }
+  },
+  "googleWord": {
+    "type": "googleWord",
+    "value": ""
+  },
+  "googlePowerpoint": {
+    "type": "googlePowerpoint",
+    "value": ""
+  },
+  "divider": {
+    "type": "divider"
   }
 }

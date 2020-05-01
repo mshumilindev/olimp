@@ -7,10 +7,8 @@ export default function SeamlessEditorText({ block, openTextEditor }) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
-        <div className="seamlessEditor__editor-block">
-            <div className="seamlessEditor__editor-block-inner seamlessEditor__editor-block-text" onClick={() => openTextEditor(block)}>
-                <MathJax math={block.value[lang] ? block.value[lang] : translate('enter_text') }/>
-            </div>
+        <div className="seamlessEditor__editor-block-text" onClick={() => openTextEditor(block)}>
+            <MathJax math={block.value[lang] ? block.value[lang] : translate('enter_text') }/>
         </div>
     );
 }

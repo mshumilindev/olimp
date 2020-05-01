@@ -2,11 +2,18 @@ import React, {useContext, useState} from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import classNames from 'classnames';
 import * as blocksJSON from './blocks';
-import SeamlessEditorText from "./blocks/SeamlessEditorText";
-import SeamlessEditorImage from "./blocks/SeamlessEditorImage";
 import SeamlessEditorPreview from "./SeamlessEditorPreview";
 import {Scrollbars} from "react-custom-scrollbars";
 import { Editor } from "@tinymce/tinymce-react";
+import SeamlessEditorText from "./blocks/SeamlessEditorText";
+import SeamlessEditorImage from "./blocks/SeamlessEditorImage";
+import SeamlessEditorAudio from "./blocks/SeamlessEditorAudio";
+import SeamlessEditorVideo from "./blocks/SeamlessEditorVideo";
+import SeamlessEditorYoutube from "./blocks/SeamlessEditorYoutube";
+import SeamlessEditorDivider from "./blocks/SeamlessEditorDivider";
+import SeamlessEditorGoogleWord from "./blocks/SeamlessEditorGoogleWord";
+import SeamlessEditorGooglePowerpoint from "./blocks/SeamlessEditorGooglePowerpoint";
+import SeamlessEditorWord from "./blocks/SeamlessEditorWord";
 
 const blocksData = blocksJSON.default;
 
@@ -30,6 +37,10 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
         {
             icon: 'fas fa-file',
             type: 'document',
+        },
+        {
+            icon: 'fab fa-google-drive',
+            type: 'googleDrive',
         },
         {
             icon: 'fas fa-infinity',
@@ -65,20 +76,22 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
             {
                 icon: 'fas fa-file-word',
                 block: 'word'
+            }
+        ],
+        googleDrive: [
+            {
+                icon: 'fas fa-file-word',
+                block: 'googleWord'
             },
             {
                 icon: 'fas fa-file-powerpoint',
-                block: 'powerpoint'
+                block: 'googlePowerpoint'
             }
         ],
         other: [
             {
                 icon: 'fa fa-divide',
                 block: 'divider'
-            },
-            {
-                icon: 'fa fa-file',
-                block: 'page'
             }
         ]
     };
@@ -225,7 +238,11 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
                         :
                         null
                 }
-                { getBlock(item) }
+                <div className="seamlessEditor__editor-block">
+                    <div className="seamlessEditor__editor-block-inner">
+                        { getBlock(item) }
+                    </div>
+                </div>
                 {
                     dragBlock ?
                         _renderDropArea(item.id, 'after')
@@ -295,12 +312,38 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
 
     function getBlock(block) {
         switch (block.type) {
+            // === Text
             case 'text':
                 return <SeamlessEditorText block={block} openTextEditor={openTextEditor}/>;
 
+            // === Media
             case 'media':
             case 'image':
                 return <SeamlessEditorImage block={block} setBlock={setBlock}/>;
+
+            case 'audio':
+                return <SeamlessEditorAudio block={block} setBlock={setBlock}/>;
+
+            case 'video':
+                return <SeamlessEditorVideo block={block} setBlock={setBlock}/>;
+
+            case 'youtube':
+                return <SeamlessEditorYoutube block={block} setBlock={setBlock}/>;
+
+            // === Document
+            case 'word':
+                return <SeamlessEditorWord block={block} setBlock={setBlock} openTextEditor={openTextEditor}/>;
+
+            // === Google Drive
+            case 'googleWord':
+                return <SeamlessEditorGoogleWord block={block} setBlock={setBlock}/>;
+
+            case 'googlePowerpoint':
+                return <SeamlessEditorGooglePowerpoint block={block} setBlock={setBlock}/>;
+
+            // === Other
+            case 'divider':
+                return <SeamlessEditorDivider/>;
         }
     }
 

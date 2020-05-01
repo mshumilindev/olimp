@@ -15,6 +15,7 @@
     "firebase": "^6.6.2",
     "generate-password": "^1.5.1",
     "google-map-react": "^1.1.7",
+    "mammoth": "^1.4.9",
     "moment": "^2.24.0",
     "natural-orderby": "^2.0.3",
     "node-sass": "^4.14.0",
