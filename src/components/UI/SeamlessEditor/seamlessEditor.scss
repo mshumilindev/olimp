@@ -134,6 +134,9 @@ $blockMinHeight: 100px;
       position: relative;
       &:hover {
         border-color: $anchorColor;
+        [class$="-placeholder"] {
+          color: $anchorColor;
+        }
       }
       &:after {
         content: '';
@@ -190,9 +193,16 @@ $blockMinHeight: 100px;
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      font-size: 30px;
+      font-family: $RobotoCondensed;
+      text-transform: uppercase;
+      color: $greyColor;
+      font-weight: 300;
+      letter-spacing: .5px;
       i {
-        font-size: 50px;
-        color: $mediumGreyColor;
+        font-size: 40px;
+        margin-bottom: 20px;
       }
     }
   }
@@ -390,6 +400,7 @@ $blockMinHeight: 100px;
       min-height: $blockMinHeight;
       display: flex;
       line-height: 1.5;
+      position: relative;
       img {
         max-width: 100%;
       }
@@ -401,6 +412,22 @@ $blockMinHeight: 100px;
         background: $lightGreyColor;
         color: $mediumGreyColor;
         height: $blockMinHeight - 25;
+      }
+      &-type {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        transform: translateY(-50%);
+        background: $white;
+        padding: 0 5px;
+        color: $mediumGreyColor;
+        font-family: $RobotoCondensed;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        i {
+          margin-right: 5px;
+        }
       }
       &.isNew {
         font-family: $RobotoCondensed;
@@ -445,13 +472,21 @@ $blockMinHeight: 100px;
           margin-top: 20px;
         }
       }
+      &:hover {
+        [class$="-block-inner"] {
+          border-color: $anchorColor;
+        }
+        [class$="-block-type"] {
+          color: $anchorColor;
+        }
+      }
       &-inner {
         border: 1px solid $mediumGreyColor;
         width: 100%;
         padding: 10px;
         box-sizing: border-box;
         display: flex;
-        > * {
+        > *:not(.seamlessEditor__editor-block-type) {
           width: 100%;
         }
       }
@@ -486,6 +521,7 @@ $blockMinHeight: 100px;
           background: $mediumGreyColor;
           border: none;
           margin: 40px 0;
+          opacity: 1;
         }
       }
       &-word-holder,

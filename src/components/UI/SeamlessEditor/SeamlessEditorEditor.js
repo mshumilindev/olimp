@@ -195,6 +195,10 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
                 }
                 <div className="seamlessEditor__editor-block">
                     <div className="seamlessEditor__editor-block-inner">
+                        <div className="seamlessEditor__editor-block-type">
+                            <i className={'content_title-icon ' + getType(item.type).icon} />
+                            { translate(getType(item.type).block) }
+                        </div>
                         { getBlock(item) }
                     </div>
                 </div>
@@ -347,4 +351,17 @@ export default function SeamlessEditorEditor({title, type, addBlock, setBlock, r
     function openTextEditor(block) {
         setTextEditorValue(Object.assign({}, block));
     }
-}
+
+    function getType(itemType) {
+        let type = null;
+
+        Object.keys(typeBlocks).forEach(key => {
+            const parsedType = itemType === 'media' ? 'image' : itemType;
+
+            if ( typeBlocks[key].find(item => item.block === parsedType) ) {
+                type = typeBlocks[key].find(item => item.block === parsedType);
+            }
+        });
+
+        return type;
+    }}

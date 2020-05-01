@@ -52,7 +52,8 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
                         {
                             !item.value || !hasValue(item) ?
                                 <div className="seamlessEditor__preview-placeholder">
-                                    <i className={getIcon(item.type)}/>
+                                    <i className={getType(item.type).icon}/>
+                                    { translate(getType(item.type).block) }
                                 </div>
                                 :
                                 <Article content={[item]} isCanvas/>
@@ -109,18 +110,18 @@ export default function SeamlessEditorPreview({content, scrollToBlock, moveBlock
         setIsToDelete(false);
     }
 
-    function getIcon(itemType) {
-        let icon = null;
+    function getType(itemType) {
+        let type = null;
 
         Object.keys(typeBlocks).forEach(key => {
             const parsedType = itemType === 'media' ? 'image' : itemType;
 
             if ( typeBlocks[key].find(item => item.block === parsedType) ) {
-                icon = typeBlocks[key].find(item => item.block === parsedType).icon;
+                type = typeBlocks[key].find(item => item.block === parsedType);
             }
         });
 
-        return icon;
+        return type;
     }
 
     function hasValue(item) {
