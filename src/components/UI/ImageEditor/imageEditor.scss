@@ -16,6 +16,8 @@ $trackerColor: $mediumGreyColor;
       &__image-holder {
         position: relative;
         user-select: none;
+        min-width: 400px;
+        min-height: 200px;
         &:after {
           content: '';
           position: absolute;
@@ -264,12 +266,17 @@ $trackerColor: $mediumGreyColor;
     &-handle {
       width: 20px;
       height: 20px;
-      background: $greyColor;
+      border: 3px solid $greyColor;
       position: absolute;
       left: 50%;
       transform: translate(-50%, 50%);
       cursor: grab;
       border-radius: 100%;
+      box-sizing: border-box;
+      transition: border-color .15s ease-in-out;
+      &:hover {
+        border-color: $baseColor;
+      }
     }
     &-marks {
       position: absolute;
@@ -287,7 +294,7 @@ $trackerColor: $mediumGreyColor;
           background: $anchorColor;
         }
         [class$="-tick-label"] {
-          color: $linkHoverColor;
+          color: $anchorColor;
         }
       }
     }
