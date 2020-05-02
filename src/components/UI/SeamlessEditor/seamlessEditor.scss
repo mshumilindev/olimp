@@ -3,7 +3,6 @@
 @import '../../../assets/scss/utils/sizes';
 
 $editorIndent: 20px;
-$actionsSize: 100px;
 $editorBackground: $lightGreyColor;
 $blockMinHeight: 100px;
 
@@ -113,7 +112,7 @@ $blockMinHeight: 100px;
     }
   }
   &__preview-delete {
-    height: #{9 * $actionsSize * 2 / 16};
+    height: #{9 * $editorBarSize * 2 / 16};
     flex: 0 0 auto;
     display: flex;
     justify-content: center;
@@ -152,7 +151,7 @@ $blockMinHeight: 100px;
       overflow: hidden;
     }
     &-item {
-      height: #{9 * $actionsSize * 2 / 16};
+      height: #{9 * $editorBarSize * 2 / 16};
       overflow: hidden;
       border: 1px solid $mediumGreyColor;
       padding: $editorIndent / 2;
@@ -202,7 +201,7 @@ $blockMinHeight: 100px;
       margin: -20px 0;
       opacity: 0;
       &.isOver {
-        height: #{9 * $actionsSize * 2 / 16 + 50};
+        height: #{9 * $editorBarSize * 2 / 16 + 50};
         opacity: 1;
       }
     }
@@ -259,13 +258,13 @@ $blockMinHeight: 100px;
       overflow: hidden;
       > *:last-child:not(:nth-child(2)):not(.seamlessEditor__editor-blocks-holder) {
         flex: 0 0 auto;
-        width: $actionsSize * 2 !important;
+        width: $editorBarSize * 2 !important;
         height: 100% !important;
       }
     }
     &-title {
       z-index: 1;
-      height: $actionsSize;
+      height: $editorBarSize;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -283,8 +282,8 @@ $blockMinHeight: 100px;
         margin-top: 5px;
       }
       i {
-        width: $actionsSize;
-        height: $actionsSize;
+        width: $editorBarSize;
+        height: $editorBarSize;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -303,10 +302,10 @@ $blockMinHeight: 100px;
       align-items: center;
       justify-content: flex-end;
       background: $white;
-      height: $actionsSize;
+      height: $editorBarSize;
       &-item {
-        height: $actionsSize;
-        width: $actionsSize;
+        height: $editorBarSize;
+        width: $editorBarSize;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -316,11 +315,11 @@ $blockMinHeight: 100px;
       background: $white;
       display: flex;
       flex-direction: column;
-      width: $actionsSize;
+      width: $editorBarSize;
       flex: 0 0 auto;
       &-item {
-        width: $actionsSize;
-        height: $actionsSize;
+        width: $editorBarSize;
+        height: $editorBarSize;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -328,7 +327,7 @@ $blockMinHeight: 100px;
       }
     }
     &-type {
-      width: $actionsSize;
+      width: $editorBarSize;
       flex: 0 0 auto;
       background: $anchorColor;
       display: flex;
@@ -337,8 +336,8 @@ $blockMinHeight: 100px;
       animation: typeAnimation .15s linear;
       overflow: hidden;
       &-item {
-        width: $actionsSize;
-        height: $actionsSize;
+        width: $editorBarSize;
+        height: $editorBarSize;
         border-bottom: 1px solid $white;
       }
       [class$="-btn"] {
@@ -436,6 +435,7 @@ $blockMinHeight: 100px;
       }
       img {
         max-width: 100%;
+        vertical-align: top;
       }
       &-placeholder {
         display: flex;
@@ -612,6 +612,11 @@ $blockMinHeight: 100px;
       &-powerpoint-holder {
         border: 1px solid $mediumGreyColor;
       }
+      &-image {
+        .form:first-child {
+          margin-top: -20px;
+        }
+      }
     }
   }
 }
@@ -620,7 +625,7 @@ $blockMinHeight: 100px;
     width: 0;
   }
   100% {
-    width: $actionsSize;
+    width: $editorBarSize;
   }
 }
 @keyframes textEditorAnimation {

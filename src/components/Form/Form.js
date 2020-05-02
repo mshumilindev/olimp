@@ -436,15 +436,6 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                         <TextTooltip text={translate(field.label)} position="left">
                             <span className="form__fileItem-trigger">
                                 <i className={field.icon ? field.icon + ' form__fileItem-icon' : 'form__fileItem-icon'} />
-                                {
-                                    field.value ?
-                                        field.customSize ?
-                                            <img src={field.value}/>
-                                            :
-                                            <span className="form__fileItem-image" style={{backgroundImage: 'url(' + field.value + ')'}} />
-                                        :
-                                        null
-                                }
                             </span>
                             <input type="file" ref={$fileItem} className="form__fileItem" accept={field.ext} onChange={() => getFileValue(field.id, $fileItem.current)} id={'file-' + field.id}/>
                         </TextTooltip>
@@ -468,10 +459,10 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                 return (
                     <div className={classNames('form__file-holder', {isUpdated: field.updated})} style={{width: field.size, maxWidth: field.maxSize ? field.maxSize : '100%'}}>
                         <TextTooltip text={translate(field.label)} position="left">
-                            <span className={classNames(imageClasses, {customSize: field.customSize})}>
+                            <span className={classNames(imageClasses, {customSize: field.customSize, noImage: field.value && field.noImage})}>
                                 <i className={field.icon ? field.icon + ' form__file-icon' : 'form__file-icon'} />
                                 {
-                                    field.value ?
+                                    field.value && !field.noImage ?
                                         field.customSize ?
                                             <img src={field.value}/>
                                             :

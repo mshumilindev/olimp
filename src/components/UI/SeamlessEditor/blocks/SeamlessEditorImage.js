@@ -1,25 +1,19 @@
 import React, { useContext } from 'react';
 import siteSettingsContext from "../../../../context/siteSettingsContext";
 import Form from '../../../../components/Form/Form';
+import ImageEditor from "../../ImageEditor/ImageEditor";
 
 export default function SeamlessEditorImage({ block, setBlock }) {
     const { translate, lang } = useContext(siteSettingsContext);
     block.value = block.value || {};
     block.value.image = block.value.image || '';
+    block.value.settings = block.value.settings || {};
     block.value.caption = block.value.caption || {
         ua: '',
         ru: '',
         en: ''
     };
     const formFields = [
-        {
-            type: 'image',
-            id: block.id + '_image',
-            value: block.value.image,
-            size: '100%',
-            icon: 'fa fa-image',
-            customSize: true
-        },
         {
             type: 'text',
             id: block.id + '_caption',
@@ -29,7 +23,8 @@ export default function SeamlessEditorImage({ block, setBlock }) {
     ];
 
     return (
-        <div className="seamlessEditor__editor-block-media">
+        <div className="seamlessEditor__editor-block-image">
+            <ImageEditor image={block.value.image} settings={block.value.settings} handleChange={handleChange} id={block.id} setSettings={setSettings} />
             <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
         </div>
     );
@@ -49,6 +44,16 @@ export default function SeamlessEditorImage({ block, setBlock }) {
         setBlock({
             ...block,
             ...newValue
+        })
+    }
+
+    function setSettings(newSettings) {
+        setBlock({
+            ...block,
+            value: {
+                ...block.value,
+                settings: newSettings
+            }
         })
     }
 }
