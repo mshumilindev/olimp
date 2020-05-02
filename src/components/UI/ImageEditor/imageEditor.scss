@@ -15,6 +15,7 @@ $trackerColor: $mediumGreyColor;
     .imageEditor {
       &__image-holder {
         position: relative;
+        user-select: none;
         &:after {
           content: '';
           position: absolute;

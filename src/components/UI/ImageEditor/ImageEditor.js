@@ -6,6 +6,7 @@ import ImageEditorSize from "./tools/ImageEditorSize";
 import ImageEditorDimensions from "./tools/ImageEditorDimensions";
 import ImageEditorBG from "./tools/ImageEditorBG";
 import ImageEditorOverlay from "./tools/ImageEditorOverlay";
+import ImageEditorResize from "./tools/ImageEditorResize";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 
 export default function ImageEditor({id, image, settings, handleChange, setSettings}) {
@@ -85,16 +86,12 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                         isOriginal() ?
                                             <div className="imageEditor__image-holder">
                                                 <img src={image} className="imageEditor__image"/>
-                                                <div className="imageEditor__image-vr"/>
-                                                <div className="imageEditor__image-hr"/>
-                                                <div className="imageEditor__image-ar"/>
+                                                <ImageEditorResize/>
                                             </div>
                                             :
                                             <div className="imageEditor__image-holder">
                                                 <div className="imageEditor__image" style={{backgroundImage: 'url(' + image + ')'}}/>
-                                                <div className="imageEditor__image-vr"/>
-                                                <div className="imageEditor__image-hr"/>
-                                                <div className="imageEditor__image-ar"/>
+                                                <ImageEditorResize/>
                                             </div>
                                     }
                                 </div>
