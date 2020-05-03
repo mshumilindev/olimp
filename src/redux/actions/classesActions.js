@@ -8,7 +8,7 @@ export function fetchClasses() {
     if ( !classesList.length ) {
         return dispatch => {
             dispatch(classesBegin());
-            return classesCollection.get().then(snapshot => {
+            return classesCollection.onSnapshot(snapshot => {
                 classesList.splice(0, classesList.length);
                 snapshot.docs.map(doc => {
                     return classesList.push({
@@ -80,18 +80,6 @@ export function updateClass(classID, classData) {
         dispatch(classBegin());
         return classRef.set({
             ...classData
-        }).then(() => {
-            return classesCollection.get().then(snapshot => {
-                classesList.splice(0, classesList.length);
-                snapshot.docs.map(doc => {
-                    return classesList.push({
-                        ...doc.data(),
-                        id: doc.id
-                    })
-                });
-                dispatch(classesSuccess(classesList));
-                dispatch(classSuccess(classData));
-            });
         });
     };
 }
@@ -101,7 +89,7 @@ export function fetchClass(classID) {
 
     return dispatch => {
         dispatch(classBegin());
-        return docRef.get().then(snapshot => {
+        return docRef.onSnapshot(snapshot => {
             dispatch(classSuccess({
                 ...snapshot.data(),
                 id: snapshot.id

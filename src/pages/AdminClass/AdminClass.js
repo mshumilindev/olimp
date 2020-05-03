@@ -26,8 +26,17 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
     }, []);
 
     useEffect(() => {
-        if ( classData && !currentClass ) {
-            setCurrentClass(Object.assign({}, classData));
+        if ( JSON.stringify(currentClass) !== JSON.stringify(classData) ) {
+            setClassUpdated(true);
+        }
+        else {
+            setClassUpdated(false);
+        }
+    }, [currentClass]);
+
+    useEffect(() => {
+        if ( classData ) {
+            setCurrentClass(JSON.parse(JSON.stringify(classData)));
         }
     }, [classData]);
 
@@ -94,7 +103,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
 
         if ( classUpdated ) {
             updateClass(currentClass.id, currentClass);
-            setClassUpdated(false);
         }
     }
 
@@ -115,7 +123,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             ...currentClass,
             title: newValue
         }));
-        setClassUpdated(true);
     }
 
     function setDescr(fieldID, value) {
@@ -135,7 +142,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             ...currentClass,
             info: newValue
         }));
-        setClassUpdated(true);
     }
 
     function setCurator(type, value) {
@@ -143,7 +149,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             ...currentClass,
             curator: value[0]
         }));
-        setClassUpdated(true);
     }
 }
 const mapStateToProps = state => ({
