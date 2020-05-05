@@ -16,7 +16,7 @@ $trackerColor: $mediumGreyColor;
       &__image-holder {
         position: relative;
         user-select: none;
-        min-width: 400px;
+        min-width: 500px;
         min-height: 200px;
         &:after {
           content: '';
@@ -173,6 +173,18 @@ $trackerColor: $mediumGreyColor;
     max-width: 800px !important;
     height: auto;
   }
+  &__image-bg {
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
+  &__image-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
   &__icon {
     width: $editorBarSize;
     height: $editorBarSize;
@@ -210,16 +222,31 @@ $trackerColor: $mediumGreyColor;
     overflow: hidden;
     letter-spacing: .5px;
     flex: 0 0 auto;
+    box-sizing: border-box;
     &:hover {
       color: $baseColor;
-      .colorIcon {
-        border-color: $baseColor;
-      }
       .coverIcon,
       .containIcon {
         &:after {
           border-color: $baseColor;
         }
+      }
+      .borderIcon {
+        border-color: $baseColor;
+      }
+    }
+    &.active,
+    &.open {
+      background: $lightGreyColor;
+      color: $baseColor;
+      .coverIcon,
+      .containIcon {
+        &:after {
+          border-color: $baseColor;
+        }
+      }
+      .borderIcon {
+        border-color: $baseColor;
       }
     }
     &-icon {
@@ -240,28 +267,31 @@ $trackerColor: $mediumGreyColor;
   }
   &__size {
     position: absolute;
-    right: 30px;
-    top: $editorBarSize;
-    bottom: $editorBarSize;
-    width: $editorBarSize - 30;
+    right: 10px;
+    top: $editorBarSize + 30;
+    bottom: $editorBarSize + 20;
+    width: $editorBarSize;
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-    &-box {
-      position: relative;
-      height: 400px;
+    .range {
+      max-height: 400px;
       width: 100%;
-      max-height: 90%;
+      height: 100%;
     }
     &-track {
-      width: 1px;
       height: 100%;
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background: $trackerColor;
+      &:after {
+        content: '';
+        width: 1px;
+        bottom: 20px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background: $trackerColor;
+      }
     }
     &-handle {
       width: 20px;
@@ -269,21 +299,19 @@ $trackerColor: $mediumGreyColor;
       border: 3px solid $greyColor;
       position: absolute;
       left: 50%;
-      transform: translate(-50%, 50%);
+      transform: translate(-50%, -50%);
       cursor: grab;
       border-radius: 100%;
       box-sizing: border-box;
-      transition: border-color .15s ease-in-out;
-      &:hover {
-        border-color: $baseColor;
-      }
+      outline: none;
     }
     &-marks {
       position: absolute;
       left: 0;
       top: 0;
       right: 0;
-      bottom: 0;
+      bottom: 20px;
+      outline: none;
     }
     &-mark {
       position: absolute;
@@ -327,6 +355,7 @@ $trackerColor: $mediumGreyColor;
     top: $editorBarSize;
     bottom: $editorBarSize;
     width: $editorBarSize;
+    z-index: 1;
   }
   &__dimensions {
     .dimensionsIcon {
@@ -334,11 +363,6 @@ $trackerColor: $mediumGreyColor;
       margin-left: auto;
       margin-right: auto;
     }
-  }
-  .colorIcon {
-    border-radius: 100%;
-    border: 1px solid $greyColor;
-    transition: all .15s ease-in-out;
   }
   .coverIcon {
     position: relative;
@@ -387,6 +411,143 @@ $trackerColor: $mediumGreyColor;
       border: 1px solid $greyColor;
       box-sizing: border-box;
       transition: border-color .15s ease-in-out;
+    }
+  }
+  .borderIcon {
+    border: 2px dotted $greyColor;
+    transition: border-color .15s ease-in-out;
+  }
+  &__text {
+    position: absolute;
+    left: $editorBarSize;
+    bottom: 0;
+    right: $editorBarSize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .swatches-picker {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    > div {
+      height: 100%;
+      width: 400px;
+      > div {
+        &:first-child {
+          box-shadow: none !important;
+          background: $lightGreyColor !important;
+          border-radius: 0 !important;
+        }
+        > div {
+          overflow: auto !important;
+          > div {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 20px !important;
+            > div {
+              margin: 0 5px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  &__overlay-drop {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    background: $lightGreyColor;
+    display: flex;
+    flex-direction: column;
+    .swatches-picker {
+      position: static;
+    }
+  }
+  &__overlay-opacity {
+    padding: 30px 20px 0;
+    height: 40px;
+    flex: 0 0 auto;
+    .range {
+      height: 100%;
+      position: relative;
+
+      &__track {
+        height: 100%;
+
+        &:after {
+          content: '';
+          position: absolute;
+          left: 10px;
+          right: 10px;
+          top: 50%;
+          height: 1px;
+          background: $mediumGreyColor;
+          transform: translateY(-50%);
+        }
+      }
+
+      &__handle {
+        width: 20px;
+        height: 20px;
+        border: 3px solid $greyColor;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: grab;
+        border-radius: 100%;
+        box-sizing: border-box;
+        outline: none;
+      }
+
+      &__marks {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        height: 100%;
+        top: 0;
+      }
+
+      &__mark {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        &.isActive {
+          [class$="__tick"] {
+            background: $anchorColor;
+          }
+          [class$="__tick-label"] {
+            color: $anchorColor;
+          }
+        }
+      }
+
+      &__tick {
+        position: absolute;
+        top: 50%;
+        width: 5px;
+        height: 5px;
+        border-radius: 100%;
+        background: $mediumGreyColor;
+        transform: translate(-50%, -50%);
+      }
+
+      &__tick-label {
+        position: absolute;
+        top: 50%;
+        font-size: 12px;
+        font-family: $RobotoCondensed;
+        color: $trackerColor;
+        letter-spacing: .5px;
+        margin-top: -30px;
+        width: 50px;
+        text-align: center;
+        margin-left: -22px;
+      }
     }
   }
 }

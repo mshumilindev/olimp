@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Form from "../../Form/Form";
 import './imageEditor.scss';
 import classNames from 'classnames';
@@ -7,11 +7,16 @@ import ImageEditorDimensions from "./tools/ImageEditorDimensions";
 import ImageEditorBG from "./tools/ImageEditorBG";
 import ImageEditorOverlay from "./tools/ImageEditorOverlay";
 import ImageEditorResize from "./tools/ImageEditorResize";
+import ImageEditorBGSize from "./tools/ImageEditorBGSize";
+import ImageEditorBorder from "./tools/ImageEditorBorder";
+import ImageEditorText from "./tools/ImageEditorText";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 
 export default function ImageEditor({id, image, settings, handleChange, setSettings}) {
-    const [ isUsed, setIsUsed ] = useState(true);
     const { translate } = useContext(siteSettingsContext);
+    const [ isUsed, setIsUsed ] = useState(true);
+    const [ originalSize, setOriginalSize ] = useState(null);
+    const $image = useRef(null);
     const formFields = [
         {
             type: 'image',
@@ -24,6 +29,12 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
             label: translate('upload')
         },
     ];
+
+    useEffect(() => {
+        if ( $image && !Object.keys(settings).length && !originalSize ) {
+            setOriginalSize({width: $image.current.offsetWidth, height: $image.current.offsetHeight});
+        }
+    }, [settings]);
 
     return (
         <div className={classNames('imageEditor', { isUsed: isUsed })}>
@@ -45,22 +56,12 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                     :
                                                     null
                                             }
-                                            <div className="imageEditor__toolbar-btn">
+                                            <div className={classNames('imageEditor__toolbar-btn', {active: !Object.keys(settings).length})} onClick={resetSettings}>
                                                 <i className="imageEditor__toolbar-btn-icon fas fa-history"/>
                                                 <div className="imageEditor__toolbar-btn-label">{ translate('original_settings') }</div>
                                             </div>
-                                            <div className="imageEditor__toolbar-btn">
-                                                <i className="imageEditor__toolbar-btn-icon customIcon coverIcon"/>
-                                                <div className="imageEditor__toolbar-btn-label">
-                                                    { translate('cover') }
-                                                </div>
-                                            </div>
-                                            <div className="imageEditor__toolbar-btn">
-                                                <i className="imageEditor__toolbar-btn-icon customIcon containIcon"/>
-                                                <div className="imageEditor__toolbar-btn-label">
-                                                    { translate('contain') }
-                                                </div>
-                                            </div>
+                                            <ImageEditorDimensions dimensions={isOriginal() ? 'original' : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
+                                            <ImageEditorBGSize size={settings.size} setSettingsItem={setSettingsItem}/>
                                         </div>
                                         <div className="imageEditor__toolbar-col">
                                             <div className="imageEditor__toolbar-btn">
@@ -70,11 +71,12 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                         </div>
                                     </div>
                                     <div className="imageEditor__actions">
-                                        <ImageEditorDimensions dimensions={isOriginal() ? 'original' : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
                                         <ImageEditorBG bg={settings.bg ? settings.bg : '#fff'} setSettingsItem={setSettingsItem}/>
-                                        <ImageEditorOverlay overlay={settings.overlay ? settings.overlay : {color: 'none', opacity: 0}} setSettingsItem={setSettingsItem}/>
+                                        <ImageEditorOverlay overlay={settings.overlay ? settings.overlay : {color: '#fff', opacity: 0}} setSettingsItem={setSettingsItem}/>
+                                        <ImageEditorBorder border={settings.border} setSettingsItem={setSettingsItem} />
                                     </div>
                                     <ImageEditorSize size={settings.size ? settings.size : 100} setSettingsItem={setSettingsItem}/>
+                                    <ImageEditorText text={settings.text} setSettingsItem={setSettingsItem} />
                                 </>
                                 :
                                 null
@@ -85,12 +87,31 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                     {
                                         isOriginal() ?
                                             <div className="imageEditor__image-holder">
-                                                <img src={image} className="imageEditor__image"/>
+                                                <img src={image} className="imageEditor__image" ref={$image}/>
                                                 <ImageEditorResize/>
                                             </div>
                                             :
                                             <div className="imageEditor__image-holder">
-                                                <div className="imageEditor__image" style={{backgroundImage: 'url(' + image + ')'}}/>
+                                                <div className="imageEditor__image-bg" style={
+                                                    {
+                                                        width: settings.width ? settings.width : originalSize.width,
+                                                        height: settings.height ? settings.height : originalSize.height,
+                                                        backgroundImage: 'url(' + image + ')',
+                                                        backgroundSize: typeof settings.size === 'number' ? settings.size + '%' : settings.size,
+                                                        backgroundColor: settings.bg ? settings.bg : 'none'
+                                                    }
+                                                }/>
+                                                {
+                                                    settings.overlay ?
+                                                        <div className="imageEditor__image-overlay" style={
+                                                            {
+                                                                backgroundColor: settings.overlay.color,
+                                                                opacity: settings.overlay.opacity / 100
+                                                            }
+                                                        }/>
+                                                        :
+                                                        null
+                                                }
                                                 <ImageEditorResize/>
                                             </div>
                                     }
@@ -114,7 +135,14 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
         return !Object.keys(settings).length;
     }
 
-    function setSettingsItem() {
+    function setSettingsItem(type, value) {
+        setSettings({
+            ...settings,
+            [type]: value
+        })
+    }
 
+    function resetSettings() {
+        setSettings({});
     }
 }

@@ -41,7 +41,7 @@ export default function ImageEditorDimensions({dimensions, setSettingsItem}) {
     return (
         <div className="imageEditor__dimensions">
             <div className="imageEditor__toolbar-btn">
-                <i className="imageEditor__toolbar-btn-icon fas fa-arrows-alt"/>
+                <i className="imageEditor__toolbar-btn-icon fas fa-vector-square"/>
                 <div className="imageEditor__toolbar-btn-label">
                     { translate('dimensions') }
                 </div>
