@@ -328,7 +328,7 @@ class Jitsi {
         let i = 0;
         navigator.getMedia({audio: {volume: 1}}, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId: selectedCameraID})
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId: selectedCameraID, resolution: 480})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -344,7 +344,7 @@ class Jitsi {
             });
         }, () => {
             navigator.getMedia({video: true}, () => {
-                JitsiMeetJS.createLocalTracks({devices: ['video'], cameraDeviceId: selectedCameraID})
+                JitsiMeetJS.createLocalTracks({devices: ['video'], cameraDeviceId: selectedCameraID, resolution: 480})
                     .then(tracks => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         JitsiMeetJS.enumerateDevices(devices => {
@@ -358,7 +358,7 @@ class Jitsi {
 
         function goThroughVideoDevices(devices, length) {
             if ( devices[i].kind === 'videoinput' ) {
-                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId : devices[i].deviceId})
+                JitsiMeetJS.createLocalTracks({devices: ['audio', 'video'], cameraDeviceId : devices[i].deviceId, resolution: 480})
                     .then((tracks) => onLocalTracks(tracks, onlyVideo))
                     .catch(error => {
                         i ++;
@@ -422,7 +422,7 @@ class Jitsi {
 
     changeVideoDevice(value, label) {
         localStorage.setItem('videoDevice', JSON.stringify({id: value, label: label}));
-        JitsiMeetJS.createLocalTracks({devices: ['video'], cameraDeviceId: value})
+        JitsiMeetJS.createLocalTracks({devices: ['video'], cameraDeviceId: value, resolution: 480})
             .then(tracks => {
                 if ( localTracks.find(item => item.type === 'video') ) {
                     localTracks.find(item => item.type === 'video').dispose();
