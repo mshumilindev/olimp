@@ -50,12 +50,6 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                             <div className="imageEditor__icon">
                                                 <i className="fas fa-image" />
                                             </div>
-                                            {
-                                                isUsed ?
-                                                    <Form fields={formFields} setFieldValue={(fieldID, value) => handleChange(fieldID, value)}/>
-                                                    :
-                                                    null
-                                            }
                                             <div className={classNames('imageEditor__toolbar-btn', {active: !Object.keys(settings).length})} onClick={resetSettings}>
                                                 <i className="imageEditor__toolbar-btn-icon fas fa-history"/>
                                                 <div className="imageEditor__toolbar-btn-label">{ translate('original_settings') }</div>
