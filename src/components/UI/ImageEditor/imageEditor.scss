@@ -235,7 +235,6 @@ $trackerColor: $mediumGreyColor;
         border-color: $baseColor;
       }
     }
-    &.active,
     &.open {
       background: $lightGreyColor;
       color: $baseColor;
@@ -248,6 +247,10 @@ $trackerColor: $mediumGreyColor;
       .borderIcon {
         border-color: $baseColor;
       }
+    }
+    &.active {
+      background: $anchorColor;
+      color: $white;
     }
     &-icon {
       display: block;
