@@ -3,11 +3,86 @@ import siteSettingsContext from "../../../../context/siteSettingsContext";
 import {SwatchesPicker} from "react-color";
 import classNames from "classnames";
 import Range from "../../Range/Range";
+import Form from "../../../Form/Form";
 
 export default function ImageEditorOverlay({overlay, setSettingsItem}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showColorPicker, setShowColorPicker ] = useState(false);
     const $overlay = useRef(null);
+
+    const modesFields = [
+        {
+            type: 'select',
+            id: 'overlayMode',
+            value: overlay.mode,
+            options: [
+                {
+                    id: 'normal',
+                    title: 'normal'
+                },
+                {
+                    id: 'color',
+                    title: 'color'
+                },
+                {
+                    id: 'color-burn',
+                    title: 'color-burn'
+                },
+                {
+                    id: 'color-dodge',
+                    title: 'color-dodge'
+                },
+                {
+                    id: 'darken',
+                    title: 'darken'
+                },
+                {
+                    id: 'difference',
+                    title: 'difference'
+                },
+                {
+                    id: 'exclusion',
+                    title: 'exclusion'
+                },
+                {
+                    id: 'hard-light',
+                    title: 'hard-light'
+                },
+                {
+                    id: 'hue',
+                    title: 'hue'
+                },
+                {
+                    id: 'lighten',
+                    title: 'lighten'
+                },
+                {
+                    id: 'luminosity',
+                    title: 'luminosity'
+                },
+                {
+                    id: 'multiply',
+                    title: 'multiply'
+                },
+                {
+                    id: 'overlay',
+                    title: 'overlay'
+                },
+                {
+                    id: 'saturation',
+                    title: 'saturation'
+                },
+                {
+                    id: 'screen',
+                    title: 'screen'
+                },
+                {
+                    id: 'soft-light',
+                    title: 'soft-light'
+                }
+            ]
+        }
+    ];
 
     useEffect(() => {
         document.addEventListener('click', closeBG);
@@ -31,6 +106,10 @@ export default function ImageEditorOverlay({overlay, setSettingsItem}) {
             {
                 showColorPicker ?
                     <div className="imageEditor__overlay-drop">
+                        <div className="imageEditor__overlay-mode">
+                            <div className="imageEditor__toolbar-heading">{ translate('blend_mode') }</div>
+                            <Form fields={modesFields} setFieldValue={(fieldID, value) => setSettingsItem('overlay', {...overlay, mode: value})}/>
+                        </div>
                         <div className="imageEditor__overlay-opacity">
                             <div className="imageEditor__toolbar-heading">{ translate('opacity') }</div>
                             <Range

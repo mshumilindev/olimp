@@ -18,7 +18,7 @@ export function fetchLibrary(userID) {
     return dispatch => {
         dispatch(fetchLibraryBegin());
 
-        return libraryCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return libraryCollection.onSnapshot(snapshot => {
             const libraryList = [];
 
             snapshot.docs.forEach(doc => {

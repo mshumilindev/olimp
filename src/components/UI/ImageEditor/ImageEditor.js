@@ -65,7 +65,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                     </div>
                                     <div className="imageEditor__actions">
                                         <ImageEditorBG bg={settings.bg ? settings.bg : '#fff'} setSettingsItem={setSettingsItem}/>
-                                        <ImageEditorOverlay overlay={settings.overlay ? settings.overlay : {color: '#fff', opacity: 0}} setSettingsItem={setSettingsItem}/>
+                                        <ImageEditorOverlay overlay={settings.overlay ? settings.overlay : {color: '#fff', opacity: 0, mode: 'normal'}} setSettingsItem={setSettingsItem}/>
                                         <ImageEditorBorder border={settings.border ? settings.border : {color: '#fff', width: 0, style: 'solid'}} setSettingsItem={setSettingsItem} />
                                     </div>
                                     <ImageEditorSize size={settings.size ? settings.size : 100} setSettingsItem={setSettingsItem}/>
@@ -99,7 +99,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                         <div className="imageEditor__image-overlay" style={
                                                             {
                                                                 backgroundColor: settings.overlay.color,
-                                                                opacity: settings.overlay.opacity / 100
+                                                                opacity: settings.overlay.opacity / 100,
+                                                                mixBlendMode: settings.overlay.mode
                                                             }
                                                         }/>
                                                         :

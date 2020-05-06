@@ -9,7 +9,7 @@ export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 export function fetchUsers(role) {
     return dispatch => {
         dispatch(fetchUsersBegin());
-        return usersCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return usersCollection.onSnapshot(snapshot => {
             const usersList = [];
 
             snapshot.docs.forEach(doc => {

@@ -11,7 +11,7 @@ export function fetchTests(userID) {
 
     return dispatch => {
         dispatch(testsBegin());
-        testsRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        testsRef.onSnapshot(snapshot => {
             const tests = [];
 
             snapshot.docs.forEach(doc => {

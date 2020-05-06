@@ -443,6 +443,15 @@ $trackerColor: $mediumGreyColor;
     flex-direction: column;
     overflow: auto;
   }
+  &__overlay-mode {
+    padding: 20px;
+    border-bottom: 1px solid $mediumGreyColor;
+    .form {
+      margin-top: 20px;
+      height: auto !important;
+      width: 100% !important;
+    }
+  }
   &__overlay-opacity {
     padding: 20px;
     flex: 0 0 auto;

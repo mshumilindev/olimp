@@ -11,7 +11,7 @@ export function fetchNotifications(userID) {
 
     return dispatch => {
         dispatch(fetchNotificationsBegin());
-        return notificationsCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return notificationsCollection.onSnapshot(snapshot => {
             const notificationsList = [];
 
             snapshot.docs.forEach(doc => {
