@@ -12,7 +12,7 @@ export function fetchEvents() {
         const eventsCollection = db.collection('events').orderBy('datetime');
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return eventsCollection.onSnapshot(snapshot => {
             events.all = [];
             snapshot.docs.forEach(doc => {
                 events.all.push({
@@ -30,7 +30,7 @@ export function fetchEventsOrganizer(userID) {
         const eventsCollection = db.collection('events').where('organizer', '==', userID);
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return eventsCollection.onSnapshot(snapshot => {
             events.organizer = [];
             snapshot.docs.forEach(doc => {
                 events.organizer.push({
@@ -52,7 +52,7 @@ export function fetchEventsParticipant(userID, date) {
         }
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        return eventsCollection.onSnapshot(snapshot => {
             events.participant = [];
 
             snapshot.docs.forEach(doc => {
@@ -89,7 +89,7 @@ export function fetchChat(chatID, userID) {
     return dispatch => {
         dispatch(fetchChatBegin());
 
-        eventRef.onSnapshot({ includeMetadataChanges: true }, doc => {
+        eventRef.onSnapshot(doc => {
             if ( !doc.exists ) {
                 dispatch(fetchChatError('videochat_does_not_exist'));
             }
