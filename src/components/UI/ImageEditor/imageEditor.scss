@@ -354,11 +354,10 @@ $trackerColor: $mediumGreyColor;
         flex: 0 0 auto;
         margin: 0 0 20px !important;
         display: flex;
-        justify-content: center;
         border-bottom: 1px solid $mediumGreyColor;
         padding-bottom: 20px;
         &__row {
-          width: 200px;
+          width: 100px;
           flex: 0 0 auto;
           &:not(:first-child) {
             margin-left: 20px;
