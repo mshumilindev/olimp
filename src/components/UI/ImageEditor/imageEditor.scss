@@ -140,6 +140,37 @@ $trackerColor: $mediumGreyColor;
     width: 100%;
     height: 100%;
   }
+  &__image-vr {
+    width: 15px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: $anchorColor;
+    opacity: 0;
+    position: absolute;
+    cursor: col-resize;
+    transition: opacity .15s ease-in-out;
+    z-index: 1;
+    &:hover {
+      opacity: .75;
+    }
+  }
+  &__image-hr {
+    height: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $anchorColor;
+    opacity: 0;
+    position: absolute;
+    cursor: row-resize;
+    transition: opacity .15s ease-in-out;
+    z-index: 1;
+
+    &:hover {
+      opacity: .75;
+    }
+  }
   &__image-overlay {
     position: absolute;
     left: 0;

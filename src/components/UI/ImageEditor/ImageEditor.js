@@ -10,6 +10,7 @@ import ImageEditorBGSize from "./tools/ImageEditorBGSize";
 import ImageEditorBorder from "./tools/ImageEditorBorder";
 import ImageEditorText from "./tools/ImageEditorText";
 import ImageEditorTransform from "./tools/ImageEditorTransform";
+import ImageEditorResize from "./tools/ImageEditorResize";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 
 export default function ImageEditor({id, image, settings, handleChange, setSettings}) {
@@ -83,6 +84,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                         isOriginal() ?
                                             <div className="imageEditor__image-holder">
                                                 <img src={image} className="imageEditor__image" ref={$image}/>
+                                                <ImageEditorResize/>
                                             </div>
                                             :
                                             <div className="imageEditor__image-holder" style={                                                    {
@@ -98,6 +100,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                         transform: settings.transform ? getTransforms() : 'none'
                                                     }
                                                 }/>
+                                                <ImageEditorResize/>
                                                 {
                                                     settings.overlay ?
                                                         <div className="imageEditor__image-overlay" style={
