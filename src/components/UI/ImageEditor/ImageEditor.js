@@ -9,6 +9,7 @@ import ImageEditorOverlay from "./tools/ImageEditorOverlay";
 import ImageEditorBGSize from "./tools/ImageEditorBGSize";
 import ImageEditorBorder from "./tools/ImageEditorBorder";
 import ImageEditorText from "./tools/ImageEditorText";
+import ImageEditorTransform from "./tools/ImageEditorTransform";
 import siteSettingsContext from "../../../context/siteSettingsContext";
 
 export default function ImageEditor({id, image, settings, handleChange, setSettings}) {
@@ -53,7 +54,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                 <i className="imageEditor__toolbar-btn-icon fas fa-history"/>
                                                 <div className="imageEditor__toolbar-btn-label">{ translate('original_settings') }</div>
                                             </div>
-                                            <ImageEditorDimensions dimensions={isOriginal() ? 'original' : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
+                                            <ImageEditorDimensions originalDimensions={originalSize} dimensions={isOriginal() ? originalSize : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
+                                            <ImageEditorTransform transform={settings.transform ? settings.transform : {rotate: {x: 0, y: 0, z: 0}, skew: {x: 0, y: 0}}} setSettingsItem={setSettingsItem} />
                                             <ImageEditorBGSize size={settings.size} setSettingsItem={setSettingsItem}/>
                                         </div>
                                         <div className="imageEditor__toolbar-col">
@@ -86,8 +88,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                             <div className="imageEditor__image-holder">
                                                 <div className="imageEditor__image-bg" style={
                                                     {
-                                                        width: settings.width ? settings.width : originalSize.width,
-                                                        height: settings.height ? settings.height : originalSize.height,
+                                                        width: settings.dimensions ? 800 : originalSize.width,
+                                                        height: settings.dimensions ? settings.dimensions.height * 800 / settings.dimensions.width : originalSize.height,
                                                         backgroundImage: 'url(' + image + ')',
                                                         backgroundSize: typeof settings.size === 'number' ? settings.size + '%' : settings.size,
                                                         backgroundColor: settings.bg ? settings.bg : 'none',
