@@ -624,9 +624,9 @@ $trackerColor: $mediumGreyColor;
     &-drop {
       position: absolute;
       left: $editorBarSize;
+      right: $editorBarSize;
       top: 100%;
       background: $lightGreyColor;
-      max-width: 500px;
       max-height: 400px;
       overflow: auto;
       display: flex;

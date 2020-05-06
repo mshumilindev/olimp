@@ -85,8 +85,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                 <img src={image} className="imageEditor__image" ref={$image}/>
                                             </div>
                                             :
-                                            <div className="imageEditor__image-holder" style={                                                    {
-                                                width: settings.dimensions ? 800 : originalSize.width,
+                                            <div className="imageEditor__image-holder" style={{
+                                                width: 800,
                                                 height: settings.dimensions ? settings.dimensions.height * 800 / settings.dimensions.width : originalSize.height,
                                                 backgroundColor: settings.bg ? settings.bg : 'none',
                                                 border: settings.border ? settings.border.width + 'px ' + settings.border.style + ' ' + settings.border.color : 'none',
