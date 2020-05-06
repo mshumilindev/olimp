@@ -85,15 +85,17 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                 <img src={image} className="imageEditor__image" ref={$image}/>
                                             </div>
                                             :
-                                            <div className="imageEditor__image-holder">
+                                            <div className="imageEditor__image-holder" style={                                                    {
+                                                width: settings.dimensions ? 800 : originalSize.width,
+                                                height: settings.dimensions ? settings.dimensions.height * 800 / settings.dimensions.width : originalSize.height,
+                                                backgroundColor: settings.bg ? settings.bg : 'none',
+                                                border: settings.border ? settings.border.width + 'px ' + settings.border.style + ' ' + settings.border.color : 'none',
+                                            }}>
                                                 <div className="imageEditor__image-bg" style={
                                                     {
-                                                        width: settings.dimensions ? 800 : originalSize.width,
-                                                        height: settings.dimensions ? settings.dimensions.height * 800 / settings.dimensions.width : originalSize.height,
                                                         backgroundImage: 'url(' + image + ')',
                                                         backgroundSize: typeof settings.size === 'number' ? settings.size + '%' : settings.size,
-                                                        backgroundColor: settings.bg ? settings.bg : 'none',
-                                                        border: settings.border ? settings.border.width + 'px ' + settings.border.style + ' ' + settings.border.color : 'none'
+                                                        transform: settings.transform ? getTransforms() : 'none'
                                                     }
                                                 }/>
                                                 {
@@ -139,5 +141,31 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
 
     function resetSettings() {
         setSettings({});
+    }
+
+    function getTransforms() {
+        let transforms = '';
+
+        if ( settings.transform.rotate ) {
+            if ( settings.transform.rotate.z ) {
+                transforms += 'rotateZ(' + settings.transform.rotate.z + 'deg)';
+            }
+            if ( settings.transform.rotate.x ) {
+                transforms += 'rotateX(' + settings.transform.rotate.x + 'deg)';
+            }
+            if ( settings.transform.rotate.y ) {
+                transforms += 'rotateY(' + settings.transform.rotate.y + 'deg)';
+            }
+        }
+        if ( settings.transform.skew ) {
+            if ( settings.transform.skew.x ) {
+                transforms += 'skewX(' + settings.transform.skew.x + 'deg)';
+            }
+            if ( settings.transform.skew.y ) {
+                transforms += 'skewY(' + settings.transform.skew.y + 'deg)';
+            }
+        }
+
+        return transforms;
     }
 }

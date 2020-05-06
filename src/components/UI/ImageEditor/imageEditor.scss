@@ -13,21 +13,6 @@ $trackerColor: $mediumGreyColor;
     bottom: 0;
     z-index: 99999;
     .imageEditor {
-      &__image-holder {
-        position: relative;
-        user-select: none;
-        min-width: 500px;
-        min-height: 200px;
-        &:after {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          cursor: move;
-        }
-      }
       &__shade {
         position: absolute;
         left: 0;
@@ -123,8 +108,24 @@ $trackerColor: $mediumGreyColor;
   &__inner {
     position: relative;
   }
+  &__image-wrapper {
+    position: relative;
+    user-select: none;
+    min-width: 500px;
+    min-height: 200px;
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      cursor: move;
+    }
+  }
   &__image-holder {
     overflow: hidden;
+    box-sizing: border-box;
   }
   &__image {
     width: 100%;
@@ -136,6 +137,8 @@ $trackerColor: $mediumGreyColor;
     background-position: 50% 50%;
     background-repeat: no-repeat;
     box-sizing: border-box;
+    width: 100%;
+    height: 100%;
   }
   &__image-overlay {
     position: absolute;
@@ -207,6 +210,24 @@ $trackerColor: $mediumGreyColor;
       }
       .dimensionsIcon {
         background: $baseColor;
+      }
+      .flipV {
+        background: $baseColor;
+        &:after {
+          border-left-color: $baseColor;
+        }
+      }
+      .flipH {
+        background: $baseColor;
+        &:after {
+          border-top-color: $baseColor;
+        }
+      }
+      .skewX,
+      .skewY {
+        &:before {
+          border-color: $baseColor;
+        }
       }
     }
     &.open {
@@ -341,7 +362,7 @@ $trackerColor: $mediumGreyColor;
       top: 100%;
       right: $editorBarSize;
       background: $lightGreyColor;
-      width: 540px;
+      width: 500px;
       max-height: 400px;
       overflow: auto;
       display: flex;
@@ -354,6 +375,7 @@ $trackerColor: $mediumGreyColor;
         flex: 0 0 auto;
         margin: 0 0 20px !important;
         display: flex;
+        justify-content: center;
         border-bottom: 1px solid $mediumGreyColor;
         padding-bottom: 20px;
         &__row {
@@ -588,6 +610,157 @@ $trackerColor: $mediumGreyColor;
       }
       .range {
         height: 40px;
+      }
+    }
+  }
+  &__transform {
+    &-drop {
+      position: absolute;
+      left: $editorBarSize;
+      top: 100%;
+      background: $lightGreyColor;
+      max-width: 500px;
+      max-height: 400px;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      padding-top: 20px;
+      box-sizing: border-box;
+      > * {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-bottom: 1px solid $mediumGreyColor;
+        margin-bottom: 20px;
+        width: 50%;
+        flex: 0 0 auto;
+        &:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+    .flipV {
+      background: $greyColor;
+      width: 30px;
+      position: relative;
+      transition: background .15s ease-in-out;
+      &:before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background: $lightGreyColor;
+        transform: translateX(-50%);
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -5px;
+        bottom: -5px;
+        border-left: 2px dashed $greyColor;
+        transform: translateX(-50%);
+        transition: border-left-color .15s ease-in-out;
+      }
+    }
+    .flipH {
+      background: $greyColor;
+      width: 30px;
+      position: relative;
+      transition: background .15s ease-in-out;
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        right: 0;
+        height: 6px;
+        background: $lightGreyColor;
+        transform: translateY(-50%);
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        left: -5px;
+        top: 50%;
+        right: -5px;
+        border-top: 2px dashed $greyColor;
+        transform: translateY(-50%);
+        transition: border-top-color .15s ease-in-out;
+      }
+    }
+    &-skew {
+      width: 100%;
+      [class$="-icon-holder"] {
+        display: flex;
+        align-items: center;
+        font-family: 'Arial', 'Helvetica', sans-serif;
+        .add,
+        .substract {
+          margin-top: 17px;
+          font-size: 24px;
+          font-style: normal;
+          cursor: pointer;
+          &:hover {
+            color: $linkHoverColor;
+          }
+        }
+        .substract {
+          margin-left: 5px;
+          padding: 5px;
+        }
+        .add {
+          margin-right: 5px;
+          margin-top: 20px;
+          padding: 5px;
+        }
+      }
+      [class$="-btn"] {
+        margin: 0 25px;
+      }
+    }
+    .skewX {
+      background: $lightBlueColor;
+      border: 1px solid $greyColor;
+      width: 30px;
+      position: relative;
+      cursor: default;
+      &:before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        border: 2px dashed $greyColor;
+        position: absolute;
+        left: -2px;
+        top: -2px;
+        right: -2px;
+        bottom: -2px;
+        transform: skewX(30deg);
+        transition: border-color .15s ease-in-out;
+      }
+    }
+    .skewY {
+      background: $lightBlueColor;
+      border: 1px solid $greyColor;
+      width: 30px;
+      position: relative;
+      cursor: default;
+      &:before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        border: 2px dashed $greyColor;
+        position: absolute;
+        left: -2px;
+        top: -2px;
+        right: -2px;
+        bottom: -2px;
+        transform: skewY(-20deg);
+        transition: border-color .15s ease-in-out;
       }
     }
   }
