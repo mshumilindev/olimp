@@ -77,16 +77,18 @@ export default function ImageEditorDimensions({originalDimensions, dimensions, s
                 showDrop ?
                     <div className="imageEditor__dimensions-drop">
                         <Form fields={formFields} setFieldValue={(fieldID, value) => setSettingsItem('dimensions', {...dimensions, [fieldID]: value})}/>
-                        {
-                            originalDimensions ?
-                                _renderDimension({
-                                    ...originalDimensions,
-                                    label: 'original_dimensions'
-                                })
-                                :
-                                null
-                        }
-                        { availableDimensions.map(item => _renderDimension(item)) }
+                        <div className="imageEditor__dimensions-list">
+                            {
+                                originalDimensions ?
+                                    _renderDimension({
+                                        ...originalDimensions,
+                                        label: 'original_dimensions'
+                                    })
+                                    :
+                                    null
+                            }
+                            { availableDimensions.map(item => _renderDimension(item)) }
+                        </div>
                     </div>
                     :
                     null
