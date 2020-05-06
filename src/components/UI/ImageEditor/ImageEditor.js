@@ -67,7 +67,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                     <div className="imageEditor__actions">
                                         <ImageEditorBG bg={settings.bg ? settings.bg : '#fff'} setSettingsItem={setSettingsItem}/>
                                         <ImageEditorOverlay overlay={settings.overlay ? settings.overlay : {color: '#fff', opacity: 0}} setSettingsItem={setSettingsItem}/>
-                                        <ImageEditorBorder border={settings.border} setSettingsItem={setSettingsItem} />
+                                        <ImageEditorBorder border={settings.border ? settings.border : {color: '#fff', width: 0, style: 'solid'}} setSettingsItem={setSettingsItem} />
                                     </div>
                                     <ImageEditorSize size={settings.size ? settings.size : 100} setSettingsItem={setSettingsItem}/>
                                     <ImageEditorText text={settings.text} setSettingsItem={setSettingsItem} />
@@ -92,7 +92,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                         height: settings.height ? settings.height : originalSize.height,
                                                         backgroundImage: 'url(' + image + ')',
                                                         backgroundSize: typeof settings.size === 'number' ? settings.size + '%' : settings.size,
-                                                        backgroundColor: settings.bg ? settings.bg : 'none'
+                                                        backgroundColor: settings.bg ? settings.bg : 'none',
+                                                        border: settings.border ? settings.border.width + 'px ' + settings.border.style + ' ' + settings.border.color : 'none'
                                                     }
                                                 }/>
                                                 {

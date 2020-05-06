@@ -177,6 +177,7 @@ $trackerColor: $mediumGreyColor;
     background-size: cover;
     background-position: 50% 50%;
     background-repeat: no-repeat;
+    box-sizing: border-box;
   }
   &__image-overlay {
     position: absolute;
@@ -232,6 +233,9 @@ $trackerColor: $mediumGreyColor;
         }
       }
       .borderIcon {
+        border-color: $baseColor;
+      }
+      .borderStyle {
         border-color: $baseColor;
       }
     }
@@ -475,82 +479,52 @@ $trackerColor: $mediumGreyColor;
     padding: 30px 20px 0;
     height: 40px;
     flex: 0 0 auto;
-    .range {
-      height: 100%;
-      position: relative;
-
-      &__track {
-        height: 100%;
-
-        &:after {
-          content: '';
-          position: absolute;
-          left: 10px;
-          right: 10px;
-          top: 50%;
-          height: 1px;
-          background: $mediumGreyColor;
-          transform: translateY(-50%);
+  }
+  &__border {
+    .imageEditor__toolbar-btn {
+      &.active {
+        background: none;
+        color: $baseColor;
+        i {
+          border-color: $baseColor;
         }
       }
-
-      &__handle {
-        width: 20px;
-        height: 20px;
-        border: 3px solid $greyColor;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: grab;
-        border-radius: 100%;
-        box-sizing: border-box;
-        outline: none;
+    }
+    &-drop {
+      position: absolute;
+      left: 100%;
+      top: 0;
+      bottom: 0;
+      background: $lightGreyColor;
+      display: flex;
+      flex-direction: column;
+    }
+    &-style {
+      display: flex;
+      justify-content: center;
+    }
+    .borderStyle {
+      border-bottom-width: 5px;
+      border-bottom-color: $greyColor;
+      width: 50px;
+      transition: border-color .15s ease-in-out;
+      &.solid {
+        border-bottom-style: solid;
       }
-
-      &__marks {
-        position: absolute;
-        left: 10px;
-        right: 10px;
-        height: 100%;
-        top: 0;
+      &.dashed {
+        border-bottom-style: dashed;
       }
-
-      &__mark {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        &.isActive {
-          [class$="__tick"] {
-            background: $anchorColor;
-          }
-          [class$="__tick-label"] {
-            color: $anchorColor;
-          }
-        }
+      &.dotted {
+        border-bottom-style: dotted;
       }
-
-      &__tick {
-        position: absolute;
-        top: 50%;
-        width: 5px;
-        height: 5px;
-        border-radius: 100%;
-        background: $mediumGreyColor;
-        transform: translate(-50%, -50%);
-      }
-
-      &__tick-label {
-        position: absolute;
-        top: 50%;
-        font-size: 12px;
-        font-family: $RobotoCondensed;
-        color: $trackerColor;
-        letter-spacing: .5px;
-        margin-top: -30px;
-        width: 50px;
-        text-align: center;
-        margin-left: -22px;
-      }
+    }
+    &-width {
+      padding: 30px 20px 0;
+      height: 40px;
+      flex: 0 0 auto;
+    }
+    .swatches-picker {
+      position: static;
     }
   }
 }

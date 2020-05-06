@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactSlider from "react-slider";
 import classNames from "classnames";
+import './range.scss';
 
-export default function Range({markClassName, tickClassName, className, thumbClassName, vertical, invert, min, max, step, activeValue, type, setRange}) {
+export default function Range({units, markClassName, tickClassName, className, thumbClassName, vertical, invert, min, max, step, activeValue, type, setRange}) {
     return (
         <div className="range">
             <ReactSlider
@@ -24,10 +25,11 @@ export default function Range({markClassName, tickClassName, className, thumbCla
     function _renderMarks() {
         let i = min;
         let marks = [];
+        const newStep = (max - min) / step > 20 ? 10 : step;
 
         while (i <= max) {
             marks.push(i);
-            i += step;
+            i += newStep;
         }
 
         if ( invert ) {
@@ -68,7 +70,7 @@ export default function Range({markClassName, tickClassName, className, thumbCla
                 }
             >
                 <div className={tickClassName ? tickClassName : 'range__tick'}/>
-                <div className={tickClassName ? tickClassName + '-label' : 'range__tick-label'}>{ item }%</div>
+                <div className={tickClassName ? tickClassName + '-label' : 'range__tick-label'}>{ item }{ units ? units : '%' }</div>
             </div>
         )
     }
