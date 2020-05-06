@@ -20,7 +20,10 @@ export default function ImageEditorOverlay({overlay, setSettingsItem}) {
     return (
         <div className="imageEditor__overlay" ref={$overlay}>
             <div className={classNames('imageEditor__toolbar-btn', {open: showColorPicker})} onClick={() => setShowColorPicker(!showColorPicker)}>
-                <i className="imageEditor__toolbar-btn-icon fas fa-palette" style={{color: overlay.color}}/>
+                <i className="imageEditor__toolbar-btn-icon fas fa-palette" style={{
+                    color: overlay.color,
+                    textShadow: overlay.color === '#fff' || overlay.color === '#ffffff' ? '0 0 5px rgba(0,0,0,.25)' : 'none'
+                }}/>
                 <div className="imageEditor__toolbar-btn-label">
                     { translate('overlay') }
                 </div>
@@ -29,6 +32,7 @@ export default function ImageEditorOverlay({overlay, setSettingsItem}) {
                 showColorPicker ?
                     <div className="imageEditor__overlay-drop">
                         <div className="imageEditor__overlay-opacity">
+                            <div className="imageEditor__toolbar-heading">{ translate('opacity') }</div>
                             <Range
                                 step={10}
                                 min={0}
@@ -38,12 +42,15 @@ export default function ImageEditorOverlay({overlay, setSettingsItem}) {
                                 setRange={(type, value) => setSettingsItem(type, {...overlay, opacity: value})}
                             />
                         </div>
-                        <SwatchesPicker
-                            color={overlay.color}
-                            onChange={value => setSettingsItem('overlay', {...overlay, color: value.hex})}
-                            height="100%"
-                            width={400}
-                        />
+                        <div className="imageEditor__overlay-color">
+                            <div className="imageEditor__toolbar-heading">{ translate('color') }</div>
+                            <SwatchesPicker
+                                color={overlay.color}
+                                onChange={value => setSettingsItem('overlay', {...overlay, color: value.hex})}
+                                height="100%"
+                                width={400}
+                            />
+                        </div>
                     </div>
                     :
                     null

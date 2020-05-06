@@ -21,7 +21,8 @@ export default function ImageEditorBorder({border, setSettingsItem}) {
         <div className="imageEditor__border" ref={$border}>
             <div className={classNames('imageEditor__toolbar-btn', {open: showDrop})} onClick={() => setShowDrop(!showDrop)}>
                 <i className="imageEditor__toolbar-btn-icon customIcon borderIcon" style={{
-                    border: '2px ' + border.style + ' ' + border.color
+                    border: '2px ' + border.style + ' ' + border.color,
+                    boxShadow: border.color === '#fff' || border.color === '#ffffff' ? 'inset 0 0 5px 0 rgba(0,0,0,.15), 0 0 5px 0 rgba(0,0,0,.25)' : 'none'
                 }}/>
                 <div className="imageEditor__toolbar-btn-label">
                     { translate('border') }
@@ -31,6 +32,7 @@ export default function ImageEditorBorder({border, setSettingsItem}) {
                 showDrop ?
                     <div className="imageEditor__border-drop">
                         <div className="imageEditor__border-style">
+                            <div className="imageEditor__toolbar-heading">{ translate('style') }</div>
                             <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'solid'})} onClick={() => setSettingsItem('border', {...border, style: 'solid'})}>
                                 <i className="imageEditor__toolbar-btn-icon customIcon borderStyle solid"/>
                                 <div className="imageEditor__toolbar-btn-label">
@@ -51,6 +53,7 @@ export default function ImageEditorBorder({border, setSettingsItem}) {
                             </div>
                         </div>
                         <div className="imageEditor__border-width">
+                            <div className="imageEditor__toolbar-heading">{ translate('width') }</div>
                             <Range
                                 step={10}
                                 min={0}
@@ -61,12 +64,15 @@ export default function ImageEditorBorder({border, setSettingsItem}) {
                                 units={'px'}
                             />
                         </div>
-                        <SwatchesPicker
-                            color={border.color}
-                            onChange={value => setSettingsItem('border', {...border, color: value.hex})}
-                            height="100%"
-                            width={400}
-                        />
+                        <div className="imageEditor__border-color">
+                            <div className="imageEditor__toolbar-heading">{ translate('color') }</div>
+                            <SwatchesPicker
+                                color={border.color}
+                                onChange={value => setSettingsItem('border', {...border, color: value.hex})}
+                                height="100%"
+                                width={400}
+                            />
+                        </div>
                     </div>
                     :
                     null

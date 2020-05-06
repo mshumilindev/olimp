@@ -28,51 +28,6 @@ $trackerColor: $mediumGreyColor;
           cursor: move;
         }
       }
-      &__image-vr {
-        width: 15px;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background: $anchorColor;
-        opacity: 0;
-        position: absolute;
-        cursor: col-resize;
-        transition: opacity .15s ease-in-out;
-        z-index: 1;
-        &:hover {
-          opacity: .75;
-        }
-      }
-      &__image-hr {
-        height: 15px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: $anchorColor;
-        opacity: 0;
-        position: absolute;
-        cursor: row-resize;
-        transition: opacity .15s ease-in-out;
-        z-index: 1;
-        &:hover {
-          opacity: .75;
-        }
-      }
-      &__image-ar {
-        height: 15px;
-        width: 15px;
-        right: 0;
-        bottom: 0;
-        background: $anchorColor;
-        opacity: 0;
-        position: absolute;
-        cursor: crosshair;
-        transition: opacity .15s ease-in-out;
-        z-index: 1;
-        &:hover {
-          opacity: .75;
-        }
-      }
       &__shade {
         position: absolute;
         left: 0;
@@ -209,6 +164,14 @@ $trackerColor: $mediumGreyColor;
   }
   &__toolbar-col {
     display: flex;
+  }
+  &__toolbar-heading {
+    text-align: center;
+    width: 100%;
+    flex: 0 0 auto;
+    font-family: $RobotoCondensed;
+    text-transform: uppercase;
+    letter-spacing: .5px;
   }
   &__toolbar-btn {
     font-size: 12px;
@@ -433,18 +396,25 @@ $trackerColor: $mediumGreyColor;
     justify-content: center;
     align-items: center;
   }
-  .swatches-picker {
+  &__bg-drop {
     position: absolute;
     left: 100%;
     top: 0;
     bottom: 0;
+    background: $lightGreyColor;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+  }
+  .swatches-picker {
     > div {
       height: 100%;
       width: 400px;
       > div {
         &:first-child {
           box-shadow: none !important;
-          background: $lightGreyColor !important;
+          background: none !important;
           border-radius: 0 !important;
         }
         > div {
@@ -471,14 +441,19 @@ $trackerColor: $mediumGreyColor;
     background: $lightGreyColor;
     display: flex;
     flex-direction: column;
-    .swatches-picker {
-      position: static;
-    }
+    overflow: auto;
   }
   &__overlay-opacity {
-    padding: 30px 20px 0;
-    height: 40px;
+    padding: 20px;
     flex: 0 0 auto;
+    margin-bottom: 20px;
+    border-bottom: 1px solid $mediumGreyColor;
+    [class$="-heading"] {
+      margin-bottom: 20px;
+    }
+    .range {
+      height: 40px;
+    }
   }
   &__border {
     .imageEditor__toolbar-btn {
@@ -498,10 +473,19 @@ $trackerColor: $mediumGreyColor;
       background: $lightGreyColor;
       display: flex;
       flex-direction: column;
+      overflow: auto;
     }
     &-style {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
+      padding-top: 20px;
+      border-bottom: 1px solid $mediumGreyColor;
+      [class$="-heading"] {
+        margin-bottom: -20px;
+        position: relative;
+        z-index: 1;
+      }
     }
     .borderStyle {
       border-bottom-width: 5px;
@@ -519,12 +503,18 @@ $trackerColor: $mediumGreyColor;
       }
     }
     &-width {
-      padding: 30px 20px 0;
-      height: 40px;
+      padding: 20px 20px 20px;
       flex: 0 0 auto;
-    }
-    .swatches-picker {
-      position: static;
+      border-bottom: 1px solid $mediumGreyColor;
+      margin-bottom: 20px;
+      [class$="-heading"] {
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+      }
+      .range {
+        height: 40px;
+      }
     }
   }
 }
