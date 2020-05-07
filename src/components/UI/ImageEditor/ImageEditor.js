@@ -14,8 +14,8 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 
 export default function ImageEditor({id, image, settings, handleChange, setSettings}) {
     const { translate } = useContext(siteSettingsContext);
-    const [ isUsed, setIsUsed ] = useState(true);
-    const [ originalSize, setOriginalSize ] = useState(null);
+    const [ isUsed, setIsUsed ] = useState(false);
+    const [ originalSize, setOriginalSize ] = useState(settings.originalSize ? settings.originalSize : {width: 0, height: 0});
     const $image = useRef(null);
     const formFields = [
         {
@@ -31,13 +31,13 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
     ];
 
     useEffect(() => {
-        if ( $image && !Object.keys(settings).length && !originalSize ) {
+        if ( image && $image && $image.current && !settings.originalSize ) {
             setOriginalSize({width: $image.current.offsetWidth, height: $image.current.offsetHeight});
         }
-    }, [settings]);
+    }, [image, settings]);
 
     return (
-        <div className={classNames('imageEditor', { isUsed: isUsed })}>
+        <div className={classNames('imageEditor', { isUsed: isUsed, hasImage: image })}>
             <div className="imageEditor__shade"/>
             <div className="imageEditor__holder">
                 <div className="imageEditor__box">
@@ -54,12 +54,12 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                 <i className="imageEditor__toolbar-btn-icon fas fa-history"/>
                                                 <div className="imageEditor__toolbar-btn-label">{ translate('original_settings') }</div>
                                             </div>
-                                            <ImageEditorDimensions originalDimensions={originalSize} dimensions={isOriginal() ? originalSize : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
+                                            <ImageEditorDimensions originalDimensions={settings.originalSize ? settings.originalSize : originalSize} dimensions={isOriginal() ? originalSize : settings.dimensions ? settings.dimensions : 'original'} setSettingsItem={setSettingsItem}/>
                                             <ImageEditorTransform transform={settings.transform ? settings.transform : {rotate: {x: 0, y: 0, z: 0}, skew: {x: 0, y: 0}}} setSettingsItem={setSettingsItem} />
                                             <ImageEditorBGSize size={settings.size} setSettingsItem={setSettingsItem}/>
                                         </div>
                                         <div className="imageEditor__toolbar-col">
-                                            <div className="imageEditor__toolbar-btn">
+                                            <div className="imageEditor__toolbar-btn" onClick={() => setIsUsed(false)}>
                                                 <i className="imageEditor__toolbar-btn-icon fas fa-times"/>
                                                 <div className="imageEditor__toolbar-btn-label">{ translate('close') }</div>
                                             </div>
@@ -71,7 +71,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                         <ImageEditorBorder border={settings.border ? settings.border : {color: '#fff', width: 0, style: 'solid'}} setSettingsItem={setSettingsItem} />
                                     </div>
                                     <ImageEditorSize size={settings.size ? settings.size : 100} setSettingsItem={setSettingsItem}/>
-                                    <ImageEditorText text={settings.text} setSettingsItem={setSettingsItem} />
+                                    <ImageEditorText text={settings.text ? settings.text : {heading: '', text: '', btn: {link: '', text: '', style: 'link'}, position: {x: 'center', y: 'center'}, opacity: 100, color: '#fff', bg: 'transparent'}} setSettingsItem={setSettingsItem} />
                                 </>
                                 :
                                 null
@@ -86,8 +86,8 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                             </div>
                                             :
                                             <div className="imageEditor__image-holder" style={{
-                                                width: 800,
-                                                height: settings.dimensions ? settings.dimensions.height * 800 / settings.dimensions.width : originalSize.height,
+                                                width: 778,
+                                                height: settings.dimensions ? settings.dimensions.height * 778 / settings.dimensions.width : originalSize.height,
                                                 backgroundColor: settings.bg ? settings.bg : 'none',
                                                 border: settings.border ? settings.border.width + 'px ' + settings.border.style + ' ' + settings.border.color : 'none',
                                             }}>
@@ -104,14 +104,78 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                             {
                                                                 backgroundColor: settings.overlay.color,
                                                                 opacity: settings.overlay.opacity / 100,
-                                                                mixBlendMode: settings.overlay.mode
+                                                                mixBlendMode: settings.overlay.mode,
+                                                                left: settings.border ? settings.border.width : 0,
+                                                                right: settings.border ? settings.border.width : 0,
+                                                                top: settings.border ? settings.border.width : 0,
+                                                                bottom: settings.border ? settings.border.width : 0,
                                                             }
                                                         }/>
                                                         :
                                                         null
                                                 }
+                                                {
+                                                    settings.text ?
+                                                        <div className={'imageEditor__image-text y' + settings.text.position.y + ' x' + settings.text.position.x} style={{
+                                                            color: settings.text.color,
+                                                            margin: settings.border ? settings.border.width : 0
+                                                        }}>
+                                                            <div className="imageEditor__image-text-overlay" style={{
+                                                                backgroundColor: settings.text.bg,
+                                                                opacity: settings.text.opacity / 100
+                                                            }} />
+                                                            {
+                                                                settings.text.heading ?
+                                                                    <h2>{ settings.text.heading }</h2>
+                                                                    :
+                                                                    null
+                                                            }
+                                                            {
+                                                                settings.text.text ?
+                                                                    <p>{ settings.text.text }</p>
+                                                                    :
+                                                                    null
+                                                            }
+                                                            {
+                                                                settings.text.btn.link ?
+                                                                    <a
+                                                                        href={settings.text.btn.link}
+                                                                        target="_blank"
+                                                                        className={
+                                                                            settings.text.btn.style !== 'link' ?
+                                                                                settings.text.btn.style === 'primary' ?
+                                                                                    'btn btn_primary'
+                                                                                    :
+                                                                                    'btn btn__' + settings.text.btn.style
+                                                                                :
+                                                                                null
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            settings.text.btn.text ?
+                                                                                settings.text.btn.text
+                                                                                :
+                                                                                settings.text.btn.link
+                                                                        }
+                                                                    </a>
+                                                                    :
+                                                                    null
+                                                            }
+                                                        </div>
+                                                        :
+                                                        null
+                                                }
                                             </div>
                                     }
+                                </div>
+                                :
+                                null
+                        }
+                        {
+                            !isUsed && image ?
+                                <div className="imageEditor__open" onClick={() => setIsUsed(true)}>
+                                    <i className="imageEditor__open-icon fas fa-pencil-alt"/>
+                                    <div className="imageEditor__open-label">{ translate('edit') }</div>
                                 </div>
                                 :
                                 null
@@ -133,9 +197,18 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
     }
 
     function setSettingsItem(type, value) {
+        const newParameter = {
+            [type]: value
+        };
+
+        if ( type !== 'dimensions' && !settings.dimensions && originalSize ) {
+            newParameter.dimensions = originalSize;
+            newParameter.originalSize = originalSize;
+        }
+
         setSettings({
             ...settings,
-            [type]: value
+            ...newParameter
         })
     }
 

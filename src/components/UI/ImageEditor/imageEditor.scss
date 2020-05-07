@@ -5,6 +5,66 @@
 $trackerColor: $mediumGreyColor;
 
 .imageEditor {
+  &.hasImage:not(.isUsed) {
+    .form {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      opacity: 0;
+      z-index: 10;
+      * {
+        height: 100%;
+      }
+      &__row {
+        margin: 0;
+      }
+    }
+    [class$="__open"] {
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 11;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: $white;
+      font-size: 12px;
+      color: #999;
+      transition: color .15s ease-in-out;
+      cursor: pointer;
+      width: $editorBarSize;
+      height: $editorBarSize;
+      user-select: none;
+      line-height: 1;
+      font-family: $RobotoCondensed;
+      overflow: hidden;
+      letter-spacing: .5px;
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      &:hover {
+        color: $baseColor;
+      }
+      i {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+        width: 20px;
+        height: 20px;
+        box-sizing: border-box;
+        transform: translateZ(0);
+      }
+      div {
+        width: 100%;
+        flex: 0 0 auto;
+        text-align: center;
+      }
+    }
+  }
   &.isUsed {
     position: fixed;
     left: 0;
@@ -42,6 +102,7 @@ $trackerColor: $mediumGreyColor;
         background: $white;
         padding: $editorBarSize;
         box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+        overflow: hidden;
       }
     }
     .form {
@@ -111,17 +172,8 @@ $trackerColor: $mediumGreyColor;
   &__image-wrapper {
     position: relative;
     user-select: none;
-    min-width: 500px;
+    min-width: 600px;
     min-height: 200px;
-    &:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      cursor: move;
-    }
   }
   &__image-holder {
     overflow: hidden;
@@ -129,7 +181,7 @@ $trackerColor: $mediumGreyColor;
   }
   &__image {
     width: 100%;
-    max-width: 800px !important;
+    max-width: 778px !important;
     height: auto;
   }
   &__image-bg {
@@ -146,6 +198,64 @@ $trackerColor: $mediumGreyColor;
     top: 0;
     right: 0;
     bottom: 0;
+  }
+  &__image-text {
+    position: absolute;
+    max-width: 400px;
+    padding: $pageIndent;
+    font-family: $RobotoCondensed;
+    z-index: 1;
+    box-sizing: border-box;
+    &-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+    }
+    &.ycenter {
+      top: 50%;
+      transform: translateY(-50%);
+      &.xcenter {
+        transform: translate(-50%, -50%);
+      }
+    }
+    &.ytop {
+      top: 0;
+      &.xcenter {
+        transform: translateX(-50%);
+      }
+    }
+    &.ybottom {
+      bottom: 0;
+      &.xcenter {
+        transform: translateX(-50%);
+      }
+    }
+    &.xcenter {
+      left: 50%;
+      text-align: center;
+    }
+    &.xleft {
+      left: 0;
+      text-align: left;
+    }
+    &.xright {
+      right: 0;
+      text-align: right;
+    }
+    h2 {
+      font-size: 24px;
+      &:not(:last-child) {
+        margin-bottom: 10px;
+      }
+    }
+    p {
+      &:not(:last-child) {
+        margin-bottom: 20px;
+      }
+    }
   }
   &__icon {
     width: $editorBarSize;
@@ -167,7 +277,17 @@ $trackerColor: $mediumGreyColor;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 1;
+    z-index: 2;
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: $white;
+      z-index: -1;
+    }
   }
   &__toolbar-col {
     display: flex;
@@ -353,7 +473,17 @@ $trackerColor: $mediumGreyColor;
     top: $editorBarSize;
     bottom: $editorBarSize;
     width: $editorBarSize;
-    z-index: 1;
+    z-index: 2;
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: $white;
+      z-index: -1;
+    }
   }
   &__dimensions {
     &-drop {
@@ -366,7 +496,10 @@ $trackerColor: $mediumGreyColor;
       overflow: auto;
       display: flex;
       box-sizing: border-box;
-      box-shadow: inset 0 2px 10px 0 rgba(0,0,0,.15);
+      box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.15);
+      border-bottom: 5px solid $white;
+      animation: topDown .15s linear;
+      z-index: -1;
       .form {
         width: 200px !important;
         height: 240px !important;
@@ -486,6 +619,147 @@ $trackerColor: $mediumGreyColor;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 2;
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: $white;
+      z-index: -1;
+    }
+    .form {
+      height: auto !important;
+      margin: 0 !important;
+      width: 100% !important;
+      &__row {
+        margin-top: 20px !important;
+        &:first-child {
+          margin-top: 0 !important;
+        }
+      }
+      &__field-placeholder {
+        background: $lightGreyColor !important;
+      }
+    }
+    &-heading-drop,
+    &-text-drop,
+    &-btn-drop,
+    &-position-drop,
+    &-bg-drop {
+      position: absolute;
+      left: 0;
+      width: $editorBarSize * 4;
+      bottom: $editorBarSize;
+      background: $lightGreyColor;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: inset 0 -2px 5px 0 rgba(0,0,0,.15);
+      box-sizing: border-box;
+      align-items: center;
+      border: 5px solid $white;
+      border-width: 5px 5px 0 0;
+      animation: bottomUp .15s linear;
+      z-index: -1;
+    }
+    &-text-drop {
+      left: #{$editorBarSize / 2 - 2.5px};
+      border-width: 5px 5px 0;
+    }
+    &-bg-drop {
+      width: #{$editorBarSize * 4 + 10};
+      left: #{$editorBarSize * 3.5 - 5px};
+      border-width: 5px 5px 0;
+      max-height: $editorBarSize * 3;
+      .range {
+        margin-top: 20px;
+        height: 40px;
+        width: 100%;
+      }
+    }
+    &-position-drop {
+      width: #{$editorBarSize * 1.5 + 10};
+      left: #{$editorBarSize * 3.75 - 5px};
+      border-width: 5px 5px 0;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      padding: 0;
+    }
+    &-position-item {
+      width: $editorBarSize / 2;
+      height: $editorBarSize / 2;
+      flex: 0 0 auto;
+      position: relative;
+      cursor: pointer;
+      &:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: $mediumGreyColor;
+      }
+      &:hover,
+      &.active {
+        background: $lightColor;
+        &:after {
+          background: $baseColor;
+        }
+      }
+    }
+    &-btn-drop {
+      left: 0;
+      width: 100%;
+      border-width: 5px 0 0;
+      overflow: auto;
+      max-height: $editorBarSize * 3;
+      flex-direction: row;
+      .form {
+        width: 33.33333% !important;
+      }
+      > * {
+        width: 66.66666%;
+        flex: 0 0 auto;
+      }
+    }
+    &-btn-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 25px;
+      box-sizing: border-box;
+      &-item {
+        width: $editorBarSize;
+        height: $editorBarSize / 1.5;
+        flex: 0 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        &.active,
+        &:hover {
+          background: $lightColor;
+        }
+      }
+      span {
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform: scale(.75);
+        &:not(.btn) {
+          color: $anchorColor;
+        }
+      }
+    }
   }
   &__bg-drop {
     position: absolute;
@@ -497,7 +771,10 @@ $trackerColor: $mediumGreyColor;
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    box-shadow: inset 2px 0 10px 0 rgba(0,0,0,.15);
+    box-shadow: inset 2px 0 5px 0 rgba(0,0,0,.15);
+    border-right: 5px solid $white;
+    animation: ltr .15s linear;
+    z-index: -1;
   }
   .swatches-picker {
     > div {
@@ -534,7 +811,10 @@ $trackerColor: $mediumGreyColor;
     display: flex;
     flex-direction: column;
     overflow: auto;
-    box-shadow: inset 2px 0 10px 0 rgba(0,0,0,.15);
+    box-shadow: inset 2px 0 5px 0 rgba(0,0,0,.15);
+    border-right: 5px solid $white;
+    animation: ltr .15s ease-in-out;
+    z-index: -1;
   }
   &__overlay-mode {
     padding: 20px;
@@ -576,7 +856,10 @@ $trackerColor: $mediumGreyColor;
       display: flex;
       flex-direction: column;
       overflow: auto;
-      box-shadow: inset 2px 0 10px 0 rgba(0,0,0,.15);
+      box-shadow: inset 2px 0 5px 0 rgba(0,0,0,.15);
+      border-right: 5px solid $white;
+      animation: ltr .15s ease-in-out;
+      z-index: -1;
     }
     &-style {
       display: flex;
@@ -633,7 +916,10 @@ $trackerColor: $mediumGreyColor;
       flex-wrap: wrap;
       padding-top: 20px;
       box-sizing: border-box;
-      box-shadow: inset 0 2px 10px 0 rgba(0,0,0,.15);
+      box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.15);
+      border-bottom: 5px solid $white;
+      animation: topDown .15s linear;
+      z-index: -1;
       > * {
         display: flex;
         flex-wrap: wrap;
@@ -771,5 +1057,30 @@ $trackerColor: $mediumGreyColor;
         transition: border-color .15s ease-in-out;
       }
     }
+  }
+}
+
+@keyframes bottomUp {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes ltr {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes topDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
   }
 }

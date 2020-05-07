@@ -40,6 +40,48 @@
       color: $white;
     }
   }
+  &__warning {
+    background: $warningColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
+  &__orange {
+    background: $orangeColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
+  &__purple {
+    background: $purpleColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
+  &__pink {
+    background: $successColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
+  &__dark {
+    background: $baseColor;
+    color: $white;
+    &:hover {
+      color: $white;
+    }
+  }
+  &__light {
+    background: $white;
+    color: $baseColor;
+    &:hover {
+      color: $baseColor;
+    }
+  }
   &:hover {
     opacity: .75;
     i {
