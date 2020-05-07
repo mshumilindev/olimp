@@ -32,7 +32,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
 
     useEffect(() => {
         if ( image && $image && $image.current && !settings.originalSize ) {
-            setOriginalSize({width: $image.current.offsetWidth, height: $image.current.offsetHeight});
+            setOriginalSize({width: $image.current.offsetWidth <= 800 ? $image.current.offsetWidth : 800, height: $image.current.offsetWidth <= 800 ? $image.current.offsetHeight : $image.current.offsetHeight * 800 / $image.current.offsetWidth});
         }
     }, [image, settings]);
 

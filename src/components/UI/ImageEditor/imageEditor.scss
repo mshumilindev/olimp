@@ -172,6 +172,7 @@ $trackerColor: $mediumGreyColor;
   &__image-wrapper {
     position: relative;
     user-select: none;
+    max-width: 800px;
   }
   &__image-holder {
     overflow: hidden;
