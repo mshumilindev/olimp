@@ -65,11 +65,13 @@ function AdminLesson(
     }, [lessonContent]);
 
     useEffect(() => {
-        if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(lessonContent, v => v.order)) ) {
-            setContentUpdated(true);
-        }
-        else {
-            setContentUpdated(false);
+        if ( currentContent ) {
+            if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(lessonContent, v => v.order)) ) {
+                setContentUpdated(true);
+            }
+            else {
+                setContentUpdated(false);
+            }
         }
     }, [currentContent]);
 
@@ -78,11 +80,14 @@ function AdminLesson(
     }, [lessonQA]);
 
     useEffect(() => {
-        if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.order)) ) {
-            setQAUpdated(true);
-        }
-        else {
-            setQAUpdated(false);
+        if ( currentQA ) {
+            console.log(currentQA, lessonQA);
+            if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.order)) ) {
+                setQAUpdated(true);
+            }
+            else {
+                setQAUpdated(false);
+            }
         }
     }, [currentQA]);
 
