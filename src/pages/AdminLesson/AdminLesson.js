@@ -20,10 +20,33 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
     const [ content, setContent ] = useState(null);
     const [ QA, setQA ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
+    const [ hideLessonData, setHideLessonData ] = useState({
+        hideLesson: false,
+        hideQA: false
+    });
     const breadcrumbs = [
         {
             name: translate('subjects'),
             url: '/admin-courses'
+        }
+    ];
+
+    const hideFields = [
+        {
+            type: 'checkbox',
+            checked: true,
+            unchecked: false,
+            label: translate('hide_lesson'),
+            id: 'hideLesson',
+            value: hideLessonData.hideLesson
+        },
+        {
+            type: 'checkbox',
+            checked: true,
+            unchecked: false,
+            label: translate('hide_QA'),
+            id: 'hideQA',
+            value: hideLessonData.hideQA
         }
     ];
 
@@ -40,6 +63,10 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
 
     useEffect(() => {
         if ( lesson ) {
+            setHideLessonData({
+                hideLesson: lesson.hideLesson ? lesson.hideLesson : false,
+                hideQA: lesson.hideQA ? lesson.hideQA : false
+            });
             if ( !lessonInfoFields ) {
                 setLessonInfoFields(getLessonFields(lesson, false));
             }
@@ -135,7 +162,10 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
                             </div>
                             {
                                 checkIfEditable() ?
-                                    <Form fields={lessonInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
+                                    <>
+                                        <Form fields={lessonInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
+                                        <Form fields={hideFields} setFieldValue={setHideFieldValue} loading={loading} />
+                                    </>
                                     :
                                     lesson.name[lang] ? lesson.name[lang] : lesson.name['ua']
                             }
@@ -251,6 +281,14 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
         setLessonInfoFields(Object.assign([], newLessonInfoFields));
     }
 
+    function setHideFieldValue(fieldID, value) {
+        setHideLessonData(Object.assign({
+            ...hideLessonData,
+            [fieldID]: value
+        }));
+        setLessonUpdated(true);
+    }
+
     function saveLesson(e) {
         e.preventDefault();
 
@@ -263,6 +301,8 @@ function AdminLesson({user, fetchLesson, updateLesson, params, lesson, loading, 
                     ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
                     en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
                 },
+                hideLesson: hideLessonData.hideLesson,
+                hideQA: hideLessonData.hideQA,
                 content: content,
                 QA: QA
             };

@@ -135,7 +135,7 @@ function StudentCourseItem({user, allCoursesList, modulesLessons, modulesLessons
                                     return 1;
                                 }
                                 return 0;
-                            }).map(lesson  => _renderLesson(module.id, lesson))
+                            }).filter(lesson => !lesson.hideLesson).map(lesson  => _renderLesson(module.id, lesson))
                             :
                             <div className="studentCourse__module-lessons-notFound">
                                 { translate('no_lessons') }
