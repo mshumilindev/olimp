@@ -81,7 +81,6 @@ function AdminLesson(
 
     useEffect(() => {
         if ( currentQA ) {
-            console.log(currentQA, lessonQA);
             if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.order)) ) {
                 setQAUpdated(true);
             }
