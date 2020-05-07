@@ -232,6 +232,15 @@ $blockMinHeight: 100px;
         margin-bottom: 20px;
       }
     }
+    .imageEditor__image-wrapper {
+      height: 100%;
+    }
+    .imageEditor__image-holder {
+      height: 100% !important;
+    }
+    .imageEditor__image-text {
+      display: none;
+    }
   }
   &__editor {
     position: fixed;

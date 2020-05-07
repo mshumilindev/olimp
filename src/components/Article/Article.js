@@ -7,6 +7,7 @@ import ReactPlayer from 'react-player';
 import MathJax from 'react-mathjax-preview'
 import Form from "../Form/Form";
 import { connect } from 'react-redux';
+import '../UI/ImageEditor/imageEditor.scss';
 
 function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -21,6 +22,8 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
             width: width,
             height: width * 56.25 / 100
         });
+
+        new ResizeObserver(handleResize).observe(articleRef.current);
     }, []);
 
     return (
@@ -89,7 +92,95 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                                 block.value.size ?
                                     <div className={'article__image size-' + block.value.size} style={{backgroundImage: 'url(' + block.value.image + ')'}}/>
                                     :
-                                    <img src={block.value.image} />
+                                    <div className="imageEditor__image-wrapper">
+                                        {
+                                            isOriginal(block) ?
+                                                <div className="imageEditor__image-holder">
+                                                    <img src={block.value.image} className="imageEditor__image"/>
+                                                </div>
+                                                :
+                                                <div className="imageEditor__image-holder" style={{
+                                                    width: size.width,
+                                                    height: block.value.settings.dimensions ? block.value.settings.dimensions.height * size.width / block.value.settings.dimensions.width : block.value.settings.originalSize.height,
+                                                    backgroundColor: block.value.settings.bg ? block.value.settings.bg : 'none',
+                                                    border: block.value.settings.border ? block.value.settings.border.width + 'px ' + block.value.settings.border.style + ' ' + block.value.settings.border.color : 'none',
+                                                }}>
+                                                    <div className="imageEditor__image-bg" style={
+                                                        {
+                                                            backgroundImage: 'url(' + block.value.image + ')',
+                                                            backgroundSize: typeof block.value.settings.size === 'number' ? block.value.settings.size + '%' : block.value.settings.size,
+                                                            transform: block.value.settings.transform ? getTransforms(block) : 'none'
+                                                        }
+                                                    }/>
+                                                    {
+                                                        block.value.settings.overlay ?
+                                                            <div className="imageEditor__image-overlay" style={
+                                                                {
+                                                                    backgroundColor: block.value.settings.overlay.color,
+                                                                    opacity: block.value.settings.overlay.opacity / 100,
+                                                                    mixBlendMode: block.value.settings.overlay.mode,
+                                                                    left: block.value.settings.border ? block.value.settings.border.width : 0,
+                                                                    right: block.value.settings.border ? block.value.settings.border.width : 0,
+                                                                    top: block.value.settings.border ? block.value.settings.border.width : 0,
+                                                                    bottom: block.value.settings.border ? block.value.settings.border.width : 0,
+                                                                }
+                                                            }/>
+                                                            :
+                                                            null
+                                                    }
+                                                    {
+                                                        block.value.settings.text ?
+                                                            <div className={'imageEditor__image-text y' + block.value.settings.text.position.y + ' x' + block.value.settings.text.position.x} style={{
+                                                                color: block.value.settings.text.color
+                                                            }}>
+                                                                <div className="imageEditor__image-text-overlay" style={{
+                                                                    backgroundColor: block.value.settings.text.bg,
+                                                                    opacity: block.value.settings.text.opacity / 100
+                                                                }} />
+                                                                {
+                                                                    block.value.settings.text.heading ?
+                                                                        <h2>{ block.value.settings.text.heading }</h2>
+                                                                        :
+                                                                        null
+                                                                }
+                                                                {
+                                                                    block.value.settings.text.text ?
+                                                                        <p>{ block.value.settings.text.text }</p>
+                                                                        :
+                                                                        null
+                                                                }
+                                                                {
+                                                                    block.value.settings.text.btn.link ?
+                                                                        <a
+                                                                            href={block.value.settings.text.btn.link}
+                                                                            target="_blank"
+                                                                            className={
+                                                                                block.value.settings.text.btn.style !== 'link' ?
+                                                                                    block.value.settings.text.btn.style === 'primary' ?
+                                                                                        'btn btn_primary'
+                                                                                        :
+                                                                                        'btn btn__' + block.value.settings.text.btn.style
+                                                                                    :
+                                                                                    null
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                block.value.settings.text.btn.text ?
+                                                                                    block.value.settings.text.btn.text
+                                                                                    :
+                                                                                    block.value.settings.text.btn.link
+                                                                            }
+                                                                        </a>
+                                                                        :
+                                                                        null
+                                                                }
+                                                            </div>
+                                                            :
+                                                            null
+                                                    }
+                                                </div>
+                                        }
+                                    </div>
                             }
                             {
                                 block.value.caption[lang] || block.value.caption['ua'] ?
@@ -333,6 +424,47 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
         newComments.find(item => item.id === fieldID).value = value;
 
         setComments(Object.assign([], newComments));
+    }
+
+    function isOriginal(block) {
+        return !Object.keys(block.value.settings).length;
+    }
+
+    function getTransforms(block) {
+        let transforms = '';
+
+        if ( block.value.settings.transform.rotate ) {
+            if ( block.value.settings.transform.rotate.z ) {
+                transforms += 'rotateZ(' + block.value.settings.transform.rotate.z + 'deg)';
+            }
+            if ( block.value.settings.transform.rotate.x ) {
+                transforms += 'rotateX(' + block.value.settings.transform.rotate.x + 'deg)';
+            }
+            if ( block.value.settings.transform.rotate.y ) {
+                transforms += 'rotateY(' + block.value.settings.transform.rotate.y + 'deg)';
+            }
+        }
+        if ( block.value.settings.transform.skew ) {
+            if ( block.value.settings.transform.skew.x ) {
+                transforms += 'skewX(' + block.value.settings.transform.skew.x + 'deg)';
+            }
+            if ( block.value.settings.transform.skew.y ) {
+                transforms += 'skewY(' + block.value.settings.transform.skew.y + 'deg)';
+            }
+        }
+
+        return transforms;
+    }
+
+    function handleResize() {
+        if ( articleRef && articleRef.current ) {
+            const width = articleRef.current.offsetWidth;
+
+            setSize({
+                width: width,
+                height: width * 56.25 / 100
+            });
+        }
     }
 }
 

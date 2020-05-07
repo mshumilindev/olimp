@@ -172,8 +172,6 @@ $trackerColor: $mediumGreyColor;
   &__image-wrapper {
     position: relative;
     user-select: none;
-    min-width: 600px;
-    min-height: 200px;
   }
   &__image-holder {
     overflow: hidden;
@@ -181,7 +179,7 @@ $trackerColor: $mediumGreyColor;
   }
   &__image {
     width: 100%;
-    max-width: 778px !important;
+    max-width: 100% !important;
     height: auto;
   }
   &__image-bg {
@@ -201,7 +199,7 @@ $trackerColor: $mediumGreyColor;
   }
   &__image-text {
     position: absolute;
-    max-width: 400px;
+    width: 400px;
     padding: $pageIndent;
     font-family: $RobotoCondensed;
     z-index: 1;

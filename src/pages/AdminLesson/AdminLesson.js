@@ -61,12 +61,12 @@ function AdminLesson(
     }, []);
 
     useEffect(() => {
-        setCurrentContent(JSON.parse(JSON.stringify(orderBy(lessonContent, v => v.order))));
+        setCurrentContent(JSON.parse(JSON.stringify(orderBy(lessonContent, v => v.index))));
     }, [lessonContent]);
 
     useEffect(() => {
         if ( currentContent ) {
-            if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(lessonContent, v => v.order)) ) {
+            if ( JSON.stringify(currentContent) !== JSON.stringify(orderBy(lessonContent, v => v.index)) ) {
                 setContentUpdated(true);
             }
             else {
@@ -76,12 +76,12 @@ function AdminLesson(
     }, [currentContent]);
 
     useEffect(() => {
-        setCurrentQA(JSON.parse(JSON.stringify(orderBy(lessonQA, v => v.order))));
+        setCurrentQA(JSON.parse(JSON.stringify(orderBy(lessonQA, v => v.index))));
     }, [lessonQA]);
 
     useEffect(() => {
         if ( currentQA ) {
-            if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.order)) ) {
+            if ( JSON.stringify(currentQA) !== JSON.stringify(orderBy(lessonQA, v => v.index)) ) {
                 setQAUpdated(true);
             }
             else {

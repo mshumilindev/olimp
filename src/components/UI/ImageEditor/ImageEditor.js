@@ -117,8 +117,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                                 {
                                                     settings.text ?
                                                         <div className={'imageEditor__image-text y' + settings.text.position.y + ' x' + settings.text.position.x} style={{
-                                                            color: settings.text.color,
-                                                            margin: settings.border ? settings.border.width : 0
+                                                            color: settings.text.color
                                                         }}>
                                                             <div className="imageEditor__image-text-overlay" style={{
                                                                 backgroundColor: settings.text.bg,

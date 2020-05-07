@@ -92,7 +92,7 @@ export default function SeamlessEditor({loading, title, type, content, updateCon
         newContent[index] = block;
 
         newContent.forEach((item, itemIndex) => {
-            item.order = itemIndex;
+            item.index = itemIndex;
         });
 
         updateContent(type, newContent);
@@ -108,7 +108,7 @@ export default function SeamlessEditor({loading, title, type, content, updateCon
         });
 
         newContent.forEach((item, itemIndex) => {
-            item.order = itemIndex;
+            item.index = itemIndex;
         });
 
         updateContent(type, newContent);
@@ -125,7 +125,7 @@ export default function SeamlessEditor({loading, title, type, content, updateCon
         newContent.splice(index, 1);
 
         newContent.forEach((item, itemIndex) => {
-            item.order = itemIndex;
+            item.index = itemIndex;
         });
 
         updateContent(type, newContent);
@@ -147,7 +147,7 @@ export default function SeamlessEditor({loading, title, type, content, updateCon
             }
 
             newContent.forEach((item, itemIndex) => {
-                item.order = itemIndex;
+                item.index = itemIndex;
             });
 
             updateContent(type, newContent);
