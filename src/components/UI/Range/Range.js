@@ -3,7 +3,7 @@ import ReactSlider from "react-slider";
 import classNames from "classnames";
 import './range.scss';
 
-export default function Range({units, markClassName, tickClassName, className, thumbClassName, vertical, invert, min, max, step, activeValue, type, setRange}) {
+export default function Range({units, markClassName, tickClassName, className, thumbClassName, vertical, invert, min, max, step, activeValue, type, setRange, hideSteps}) {
     return (
         <div className="range">
             <ReactSlider
@@ -25,7 +25,7 @@ export default function Range({units, markClassName, tickClassName, className, t
     function _renderMarks() {
         let i = min;
         let marks = [];
-        const newStep = (max - min) / step > 20 ? 10 : step;
+        let newStep = (max - min) / step > 20 ? (max - min) / 10 : step;
 
         while (i <= max) {
             marks.push(i);
@@ -39,13 +39,19 @@ export default function Range({units, markClassName, tickClassName, className, t
         return (
             <div className={markClassName ? markClassName + 's' : 'range__marks'}>
                 {
-                    marks.map(item => _renderMark(item))
+                    marks.map((item, index) => _renderMark(item, index, marks.length - 1))
                 }
             </div>
         )
     }
 
-    function _renderMark(item) {
+    function _renderMark(item, index, lastIndex) {
+        if ( hideSteps ) {
+            if ( index > 0 && index < lastIndex ) {
+                return null;
+            }
+        }
+
         return (
             <div
                 key={item}
@@ -57,20 +63,20 @@ export default function Range({units, markClassName, tickClassName, className, t
                     vertical ?
                         invert ?
                             {
-                                bottom: item - min + '%'
+                                bottom: index * 10 + '%'
                             }
                             :
                             {
-                                top: item - min + '%'
+                                top: index * 10 + '%'
                             }
                         :
                         {
-                            left: item - min + '%'
+                            left: index * 10 + '%'
                         }
                 }
             >
                 <div className={tickClassName ? tickClassName : 'range__tick'}/>
-                <div className={tickClassName ? tickClassName + '-label' : 'range__tick-label'}>{ item }{ units ? units : '%' }</div>
+                <div className={tickClassName ? tickClassName + '-label' : 'range__tick-label'}>{ item }{ units ? units === 'deg' ? '°' : units : '%' }</div>
             </div>
         )
     }

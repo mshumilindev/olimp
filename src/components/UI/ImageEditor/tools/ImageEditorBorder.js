@@ -31,47 +31,51 @@ export default function ImageEditorBorder({border, setSettingsItem}) {
             {
                 showDrop ?
                     <div className="imageEditor__border-drop">
-                        <div className="imageEditor__border-style">
-                            <div className="imageEditor__toolbar-heading">{ translate('style') }</div>
-                            <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'solid'})} onClick={() => setSettingsItem('border', {...border, style: 'solid'})}>
-                                <i className="imageEditor__toolbar-btn-icon customIcon borderStyle solid"/>
-                                <div className="imageEditor__toolbar-btn-label">
-                                    { translate('solid') }
+                        <div className="imageEditor__border-col">
+                            <div className="imageEditor__border-style">
+                                <div className="imageEditor__toolbar-heading">{ translate('style') }</div>
+                                <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'solid'})} onClick={() => setSettingsItem('border', {...border, style: 'solid'})}>
+                                    <i className="imageEditor__toolbar-btn-icon customIcon borderStyle solid"/>
+                                    <div className="imageEditor__toolbar-btn-label">
+                                        { translate('solid') }
+                                    </div>
+                                </div>
+                                <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'dashed'})} onClick={() => setSettingsItem('border', {...border, style: 'dashed'})}>
+                                    <i className="imageEditor__toolbar-btn-icon customIcon borderStyle dashed"/>
+                                    <div className="imageEditor__toolbar-btn-label">
+                                        { translate('dashed') }
+                                    </div>
+                                </div>
+                                <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'dotted'})} onClick={() => setSettingsItem('border', {...border, style: 'dotted'})}>
+                                    <i className="imageEditor__toolbar-btn-icon customIcon borderStyle dotted"/>
+                                    <div className="imageEditor__toolbar-btn-label">
+                                        { translate('dotted') }
+                                    </div>
                                 </div>
                             </div>
-                            <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'dashed'})} onClick={() => setSettingsItem('border', {...border, style: 'dashed'})}>
-                                <i className="imageEditor__toolbar-btn-icon customIcon borderStyle dashed"/>
-                                <div className="imageEditor__toolbar-btn-label">
-                                    { translate('dashed') }
-                                </div>
-                            </div>
-                            <div className={classNames('imageEditor__toolbar-btn', {active: border.style === 'dotted'})} onClick={() => setSettingsItem('border', {...border, style: 'dotted'})}>
-                                <i className="imageEditor__toolbar-btn-icon customIcon borderStyle dotted"/>
-                                <div className="imageEditor__toolbar-btn-label">
-                                    { translate('dotted') }
-                                </div>
+                            <div className="imageEditor__border-width">
+                                <div className="imageEditor__toolbar-heading">{ translate('width') }</div>
+                                <Range
+                                    step={10}
+                                    min={0}
+                                    max={100}
+                                    activeValue={border.width}
+                                    type={'border'}
+                                    setRange={(type, value) => setSettingsItem(type, {...border, width: value})}
+                                    units={'px'}
+                                />
                             </div>
                         </div>
-                        <div className="imageEditor__border-width">
-                            <div className="imageEditor__toolbar-heading">{ translate('width') }</div>
-                            <Range
-                                step={10}
-                                min={0}
-                                max={100}
-                                activeValue={border.width}
-                                type={'border'}
-                                setRange={(type, value) => setSettingsItem(type, {...border, width: value})}
-                                units={'px'}
-                            />
-                        </div>
-                        <div className="imageEditor__border-color">
-                            <div className="imageEditor__toolbar-heading">{ translate('color') }</div>
-                            <SwatchesPicker
-                                color={border.color}
-                                onChange={value => setSettingsItem('border', {...border, color: value.hex})}
-                                height="100%"
-                                width={400}
-                            />
+                        <div className="imageEditor__border-col">
+                            <div className="imageEditor__border-color">
+                                <div className="imageEditor__toolbar-heading">{ translate('color') }</div>
+                                <SwatchesPicker
+                                    color={border.color}
+                                    onChange={value => setSettingsItem('border', {...border, color: value.hex})}
+                                    height="100%"
+                                    width={400}
+                                />
+                            </div>
                         </div>
                     </div>
                     :

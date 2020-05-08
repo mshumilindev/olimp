@@ -105,13 +105,17 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                                                     backgroundColor: block.value.settings.bg ? block.value.settings.bg : 'none',
                                                     border: block.value.settings.border ? block.value.settings.border.width + 'px ' + block.value.settings.border.style + ' ' + block.value.settings.border.color : 'none',
                                                 }}>
-                                                    <div className="imageEditor__image-bg" style={
-                                                        {
-                                                            backgroundImage: 'url(' + block.value.image + ')',
-                                                            backgroundSize: typeof block.value.settings.size === 'number' ? block.value.settings.size + '%' : block.value.settings.size,
-                                                            transform: block.value.settings.transform ? getTransforms(block) : 'none'
-                                                        }
-                                                    }/>
+                                                    <div className="imageEditor__image-bg-holder" style={{
+                                                        filter: block.value.settings.filters ? getFilters(block) : 'none'
+                                                    }}>
+                                                        <div className={classNames('imageEditor__image-bg', {[block.value.settings.filters ? 'imageFilter-' + block.value.settings.filters.item : 'imageFilter-normal'] : block.value.settings.filters})} style={
+                                                            {
+                                                                backgroundImage: 'url(' + block.value.image + ')',
+                                                                backgroundSize: typeof block.value.settings.size === 'number' ? block.value.settings.size + '%' : block.value.settings.size,
+                                                                transform: block.value.settings.transform ? getTransforms(block) : 'none'
+                                                            }
+                                                        }/>
+                                                    </div>
                                                     {
                                                         block.value.settings.overlay ?
                                                             <div className="imageEditor__image-overlay" style={
@@ -454,6 +458,16 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
         }
 
         return transforms;
+    }
+
+    function getFilters(block) {
+        let filter = '';
+
+        Object.keys(block.value.settings.filters).forEach(item => {
+            filter += item + '(' + block.value.settings.filters[item] + ')';
+        });
+
+        return filter;
     }
 
     function handleResize() {
