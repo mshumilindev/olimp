@@ -63,7 +63,7 @@ export default function Range({units, markClassName, tickClassName, className, t
                     vertical ?
                         invert ?
                             {
-                                bottom: index * 10 + '%'
+                                bottom: (lastIndex - index) * 10 + '%'
                             }
                             :
                             {
