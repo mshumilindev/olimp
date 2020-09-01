@@ -31,7 +31,10 @@ function ChatListItem({user, history, event, usersList, deleteEvent, mapEventToF
                     <div className="adminChats__event-info-row">
                         <div className="adminChats__event-info-dt">{ translate('organizer') }: </div>
                         <div className="adminChats__event-info-dd">
-                            <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login} onClick={e => e.stopPropagation()}>{ getUser(event.organizer).name }</Link>
+                            {
+                                getUser(event.organizer) &&
+                                    <Link to={(isStudent ? '/user/' : '/admin-users/') + getUser(event.organizer).login} onClick={e => e.stopPropagation()}>{ getUser(event.organizer).name }</Link>
+                            }
                         </div>
                     </div>
                     <div className="adminChats__event-info-row">

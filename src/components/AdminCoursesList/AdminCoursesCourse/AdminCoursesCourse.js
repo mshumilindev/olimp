@@ -78,7 +78,7 @@ function AdminCoursesCourse({user, fetchLibrary, subjectID, course, params, load
             </ContextMenu>
             {
                 checkIfIsOpen() ?
-                    course.teacher && getUser(course.teacher).status === 'active' ?
+                    course.teacher && getUser(course.teacher) && getUser(course.teacher).status === 'active' ?
                         <div className="adminCourses__list-item-teacher">
                             {
                                 usersList.length ?
