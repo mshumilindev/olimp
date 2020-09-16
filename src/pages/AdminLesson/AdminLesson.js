@@ -47,14 +47,6 @@ function AdminLesson(
     const [ currentContent, setCurrentContent ] = useState(null);
     const [ currentQA, setCurrentQA ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
-    const breadcrumbs = useMemo(() => (
-        [
-            {
-                name: translate('subjects'),
-                url: '/admin-courses'
-            }
-        ]
-    ), [translate]);
 
     useEffect(() => {
         fetchLessonMeta(subjectID, courseID, moduleID, lessonID);
@@ -102,6 +94,13 @@ function AdminLesson(
     }, [lessonMeta, setLessonInfoFields, setLessonUpdated, getLessonFields]);
 
     const getBreadcrumbs = useCallback(() => {
+        const breadcrumbs = [
+            {
+                name: translate('subjects'),
+                url: '/admin-courses'
+            }
+        ];
+
         if ( params ) {
             let currentSubject = null;
             let currentCourse = null;
@@ -148,7 +147,7 @@ function AdminLesson(
         }
 
         return breadcrumbs;
-    }, [params, breadcrumbs, allCoursesList, lang, lessonMeta, translate]);
+    }, [params, allCoursesList, lang, lessonMeta, translate]);
 
     const checkIfEditable = useMemo(() => {
         let isEditable = false;
