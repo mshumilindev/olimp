@@ -12,8 +12,11 @@ import AdminClassCurator from "./AdminClassCurator";
 
 function AdminClass({user, fetchClass, params, classData, updateClass, loading, discardClass}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const [ classUpdated, setClassUpdated ] = useState(false);
     const [ currentClass, setCurrentClass ] = useState(null);
+
+    const classUpdated = useMemo(() => {
+        return JSON.stringify(currentClass) !== JSON.stringify(classData);
+    }, [currentClass, classData]);
 
     useEffect(() => {
         fetchClass(params.classID);
@@ -21,31 +24,20 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
         return () => {
             discardClass();
             setCurrentClass(null);
-            setClassUpdated(false);
         }
-    }, [fetchClass, discardClass, setCurrentClass, setClassUpdated, params]);
-
-    useEffect(() => {
-        if ( JSON.stringify(currentClass) !== JSON.stringify(classData) ) {
-            setClassUpdated(true);
-        }
-        else {
-            setClassUpdated(false);
-        }
-    }, [currentClass]);
+    }, [fetchClass, discardClass, setCurrentClass, params]);
 
     useEffect(() => {
         if ( classData ) {
             setCurrentClass(JSON.parse(JSON.stringify(classData)));
         }
-    }, [classData, currentClass, setCurrentClass]);
+    }, [classData, setCurrentClass]);
 
     const canEdit = useMemo(() => user.role === 'admin' || (currentClass && currentClass.curator === user.id), [user, currentClass]);
 
     const handleSetContent = useCallback((newContent) => {
         setCurrentClass(Object.assign({}, newContent));
-        setClassUpdated(true);
-    }, [setCurrentClass, setClassUpdated]);
+    }, [setCurrentClass]);
 
     const onUpdateClass = useCallback((e) => {
         e.preventDefault();
@@ -53,7 +45,7 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
         if ( classUpdated ) {
             updateClass(currentClass.id, currentClass);
         }
-    }, [classUpdated, updateClass, currentClass, setClassUpdated]);
+    }, [classUpdated, updateClass, currentClass]);
 
     const setInfo = useCallback((fieldID, value) => {
         const newValue = currentClass.title;
@@ -72,8 +64,7 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             ...currentClass,
             title: newValue
         }));
-        setClassUpdated(true);
-    }, [currentClass, setCurrentClass, setClassUpdated]);
+    }, [currentClass, setCurrentClass]);
 
     const setDescr = useCallback((fieldID, value) => {
         const newValue = currentClass.info;
@@ -92,16 +83,14 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             ...currentClass,
             info: newValue
         }));
-        setClassUpdated(true);
-    }, [currentClass, setCurrentClass, setClassUpdated]);
+    }, [currentClass, setCurrentClass]);
 
     const setCurator = useCallback((type, value) => {
         setCurrentClass(Object.assign({}, {
             ...currentClass,
             curator: value[0]
         }));
-        setClassUpdated(true);
-    }, [setCurrentClass, setClassUpdated, currentClass]);
+    }, [setCurrentClass, currentClass]);
 
     return (
         <div className="adminClass">

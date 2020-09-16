@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import Preloader from "../UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import UserPicker from '../UI/UserPicker/UserPicker';
@@ -8,18 +8,6 @@ import AdminClassScheduleDay from './AdminClassScheduleDay';
 
 function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
     const { translate } = useContext(siteSettingsContext);
-    const [ students, setStudents ] = useState(null);
-    const [ courses, setCourses ] = useState([]);
-    const [ schedule, setSchedule ] = useState([]);
-
-    useEffect(() => {
-        if ( content ) {
-            setStudents(Object.assign([], filterStudents()));
-            setCourses(Object.assign([], content.courses));
-            setSchedule(Object.assign([], content.schedule));
-        }
-    }, [content]);
-
 
     return (
         <>
@@ -29,7 +17,7 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
                     { translate('courses') }
                 </div>
                 {
-                    <CoursesPicker selectedCourses={JSON.stringify(courses)} handleAddCourses={handleAddCourses} noControls={!canEdit}/>
+                    <CoursesPicker selectedCourses={content ? JSON.stringify(content.courses) : []} handleAddCourses={handleAddCourses} noControls={!canEdit}/>
                 }
             </div>
             <div className="widget">
@@ -39,7 +27,7 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
                 </div>
                 {
                     content ?
-                        courses.length ?
+                        content.courses.length ?
                             _renderSchedule()
                             :
                             <div className="nothingFound">
@@ -59,7 +47,7 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
                 </div>
                 {
                     content ?
-                        <UserPicker type="student" noneditable selectedList={students ? students : []} />
+                        <UserPicker type="student" noneditable selectedList={filterStudents() ? filterStudents() : []} />
                         :
                         loading ?
                             <Preloader/>
@@ -71,12 +59,12 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
     );
 
     function _renderSchedule() {
-        const parsedSchedule = schedule;
+        const parsedSchedule = content.schedule;
 
         return (
             <div className="adminClass__schedule">
                 {
-                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={courses} content={content} handleAddSchedule={handleAddSchedule} canEdit={canEdit}/>)
+                    parsedSchedule.map(day => <AdminClassScheduleDay day={day} key={day.title} selectedCourses={content.courses} content={content} handleAddSchedule={handleAddSchedule} canEdit={canEdit}/>)
                 }
             </div>
         )
@@ -96,7 +84,7 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
     }
 
     function handleAddSchedule(newDay) {
-        const newSchedule = schedule;
+        const newSchedule = content.schedule;
 
         newSchedule.find(item => item.title === newDay.title).lessons = newDay.lessons;
 

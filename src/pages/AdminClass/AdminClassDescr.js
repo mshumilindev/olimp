@@ -1,15 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useMemo} from 'react';
 import Form from "../../components/Form/Form";
 import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 
 export default function AdminClassDescr({loading, classData, canEdit, setDescr}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const [ classDescrFields, setClassDescrFields ] = useState([]);
 
-    useEffect(() => {
+    const classDescrFields = useMemo(() => {
         if ( classData ) {
-            setClassDescrFields(Object.assign([], [
+            return [
                 {
                     value: classData.info.ua,
                     id: 'descr_ua',
@@ -31,9 +30,10 @@ export default function AdminClassDescr({loading, classData, canEdit, setDescr})
                     type: 'textarea',
                     updated: false
                 }
-            ]));
+            ];
         }
-    }, [classData, setClassDescrFields, translate]);
+        return [];
+    }, [classData, translate]);
 
     return (
         <div className="widget">
