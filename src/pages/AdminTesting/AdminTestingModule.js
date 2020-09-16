@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {orderBy} from "natural-orderby";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import firebase from "firebase";
@@ -21,7 +21,11 @@ export default function AdminTestingModule({subjectID, courseID, module, tests})
                 setLessonsList([]);
             }
         });
-    }, []);
+    }, [setLessonsList, subjectID, courseID, module]);
+
+    const filterLessons = useCallback(() => {
+        return lessonsList.filter(lessonItem => tests.some(testItem => testItem.lesson.subjectID === subjectID && testItem.lesson.courseID === courseID && testItem.lesson.moduleID === module.id && testItem.lesson.lessonID === lessonItem.id));
+    }, [lessonsList, subjectID, courseID, module, tests]);
 
     return (
         <div className="adminTesting__module">
@@ -39,8 +43,4 @@ export default function AdminTestingModule({subjectID, courseID, module, tests})
             }
         </div>
     );
-
-    function filterLessons() {
-        return lessonsList.filter(lessonItem => tests.some(testItem => testItem.lesson.subjectID === subjectID && testItem.lesson.courseID === courseID && testItem.lesson.moduleID === module.id && testItem.lesson.lessonID === lessonItem.id));
-    }
 }

@@ -1,6 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import './nav.scss';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
 import {connect} from "react-redux";
@@ -11,6 +11,7 @@ import favicon from '../../assets/img/favicon.png';
 function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const [ isNavCollapsed, setIsNavCollapsed ] = useState(localStorage.getItem('isNavCollapsed'));
+    const history = useHistory();
 
     useEffect(() => {
         if ( isNavCollapsed ) {
@@ -19,6 +20,39 @@ function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
         else {
           document.querySelector('body').classList.remove('isNavCollapsed');
         }
+    }, [isNavCollapsed]);
+
+    const _renderItem = useCallback((item) => {
+        const pathName = history.location.pathname;
+
+        if ( !hideItems || !hideItems.some(hiddenItem => item.name === hiddenItem) ) {
+            return (
+                <li key={item.id} className={prefix + 'nav_item'}>
+                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {active: pathName.includes(item.url) && (pathName.substr(item.url.length, pathName.length).split('')[0] === '/' || pathName.substr(item.url.length, pathName.length).split('')[0] === undefined)})}>
+                        {
+                            isNavCollapsed ?
+                                <i className={prefix + 'nav_icon ' + item.icon} />
+                                :
+                                <>
+                                    <i className={prefix + 'nav_icon ' + item.icon} />
+                                    <span className={prefix + 'nav_text'}>{ translate(item.name) }</span>
+                                </>
+                        }
+                    </Link>
+                </li>
+            )
+        }
+        return false;
+    }, [history, hideItems, isNavCollapsed, prefix, translate]);
+
+    const collapseNav = useCallback(() => {
+        if ( !isNavCollapsed ) {
+            localStorage.setItem('isNavCollapsed', true);
+        }
+        else {
+            localStorage.removeItem('isNavCollapsed');
+        }
+        setIsNavCollapsed(!isNavCollapsed);
     }, [isNavCollapsed]);
 
     return (
@@ -62,39 +96,6 @@ function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
             </ul>
         </nav>
     );
-
-    function _renderItem(item) {
-        const pathName = window.location.pathname;
-
-        if ( !hideItems || !hideItems.some(hiddenItem => item.name === hiddenItem) ) {
-            return (
-                <li key={item.id} className={prefix + 'nav_item'}>
-                    <Link to={ item.url } className={classNames(prefix + 'nav_link type-' + item.name, {active: pathName.includes(item.url) && (pathName.substr(item.url.length, pathName.length).split('')[0] === '/' || pathName.substr(item.url.length, pathName.length).split('')[0] === undefined)})}>
-                        {
-                            isNavCollapsed ?
-                                <i className={prefix + 'nav_icon ' + item.icon} />
-                                :
-                                <>
-                                    <i className={prefix + 'nav_icon ' + item.icon} />
-                                    <span className={prefix + 'nav_text'}>{ translate(item.name) }</span>
-                                </>
-                        }
-                    </Link>
-                </li>
-            )
-        }
-        return false;
-    }
-
-    function collapseNav() {
-        if ( !isNavCollapsed ) {
-            localStorage.setItem('isNavCollapsed', true);
-        }
-        else {
-            localStorage.removeItem('isNavCollapsed');
-        }
-        setIsNavCollapsed(!isNavCollapsed);
-    }
 }
 const mapStateToProps = state => ({
     logo: state.siteSettingsReducer.siteSettingsList ? state.siteSettingsReducer.siteSettingsList.logo : null,

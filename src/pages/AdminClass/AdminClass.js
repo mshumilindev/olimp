@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useMemo, useCallback} from 'react';
 import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -23,13 +23,77 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             setCurrentClass(null);
             setClassUpdated(false);
         }
-    }, []);
+    }, [fetchClass, discardClass, setCurrentClass, setClassUpdated, params]);
 
     useEffect(() => {
         if ( classData && !currentClass ) {
             setCurrentClass(Object.assign({}, classData));
         }
-    }, [classData]);
+    }, [classData, currentClass, setCurrentClass]);
+
+    const canEdit = useMemo(() => user.role === 'admin' || (currentClass && currentClass.curator === user.id), [user, currentClass]);
+
+    const handleSetContent = useCallback((newContent) => {
+        setCurrentClass(Object.assign({}, newContent));
+        setClassUpdated(true);
+    }, [setCurrentClass, setClassUpdated]);
+
+    const onUpdateClass = useCallback((e) => {
+        e.preventDefault();
+
+        if ( classUpdated ) {
+            updateClass(currentClass.id, currentClass);
+            setClassUpdated(false);
+        }
+    }, [classUpdated, updateClass, currentClass, setClassUpdated]);
+
+    const setInfo = useCallback((fieldID, value) => {
+        const newValue = currentClass.title;
+
+        if ( fieldID === 'title_ua' ) {
+            newValue.ua = value;
+        }
+        if ( fieldID === 'title_en' ) {
+            newValue.en = value;
+        }
+        if ( fieldID === 'title_ru' ) {
+            newValue.ru = value;
+        }
+
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            title: newValue
+        }));
+        setClassUpdated(true);
+    }, [currentClass, setCurrentClass, setClassUpdated]);
+
+    const setDescr = useCallback((fieldID, value) => {
+        const newValue = currentClass.info;
+
+        if ( fieldID === 'descr_ua' ) {
+            newValue.ua = value;
+        }
+        if ( fieldID === 'descr_en' ) {
+            newValue.en = value;
+        }
+        if ( fieldID === 'descr_ru' ) {
+            newValue.ru = value;
+        }
+
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            info: newValue
+        }));
+        setClassUpdated(true);
+    }, [currentClass, setCurrentClass, setClassUpdated]);
+
+    const setCurator = useCallback((type, value) => {
+        setCurrentClass(Object.assign({}, {
+            ...currentClass,
+            curator: value[0]
+        }));
+        setClassUpdated(true);
+    }, [setCurrentClass, setClassUpdated, currentClass]);
 
     return (
         <div className="adminClass">
@@ -48,7 +112,7 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
                         }
                     </h2>
                     {
-                        canEdit() ?
+                        canEdit ?
                             <div className="section__title-actions">
                                 <span>
                                     <a href="/" className="btn btn__success" onClick={e => onUpdateClass(e)} disabled={!classUpdated}>
@@ -80,71 +144,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
             </section>
         </div>
     );
-
-    function canEdit() {
-        return user.role === 'admin' || (currentClass && currentClass.curator === user.id);
-    }
-
-    function handleSetContent(newContent) {
-        setCurrentClass(Object.assign({}, newContent));
-    }
-
-    function onUpdateClass(e) {
-        e.preventDefault();
-
-        if ( classUpdated ) {
-            updateClass(currentClass.id, currentClass);
-            setClassUpdated(false);
-        }
-    }
-
-    function setInfo(fieldID, value) {
-        const newValue = currentClass.title;
-
-        if ( fieldID === 'title_ua' ) {
-            newValue.ua = value;
-        }
-        if ( fieldID === 'title_en' ) {
-            newValue.en = value;
-        }
-        if ( fieldID === 'title_ru' ) {
-            newValue.ru = value;
-        }
-
-        setCurrentClass(Object.assign({}, {
-            ...currentClass,
-            title: newValue
-        }));
-        setClassUpdated(true);
-    }
-
-    function setDescr(fieldID, value) {
-        const newValue = currentClass.info;
-
-        if ( fieldID === 'descr_ua' ) {
-            newValue.ua = value;
-        }
-        if ( fieldID === 'descr_en' ) {
-            newValue.en = value;
-        }
-        if ( fieldID === 'descr_ru' ) {
-            newValue.ru = value;
-        }
-
-        setCurrentClass(Object.assign({}, {
-            ...currentClass,
-            info: newValue
-        }));
-        setClassUpdated(true);
-    }
-
-    function setCurator(type, value) {
-        setCurrentClass(Object.assign({}, {
-            ...currentClass,
-            curator: value[0]
-        }));
-        setClassUpdated(true);
-    }
 }
 const mapStateToProps = state => ({
     classData: state.classesReducer.classData,

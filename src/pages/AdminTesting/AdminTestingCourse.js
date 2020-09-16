@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import firebase from "firebase";
 import AdminTestingModule from "./AdminTestingModule";
@@ -21,7 +21,11 @@ export default function AdminTestingCourse({subjectID, course, tests}) {
                 setModulesList([]);
             }
         });
-    }, []);
+    }, [course, setModulesList, subjectID]);
+
+    const filterModules = useCallback(() => {
+        return modulesList.filter(moduleItem => tests.some(testItem => testItem.lesson.subjectID === subjectID && testItem.lesson.courseID === course.id && testItem.lesson.moduleID === moduleItem.id));
+    }, [modulesList, subjectID, course, tests]);
 
     return (
         <div className="adminTesting__course">
@@ -39,8 +43,4 @@ export default function AdminTestingCourse({subjectID, course, tests}) {
             }
         </div>
     );
-
-    function filterModules() {
-        return modulesList.filter(moduleItem => tests.some(testItem => testItem.lesson.subjectID === subjectID && testItem.lesson.courseID === course.id && testItem.lesson.moduleID === moduleItem.id));
-    }
 }

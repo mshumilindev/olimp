@@ -74,8 +74,6 @@ export function createClass(classID, classData) {
 export function updateClass(classID, classData) {
     const classRef = db.collection('classes').doc(classID);
 
-    delete classData.id;
-
     return dispatch => {
         dispatch(classBegin());
         return classRef.set({

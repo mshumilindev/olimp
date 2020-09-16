@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useMemo, useState} from 'react';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import { connect } from 'react-redux';
 import ChatList from "../../components/ChatList/ChatList";
@@ -12,79 +12,143 @@ import Preloader from "../../components/UI/preloader";
 
 function AdminChats({user, loading, events, usersList, updateEvent}) {
     const { translate } = useContext(SiteSettingsContext);
-    const initialFormFields = [
-        {
-            type: 'block',
-            id: 'info',
-            heading: translate('info'),
-            children: [
-                {
-                    type: 'text',
-                    placeholder: translate('videochat_name'),
-                    value: '',
-                    id: 'name',
-                    required: true
-                },
-                {
-                    type: 'datepicker',
-                    value: moment().unix(),
-                    id: 'datepicker',
-                    time: true,
-                    required: true
-                }
-            ]
-        },
-        {
-            type: 'block',
-            heading: translate('organizer'),
-            id: 'block_organizer',
-            children: [
-                {
-                    type: 'userPicker',
-                    value: user.id,
-                    id: 'organizer',
-                    placeholder: translate('organizator'),
-                    noneditable: true,
-                    required: true
-                }
-            ]
-        },
-        {
-            type: 'block',
-            heading: translate('participants'),
-            id: 'block_participants',
-            children: [
-                {
-                    type: 'userPicker',
-                    value: [],
-                    id: 'participant',
-                    placeholder: translate('participant'),
-                    multiple: true,
-                    required: true,
-                    exclude: [user.id]
-                }
-            ]
-        },
-        {
-            type: 'block',
-            heading: translate('lesson'),
-            id: 'lesson',
-            children: [
-                {
-                    type: 'lessonPicker',
-                    value: {},
-                    id: 'lessonPicker'
-                }
-            ]
-        },
-        {
-            id: 'submit',
-            type: 'submit',
-            name: translate('save')
-        }
-    ];
+    const initialFormFields = useMemo(() => {
+        return [
+            {
+                type: 'block',
+                id: 'info',
+                heading: translate('info'),
+                children: [
+                    {
+                        type: 'text',
+                        placeholder: translate('videochat_name'),
+                        value: '',
+                        id: 'name',
+                        required: true
+                    },
+                    {
+                        type: 'datepicker',
+                        value: moment().unix(),
+                        id: 'datepicker',
+                        time: true,
+                        required: true
+                    }
+                ]
+            },
+            {
+                type: 'block',
+                heading: translate('organizer'),
+                id: 'block_organizer',
+                children: [
+                    {
+                        type: 'userPicker',
+                        value: user.id,
+                        id: 'organizer',
+                        placeholder: translate('organizator'),
+                        noneditable: true,
+                        required: true
+                    }
+                ]
+            },
+            {
+                type: 'block',
+                heading: translate('participants'),
+                id: 'block_participants',
+                children: [
+                    {
+                        type: 'userPicker',
+                        value: [],
+                        id: 'participant',
+                        placeholder: translate('participant'),
+                        multiple: true,
+                        required: true,
+                        exclude: [user.id]
+                    }
+                ]
+            },
+            {
+                type: 'block',
+                heading: translate('lesson'),
+                id: 'lesson',
+                children: [
+                    {
+                        type: 'lessonPicker',
+                        value: {},
+                        id: 'lessonPicker'
+                    }
+                ]
+            },
+            {
+                id: 'submit',
+                type: 'submit',
+                name: translate('save')
+            }
+        ];
+    }, [translate, user.id]);
+
     const [ showEditModal, setShowEditModal ] = useState(null);
     const [ formFields, setFormFields ] = useState(Object.assign([], initialFormFields));
+
+    const mapEventToFormFields = useCallback((event) => {
+        const newFormFields = Object.assign([], initialFormFields);
+
+        newFormFields.find(item => item.id === 'block_organizer').children[0].value = event.organizer;
+        newFormFields.find(item => item.id === 'block_participants').children[0].value = event.participants;
+        newFormFields.find(item => item.id === 'lesson').children[0].value = event.lesson;
+        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value = event.name;
+        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value = event.datetime;
+        setFormFields(Object.assign([], newFormFields));
+        setShowEditModal(event);
+    }, [initialFormFields, setFormFields, setShowEditModal]);
+
+    const handleHideModal = useCallback(() => {
+        setShowEditModal(null);
+        setFormFields(Object.assign([], initialFormFields));
+    }, [setShowEditModal, setFormFields, initialFormFields]);
+
+    const setFieldValue = useCallback((fieldID, value) => {
+        const newFields = formFields;
+
+        if ( fieldID === 'participant' ) {
+            newFields.find(item => item.id === 'block_participants').children[0].value = value;
+        }
+        if ( fieldID === 'name' || fieldID === 'recurring' || fieldID === 'datepicker' ) {
+            newFields.find(item => item.id === 'info').children.find(item => item.id === fieldID).value = value;
+        }
+        if ( fieldID === 'lessonPicker' ) {
+            newFields.find(item => item.id === 'lesson').children.find(item => item.id === fieldID).value = value;
+        }
+
+        setFormFields(Object.assign([], newFields));
+    }, [setFormFields, formFields]);
+
+    const onUpdateEvent = useCallback(() => {
+        let newEvent = {};
+
+        const organizerField = formFields.find(item => item.id === 'block_organizer').children[0];
+        const participantsField = formFields.find(item => item.id === 'block_participants').children[0];
+
+        if ( !showEditModal.id ) {
+            newEvent.id = generate({
+                length: 20,
+                numbers: true
+            });
+        }
+        else {
+            newEvent.id = showEditModal.id;
+        }
+        newEvent.organizer = organizerField.value;
+        newEvent.participants = typeof participantsField.value === 'object' ? participantsField.value : [participantsField.value];
+        if ( formFields.find(item => item.id === 'lesson').children[0].value ) {
+            newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
+        }
+        newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
+        newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
+
+        updateEvent(newEvent.id, newEvent);
+        setFormFields(Object.assign([], initialFormFields));
+        setShowEditModal(false);
+    }, [formFields, updateEvent, setFormFields, setShowEditModal, initialFormFields, showEditModal]);
 
     return (
         <section className="section">
@@ -143,67 +207,6 @@ function AdminChats({user, loading, events, usersList, updateEvent}) {
             }
         </section>
     );
-
-    function mapEventToFormFields(event) {
-        const newFormFields = Object.assign([], initialFormFields);
-
-        newFormFields.find(item => item.id === 'block_organizer').children[0].value = event.organizer;
-        newFormFields.find(item => item.id === 'block_participants').children[0].value = event.participants;
-        newFormFields.find(item => item.id === 'lesson').children[0].value = event.lesson;
-        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value = event.name;
-        newFormFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value = event.datetime;
-        setFormFields(Object.assign([], newFormFields));
-        setShowEditModal(event);
-    }
-
-    function handleHideModal() {
-        setShowEditModal(null);
-        setFormFields(Object.assign([], initialFormFields));
-    }
-
-    function setFieldValue(fieldID, value) {
-        const newFields = formFields;
-
-        if ( fieldID === 'participant' ) {
-            newFields.find(item => item.id === 'block_participants').children[0].value = value;
-        }
-        if ( fieldID === 'name' || fieldID === 'recurring' || fieldID === 'datepicker' ) {
-            newFields.find(item => item.id === 'info').children.find(item => item.id === fieldID).value = value;
-        }
-        if ( fieldID === 'lessonPicker' ) {
-            newFields.find(item => item.id === 'lesson').children.find(item => item.id === fieldID).value = value;
-        }
-
-        setFormFields(Object.assign([], newFields));
-    }
-
-    function onUpdateEvent() {
-        let newEvent = {};
-
-        const organizerField = formFields.find(item => item.id === 'block_organizer').children[0];
-        const participantsField = formFields.find(item => item.id === 'block_participants').children[0];
-
-        if ( !showEditModal.id ) {
-            newEvent.id = generate({
-                length: 20,
-                numbers: true
-            });
-        }
-        else {
-            newEvent.id = showEditModal.id;
-        }
-        newEvent.organizer = organizerField.value;
-        newEvent.participants = typeof participantsField.value === 'object' ? participantsField.value : [participantsField.value];
-        if ( formFields.find(item => item.id === 'lesson').children[0].value ) {
-            newEvent.lesson = formFields.find(item => item.id === 'lesson').children[0].value;
-        }
-        newEvent.name = formFields.find(item => item.id === 'info').children.find(item => item.id === 'name').value;
-        newEvent.datetime = formFields.find(item => item.id === 'info').children.find(item => item.id === 'datepicker').value;
-
-        updateEvent(newEvent.id, newEvent);
-        setFormFields(Object.assign([], initialFormFields));
-        setShowEditModal(false);
-    }
 }
 
 const mapStateToProps = state => {

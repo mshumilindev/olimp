@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { withRouter, Link } from 'react-router-dom';
 import AdminInfoManuals from '../../components/AdminInfo/AdminInfoManuals';
@@ -21,18 +21,20 @@ const manuals = [
 
 function AdminInfo({location, history, params}) {
     const { translate } = useContext(siteSettingsContext);
-    const nav = [
-        {
-            id: 'videochats',
-            title: translate('videochats'),
-            sections: manuals.find(item => item.id === 'videochats').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
-        },
-        {
-            id: 'subjects',
-            title: translate('subjects'),
-            sections: manuals.find(item => item.id === 'subjects').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
-        }
-    ];
+    const nav = useMemo(() => (
+        [
+            {
+                id: 'videochats',
+                title: translate('videochats'),
+                sections: manuals.find(item => item.id === 'videochats').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
+            },
+            {
+                id: 'subjects',
+                title: translate('subjects'),
+                sections: manuals.find(item => item.id === 'subjects').content.sections.map(sectionItem => {return {title: sectionItem.sectionTitle, id: sectionItem.sectionID}})
+            }
+        ]
+    ), [translate]);
 
     useEffect(() => {
         if ( location.hash && location.hash.indexOf('#') !== -1 ) {

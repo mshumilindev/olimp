@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, {useCallback, useContext, useRef, useState} from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
@@ -12,6 +12,38 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
     const { translate } = useContext(siteSettingsContext);
     const $block = useRef(null);
     const [ isLoaded, setIsLoaded ] = useState(false);
+
+    const filterTranslations = useCallback(() => {
+        const editedSearchQuery = searchQuery.toLowerCase();
+        let newTranslations = translationsList;
+
+        if ( translationsList ) {
+            if ( editedSearchQuery.trim() ) {
+                newTranslations = translationsList.filter(item => item.id.toLowerCase().includes(editedSearchQuery) || item.langs.some(lang => lang[Object.keys(lang)].toLowerCase().includes(editedSearchQuery)));
+            }
+        }
+
+        return newTranslations;
+    }, [searchQuery, translationsList]);
+
+    const handleUpdateTranslations = useCallback((e) => {
+        e.preventDefault();
+
+        const updatedFields = $block.current.querySelectorAll('.isUpdated');
+
+        if ( updatedFields.length ) {
+            if ( [...updatedFields].every(field => field.value) ) {
+                updatedFields.forEach(field => {
+                    const lang = field.title.substr(0, field.title.indexOf('_'));
+                    const key = field.title.substr(field.title.indexOf('_') + 1, field.length);
+
+                    updateTranslation(lang, key, field.value);
+                    setIsLoaded(false);
+                    setUpdates('translations')
+                });
+            }
+        }
+    }, [$block, setIsLoaded, setUpdates, updateTranslation]);
 
     return (
         <div className="adminTranslations" ref={$block}>
@@ -41,38 +73,6 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
             </section>
         </div>
     );
-
-    function filterTranslations() {
-        const editedSearchQuery = searchQuery.toLowerCase();
-        let newTranslations = translationsList;
-
-        if ( translationsList ) {
-            if ( editedSearchQuery.trim() ) {
-                newTranslations = translationsList.filter(item => item.id.toLowerCase().includes(editedSearchQuery) || item.langs.some(lang => lang[Object.keys(lang)].toLowerCase().includes(editedSearchQuery)));
-            }
-        }
-
-        return newTranslations;
-    }
-
-    function handleUpdateTranslations(e) {
-        e.preventDefault();
-
-        const updatedFields = $block.current.querySelectorAll('.isUpdated');
-
-        if ( updatedFields.length ) {
-            if ( [...updatedFields].every(field => field.value) ) {
-                updatedFields.forEach(field => {
-                    const lang = field.title.substr(0, field.title.indexOf('_'));
-                    const key = field.title.substr(field.title.indexOf('_') + 1, field.length);
-
-                    updateTranslation(lang, key, field.value);
-                    setIsLoaded(false);
-                    setUpdates('translations')
-                });
-            }
-        }
-    }
 }
 const mapStateToProps = state => ({
     translationsList: state.translationsReducer.translationsList,

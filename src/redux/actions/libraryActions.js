@@ -120,10 +120,11 @@ export const UPDATE_DOC_BEGIN = 'UPDATE_DOC_BEGIN';
 
 export function updateDoc(newFile, id) {
     const documentDoc = db.collection('library').doc(id);
+    const teacherArray = Array.isArray(newFile.teacher) ? newFile.teacher : [newFile.teacher];
 
     return dispatch => {
         dispatch(updateDocBegin());
-        return documentDoc.update({...newFile});
+        return documentDoc.update({...newFile, teacher: teacherArray});
     };
 }
 

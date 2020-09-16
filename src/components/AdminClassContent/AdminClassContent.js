@@ -29,7 +29,7 @@ function AdminClassContent({content, loading, setContent, usersList, canEdit}) {
                     { translate('courses') }
                 </div>
                 {
-                    <CoursesPicker selectedCourses={JSON.stringify(courses)} handleAddCourses={handleAddCourses} noControls={!canEdit()}/>
+                    <CoursesPicker selectedCourses={JSON.stringify(courses)} handleAddCourses={handleAddCourses} noControls={!canEdit}/>
                 }
             </div>
             <div className="widget">

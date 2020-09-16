@@ -1,11 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, {useContext, useState, useEffect, useRef, useCallback} from 'react';
 import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
 import { withRouter } from 'react-router-dom';
 import {fetchSubjects, updateSubject} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
-import Breadcrumbs from '../../components/UI/Breadcrumbs/Breadcrumbs';
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
 import { orderBy } from 'natural-orderby';
@@ -37,12 +36,6 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         }
     }
     const { translate, lang, getSubjectModel, getSubjectFields, identify, transliterize } = useContext(siteSettingsContext);
-    const breadcrumbs = [
-        {
-            name: translate('subjects'),
-            url: '/admin-courses'
-        }
-    ];
     const [ showModal, setShowModal ] = useState(false);
     const [ subjectFields, setSubjectFields ] = useState(JSON.stringify(getSubjectFields(getSubjectModel())));
     const [ formError, setFormError ] = useState(null);
@@ -55,6 +48,65 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         }
     });
 
+    const handleCreateSubject = useCallback(() => {
+        const newSubjectFields = JSON.parse(subjectFields);
+        const newSubject = {};
+
+        newSubject.name = {
+            en: newSubjectFields.find(item => item.id === 'subjectName_en').value.replace(/\s*$/,''),
+            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value.replace(/\s*$/,''),
+            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value.replace(/\s*$/,'')
+        };
+        newSubject.id = identify(transliterize(newSubject.name['ua']));
+
+        if ( list.some(item => item.id.toLowerCase() === newSubject.id.toLowerCase()) ) {
+            setFormError(translate('subject_already_exists'));
+        }
+        else {
+            setFormError(null);
+            updateSubject(newSubject);
+        }
+    }, [subjectFields, list, setFormError, updateSubject, identify, translate, transliterize]);
+
+    const setFieldValue = useCallback((fieldID, value) => {
+        const newSubjectFields = JSON.parse(subjectFields);
+
+        newSubjectFields.find(item => item.id === fieldID).value = value;
+        newSubjectFields.find(item => item.id === fieldID).updated = true;
+        setFormUpdated(true);
+
+        setSubjectFields(JSON.stringify(newSubjectFields));
+    }, [subjectFields, setSubjectFields]);
+
+    const toggleModal = useCallback(() => {
+        setShowModal(false);
+        setSubjectFields(JSON.stringify(getSubjectFields(getSubjectModel())));
+    }, [setShowModal, setSubjectFields, getSubjectFields, getSubjectModel]);
+
+    const filterList = useCallback(() => orderBy(list.filter(item => {
+        // let sameTeacher = user.role === 'admin';
+        //
+        // if ( user.role === 'teacher' ) {
+        //     allCoursesList.forEach(subjectItem => {
+        //         if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
+        //             subjectItem.coursesList.forEach(courseItem => {
+        //                 if ( courseItem.teacher === user.id ) {
+        //                     sameTeacher = true;
+        //                 }
+        //             });
+        //         }
+        //     });
+        // }
+
+        return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
+    }), [v => v.name[lang] ? v.name[lang] : v.name['ua']]), [searchQuery, list, lang]);
+
+    const showCreateSubjectModal = useCallback((e) => {
+        e.preventDefault();
+
+        setShowModal(true);
+    }, [setShowModal]);
+
     return (
         <div className="adminCourses">
             <div className="section">
@@ -63,17 +115,12 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                         <i className="content_title-icon fa fa-book" />
                         { translate('courses') }
                     </h2>
-                    {/*{*/}
-                    {/*    user.role === 'admin' ?*/}
-                            <div className="section__title-actions">
-                                <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
-                                    <i className="content_title-icon fa fa-plus" />
-                                    { translate('create_subject') }
-                                </a>
-                            </div>
-                    {/*        :*/}
-                    {/*        null*/}
-                    {/*}*/}
+                    <div className="section__title-actions">
+                        <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
+                            <i className="content_title-icon fa fa-plus" />
+                            { translate('create_subject') }
+                        </a>
+                    </div>
                     {
                         loading ?
                             <Preloader size={60}/>
@@ -87,9 +134,6 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                         allCoursesList && list ?
                             list.length ?
                                 <>
-                                    <div className="widget__title">
-                                        <Breadcrumbs list={getBreadcrumbs()} />
-                                    </div>
                                     <div className="widget__descr">
                                         <h3>Правила користування:</h3>
                                         <p>Ліва кнопка миші - обрати предмет/модуль/урок</p>
@@ -132,103 +176,6 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
             }
         </div>
     );
-
-    function handleCreateSubject() {
-        const newSubjectFields = JSON.parse(subjectFields);
-        const newSubject = {};
-
-        newSubject.name = {
-            en: newSubjectFields.find(item => item.id === 'subjectName_en').value.replace(/\s*$/,''),
-            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value.replace(/\s*$/,''),
-            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value.replace(/\s*$/,'')
-        };
-        newSubject.id = identify(transliterize(newSubject.name['ua']));
-
-        if ( list.some(item => item.id.toLowerCase() === newSubject.id.toLowerCase()) ) {
-            setFormError(translate('subject_already_exists'));
-        }
-        else {
-            setFormError(null);
-            updateSubject(newSubject);
-        }
-    }
-
-    function setFieldValue(fieldID, value) {
-        const newSubjectFields = JSON.parse(subjectFields);
-
-        newSubjectFields.find(item => item.id === fieldID).value = value;
-        newSubjectFields.find(item => item.id === fieldID).updated = true;
-        setFormUpdated(true);
-
-        setSubjectFields(JSON.stringify(newSubjectFields));
-    }
-
-    function toggleModal() {
-        setShowModal(false);
-        setSubjectFields(JSON.stringify(getSubjectFields(getSubjectModel())));
-    }
-
-    function filterList() {
-        return orderBy(list.filter(item => {
-            // let sameTeacher = user.role === 'admin';
-            //
-            // if ( user.role === 'teacher' ) {
-            //     allCoursesList.forEach(subjectItem => {
-            //         if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
-            //             subjectItem.coursesList.forEach(courseItem => {
-            //                 if ( courseItem.teacher === user.id ) {
-            //                     sameTeacher = true;
-            //                 }
-            //             });
-            //         }
-            //     });
-            // }
-
-            return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
-        }), [v => v.name[lang] ? v.name[lang] : v.name['ua']]);
-    }
-
-    function showCreateSubjectModal(e) {
-        e.preventDefault();
-
-        setShowModal(true);
-    }
-
-    function getBreadcrumbs() {
-        if ( params ) {
-            let currentSubject = null;
-            let currentCourse = null;
-            let currentModule = null;
-
-            if ( params.subjectID ) {
-                currentSubject = list.find(item => item.id === params.subjectID);
-                breadcrumbs.push({
-                    name: currentSubject ? currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] : '',
-                    url: '/admin-courses/' + params.subjectID
-                });
-            }
-            if ( params.courseID ) {
-                if ( currentSubject.coursesList ) {
-                    currentCourse = currentSubject.coursesList.find(item => item.id === params.courseID);
-                    breadcrumbs.push({
-                        name: currentCourse ? currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] : '',
-                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID
-                    });
-                }
-            }
-            if ( params.moduleID ) {
-                if ( currentCourse && currentCourse.modules ) {
-                    currentModule = currentCourse.modules.find(item => item.id === params.moduleID);
-                    breadcrumbs.push({
-                        name: currentModule ? currentModule.name[lang] ? currentModule.name[lang] : currentModule.name['ua'] : '',
-                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID
-                    });
-                }
-            }
-        }
-
-        return breadcrumbs;
-    }
 }
 
 const mapStateToProps = state => ({

@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useCallback, useContext} from 'react';
 import {orderBy} from "natural-orderby";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import AdminTestingCourse from "./AdminTestingCourse";
@@ -6,6 +6,10 @@ import { connect } from 'react-redux';
 
 function AdminTestingSubject({user, subjectItem, tests}) {
     const { lang } = useContext(siteSettingsContext);
+
+    const filterCourses = useCallback(() => {
+        return subjectItem.coursesList.filter(courseItem => courseItem.teacher === user.id).filter(courseItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id && testItem.lesson.courseID === courseItem.id));
+    }, [subjectItem, user, tests]);
 
     return (
         <div className="adminTesting__subject widget">
@@ -23,10 +27,6 @@ function AdminTestingSubject({user, subjectItem, tests}) {
             }
         </div>
     );
-
-    function filterCourses() {
-        return subjectItem.coursesList.filter(courseItem => courseItem.teacher === user.id).filter(courseItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id && testItem.lesson.courseID === courseItem.id));
-    }
 }
 
 const mapStateToProps = state => {

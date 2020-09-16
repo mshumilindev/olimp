@@ -32,7 +32,7 @@ export default function AdminClassScheduleDayLesson({canEdit, coursesList, quick
                 }
             </div>
             {
-                canEdit() ?
+                canEdit ?
                     <span className="coursesPicker__selectedList-item-remove" onClick={() => quickRemoveLesson(lesson)}>
                         <i className="fa fa-trash-alt"/>
                     </span>

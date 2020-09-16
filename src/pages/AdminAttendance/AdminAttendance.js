@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
 import Preloader from "../../components/UI/preloader";
 import { updateUser } from '../../redux/actions/usersActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -40,7 +40,130 @@ function AdminAttendance({filters, selectedClass, filterByDate, usersList, loadi
         }
 
         setDays(days);
-    }, [period]);
+    }, [period, filterByDate.start, filterByDate.end, setDays]);
+
+    const filterClassesList = useCallback(() => orderBy(classesList, v => v.title[lang] ? v.title[lang] : v.title['ua']).filter(classItem => selectedClass ? classItem.id === selectedClass : true), [classesList, lang, selectedClass]);
+
+    const isWeekend = useCallback((day) => moment(day * 1000).format('dd') === 'сб' || moment(day * 1000).format('dd') === 'нд', []);
+
+    const _renderHead = useCallback((dayItem) => (
+        <th className="table__head-cell" key={dayItem}>
+            <div className={classNames('adminAttendance__day', {isWeekend: isWeekend(dayItem)})}>
+                <strong>
+                    { moment(dayItem * 1000).format('dd') }
+                    <br/>
+                    <span>
+                            { moment(dayItem * 1000).format('DD.MM') }
+                        </span>
+                </strong>
+            </div>
+        </th>
+    ), [isWeekend]);
+
+    const filterUsers = useCallback((classItem) => {
+        return orderBy(usersList, v => v.name)
+            .filter(userItem => userItem.role === 'student' && userItem.status === 'active')
+            .filter(userItem => userItem.class === classItem);
+    }, [usersList]);
+
+    const addAttendance = useCallback((userID, dayItem, courseItem) => {
+        const formattedDayItem = moment(dayItem * 1000).format('DD_MMMM_YYYY');
+        const foundUser = usersList.find(userItem => userItem.id === userID);
+        const attendance = foundUser.attendance || [];
+        const attDayIndex = attendance.find(attItem => attItem.day === formattedDayItem) ? attendance.indexOf(attendance.find(attItem => attItem.day === formattedDayItem)) : attendance.length;
+        const attDay = attendance.find(attItem => attItem.day === formattedDayItem) || {day: formattedDayItem, courses: []};
+
+        if ( attDay.courses.indexOf(courseItem) !== -1 ) {
+            attDay.courses = attDay.courses.filter(item => item !== courseItem);
+        }
+        else {
+            attDay.courses.push(courseItem);
+        }
+        attendance[attDayIndex] = attDay;
+        updateUser(userID, {attendance: attendance});
+    }, [updateUser, usersList]);
+
+    const _renderCells = useCallback((dayItem, dayLessons, userItem) => {
+        const userAtt = userItem.attendance;
+        let dayAtt = null;
+
+        if ( userAtt ) {
+            dayAtt = userAtt.find(item => item.day === moment(dayItem * 1000).format('DD_MMMM_YYYY'));
+        }
+
+        return (
+            <td className="table__body-cell" key={dayItem}>
+                {
+                    orderBy(dayLessons, v => v.time.start).map((lessonItem, index) => {
+                        const foundCourse = coursesList.find(subjectItem => subjectItem.id === lessonItem.subject).coursesList.find(courseItem => courseItem.id === lessonItem.course);
+
+                        return (
+                            <div className={classNames('adminAttendance__check', {isWeekend: isWeekend(dayItem)})} key={userItem.id + '_' + dayItem + '_' + lessonItem.course + index}>
+                                <div className={classNames('adminAttendance__check-inner', {isChecked: dayAtt && dayAtt.courses && dayAtt.courses.indexOf(lessonItem.course) !== -1})} onClick={() => addAttendance(userItem.id, dayItem, lessonItem.course)}>
+                                    <div className="adminAttendance__check-icon">
+                                        {
+                                            dayAtt && dayAtt.courses && dayAtt.courses.indexOf(lessonItem.course) !== -1 ?
+                                                <i className="content_title-icon far fa-check-square" />
+                                                :
+                                                <i className="content_title-icon far fa-square" />
+                                        }
+                                    </div>
+                                    <div className="adminAttendance__check-title">
+                                        { foundCourse.name[lang] ? foundCourse.name[lang] : foundCourse.name['ua'] }
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </td>
+        )
+    }, [addAttendance, coursesList, lang, isWeekend]);
+
+    const _renderRow = useCallback((userItem, classSchedule) => {
+        const daysNames = {
+            'monday': 'пн',
+            'tuesday': 'вт',
+            'wednesday': 'ср',
+            'thursday': 'чт',
+            'friday': 'пт',
+            'saturday': 'сб',
+            'sunday': 'нд'
+        };
+
+        return (
+            <tr className="table__body-row" key={userItem.id} title={userItem.name}>
+                <td className="table__body-cell">
+                    <div className="adminAttendance__user">
+                        { userItem.name }
+                    </div>
+                </td>
+                {
+                    days ?
+                        days.map(dayItem => _renderCells(dayItem, classSchedule.find(scheduleItem => daysNames[scheduleItem.title] === moment(dayItem * 1000).format('dd')).lessons, userItem))
+                        :
+                        null
+                }
+            </tr>
+        )
+    }, [days, _renderCells]);
+
+    const _renderClass = useCallback((classItem) => (
+        <Fragment key={classItem.id}>
+            <tr className="table__body-row adminAttendance__classRow" title={classItem.title[lang] ? classItem.title[lang] : classItem.title['ua']}>
+                <td className="table__body-cell">
+                    { classItem.title[lang] ? classItem.title[lang] : classItem.title['ua'] }
+                </td>
+                {
+                    days ?
+                        days.map(dayItem => <td className="table__body-cell" key={dayItem}/>)
+                        :
+                        null
+                }
+            </tr>
+            { filterUsers(classItem.id).map(userItem => _renderRow(userItem, classItem.schedule)) }
+        </Fragment>
+    ), [days, _renderRow, filterUsers, lang]);
 
     return (
         <div className="adminAttendance">
@@ -104,137 +227,6 @@ function AdminAttendance({filters, selectedClass, filterByDate, usersList, loadi
             </section>
         </div>
     );
-
-    function _renderHead(dayItem) {
-        return (
-            <th className="table__head-cell" key={dayItem}>
-                <div className={classNames('adminAttendance__day', {isWeekend: isWeekend(dayItem)})}>
-                    <strong>
-                        { moment(dayItem * 1000).format('dd') }
-                        <br/>
-                        <span>
-                            { moment(dayItem * 1000).format('DD.MM') }
-                        </span>
-                    </strong>
-                </div>
-            </th>
-        )
-    }
-
-    function _renderClass(classItem) {
-        return (
-            <Fragment key={classItem.id}>
-                <tr className="table__body-row adminAttendance__classRow" title={classItem.title[lang] ? classItem.title[lang] : classItem.title['ua']}>
-                    <td className="table__body-cell">
-                        { classItem.title[lang] ? classItem.title[lang] : classItem.title['ua'] }
-                    </td>
-                    {
-                        days ?
-                            days.map(dayItem => <td className="table__body-cell" key={dayItem}/>)
-                            :
-                            null
-                    }
-                </tr>
-                { filterUsers(classItem.id).map(userItem => _renderRow(userItem, classItem.schedule)) }
-            </Fragment>
-        )
-    }
-
-    function _renderRow(userItem, classSchedule) {
-        const daysNames = {
-            'monday': 'пн',
-            'tuesday': 'вт',
-            'wednesday': 'ср',
-            'thursday': 'чт',
-            'friday': 'пт',
-            'saturday': 'сб',
-            'sunday': 'нд'
-        };
-
-        return (
-            <tr className="table__body-row" key={userItem.id} title={userItem.name}>
-                <td className="table__body-cell">
-                    <div className="adminAttendance__user">
-                        { userItem.name }
-                    </div>
-                </td>
-                {
-                    days ?
-                        days.map(dayItem => _renderCells(dayItem, classSchedule.find(scheduleItem => daysNames[scheduleItem.title] === moment(dayItem * 1000).format('dd')).lessons, userItem))
-                        :
-                        null
-                }
-            </tr>
-        )
-    }
-
-    function _renderCells(dayItem, dayLessons, userItem) {
-        const userAtt = userItem.attendance;
-        let dayAtt = null;
-
-        if ( userAtt ) {
-            dayAtt = userAtt.find(item => item.day === moment(dayItem * 1000).format('DD_MMMM_YYYY'));
-        }
-
-        return (
-            <td className="table__body-cell" key={dayItem}>
-                {
-                    orderBy(dayLessons, v => v.time.start).map((lessonItem, index) => {
-                        const foundCourse = coursesList.find(subjectItem => subjectItem.id === lessonItem.subject).coursesList.find(courseItem => courseItem.id === lessonItem.course);
-
-                        return (
-                            <div className={classNames('adminAttendance__check', {isWeekend: isWeekend(dayItem)})} key={userItem.id + '_' + dayItem + '_' + lessonItem.course + index}>
-                                <div className={classNames('adminAttendance__check-inner', {isChecked: dayAtt && dayAtt.courses && dayAtt.courses.indexOf(lessonItem.course) !== -1})} onClick={() => addAttendance(userItem.id, dayItem, lessonItem.course)}>
-                                    <div className="adminAttendance__check-icon">
-                                        {
-                                            dayAtt && dayAtt.courses && dayAtt.courses.indexOf(lessonItem.course) !== -1 ?
-                                                <i className="content_title-icon far fa-check-square" />
-                                                :
-                                                <i className="content_title-icon far fa-square" />
-                                        }
-                                    </div>
-                                    <div className="adminAttendance__check-title">
-                                        { foundCourse.name[lang] ? foundCourse.name[lang] : foundCourse.name['ua'] }
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })
-                }
-            </td>
-        )
-    }
-
-    function addAttendance(userID, dayItem, courseItem) {
-        const formattedDayItem = moment(dayItem * 1000).format('DD_MMMM_YYYY');
-        const foundUser = usersList.find(userItem => userItem.id === userID);
-        const attendance = foundUser.attendance || [];
-        const attDayIndex = attendance.find(attItem => attItem.day === formattedDayItem) ? attendance.indexOf(attendance.find(attItem => attItem.day === formattedDayItem)) : attendance.length;
-        const attDay = attendance.find(attItem => attItem.day === formattedDayItem) || {day: formattedDayItem, courses: []};
-
-        if ( attDay.courses.indexOf(courseItem) !== -1 ) {
-            attDay.courses = attDay.courses.filter(item => item !== courseItem);
-        }
-        else {
-            attDay.courses.push(courseItem);
-        }
-        attendance[attDayIndex] = attDay;
-        updateUser(userID, {attendance: attendance});
-    }
-
-    function isWeekend(day) {
-        return moment(day * 1000).format('dd') === 'сб' || moment(day * 1000).format('dd') === 'нд';
-    }
-
-    function filterClassesList() {
-        return orderBy(classesList, v => v.title[lang] ? v.title[lang] : v.title['ua']).filter(classItem => selectedClass ? classItem.id === selectedClass : true);
-    }
-
-    function filterUsers(classItem) {
-        return orderBy(usersList, v => v.name)
-                    .filter(userItem => userItem.role === 'student' && userItem.status === 'active')
-                    .filter(userItem => userItem.class === classItem);
-    }
 }
 
 const mapStateToProps = state => {

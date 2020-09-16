@@ -33,7 +33,7 @@ export default function AdminClassInfo({loading, classData, canEdit, setInfo}) {
                 }
             ]));
         }
-    }, [classData]);
+    }, [classData, setClassInfoFields, translate]);
 
     return (
         <div className="widget">
@@ -43,7 +43,7 @@ export default function AdminClassInfo({loading, classData, canEdit, setInfo}) {
             </div>
             {
                 classData ?
-                    canEdit() ?
+                    canEdit ?
                         <Form fields={classInfoFields} setFieldValue={setInfo} loading={loading} />
                         :
                         classData.title[lang] ? classData.title[lang] : classData.title['ua']

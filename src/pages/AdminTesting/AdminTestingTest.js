@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import classNames from 'classnames';
 import Modal from "../../components/UI/Modal/Modal";
 import firebase from "firebase";
@@ -44,56 +44,9 @@ function AdminTestingTest({test, userItem, lesson, updateTest, deleteTest}) {
                 setLessonQA(orderBy(QA, v => v.order));
             });
         }
-    }, [showModal]);
+    }, [showModal, setLessonQA, lessonQA, test]);
 
-    return (
-        <div className={classNames('adminTesting__test', {noScore: !test.score})}>
-            <div className="adminTesting__test-inner">
-                <div className="adminTesting__deleteTest" onClick={() => setShowConfirmDelete(true)}>
-                    <i className="fa fa-trash-alt"/>
-                </div>
-                <div className="adminTesting__test-content" onClick={() => setShowModal(!showModal)}>
-                    {
-                        test.score ?
-                            <i className="content_title-icon">{ test.score }</i>
-                            :
-                            <i className="content_title-icon fa fa-hourglass-half" />
-                    }
-                    { userItem.name }
-                </div>
-            </div>
-            {
-                showModal ?
-                    <Modal onHideModal={() => setShowModal(false)} heading={`<span>${(lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'])} / </span>${translate('test_qa_for')} ${userItem.name}`}>
-                        {
-                            lessonQA ?
-                                <>
-                                    <Article content={reworkQA(lessonQA)} comments={comments} setComments={setComments}/>
-                                    <hr/>
-                                    <Form fields={[{type: 'text', placeholder: 'score', id: 'score', value: score}]} setFieldValue={(fieldID, value) => setScore(value)}/>
-                                    <div className="adminTesting__btnScore">
-                                        <span className="btn btn_primary" onClick={handleSetScore}>
-                                            { translate('set_score') }
-                                        </span>
-                                    </div>
-                                </>
-                                :
-                                <Preloader/>
-                        }
-                    </Modal>
-                    :
-                    null
-            }
-            {
-                showConfirmDelete ?
-                    <Confirm message={translate('sure_to_delete_test')} cancelAction={() => setShowConfirmDelete(false)} confirmAction={handleDeleteTest} />
-                    :
-                    null
-            }
-        </div>
-    );
-
-    function reworkQA() {
+    const reworkQA = useCallback(() => {
         const newQA = [];
 
         lessonQA.forEach(item => {
@@ -123,21 +76,68 @@ function AdminTestingTest({test, userItem, lesson, updateTest, deleteTest}) {
         });
 
         return newQA;
-    }
+    }, [lessonQA, comments, test]);
 
-    function handleSetScore() {
+    const handleSetScore = useCallback(() => {
         updateTest({
             ...test,
             comments: comments,
             score: score || ''
         });
         setShowModal(false);
-    }
+    }, [updateTest, setShowModal, comments, test, score]);
 
-    function handleDeleteTest() {
+    const handleDeleteTest = useCallback(() => {
         setShowConfirmDelete(false);
         deleteTest(test.id);
-    }
+    }, [setShowConfirmDelete, deleteTest, test]);
+
+    return (
+        <div className={classNames('adminTesting__test', {noScore: !test.score})} style={!userItem ? {opacity: '.25', filter: 'grayscale(1)'} : {}}>
+            <div className="adminTesting__test-inner">
+                <div className="adminTesting__deleteTest" onClick={() => setShowConfirmDelete(true)}>
+                    <i className="fa fa-trash-alt"/>
+                </div>
+                <div className="adminTesting__test-content" onClick={() => setShowModal(!showModal)}>
+                    {
+                        test.score ?
+                            <i className="content_title-icon">{ test.score }</i>
+                            :
+                            <i className="content_title-icon fa fa-hourglass-half" />
+                    }
+                    { userItem ? userItem.name : 'Такого учня у школі більше немає' }
+                </div>
+            </div>
+            {
+                showModal ?
+                    <Modal onHideModal={() => setShowModal(false)} heading={`<span>${(lesson.name[lang] ? lesson.name[lang] : lesson.name['ua'])} / </span>${translate('test_qa_for')} ${userItem ? userItem.name : 'Такого учня у школі більше немає'}`}>
+                        {
+                            lessonQA ?
+                                <>
+                                    <Article content={reworkQA(lessonQA)} comments={comments} setComments={setComments}/>
+                                    <hr/>
+                                    <Form fields={[{type: 'text', placeholder: 'score', id: 'score', value: score}]} setFieldValue={(fieldID, value) => setScore(value)}/>
+                                    <div className="adminTesting__btnScore">
+                                        <span className="btn btn_primary" onClick={handleSetScore}>
+                                            { translate('set_score') }
+                                        </span>
+                                    </div>
+                                </>
+                                :
+                                <Preloader/>
+                        }
+                    </Modal>
+                    :
+                    null
+            }
+            {
+                showConfirmDelete ?
+                    <Confirm message={translate('sure_to_delete_test')} cancelAction={() => setShowConfirmDelete(false)} confirmAction={handleDeleteTest} />
+                    :
+                    null
+            }
+        </div>
+    );
 }
 
 const mapDispatchToProps = dispatch => ({

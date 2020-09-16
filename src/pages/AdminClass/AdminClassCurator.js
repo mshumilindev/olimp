@@ -14,7 +14,7 @@ export default function AdminClassCurator({loading, classData, canEdit, setCurat
             </div>
             {
                 classData ?
-                    <UserPicker noneditable={!canEdit()} placeholder={translate('pick_curator')} type={'teacher'} selectedList={classData.curator ? [classData.curator] : []} addUsers={setCurator} />
+                    <UserPicker noneditable={!canEdit} placeholder={translate('pick_curator')} type={'teacher'} selectedList={classData.curator ? [classData.curator] : []} addUsers={setCurator} />
                     :
                     loading ?
                         <Preloader/>

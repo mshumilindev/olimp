@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {memo, useCallback, useContext, useMemo, useState} from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
@@ -12,130 +12,99 @@ const Form = React.lazy(() => import('../../components/Form/Form'));
 
 function AdminClasses({classesList, loading, searchQuery, filters, createClass}) {
     const { translate, lang } = useContext(siteSettingsContext);
-    const initialClassFields = [
-        {
-            type: 'block',
-            id: 'titles',
-            heading: translate('title'),
-            children: [
-                {
-                    value: '',
-                    id: 'title_ua',
-                    placeholder: translate('title') + ' ' + translate('in_ua'),
-                    type: 'text',
-                    updated: false,
-                    required: true
-                },
-                {
-                    value: '',
-                    id: 'title_ru',
-                    placeholder: translate('title') + ' ' + translate('in_ru'),
-                    type: 'text',
-                    updated: false
-                },
-                {
-                    value: '',
-                    id: 'title_en',
-                    placeholder: translate('title') + ' ' + translate('in_en'),
-                    type: 'text',
-                    updated: false
-                }
-            ]
-        },
-        {
-            type: 'block',
-            id: 'info',
-            heading: translate('description'),
-            children: [
-                {
-                    value: '',
-                    id: 'info_ua',
-                    placeholder: translate('description') + ' ' + translate('in_ua'),
-                    type: 'textarea',
-                    updated: false,
-                },
-                {
-                    value: '',
-                    id: 'info_ru',
-                    placeholder: translate('description') + ' ' + translate('in_ru'),
-                    type: 'textarea',
-                    updated: false
-                },
-                {
-                    value: '',
-                    id: 'info_en',
-                    placeholder: translate('description') + ' ' + translate('in_en'),
-                    type: 'textarea',
-                    updated: false
-                }
-            ]
-        },
-        {
-            type: 'submit',
-            id: 'submit_create_class',
-            name: translate('create')
-        }
-    ];
-    const initialNewClass = {
-        title: {
-            ua: '',
-            ru: '',
-            en: ''
-        },
-        info: {
-            ua: '',
-            ru: '',
-            en: ''
-        }
-    };
+    const initialClassFields = useMemo(() => {
+        return [
+            {
+                type: 'block',
+                id: 'titles',
+                heading: translate('title'),
+                children: [
+                    {
+                        value: '',
+                        id: 'title_ua',
+                        placeholder: translate('title') + ' ' + translate('in_ua'),
+                        type: 'text',
+                        updated: false,
+                        required: true
+                    },
+                    {
+                        value: '',
+                        id: 'title_ru',
+                        placeholder: translate('title') + ' ' + translate('in_ru'),
+                        type: 'text',
+                        updated: false
+                    },
+                    {
+                        value: '',
+                        id: 'title_en',
+                        placeholder: translate('title') + ' ' + translate('in_en'),
+                        type: 'text',
+                        updated: false
+                    }
+                ]
+            },
+            {
+                type: 'block',
+                id: 'info',
+                heading: translate('description'),
+                children: [
+                    {
+                        value: '',
+                        id: 'info_ua',
+                        placeholder: translate('description') + ' ' + translate('in_ua'),
+                        type: 'textarea',
+                        updated: false,
+                    },
+                    {
+                        value: '',
+                        id: 'info_ru',
+                        placeholder: translate('description') + ' ' + translate('in_ru'),
+                        type: 'textarea',
+                        updated: false
+                    },
+                    {
+                        value: '',
+                        id: 'info_en',
+                        placeholder: translate('description') + ' ' + translate('in_en'),
+                        type: 'textarea',
+                        updated: false
+                    }
+                ]
+            },
+            {
+                type: 'submit',
+                id: 'submit_create_class',
+                name: translate('create')
+            }
+        ];
+    }, [translate]);
+
+    const initialNewClass = useMemo(() => {
+        return {
+            title: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            info: {
+                ua: '',
+                ru: '',
+                en: ''
+            }
+        };
+    }, []);
+
     const [ showCreateClass, setShowCreateClass ] = useState(false);
     const [ newClassFields, setNewClassFields ] = useState(JSON.stringify(initialClassFields));
     const [ newClass, setNewClass ] = useState(initialNewClass);
 
-    return (
-        <div className="adminClasses">
-            <section className="section">
-                <div className="section__title-holder">
-                    <h2 className="section__title">
-                        <i className={'content_title-icon fa fa-graduation-cap'} />
-                        { translate('classes') }
-                    </h2>
-                    <div className="section__title-actions">
-                        <span>
-                            <a href="/" className="btn btn_primary" onClick={e => startCreateClass(e)}>
-                                <i className="content_title-icon fa fa-plus"/>
-                                { translate('create_class') }
-                            </a>
-                        </span>
-                    </div>
-                    {
-                        loading ?
-                            <Preloader size={60}/>
-                            :
-                            null
-                    }
-                </div>
-                { filters }
-                <AdminClassesList list={filterClasses(classesList)} loading={loading} searchQuery={searchQuery} startCreateClass={startCreateClass}/>
-            </section>
-            {
-                showCreateClass ?
-                    <Modal onHideModal={hideModal}>
-                        <Form fields={JSON.parse(newClassFields)} heading={translate('create_class')} setFieldValue={handleNewClassValue} formAction={handleCreateClass} loading={loading} />
-                    </Modal>
-                    :
-                    null
-            }
-        </div>
-    );
-
-    function hideModal() {
+    const hideModal = useCallback(() => {
         setShowCreateClass(false);
         setNewClassFields(JSON.stringify(initialClassFields));
         setNewClass(initialNewClass);
-    }
+    }, [setShowCreateClass, setNewClassFields, initialClassFields, setNewClass, initialNewClass]);
 
-    function handleNewClassValue(fieldID, value) {
+    const handleNewClassValue = useCallback((fieldID, value) => {
         const tempNewClass = newClass;
         const tempNewClassFields = JSON.parse(newClassFields);
 
@@ -173,9 +142,9 @@ function AdminClasses({classesList, loading, searchQuery, filters, createClass})
         setNewClass({
             ...tempNewClass
         });
-    }
+    }, [newClass, newClassFields, setNewClassFields, setNewClass]);
 
-    function handleCreateClass() {
+    const handleCreateClass = useCallback(() => {
         const newClassID = generator.generate({
             length: 16,
             strict: true
@@ -215,15 +184,15 @@ function AdminClasses({classesList, loading, searchQuery, filters, createClass})
             courses: []
         });
         hideModal();
-    }
+    }, [createClass, newClass, hideModal]);
 
-    function startCreateClass(e) {
+    const startCreateClass = useCallback(e => {
         e.preventDefault();
 
         setShowCreateClass(true);
-    }
+    }, [setShowCreateClass]);
 
-    function filterClasses() {
+    const filterClasses = useCallback(() => {
         const editedSearchQuery = searchQuery.toLowerCase();
         let newClasses = classesList;
 
@@ -249,7 +218,44 @@ function AdminClasses({classesList, loading, searchQuery, filters, createClass})
                 return aTitle - bTitle;
             });
         }
-    }
+    }, [searchQuery, classesList, lang]);
+
+    return (
+        <div className="adminClasses">
+            <section className="section">
+                <div className="section__title-holder">
+                    <h2 className="section__title">
+                        <i className={'content_title-icon fa fa-graduation-cap'} />
+                        { translate('classes') }
+                    </h2>
+                    <div className="section__title-actions">
+                        <span>
+                            <a href="/" className="btn btn_primary" onClick={e => startCreateClass(e)}>
+                                <i className="content_title-icon fa fa-plus"/>
+                                { translate('create_class') }
+                            </a>
+                        </span>
+                    </div>
+                    {
+                        loading ?
+                            <Preloader size={60}/>
+                            :
+                            null
+                    }
+                </div>
+                { filters }
+                <AdminClassesList list={filterClasses(classesList)} loading={loading} searchQuery={searchQuery} startCreateClass={startCreateClass}/>
+            </section>
+            {
+                showCreateClass ?
+                    <Modal onHideModal={hideModal}>
+                        <Form fields={JSON.parse(newClassFields)} heading={translate('create_class')} setFieldValue={handleNewClassValue} formAction={handleCreateClass} loading={loading} />
+                    </Modal>
+                    :
+                    null
+            }
+        </div>
+    );
 }
 const mapStateToProps = state => ({
     classesList: state.classesReducer.classesList,

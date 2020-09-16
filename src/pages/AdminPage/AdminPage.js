@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { withRouter  } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -71,6 +71,38 @@ function AdminPage({fetchPage, params, pageData, updatePage, loading}) {
         }
     });
 
+    const setContent = useCallback((newContent) => {
+        setPage({
+            ...page,
+            content: newContent
+        });
+    }, [setPage, page]);
+
+    const setInfoFieldValue = useCallback((fieldID, value) => {
+        const newPageName = page.name;
+
+        pageInfoFields.find(item => item.id === fieldID).value = value;
+        pageInfoFields.find(item => item.id === fieldID).updated = !!value;
+
+        if ( fieldID === 'name_ua' ) {
+            newPageName.ua = value;
+        }
+        if ( fieldID === 'name_ru' ) {
+            newPageName.ru = value;
+        }
+        if ( fieldID === 'name_en' ) {
+            newPageName.en = value;
+        }
+
+        setPage({
+            ...page,
+            name: {
+                ...newPageName
+            },
+            featured: fieldID === 'featured' ? value : page.featured
+        });
+    }, [page, pageInfoFields, setPage]);
+
     return (
         <div className="adminPage">
             <section className="section">
@@ -128,38 +160,6 @@ function AdminPage({fetchPage, params, pageData, updatePage, loading}) {
             </section>
         </div>
     );
-
-    function setContent(newContent) {
-        setPage({
-            ...page,
-            content: newContent
-        });
-    }
-
-    function setInfoFieldValue(fieldID, value) {
-        const newPageName = page.name;
-
-        pageInfoFields.find(item => item.id === fieldID).value = value;
-        pageInfoFields.find(item => item.id === fieldID).updated = !!value;
-
-        if ( fieldID === 'name_ua' ) {
-            newPageName.ua = value;
-        }
-        if ( fieldID === 'name_ru' ) {
-            newPageName.ru = value;
-        }
-        if ( fieldID === 'name_en' ) {
-            newPageName.en = value;
-        }
-
-        setPage({
-            ...page,
-            name: {
-                ...newPageName
-            },
-            featured: fieldID === 'featured' ? value : page.featured
-        });
-    }
 
     function onUpdatePage(e) {
         e.preventDefault();

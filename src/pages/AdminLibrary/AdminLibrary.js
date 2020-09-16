@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {connect} from "react-redux";
 import {fetchLibrary, deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -30,7 +30,7 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
         if ( user.role === 'admin' ) {
             fetchLibrary();
         }
-    }, []);
+    }, [user, fetchLibrary]);
 
     useEffect(() => {
         if ( user.role !== 'admin' ) {
@@ -41,7 +41,69 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
                 fetchLibrary();
             }
         }
-    }, [showOnlyMy]);
+    }, [showOnlyMy, user, fetchLibrary]);
+
+    const onConfirmRemove = useCallback(() => {
+        deleteDoc(docToDelete.id, docToDelete.ref);
+        setDocToDelete(null);
+        setShowConfirmRemove(false);
+    }, [deleteDoc, setDocToDelete, setShowConfirmRemove, docToDelete]);
+
+    const onDeleteDoc = useCallback((e, doc) => {
+        e.preventDefault();
+
+        setDocToDelete(doc);
+        setShowConfirmRemove(true);
+    }, [setDocToDelete, setShowConfirmRemove]);
+
+    const onUploadFile = useCallback((e) => {
+        e.preventDefault();
+        $fileRef.current.click();
+    }, [$fileRef]);
+
+    const fileChanged = useCallback(() => {
+        const file = $fileRef.current.files[0];
+
+        setFile({
+            ...newFile,
+            name: file.name
+        });
+        setShowModal(true);
+    }, [$fileRef, setFile, newFile, setShowModal]);
+
+    const setFieldValue = useCallback((fieldID, value) => {
+        setFile({
+            ...newFile,
+            [fieldID]: value
+        });
+    }, [setFile, newFile]);
+
+    const handleUploadFile = useCallback(() => {
+        const newID = generator.generate({
+            length: 16
+        });
+        uploadDoc(newFile, $fileRef.current.files[0], newID);
+        setFile({name: '', tags: [], teacher: user.role ==='teacher' ? user.id : ''});
+        setShowModal(false);
+
+        if ( $fileRef.current ) {
+            $fileRef.current.value = '';
+        }
+    }, [uploadDoc, $fileRef, newFile, setFile, user, setShowModal]);
+
+    const onHideModal = useCallback(() => {
+        $fileRef.current.value = '';
+        setShowModal(false);
+        setFile({
+            name: '',
+            tags: []
+        });
+    }, [$fileRef, setShowModal, setFile]);
+
+    const filterList = useCallback(() => {
+        return !list ? null : list
+            .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
+    }, [list, searchQuery]);
 
     return (
         <div className="adminLibrary">
@@ -86,67 +148,6 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
             }
         </div>
     );
-
-    function onConfirmRemove() {
-        deleteDoc(docToDelete.id, docToDelete.ref);
-        setDocToDelete(null);
-        setShowConfirmRemove(false);
-    }
-
-    function onDeleteDoc(e, doc) {
-        e.preventDefault();
-
-        setDocToDelete(doc);
-        setShowConfirmRemove(true);
-    }
-
-    function onUploadFile(e) {
-        e.preventDefault();
-        $fileRef.current.click();
-    }
-
-    function fileChanged() {
-        const file = $fileRef.current.files[0];
-        setFile({
-            ...newFile,
-            name: file.name
-        });
-        setShowModal(true);
-    }
-
-    function setFieldValue(fieldID, value) {
-        setFile({
-            ...newFile,
-            [fieldID]: value
-        });
-    }
-
-    function handleUploadFile() {
-        const newID = generator.generate({
-            length: 16
-        });
-        uploadDoc(newFile, $fileRef.current.files[0], newID);
-        setFile({name: '', tags: [], teacher: user.role ==='teacher' ? user.id : ''});
-        setShowModal(false);
-
-        if ( $fileRef.current ) {
-            $fileRef.current.value = '';
-        }
-    }
-
-    function onHideModal() {
-        $fileRef.current.value = '';
-        setShowModal(false);
-        setFile({
-            name: '',
-            tags: []
-        });
-    }
-
-    function filterList() {
-        return !list ? null : list
-            .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
-    }
 }
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,

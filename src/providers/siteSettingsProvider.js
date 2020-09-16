@@ -45,8 +45,8 @@ export default class SiteSettingsProvider extends React.Component {
             getCourseModel: () => {
                 return this.getCourseModel();
             },
-            getCourseFields: (course) => {
-                return this.getCourseFields(course);
+            getCourseFields: (currentUser, course) => {
+                return this.getCourseFields(currentUser, course);
             },
             getModuleModel: () => {
                 return this.getModuleModel();

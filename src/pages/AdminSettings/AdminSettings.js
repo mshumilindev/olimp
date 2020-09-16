@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useMemo, useCallback} from 'react';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import withFilters from "../../utils/withFilters";
@@ -19,15 +19,24 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
     const [ siteSettings, setSiteSettings ] = useState(null);
     const [ settingsUpdated, setSettingsUpdated ] = useState(false);
 
-    const emptyBlock = {
-        name: {
-            ua: '',
-            ru: '',
-            en: ''
-        },
-        id: generateID(),
-        phone: ''
-    };
+    const generateID = useCallback(() => (
+        generator.generate({
+            length: 16,
+            strict: true
+        })
+    ), []);
+
+    const emptyBlock = useMemo(() => (
+        {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            id: generateID(),
+            phone: ''
+        }
+    ), [generateID]);
 
     if ( (contactList && !contacts) || JSON.stringify(contactList) !== initialContacts ) {
         setContacts(JSON.stringify(contactList));
@@ -48,7 +57,78 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
                 setSettingsUpdated(false);
             }
         }
-    });
+    }, [contactList, siteSettingsList, initialContacts, contacts, initialSiteSettings, siteSettings, setSettingsUpdated]);
+
+    const updateSettings = useCallback((e) => {
+        e.preventDefault();
+
+        if ( settingsUpdated ) {
+            updateContact(JSON.parse(contacts));
+            updateSiteSettings(JSON.parse(siteSettings));
+            setUpdates('siteSettings');
+        }
+    }, [settingsUpdated, updateContact, contacts, updateSiteSettings, siteSettings, setUpdates]);
+
+    const addBlock = useCallback(() => {
+        const newList = JSON.parse(contacts);
+
+        newList.push({
+            ...emptyBlock
+        });
+
+        setContacts(JSON.stringify(newList));
+    }, [contacts, emptyBlock, setContacts]);
+
+    const removeBlock = useCallback((blockID) => {
+        const newList = JSON.parse(contacts);
+
+        newList.splice(newList.indexOf(newList.find(item => item.id === blockID)), 1);
+
+        setContacts(JSON.stringify(newList));
+    }, [contacts, setContacts]);
+
+    const updateModel = useCallback((fieldID, value) => {
+        const newList = JSON.parse(contacts);
+        const strippedID = fieldID.substr(0, fieldID.indexOf('_'));
+        const currentField = newList.find(item => item.id === strippedID);
+
+        const newSiteSettings = JSON.parse(siteSettings);
+
+        if ( fieldID.includes('_nameUA') ) {
+            currentField.name.ua = value;
+        }
+        else if ( fieldID.includes('_nameRU') ) {
+            currentField.name.ru = value;
+        }
+        else if ( fieldID.includes('_nameEN') ) {
+            currentField.name.en = value;
+        }
+        else if ( fieldID.includes('_tel') ) {
+            currentField.phone = value;
+        }
+        else if ( fieldID.includes('siteName_UA') ) {
+            newSiteSettings.siteName.ua = value;
+        }
+        else if ( fieldID.includes('siteName_RU') ) {
+            newSiteSettings.siteName.ru = value;
+        }
+        else if ( fieldID.includes('siteName_EN') ) {
+            newSiteSettings.siteName.en = value;
+        }
+        else if ( fieldID === 'logo' ) {
+            newSiteSettings.logo.url = value;
+        }
+        else if ( fieldID === 'address' ) {
+            newSiteSettings.address.value = value;
+        }
+
+        if ( fieldID.includes('_nameUA') || fieldID.includes('_nameRU') || fieldID.includes('_nameEN') || fieldID.includes('_tel') ) {
+            setContacts(JSON.stringify(newList));
+        }
+        else {
+            setSiteSettings(JSON.stringify(newSiteSettings));
+        }
+    }, [contacts, siteSettings, setContacts, setSiteSettings]);
 
     return (
         <div className="adminSettings">
@@ -120,84 +200,6 @@ function AdminSettings({contactList, loading, updateContact, siteSettingsList, s
             </section>
         </div>
     );
-
-    function updateSettings(e) {
-        e.preventDefault();
-
-        if ( settingsUpdated ) {
-            updateContact(JSON.parse(contacts));
-            updateSiteSettings(JSON.parse(siteSettings));
-            setUpdates('siteSettings');
-        }
-    }
-
-    function addBlock() {
-        const newList = JSON.parse(contacts);
-
-        newList.push({
-            ...emptyBlock
-        });
-
-        setContacts(JSON.stringify(newList));
-    }
-
-    function removeBlock(blockID) {
-        const newList = JSON.parse(contacts);
-
-        newList.splice(newList.indexOf(newList.find(item => item.id === blockID)), 1);
-
-        setContacts(JSON.stringify(newList));
-    }
-
-    function generateID() {
-        return generator.generate({
-            length: 16,
-            strict: true
-        });
-    }
-
-    function updateModel(fieldID, value) {
-        const newList = JSON.parse(contacts);
-        const strippedID = fieldID.substr(0, fieldID.indexOf('_'));
-        const currentField = newList.find(item => item.id === strippedID);
-
-        const newSiteSettings = JSON.parse(siteSettings);
-
-        if ( fieldID.includes('_nameUA') ) {
-            currentField.name.ua = value;
-        }
-        else if ( fieldID.includes('_nameRU') ) {
-            currentField.name.ru = value;
-        }
-        else if ( fieldID.includes('_nameEN') ) {
-            currentField.name.en = value;
-        }
-        else if ( fieldID.includes('_tel') ) {
-            currentField.phone = value;
-        }
-        else if ( fieldID.includes('siteName_UA') ) {
-            newSiteSettings.siteName.ua = value;
-        }
-        else if ( fieldID.includes('siteName_RU') ) {
-            newSiteSettings.siteName.ru = value;
-        }
-        else if ( fieldID.includes('siteName_EN') ) {
-            newSiteSettings.siteName.en = value;
-        }
-        else if ( fieldID === 'logo' ) {
-            newSiteSettings.logo.url = value;
-        }
-        else if ( fieldID === 'address' ) {
-            newSiteSettings.address.value = value;
-        }
-
-        if ( fieldID.includes('_nameUA') || fieldID.includes('_nameRU') || fieldID.includes('_nameEN') || fieldID.includes('_tel') ) {
-            setContacts(JSON.stringify(newList));
-        }
-        else {
-            setSiteSettings(JSON.stringify(newSiteSettings));
-        }
-    }
 }
 const mapStateToProps = state => ({
     contactList: state.contactReducer.contactList,

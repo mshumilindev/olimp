@@ -33,7 +33,7 @@ export default function AdminClassDescr({loading, classData, canEdit, setDescr})
                 }
             ]));
         }
-    }, [classData]);
+    }, [classData, setClassDescrFields, translate]);
 
     return (
         <div className="widget">
@@ -43,7 +43,7 @@ export default function AdminClassDescr({loading, classData, canEdit, setDescr})
             </div>
             {
                 classData ?
-                    canEdit() ?
+                    canEdit ?
                         <Form fields={classDescrFields} setFieldValue={setDescr} loading={loading} />
                         :
                         classData.info[lang] ? classData.info[lang] : classData.info['ua']

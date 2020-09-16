@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useMemo, useCallback} from 'react';
 import {
     fetchLessonContent,
     fetchLessonMeta,
@@ -47,18 +47,20 @@ function AdminLesson(
     const [ currentContent, setCurrentContent ] = useState(null);
     const [ currentQA, setCurrentQA ] = useState(null);
     const [ showPreview, setShowPreview ] = useState(false);
-    const breadcrumbs = [
-        {
-            name: translate('subjects'),
-            url: '/admin-courses'
-        }
-    ];
+    const breadcrumbs = useMemo(() => (
+        [
+            {
+                name: translate('subjects'),
+                url: '/admin-courses'
+            }
+        ]
+    ), [translate]);
 
     useEffect(() => {
         fetchLessonMeta(subjectID, courseID, moduleID, lessonID);
         fetchLessonContent(subjectID, courseID, moduleID, lessonID);
         fetchLessonQA(subjectID, courseID, moduleID, lessonID);
-    }, []);
+    }, [fetchLessonMeta, fetchLessonContent, fetchLessonQA, subjectID, courseID, moduleID, lessonID]);
 
     useEffect(() => {
         setCurrentContent(JSON.parse(JSON.stringify(orderBy(lessonContent, v => v.index))));
@@ -73,7 +75,7 @@ function AdminLesson(
                 setContentUpdated(false);
             }
         }
-    }, [currentContent]);
+    }, [currentContent, setContentUpdated, lessonContent]);
 
     useEffect(() => {
         setCurrentQA(JSON.parse(JSON.stringify(orderBy(lessonQA, v => v.index))));
@@ -88,7 +90,7 @@ function AdminLesson(
                 setQAUpdated(false);
             }
         }
-    }, [currentQA]);
+    }, [currentQA, lessonQA, setQAUpdated]);
 
     useEffect(() => {
         window.onbeforeunload = (lessonUpdated || contentUpdated || QAUpdated) && (() => translate('save_before_leaving'));
@@ -97,7 +99,159 @@ function AdminLesson(
     useEffect(() => {
         setLessonInfoFields(Object.assign([], getLessonFields(lessonMeta, false)));
         setLessonUpdated(false);
-    }, [lessonMeta]);
+    }, [lessonMeta, setLessonInfoFields, setLessonUpdated, getLessonFields]);
+
+    const getBreadcrumbs = useCallback(() => {
+        if ( params ) {
+            let currentSubject = null;
+            let currentCourse = null;
+            let currentModule = null;
+
+            if ( params.subjectID ) {
+                currentSubject = allCoursesList.find(item => item.id === params.subjectID);
+                if ( !breadcrumbs.some(item => item.url === '/admin-courses/' + params.subjectID) ) {
+                    breadcrumbs.push({
+                        name: currentSubject ? currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] : '',
+                        url: '/admin-courses/' + params.subjectID
+                    });
+                }
+            }
+            if ( params.courseID ) {
+                if ( currentSubject && currentSubject.coursesList ) {
+                    currentCourse = currentSubject.coursesList.find(item => item.id === params.courseID);
+                    if ( !breadcrumbs.some(item => item.url === '/admin-courses/' + params.subjectID + '/' + params.courseID) ) {
+                        breadcrumbs.push({
+                            name: currentCourse ? currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] : '',
+                            url: '/admin-courses/' + params.subjectID + '/' + params.courseID
+                        });
+                    }
+                }
+            }
+            if ( params.moduleID ) {
+                if ( currentCourse && currentCourse.modules ) {
+                    currentModule = currentCourse.modules.find(item => item.id === params.moduleID);
+                    if ( !breadcrumbs.some(item => item.url === '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID) ) {
+                        breadcrumbs.push({
+                            name: currentModule ? currentModule.name[lang] ? currentModule.name[lang] : currentModule.name['ua'] : '',
+                            url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID
+                        });
+                    }
+                }
+            }
+        }
+
+        if ( !breadcrumbs.some(item => item.url === '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + params.lessonID) ) {
+            breadcrumbs.push({
+                name: `<span class="breadcrumbs__modifier">${translate('lesson')}: </span>${lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']}`,
+                url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + params.lessonID
+            });
+        }
+
+        return breadcrumbs;
+    }, [params, breadcrumbs, allCoursesList, lang, lessonMeta, translate]);
+
+    const checkIfEditable = useMemo(() => {
+        let isEditable = false;
+
+        if ( user.role === 'admin' ) {
+            isEditable = true;
+        }
+        else {
+            if ( allCoursesList ) {
+                allCoursesList.forEach(subjectItem => {
+                    if ( subjectItem.coursesList.length ) {
+                        subjectItem.coursesList.forEach(courseItem => {
+                            if (courseItem.id === courseID ) {
+                                if ( courseItem.teacher === user.id ) {
+                                    isEditable = true;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        return isEditable;
+    }, [user, allCoursesList, courseID]);
+
+    const setInfoFieldValue = useCallback((fieldID, value) => {
+        const newLessonInfoFields = lessonInfoFields;
+
+        newLessonInfoFields.find(field => field.id === fieldID).value = value;
+        newLessonInfoFields.find(field => field.id === fieldID).updated = false;
+        setLessonUpdated(false);
+
+        if ( fieldID === 'lessonName_ua' ) {
+            if ( lessonMeta.name.ua !== value ) {
+                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
+                setLessonUpdated(true);
+            }
+        }
+        if ( fieldID === 'lessonName_ru' ) {
+            if ( lessonMeta.name.ru !== value ) {
+                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
+                setLessonUpdated(true);
+            }
+        }
+        if ( fieldID === 'lessonName_en' ) {
+            if ( lessonMeta.name.en !== value ) {
+                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
+                setLessonUpdated(true);
+            }
+        }
+
+        setLessonInfoFields(Object.assign([], newLessonInfoFields));
+    }, [lessonInfoFields, setLessonUpdated, lessonMeta, setLessonInfoFields]);
+
+    const updateContent = useCallback((type, newContent) => {
+        if ( type === 'content' ) {
+            setCurrentContent(Object.assign([], newContent));
+        }
+        if ( type === 'QA' ) {
+            setCurrentQA(Object.assign([], newContent));
+        }
+    }, [setCurrentContent, setCurrentQA]);
+
+    const saveLesson = useCallback((e) => {
+        e.preventDefault();
+
+        if ( lessonUpdated ) {
+            const updatedLessonFields = lessonInfoFields;
+            const newMeta = {
+                ...lessonMeta,
+                name: {
+                    ua: updatedLessonFields.find(field => field.id === 'lessonName_ua').value,
+                    ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
+                    en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
+                }
+            };
+            updateLessonMeta(subjectID, courseID, moduleID, lessonID, newMeta);
+        }
+
+        if ( contentUpdated ) {
+            updateLessonContent(subjectID, courseID, moduleID, lessonID, currentContent);
+        }
+
+        if ( QAUpdated ) {
+            updateLessonQA(subjectID, courseID, moduleID, lessonID, currentQA);
+        }
+    }, [
+        lessonUpdated,
+        lessonInfoFields,
+        lessonMeta,
+        updateLessonMeta,
+        contentUpdated,
+        updateLessonContent,
+        QAUpdated,
+        updateLessonQA,
+        subjectID,
+        courseID,
+        moduleID,
+        lessonID,
+        currentQA,
+        currentContent
+    ]);
 
     return (
         lessonMeta && allCoursesList ?
@@ -108,7 +262,7 @@ function AdminLesson(
                         <Breadcrumbs list={getBreadcrumbs()} />
                     </h2>
                     {
-                        checkIfEditable() ?
+                        checkIfEditable ?
                             <div className="section__title-actions">
                                 <a href="/" className="btn btn__success" disabled={!lessonUpdated && !contentUpdated && !QAUpdated} onClick={saveLesson}>
                                     <i className="content_title-icon fa fa-save" />
@@ -137,7 +291,7 @@ function AdminLesson(
                                 { translate('info') }
                             </div>
                             {
-                                checkIfEditable() ?
+                                checkIfEditable ?
                                     <Form fields={lessonInfoFields} setFieldValue={setInfoFieldValue} loading={loading} />
                                     :
                                     lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']
@@ -158,135 +312,6 @@ function AdminLesson(
             :
             <Preloader/>
     );
-
-    function getBreadcrumbs() {
-        if ( params ) {
-            let currentSubject = null;
-            let currentCourse = null;
-            let currentModule = null;
-
-            if ( params.subjectID ) {
-                currentSubject = allCoursesList.find(item => item.id === params.subjectID);
-                breadcrumbs.push({
-                    name: currentSubject ? currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] : '',
-                    url: '/admin-courses/' + params.subjectID
-                });
-            }
-            if ( params.courseID ) {
-                if ( currentSubject.coursesList ) {
-                    currentCourse = currentSubject.coursesList.find(item => item.id === params.courseID);
-                    breadcrumbs.push({
-                        name: currentCourse ? currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] : '',
-                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID
-                    });
-                }
-            }
-            if ( params.moduleID ) {
-                if ( currentCourse && currentCourse.modules ) {
-                    currentModule = currentCourse.modules.find(item => item.id === params.moduleID);
-                    breadcrumbs.push({
-                        name: currentModule ? currentModule.name[lang] ? currentModule.name[lang] : currentModule.name['ua'] : '',
-                        url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID
-                    });
-                }
-            }
-        }
-
-        breadcrumbs.push({
-            name: `<span class="breadcrumbs__modifier">${translate('lesson')}: </span>${lessonMeta.name[lang] ? lessonMeta.name[lang] : lessonMeta.name['ua']}`,
-            url: '/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + params.moduleID + '/' + params.lessonID
-        });
-
-        return breadcrumbs;
-    }
-
-    function checkIfEditable() {
-        let isEditable = false;
-
-        if ( user.role === 'admin' ) {
-            isEditable = true;
-        }
-        else {
-            if ( allCoursesList ) {
-                allCoursesList.forEach(subjectItem => {
-                    if ( subjectItem.coursesList.length ) {
-                        subjectItem.coursesList.forEach(courseItem => {
-                            if (courseItem.id === courseID ) {
-                                if ( courseItem.teacher === user.id ) {
-                                    isEditable = true;
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-        }
-
-        return isEditable;
-    }
-
-    function setInfoFieldValue(fieldID, value) {
-        const newLessonInfoFields = lessonInfoFields;
-
-        newLessonInfoFields.find(field => field.id === fieldID).value = value;
-        newLessonInfoFields.find(field => field.id === fieldID).updated = false;
-        setLessonUpdated(false);
-
-        if ( fieldID === 'lessonName_ua' ) {
-            if ( lessonMeta.name.ua !== value ) {
-                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
-                setLessonUpdated(true);
-            }
-        }
-        if ( fieldID === 'lessonName_ru' ) {
-            if ( lessonMeta.name.ru !== value ) {
-                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
-                setLessonUpdated(true);
-            }
-        }
-        if ( fieldID === 'lessonName_en' ) {
-            if ( lessonMeta.name.en !== value ) {
-                newLessonInfoFields.find(field => field.id === fieldID).updated = true;
-                setLessonUpdated(true);
-            }
-        }
-
-        setLessonInfoFields(Object.assign([], newLessonInfoFields));
-    }
-
-    function updateContent(type, newContent) {
-        if ( type === 'content' ) {
-            setCurrentContent(Object.assign([], newContent));
-        }
-        if ( type === 'QA' ) {
-            setCurrentQA(Object.assign([], newContent));
-        }
-    }
-
-    function saveLesson(e) {
-        e.preventDefault();
-
-        if ( lessonUpdated ) {
-            const updatedLessonFields = lessonInfoFields;
-            const newMeta = {
-                ...lessonMeta,
-                name: {
-                    ua: updatedLessonFields.find(field => field.id === 'lessonName_ua').value,
-                    ru: updatedLessonFields.find(field => field.id === 'lessonName_ru').value,
-                    en: updatedLessonFields.find(field => field.id === 'lessonName_en').value,
-                }
-            };
-            updateLessonMeta(subjectID, courseID, moduleID, lessonID, newMeta);
-        }
-
-        if ( contentUpdated ) {
-            updateLessonContent(subjectID, courseID, moduleID, lessonID, currentContent);
-        }
-
-        if ( QAUpdated ) {
-            updateLessonQA(subjectID, courseID, moduleID, lessonID, currentQA);
-        }
-    }
 }
 const mapStateToProps = state => ({
     loading: state.lessonReducer.loading,

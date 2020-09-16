@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useCallback, useContext} from 'react';
 import { connect } from 'react-redux';
 import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -9,6 +9,10 @@ import {fetchTests} from "../../redux/actions/testsActions";
 
 function AdminTesting({user, coursesList, tests}) {
     const { translate, lang } = useContext(siteSettingsContext);
+
+    const filterCourses = useCallback(() => {
+        return orderBy(coursesList, v => v.name[lang] ? v.name[lang] : v.name['ua']).filter(subjectItem => subjectItem.coursesList.some(courseItem => courseItem.teacher === user.id)).filter(subjectItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id));
+    }, [coursesList, lang, tests, user]);
 
     return (
         <div className="adminTesting">
@@ -39,10 +43,6 @@ function AdminTesting({user, coursesList, tests}) {
             </section>
         </div>
     );
-
-    function filterCourses() {
-        return orderBy(coursesList, v => v.name[lang] ? v.name[lang] : v.name['ua']).filter(subjectItem => subjectItem.coursesList.some(courseItem => courseItem.teacher === user.id)).filter(subjectItem => tests.some(testItem => testItem.lesson.subjectID === subjectItem.id));
-    }
 }
 
 const mapStateToProps = state => {

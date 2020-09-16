@@ -50,7 +50,7 @@ function AdminClassScheduleDay({canEdit, day, selectedCourses, coursesList, hand
                 }
             </div>
             {
-                canEdit() ?
+                canEdit ?
                     <div className="adminClass__schedule-item-add" onClick={() => setShowAddModal(true)}>
                         <i className="fa fa-plus" />
                     </div>

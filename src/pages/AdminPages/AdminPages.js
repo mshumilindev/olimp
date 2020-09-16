@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, {useContext, useState, useEffect, useRef, useMemo, useCallback} from 'react';
 import { Link } from 'react-router-dom';
 import {connect} from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
@@ -28,53 +28,58 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
     const [ showRemovePage, setShowRemovePage ] = useState(null);
     const [ showCreatePage, setShowCreatePage ] = useState(false);
     const [ formUpdated, setFormUpdated ] = useState(false);
-    const initialNewPage = {
-        name: {
-            ua: '',
-            ru: '',
-            en: ''
-        },
-        featured: ''
-    };
-    const initialNewPageFields = [
-        {
-            value: '',
-            id: 'featured',
-            type: 'image',
-            updated: false,
-            size: 200,
-            shape: 'landscape',
-            label: translate('upload'),
-            icon: 'fa fa-image'
-        },
-        {
-            value: '',
-            id: 'name_ua',
-            placeholder: translate('title') + ' ' + translate('in_ua'),
-            type: 'text',
-            updated: false,
-            required: true
-        },
-        {
-            value: '',
-            id: 'name_ru',
-            placeholder: translate('title') + ' ' + translate('in_ru'),
-            type: 'text',
-            updated: false
-        },
-        {
-            value: '',
-            id: 'name_en',
-            placeholder: translate('title') + ' ' + translate('in_en'),
-            type: 'text',
-            updated: false
-        },
-        {
-            type: 'submit',
-            id: 'submit_create_page',
-            name: translate('create')
-        }
-    ];
+    const initialNewPage = useMemo(() => {
+        return {
+            name: {
+                ua: '',
+                ru: '',
+                en: ''
+            },
+            featured: ''
+        };
+    }, []);
+    const initialNewPageFields = useMemo(() => {
+        return [
+            {
+                value: '',
+                id: 'featured',
+                type: 'image',
+                updated: false,
+                size: 200,
+                shape: 'landscape',
+                label: translate('upload'),
+                icon: 'fa fa-image'
+            },
+            {
+                value: '',
+                id: 'name_ua',
+                placeholder: translate('title') + ' ' + translate('in_ua'),
+                type: 'text',
+                updated: false,
+                required: true
+            },
+            {
+                value: '',
+                id: 'name_ru',
+                placeholder: translate('title') + ' ' + translate('in_ru'),
+                type: 'text',
+                updated: false
+            },
+            {
+                value: '',
+                id: 'name_en',
+                placeholder: translate('title') + ' ' + translate('in_en'),
+                type: 'text',
+                updated: false
+            },
+            {
+                type: 'submit',
+                id: 'submit_create_page',
+                name: translate('create')
+            }
+        ];
+    }, [translate]);
+
     const [ newPage, setNewPage ] = useState({
         name: {
             ua: '',
@@ -90,6 +95,90 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
             hideModal();
         }
     });
+
+    const handleCreatePage = useCallback(() => {
+        const newPageID = generator.generate({
+            length: 16,
+            strict: true
+        });
+        createPage(newPageID, {
+            ...newPage,
+            slug: identify(transliterize(newPage.name.ua))
+        });
+    }, [createPage, newPage, identify, transliterize]);
+
+    const hideModal = useCallback(() => {
+        setNewPage(initialNewPage);
+        setNewPageFields(initialNewPageFields);
+        setShowCreatePage(false);
+    }, [setNewPage, initialNewPage, setNewPageFields, initialNewPageFields, setShowCreatePage]);
+
+    const handleNewPageValue = useCallback((fieldID, value) => {
+        const tempNewPage = newPage;
+
+        newPageFields.find(field => field.id === fieldID).value = value;
+        newPageFields.find(field => field.id === fieldID).updated = !!value.length;
+
+        setNewPageFields(newPageFields);
+
+        if ( fieldID === 'name_ua' ) {
+            tempNewPage.name.ua = value;
+        }
+        if ( fieldID === 'name_ru' ) {
+            tempNewPage.name.ru = value;
+        }
+        if ( fieldID === 'name_en' ) {
+            tempNewPage.name.en = value;
+        }
+        if ( fieldID === 'featured' ) {
+            tempNewPage.featured = value;
+        }
+
+        setNewPage({
+            ...tempNewPage
+        });
+
+        if ( tempNewPage.name.ua ) {
+            setFormUpdated(true);
+        }
+        else {
+            setFormUpdated(false);
+        }
+    }, [newPage, setNewPageFields, setNewPage, setFormUpdated, newPageFields]);
+
+    const handleRemovePage = useCallback((pageID) => {
+        removePage(pageID);
+        setShowRemovePage(null);
+    }, [removePage, setShowRemovePage]);
+
+    const startCreatePage = useCallback((e) => {
+        e.preventDefault();
+        setShowCreatePage(true);
+    }, [setShowCreatePage]);
+
+    const filterPages = useCallback(() => {
+        const editedSearchQuery = searchQuery.toLowerCase();
+        let newPages = list;
+
+        if ( list ) {
+            if ( editedSearchQuery.trim() ) {
+                newPages = list.filter(item => item.name.ua.toLowerCase().includes(editedSearchQuery) || item.name.ru.toLowerCase().includes(editedSearchQuery) || item.name.ua.toLowerCase().includes(editedSearchQuery));
+            }
+        }
+
+        return newPages.sort((a, b) => {
+            const aTitle = a.name[lang] || a.name['ua'];
+            const bTitle = b.name[lang] || b.name['ua'];
+
+            if ( aTitle < bTitle ) {
+                return -1;
+            }
+            else if ( aTitle > bTitle ) {
+                return 1;
+            }
+            return 0;
+        });
+    }, [searchQuery, list, lang]);
 
     return (
         <div className="adminPages">
@@ -180,90 +269,6 @@ function AdminPages({list, searchQuery, filters, loading, removePage, createPage
             }
         </div>
     );
-
-    function handleCreatePage() {
-        const newPageID = generator.generate({
-            length: 16,
-            strict: true
-        });
-        createPage(newPageID, {
-            ...newPage,
-            slug: identify(transliterize(newPage.name.ua))
-        });
-    }
-
-    function hideModal() {
-        setNewPage(initialNewPage);
-        setNewPageFields(initialNewPageFields);
-        setShowCreatePage(false);
-    }
-
-    function handleNewPageValue(fieldID, value) {
-        const tempNewPage = newPage;
-
-        newPageFields.find(field => field.id === fieldID).value = value;
-        newPageFields.find(field => field.id === fieldID).updated = !!value.length;
-
-        setNewPageFields(newPageFields);
-
-        if ( fieldID === 'name_ua' ) {
-            tempNewPage.name.ua = value;
-        }
-        if ( fieldID === 'name_ru' ) {
-            tempNewPage.name.ru = value;
-        }
-        if ( fieldID === 'name_en' ) {
-            tempNewPage.name.en = value;
-        }
-        if ( fieldID === 'featured' ) {
-            tempNewPage.featured = value;
-        }
-
-        setNewPage({
-            ...tempNewPage
-        });
-
-        if ( tempNewPage.name.ua ) {
-            setFormUpdated(true);
-        }
-        else {
-            setFormUpdated(false);
-        }
-    }
-
-    function handleRemovePage(pageID) {
-        removePage(pageID);
-        setShowRemovePage(null);
-    }
-
-    function startCreatePage(e) {
-        e.preventDefault();
-        setShowCreatePage(true);
-    }
-
-    function filterPages() {
-        const editedSearchQuery = searchQuery.toLowerCase();
-        let newPages = list;
-
-        if ( list ) {
-            if ( editedSearchQuery.trim() ) {
-                newPages = list.filter(item => item.name.ua.toLowerCase().includes(editedSearchQuery) || item.name.ru.toLowerCase().includes(editedSearchQuery) || item.name.ua.toLowerCase().includes(editedSearchQuery));
-            }
-        }
-
-        return newPages.sort((a, b) => {
-            const aTitle = a.name[lang] || a.name['ua'];
-            const bTitle = b.name[lang] || b.name['ua'];
-
-            if ( aTitle < bTitle ) {
-                return -1;
-            }
-            else if ( aTitle > bTitle ) {
-                return 1;
-            }
-            return 0;
-        });
-    }
 }
 const mapStateToProps = state => ({
     list: state.staticInfoReducer.staticInfoList,
