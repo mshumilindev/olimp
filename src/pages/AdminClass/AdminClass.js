@@ -26,8 +26,17 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
     }, [fetchClass, discardClass, setCurrentClass, setClassUpdated, params]);
 
     useEffect(() => {
-        if ( classData && !currentClass ) {
-            setCurrentClass(Object.assign({}, classData));
+        if ( JSON.stringify(currentClass) !== JSON.stringify(classData) ) {
+            setClassUpdated(true);
+        }
+        else {
+            setClassUpdated(false);
+        }
+    }, [currentClass]);
+
+    useEffect(() => {
+        if ( classData ) {
+            setCurrentClass(JSON.parse(JSON.stringify(classData)));
         }
     }, [classData, currentClass, setCurrentClass]);
 
@@ -43,7 +52,6 @@ function AdminClass({user, fetchClass, params, classData, updateClass, loading, 
 
         if ( classUpdated ) {
             updateClass(currentClass.id, currentClass);
-            setClassUpdated(false);
         }
     }, [classUpdated, updateClass, currentClass, setClassUpdated]);
 

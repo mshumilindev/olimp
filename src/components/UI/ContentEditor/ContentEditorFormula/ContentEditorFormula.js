@@ -7,7 +7,6 @@ import MathJax from "react-mathjax-preview";
 export default function ContentEditorFormula({ block, setBlock, removeBlock, noBtns }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    const [ showEditor, setShowEditor ] = useState(false);
     const $wrapper = useRef(null);
     const editorToolbar = ['tiny_mce_wiris_formulaEditor | tiny_mce_wiris_formulaEditorChemistry'];
 
@@ -31,37 +30,14 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
         en: ''
     };
 
-    useEffect(() => {
-        document.addEventListener('click', handleShowEditor);
-
-        return () => {
-            document.removeEventListener('click', handleShowEditor);
-        }
-    }, []);
-
     return (
         <div className="contentEditor__block-text" ref={$wrapper}>
-            {
-                showEditor ?
-                    <Editor
-                        initialValue={block.value[lang]}
-                        onEditorChange={handleChange}
-                        init={editorConfig}
-                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-                    />
-                    :
-                    <div className="contentEditor__block-text-holder">
-                        <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
-                        {
-                            block.value[lang] || block.value['ua'] ?
-                                null
-                                :
-                                <div className="contentEditor__block-text-placeholder">
-                                    { translate('enter_formula') }
-                                </div>
-                        }
-                    </div>
-            }
+            <Editor
+                initialValue={block.value[lang]}
+                onEditorChange={handleChange}
+                init={editorConfig}
+                apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+            />
             {
                 !noBtns ?
                     <>
@@ -85,17 +61,6 @@ export default function ContentEditorFormula({ block, setBlock, removeBlock, noB
             }
         </div>
     );
-
-    function handleShowEditor(e) {
-        if ( e.target === $wrapper.current || $wrapper.current.contains(e.target) ) {
-            setShowEditor(true);
-        }
-        else {
-            if ( !e.target.classList.contains('wrs_stack') && !e.target.closest('.wrs_stack') ) {
-                setShowEditor(false);
-            }
-        }
-    }
 
     function onRemoveBlock(e) {
         e.preventDefault();

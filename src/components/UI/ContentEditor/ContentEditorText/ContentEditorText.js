@@ -6,7 +6,6 @@ import Confirm from '../../Confirm/Confirm';
 export default function ContentEditorText({ block, setBlock, removeBlock, noBtns, toolbar }) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ showRemoveBlock, setShowRemoveBlock ] = useState(false);
-    const [ showEditor, setShowEditor ] = useState(false);
     const $wrapper = useRef(null);
     const editorToolbar = toolbar || ['fullscreen undo redo | formatselect | forecolor | fontselect | fontsizeselect | numlist bullist | align | bold italic underline strikeThrough subscript superscript | image'];
 
@@ -33,37 +32,14 @@ export default function ContentEditorText({ block, setBlock, removeBlock, noBtns
         en: ''
     };
 
-    useEffect(() => {
-        document.addEventListener('click', handleShowEditor);
-
-        return () => {
-            document.removeEventListener('click', handleShowEditor);
-        }
-    }, []);
-
     return (
         <div className="contentEditor__block-text" ref={$wrapper}>
-            {
-                showEditor ?
-                    <Editor
-                        initialValue={block.value[lang] ? block.value[lang] : block.value['ua']}
-                        onEditorChange={handleChange}
-                        init={editorConfig}
-                        apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
-                    />
-                    :
-                    <div className="contentEditor__block-text-holder">
-                        <div dangerouslySetInnerHTML={{__html: block.value[lang] ? block.value[lang] : block.value['ua']}}/>
-                        {
-                            block.value[lang] || block.value['ua'] ?
-                                null
-                                :
-                                <div className="contentEditor__block-text-placeholder">
-                                    { translate('enter_text') }
-                                </div>
-                        }
-                    </div>
-            }
+            <Editor
+                initialValue={block.value[lang] ? block.value[lang] : block.value['ua']}
+                onEditorChange={handleChange}
+                init={editorConfig}
+                apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+            />
             {
                 !noBtns ?
                     <>
@@ -87,15 +63,6 @@ export default function ContentEditorText({ block, setBlock, removeBlock, noBtns
             }
         </div>
     );
-
-    function handleShowEditor(e) {
-        if ( e.target === $wrapper.current || $wrapper.current.contains(e.target) ) {
-            setShowEditor(true);
-        }
-        else {
-            setShowEditor(false);
-        }
-    }
 
     function onRemoveBlock(e) {
         e.preventDefault();

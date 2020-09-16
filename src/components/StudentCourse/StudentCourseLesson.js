@@ -83,40 +83,43 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
                     </div>
                 </h2>
                 {
-                    lesson && lesson.QA.length && !startQuestions ?
-                        !getTest() || !getTest().isSent ?
-                            <div className="content__title-actions">
-                                <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
-                                    { translate('start_quiz') }
-                                </a>
-                            </div>
-                            :
-                            getTest() && getTest().score ?
+                    !lesson || lesson.hideQA ?
+                        null
+                        :
+                        lesson.QA.length && !startQuestions ?
+                            !getTest() || !getTest().isSent ?
                                 <div className="content__title-actions">
-                                    <div className="studentLesson__score" onClick={e => handleStartQuestions(e)}>
-                                        <div className="studentLesson__score-item">
-                                            <div>{ translate('score') }</div>
-                                            <div className="studentLesson__score-num">{ getTest().score }</div>
-                                        </div>
-                                    </div>
+                                    <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
+                                        { translate('start_quiz') }
+                                    </a>
                                 </div>
                                 :
-                                <div className="content__title-actions">
-                                    <div className="studentLesson__score">
-                                        <div className="studentLesson__score-item">
-                                            <i className="fas fa-hourglass-half" />
+                                getTest() && getTest().score ?
+                                    <div className="content__title-actions">
+                                        <div className="studentLesson__score" onClick={e => handleStartQuestions(e)}>
+                                            <div className="studentLesson__score-item">
+                                                <div>{ translate('score') }</div>
+                                                <div className="studentLesson__score-num">{ getTest().score }</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                        :
-                        lesson && lesson.QA.length && (!getTest() || !getTest().score) ?
-                            <div className="content__title-actions">
-                                <span className="btn btn_primary" disabled={!isTestUpdated()} onClick={saveProgress}>
-                                    { translate('save') }
-                                </span>
-                            </div>
+                                    :
+                                    <div className="content__title-actions">
+                                        <div className="studentLesson__score">
+                                            <div className="studentLesson__score-item">
+                                                <i className="fas fa-hourglass-half" />
+                                            </div>
+                                        </div>
+                                    </div>
                             :
-                            null
+                            lesson && lesson.QA.length && (!getTest() || !getTest().score) ?
+                                <div className="content__title-actions">
+                                    <span className="btn btn_primary" disabled={!isTestUpdated()} onClick={saveProgress}>
+                                        { translate('save') }
+                                    </span>
+                                </div>
+                                :
+                                null
                 }
                 {
                     loading || testsLoading ?

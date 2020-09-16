@@ -107,7 +107,7 @@ function LibraryPicker({user, fetchLibrary, multiple, libraryList, addBooks, sel
                             </Scrollbars>
                         </div>
                         {
-                            libraryList.filter(item => user.role === 'admin' || item.teacher === user.id).length ?
+                            libraryList.filter(item => user.role === 'admin' || item.teacher.indexOf(user.id) !== -1) ?
                                 <div className="libraryPicker__list-btn">
                                     <a href="/" className="btn btn_primary" onClick={e => onAddBooks(e)}>
                                         {

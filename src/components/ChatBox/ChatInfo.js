@@ -32,6 +32,12 @@ export default function ChatInfo({isStatic, chat}) {
         if ( navigator.connection ) {
             navigator.connection.onchange = () => calcConnection();
         }
+
+        return () => {
+            if ( navigator.connection ) {
+                navigator.connection.onchange = null;
+            }
+        }
     }, []);
 
     return (

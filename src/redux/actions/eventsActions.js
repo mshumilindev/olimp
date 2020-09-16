@@ -8,7 +8,7 @@ export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 
 export function fetchEvents() {
-    return async dispatch => {
+    return dispatch => {
         const eventsCollection = db.collection('events').orderBy('datetime');
 
         dispatch(fetchEventsBegin());
@@ -26,7 +26,7 @@ export function fetchEvents() {
 }
 
 export function fetchEventsOrganizer(userID) {
-    return async dispatch => {
+    return dispatch => {
         const eventsCollection = db.collection('events').where('organizer', '==', userID);
 
         dispatch(fetchEventsBegin());
@@ -44,7 +44,7 @@ export function fetchEventsOrganizer(userID) {
 }
 
 export function fetchEventsParticipant(userID, date) {
-    return async dispatch => {
+    return dispatch => {
         let eventsCollection = db.collection('events').where('participants', 'array-contains', userID);
 
         if ( date ) {
@@ -54,6 +54,7 @@ export function fetchEventsParticipant(userID, date) {
         dispatch(fetchEventsBegin());
         return eventsCollection.onSnapshot(snapshot => {
             events.participant = [];
+
             snapshot.docs.forEach(doc => {
                 events.participant.push({
                     ...doc.data(),
