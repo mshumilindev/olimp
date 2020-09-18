@@ -3,10 +3,7 @@ import MainContainer from "../containers/configContainer";
 import AdminContainer from '../containers/adminContainer';
 import {connect} from "react-redux";
 import { withRouter } from 'react-router-dom';
-import firebase from "../db/firestore";
 import { checkIfLoggedin } from '../redux/actions/authActions';
-
-const db = firebase.firestore();
 
 function Page(props) {
     const {location, children, history, checkIfLoggedin, user} = props;
@@ -49,7 +46,7 @@ function Page(props) {
                 }
             }
         }
-    }, [user]);
+    }, [user, history, location]);
 
     return (
         user ?

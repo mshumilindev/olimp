@@ -1,9 +1,13 @@
 @import '../../assets/scss/utils/colors';
 @import '../../assets/scss/utils/fonts';
+@import '../../assets/scss/utils/sizes';
 
 .adminAttendance {
   .filters__selectClass {
     width: 150px;
+  }
+  .filters__showOnlyMy {
+    width: 250px;
   }
   .table {
     border: 1px solid $mediumGreyColor;
@@ -13,6 +17,10 @@
     &__body-cell {
       border: 1px solid $mediumGreyColor;
       vertical-align: top;
+      &:first-child {
+        vertical-align: middle;
+        text-align: center;
+      }
     }
   }
   &__classRow {
@@ -24,6 +32,8 @@
   }
   &__user {
     font-family: $RobotoCondensed;
+    font-weight: 600;
+    font-size: 18px;
   }
   &__day {
     text-align: center;
@@ -41,42 +51,103 @@
     &.isWeekend {
       opacity: .5;
     }
+    &.isToday {
+      background: $successColor;
+      margin: -10px;
+      padding: 10px;
+      .today {
+        font-size: 12px;
+        font-style: normal;
+        text-transform: lowercase;
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:hover:not(.adminAttendance__classRow) {
+        background: white !important;
+      }
+    }
   }
   &__check {
-    text-align: center;
-    cursor: pointer;
     display: flex;
-    margin-top: 10px;
+    text-align: center;
+    width: calc(100% + 20px);
+    flex-wrap: wrap;
+    padding: 10px 10px 10px 8px;
+    margin: 0 -10px;
+    box-sizing: border-box;
+    border-left: 2px solid $white;
+    &:nth-child(2n) {
+      background: $lightColor;
+      border-color: $lightColor;
+    }
     &:first-child {
-      margin-top: 0;
+      margin-top: -10px;
+    }
+    &:last-child {
+      margin-bottom: -10px;
     }
     &.isWeekend {
       opacity: .25;
     }
-    &-inner {
-      display: flex;
-      align-items: center;
-      color: $greyColor;
-      &:hover {
-        color: $baseColor;
-      }
-      &.isChecked {
+    &.isChecked {
+      border-color: $successColor;
+      [class$="-inner"] {
         color: $successColor;
         &:hover {
           opacity: .75;
         }
       }
+      [class$="-title"] {
+        color: $successColor;
+      }
+    }
+    &-inner {
+      display: flex;
+      align-items: center;
+      color: $greyColor;
+      width: calc(100% - 60px);
+      flex: 0 0 auto;
+      cursor: pointer;
+      &:hover {
+        color: $baseColor;
+      }
     }
     &-icon {
       font-size: 20px;
     }
-    &-title {
-      word-break: break-word;
+    &-time {
+      width: 100%;
       text-align: left;
       font-family: $RobotoCondensed;
-      font-weight: 400;
-      font-size: 14px;
+      margin-bottom: 10px;
+      color: $greyColor;
+      font-size: 12px;
+    }
+    &-title {
+      text-align: left;
+      font-family: $RobotoCondensed;
+      font-size: 16px;
+      font-weight: 600;
       letter-spacing: .5px;
+      padding-right: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+    &-label {
+      font-family: $RobotoCondensed;
+      font-size: 14px;
+    }
+  }
+  &__mark-input {
+    width: auto;
+    input {
+      width: 60px;
+      padding-right: 0;
+      height: 30px;
     }
   }
 }

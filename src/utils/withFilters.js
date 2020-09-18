@@ -18,7 +18,7 @@ const withFilters = (WrappedComponent, hasSearch, hasShowPerPage, sortByOptions,
             {
                 type: 'datepicker',
                 id: 'datepickerStart',
-                value: moment().subtract(7,'d').unix(),
+                value: moment().subtract(6,'d').unix(),
                 label: translate('from')
             }
         ]);

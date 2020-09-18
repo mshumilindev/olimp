@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import './filters.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 const FiltersSearchQuery = React.lazy(() => import('./FiltersSearchQuery'));
 const FiltersSortBy = React.lazy(() => import('./FiltersSortBy'));
@@ -11,7 +12,7 @@ const FiltersShowOnlyMy = React.lazy(() => import('./FiltersShowOnlyMy'));
 const FiltersSelectClass = React.lazy(() => import('./FiltersSelectClass'));
 const FiltersFilterByDate = React.lazy(() => import('./FiltersFilterByDate'));
 
-export default function Filters({searchQuery, sortBy, filterBy, showPerPage, filterChanged, showOnlyMy, showOnlyMyChecked, selectedClass, filterByDate}) {
+function Filters({user, searchQuery, sortBy, filterBy, showPerPage, filterChanged, showOnlyMy, showOnlyMyChecked, selectedClass, filterByDate}) {
     const { translate } = useContext(siteSettingsContext);
 
     return (
@@ -52,14 +53,6 @@ export default function Filters({searchQuery, sortBy, filterBy, showPerPage, fil
                             null
                     }
                     {
-                        typeof showOnlyMy !== 'undefined' ?
-                            <div className="filters__item filters__showOnlyMy">
-                                <FiltersShowOnlyMy showOnlyMyChecked={showOnlyMyChecked} filterChanged={filterChanged} />
-                            </div>
-                            :
-                            null
-                    }
-                    {
                         typeof selectedClass !== 'undefined' ?
                             <div className="filters__item filters__selectClass">
                                 <FiltersSelectClass selectedClass={selectedClass} filterChanged={filterChanged} />
@@ -75,6 +68,14 @@ export default function Filters({searchQuery, sortBy, filterBy, showPerPage, fil
                             :
                             null
                     }
+                    {
+                        typeof showOnlyMy !== 'undefined' && user.role !== 'admin' ?
+                            <div className="filters__item filters__showOnlyMy">
+                                <FiltersShowOnlyMy showOnlyMyChecked={showOnlyMyChecked} filterChanged={filterChanged} />
+                            </div>
+                            :
+                            null
+                    }
                 </div>
             </div>
         </div>
@@ -84,3 +85,11 @@ export default function Filters({searchQuery, sortBy, filterBy, showPerPage, fil
         return [searchQuery, sortBy, filterBy].filter(item => typeof item !== 'undefined').length === 1;
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.authReducer.currentUser
+    }
+};
+
+export default connect(mapStateToProps)(Filters);
