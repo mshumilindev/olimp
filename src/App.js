@@ -21,6 +21,7 @@ const StudentCourse = React.lazy(() => import('./pages/StudentCourse/StudentCour
 const StudentPage = React.lazy(() => import('./pages/StudentPage/StudentPage'));
 const StudentChats = React.lazy(() => import('./pages/StudentChats/StudentChats'));
 const StudentLibrary = React.lazy(() => import('./pages/StudentLibrary/StudentLibrary'));
+const StudentJournal = React.lazy(() => import('./pages/StudentJournal/StudentJournal'));
 
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
@@ -121,6 +122,7 @@ export default function App() {
                                     <Route path='/suspended' component={Login}/>
                                     <Route path='/profile' component={StudentProfile}/>
                                     <Route path='/schedule' component={StudentSchedule}/>
+                                    <Route path='/journal' component={StudentJournal}/>
                                     <Route path='/contact' component={StudentContact}/>
                                     <Route path='/class' component={StudentClass}/>
                                     <Route path='/library' component={StudentLibrary}/>

@@ -94,7 +94,6 @@ function Landing({ logo, siteName, address, usersList }) {
                 !logo || !siteName || !address ||
                 !usersList || !usersList.length ?
                     <>
-                        <Preloader size={150} color={'#7f00a3'}/>
                         <div className="landing__favicon" style={{backgroundImage: 'url(' + favicon + ')'}} />
                     </>
                     :

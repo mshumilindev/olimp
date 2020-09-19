@@ -51,14 +51,14 @@ function Layout({user, children, location, fetchEventsParticipant, fetchTests, c
         if ( !user ) {
             checkIfLoggedin(localStorage.getItem('token'));
         }
-    }, []);
+    }, [user, checkIfLoggedin]);
 
     useEffect(() => {
         if ( user ) {
             fetchEventsParticipant(user.id, moment(moment().format('MM DD YYYY')).unix());
             fetchTests(user.id);
         }
-    }, [user]);
+    }, [user, fetchEventsParticipant, fetchTests]);
 
     const studentNav = [
         {
@@ -81,30 +81,36 @@ function Layout({user, children, location, fetchEventsParticipant, fetchTests, c
         },
         {
             id: 3,
+            url: '/journal',
+            icon: 'fa fa-user-check',
+            name: 'attendance'
+        },
+        {
+            id: 4,
             url: '/courses',
             icon: 'fa fa-book',
             name: 'courses'
         },
         {
-            id: 4,
+            id: 5,
             url: '/chats',
             icon: 'fas fa-video',
             name: 'videochats'
         },
         {
-            id: 5,
+            id: 6,
             url: '/class',
             icon: 'fa fa-graduation-cap',
             name: 'class'
         },
         {
-            id: 6,
+            id: 7,
             url: '/library',
             icon: 'fa fa-book-open',
             name: 'library'
         },
         {
-            id: 7,
+            id: 8,
             url: '/contact',
             icon: 'fa fa-mobile-alt',
             name: 'contact'

@@ -11,6 +11,17 @@
   }
   .table {
     border: 1px solid $mediumGreyColor;
+    &__holder {
+      .preloader {
+        &__inner {
+          position: fixed;
+          bottom: $pageIndent;
+        }
+        &:before {
+          background: $baseColor;
+        }
+      }
+    }
     &__body-row:not(:hover) {
       background: $white;
     }
@@ -147,7 +158,17 @@
     input {
       width: 60px;
       padding-right: 0;
-      height: 30px;
+      font-weight: 600;
+      color: $successColor;
+      font-size: 16px;
+      &::-webkit-input-placeholder {
+        font-weight: 300;
+      }
+    }
+    &.isFilled {
+      input {
+        border-color: $successColor;
+      }
     }
   }
 }

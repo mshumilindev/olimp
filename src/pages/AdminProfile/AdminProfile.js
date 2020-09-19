@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useCallback} from 'react';
+import React, {useContext, useState, useEffect, useCallback, useMemo} from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { connect } from "react-redux";
 import {fetchProfile, updateUser} from '../../redux/actions/usersActions';
@@ -7,13 +7,25 @@ import Form from '../../components/Form/Form';
 import Profile from '../../components/Profile/Profile';
 import generator from "generate-password";
 import './adminProfile.scss';
+import Journal from "../../components/Journal/Journal";
 
-function AdminProfile({user, profile, fetchProfile, params, loading, classesList, allCoursesList, updateUser}) {
+function AdminProfile({user, profile, fetchProfile, params, usersLoading, classesLoading, coursesLoading, userLoading, classesList, allCoursesList, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);
     const [ profileUpdated, setProfileUpdated ] = useState(false);
     const [ formFields, setFormFields ] = useState(null);
     const [ currentUser, setCurrentUser ] = useState(JSON.stringify(null));
     const [ initialCurrentUser, setInitialCurrentUser ] = useState(JSON.stringify(null));
+
+    const loading = useMemo(() => {
+        return usersLoading || classesLoading || coursesLoading || userLoading;
+    }, [usersLoading, classesLoading, coursesLoading, userLoading]);
+
+    const attendance = useMemo(() => {
+        if ( JSON.parse(currentUser) ) {
+            return JSON.parse(currentUser).attendance;
+        }
+        return null;
+    }, [currentUser]);
 
     const insertClass = useCallback((newProfile) => {
         const opts = [];
@@ -258,7 +270,7 @@ function AdminProfile({user, profile, fetchProfile, params, loading, classesList
                                 { translate('info') }
                             </div>
                             {
-                                !JSON.parse(currentUser) && loading ?
+                                !JSON.parse(currentUser) || loading ?
                                     <Preloader/>
                                     :
                                     user.role === 'teacher' && params ?
@@ -268,14 +280,32 @@ function AdminProfile({user, profile, fetchProfile, params, loading, classesList
                             }
                         </div>
                     </div>
+                    {
+                        JSON.parse(currentUser) && JSON.parse(currentUser).role === 'student' && JSON.parse(currentUser).status === 'active' && attendance ?
+                            <div className="grid_col col-12">
+                                <div className="widget">
+                                    <div className="widget__title">
+                                        <i className="content_title-icon fa fa-user-check"/>
+                                        { translate('attendance') }
+                                    </div>
+                                    <Journal attendance={attendance} user={JSON.parse(currentUser)}/>
+                                </div>
+                            </div>
+                            :
+                            null
+                    }
                 </div>
             </section>
         </div>
     );
 }
+
 const mapStateToProps = state => ({
     profile: state.usersReducer.profile,
-    loading: state.usersReducer.loading,
+    usersLoading: state.usersReducer.loading,
+    classesLoading: state.classesReducer.loading,
+    coursesLoading: state.coursesReducer.loading,
+    userLoading: state.authReducer.loading,
     classesList: state.classesReducer.classesList,
     allCoursesList: state.coursesReducer.coursesList,
     usersList: state.usersReducer.usersList,

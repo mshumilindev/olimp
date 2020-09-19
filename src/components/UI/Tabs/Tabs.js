@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import classNames from 'classnames';
 import './tabs.scss';
 
 export default function Tabs({tabs}) {
     const [ activeTab, setActiveTab ] = useState(tabs[0].heading);
+
+    const _renderTabNav = useCallback((tab) => {
+        return (
+            <div className={classNames('tabs__nav-item', { active: tab.heading === activeTab })} onClick={() => setActiveTab(tab.heading)} key={tab.heading}>
+                { tab.heading }
+            </div>
+        )
+    }, [activeTab, setActiveTab]);
+
+    const _renderTabContents = useCallback((tab) => {
+        return (
+            <div className={classNames('tabs__contents-item', { active: tab.heading === activeTab })} key={tab.heading}>
+                { tab.content }
+            </div>
+        )
+    }, [activeTab]);
 
     return (
         <div className="tabs">
@@ -28,20 +44,4 @@ export default function Tabs({tabs}) {
             }
         </div>
     );
-
-    function _renderTabNav(tab) {
-        return (
-            <div className={classNames('tabs__nav-item', { active: tab.heading === activeTab })} onClick={() => setActiveTab(tab.heading)} key={tab.heading}>
-                { tab.heading }
-            </div>
-        )
-    }
-
-    function _renderTabContents(tab) {
-        return (
-            <div className={classNames('tabs__contents-item', { active: tab.heading === activeTab })} key={tab.heading}>
-                { tab.content }
-            </div>
-        )
-    }
 }

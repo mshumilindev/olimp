@@ -1,5 +1,17 @@
+@import '../../../assets/scss/utils/colors';
+@import '../../../assets/scss/utils/fonts';
+
 .preloader {
   display: flex;
   justify-content: center;
   align-self: center;
+  &__text {
+    color: $orangeColor;
+    text-align: center;
+    font-size: 18px;
+    font-family: $RobotoCondensed;
+    font-weight: 300;
+    text-transform: lowercase;
+    margin-bottom: $pageIndent;
+  }
 }

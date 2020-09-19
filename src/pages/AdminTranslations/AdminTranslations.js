@@ -19,7 +19,7 @@ function AdminTranslations({translationsList, searchQuery, showPerPage, filters,
 
         if ( translationsList ) {
             if ( editedSearchQuery.trim() ) {
-                newTranslations = translationsList.filter(item => item.id.toLowerCase().includes(editedSearchQuery) || item.langs.some(lang => lang[Object.keys(lang)].toLowerCase().includes(editedSearchQuery)));
+                newTranslations = translationsList.filter(item => item.id.toLowerCase().includes(editedSearchQuery) || item.langs.some(lang => lang[Object.keys(lang)] && lang[Object.keys(lang)].toLowerCase().includes(editedSearchQuery)));
             }
         }
 

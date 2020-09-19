@@ -1,0 +1,105 @@
+@import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
+
+.journal {
+  &__holder {
+
+  }
+  &__date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-weight: 300;
+    line-height: 24px;
+    color: $mediumGreyColor;
+    width: 150px;
+    margin: 0 auto;
+    &-day {
+      font-style: normal;
+      text-transform: lowercase;
+    }
+    &-month {
+      font-size: 20px;
+      font-weight: 600;
+      color: $white;
+    }
+  }
+  &__weekend {
+    opacity: .25;
+  }
+  &__today {
+    opacity: 1;
+    color: $greenColor;
+    [class$="__date-month"] {
+      color: $greenColor;
+    }
+  }
+  &__course {
+    font-family: $RobotoCondensed;
+    position: relative;
+    height: 80px;
+    &.attended {
+      [class$="-attended"] {
+        color: $successColor;
+      }
+    }
+    &.skipped {
+      [class$="-attended"] {
+        color: $errorColor;
+      }
+    }
+    &-time {
+      font-family: $RobotoCondensed;
+      font-weight: 300;
+      text-align: center;
+      color: $greyColor;
+      height: 80px;
+      display: flex;
+      line-height: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+    &-subject {
+      font-weight: 600;
+    }
+    &-attended {
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    &-mark {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: 14px;
+      span:last-child {
+        font-weight: 600;
+        font-size: 20px;
+        color: $successColor;
+        border-bottom: 1px solid $successColor;
+      }
+    }
+  }
+  .table {
+    &__body {
+      &-cell {
+        vertical-align: top;
+        padding: 20px;
+        border-left: 1px solid $mediumGreyColor;
+        &:first-child {
+          position: sticky;
+          left: 0;
+          z-index: 1;
+          background: inherit;
+          padding: 0;
+          border: none;
+          [class$="-time"] {
+            margin-right: -1px;
+            padding: 20px;
+            box-shadow: 0 10px 10px 2px rgba(0,0,0,.25);
+            border-right: 1px solid $mediumGreyColor;
+          }
+        }
+      }
+    }
+  }
+}
