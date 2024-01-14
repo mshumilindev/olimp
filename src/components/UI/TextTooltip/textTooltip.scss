@@ -3,6 +3,8 @@
 .textTooltip {
   position: relative;
   z-index: 1;
+  display: flex;
+  
   &__trigger {
     &:hover {
       + .textTooltip__text {

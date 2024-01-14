@@ -8,29 +8,49 @@ export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 
 export function fetchEvents() {
+  let unsubscribe = null;
+  const batch = db.batch();
+
     return dispatch => {
         const eventsCollection = db.collection('events').orderBy('datetime');
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot(snapshot => {
-            events.all = [];
-            snapshot.docs.forEach(doc => {
-                events.all.push({
-                    ...doc.data(),
-                    id: doc.id
-                });
-            });
-            dispatch(fetchEventsSuccess(Object.assign({}, events)));
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = eventsCollection.onSnapshot(snapshot => {
+          events.all = snapshot.docs.filter((doc) => {
+            const chatDate = moment(doc.data().datetime * 1000).startOf('day').unix();
+            const dateNow = moment().startOf('day').unix();
+            if ( dateNow - chatDate > 604800 ) {
+              batch.delete(db.collection('events').doc(doc.id));
+            }
+            else {
+              return true;
+            }
+          }).map((doc) => {
+            return {
+              ...doc.data(),
+              id: doc.id
+            }
+          });
+          batch.commit();
+          dispatch(fetchEventsSuccess(events));
         });
     }
 }
 
 export function fetchEventsOrganizer(userID) {
+  let unsubscribe = null;
+
     return dispatch => {
         const eventsCollection = db.collection('events').where('organizer', '==', userID);
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = eventsCollection.onSnapshot(snapshot => {
             events.organizer = [];
             snapshot.docs.forEach(doc => {
                 events.organizer.push({
@@ -44,6 +64,8 @@ export function fetchEventsOrganizer(userID) {
 }
 
 export function fetchEventsParticipant(userID, date) {
+  let unsubscribe = null;
+
     return dispatch => {
         let eventsCollection = db.collection('events').where('participants', 'array-contains', userID);
 
@@ -52,7 +74,10 @@ export function fetchEventsParticipant(userID, date) {
         }
 
         dispatch(fetchEventsBegin());
-        return eventsCollection.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = eventsCollection.onSnapshot(snapshot => {
             events.participant = [];
 
             snapshot.docs.forEach(doc => {
@@ -83,13 +108,18 @@ export const FETCH_CHAT_BEGIN = 'FETCH_CHAT_BEGIN';
 export const FETCH_CHAT_SUCCESS = 'FETCH_CHAT_SUCCESS';
 export const FETCH_CHAT_ERROR = 'FETCH_CHAT_ERROR';
 
-export function fetchChat(chatID, userID) {
+export function fetchChat(chatID, userID, userRole, userIsManagement = 'teacher') {
+  let unsubscribe = null;
     const eventRef = db.collection('events').doc(chatID);
 
     return dispatch => {
         dispatch(fetchChatBegin());
 
-        eventRef.onSnapshot(doc => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+
+        unsubscribe = eventRef.onSnapshot(doc => {
             if ( !doc.exists ) {
                 dispatch(fetchChatError('videochat_does_not_exist'));
             }
@@ -99,6 +129,9 @@ export function fetchChat(chatID, userID) {
                 // === Check for time
                 if ( false ) {
                     return dispatch(fetchChatError('wrong_time_for_chat'));
+                }
+                if ( userRole === 'admin' || userIsManagement !== 'teacher' ) {
+                  return dispatch(fetchChatSuccess(currentChat));
                 }
                 if ( currentChat.organizer !== userID && currentChat.participants.indexOf(userID) === -1 ) {
                     return dispatch(fetchChatError('user_not_allowed_to_chat'));
@@ -166,7 +199,7 @@ export function sendChalkBoard(chatID, value) {
         const chatRef = db.collection('events').doc(chatID);
 
         return chatRef.set({
-            chalkBoard: value
+          chalkBoard: value
         }, {merge: true});
     }
 }
@@ -206,6 +239,19 @@ export function deleteEvent(eventID) {
     return dispatch => {
         return chatRef.delete();
     }
+}
+
+export function deleteMultipleEvents() {
+  const batch = db.batch();
+  return dispatch => {
+    const filteredEvents = events.all.filter((ev, index) => index < 500);
+
+    filteredEvents.forEach((ev) => {
+      const eventRef = db.collection('events').doc(ev.id);
+      batch.delete(eventRef);
+    })
+    batch.commit()
+  }
 }
 
 export function updateEvent(eventID, newEvent) {

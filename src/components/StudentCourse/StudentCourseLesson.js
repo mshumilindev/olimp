@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import './studentLesson.scss';
 import {fetchLesson, discardLesson} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
@@ -7,6 +7,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import Article from '../Article/Article';
 import { Link } from 'react-router-dom';
 import {updateTest} from "../../redux/actions/testsActions";
+import { orderBy } from 'natural-orderby';
 
 function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetchLesson, allCoursesList, discardLesson, tests, updateTest}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -14,6 +15,15 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
     const [ startQuestions, setStartQuestions ] = useState(false);
     const [ answers, setAnswers ] = useState(null);
     const [ allAnswersGiven, setAllAnswersGiven ] = useState(false);
+
+    const answerMarks = useMemo(() => {
+      return answers?.blocks?.filter((block) => !!block.mark)?.map((block) => {
+        return {
+          blockID: block.id,
+          value: block.mark
+        }
+      }) || [];
+    }, [answers]);
 
     useEffect(() => {
         return () => {
@@ -86,7 +96,8 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
                     !lesson || lesson.hideQA ?
                         null
                         :
-                        lesson.QA.length && !startQuestions ?
+                        lesson.QA.length && !startQuestions
+                          ?
                             !getTest() || !getTest().isSent ?
                                 <div className="content__title-actions">
                                     <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
@@ -98,7 +109,7 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
                                     <div className="content__title-actions">
                                         <div className="studentLesson__score" onClick={e => handleStartQuestions(e)}>
                                             <div className="studentLesson__score-item">
-                                                <div>{ translate('score') }</div>
+                                                <div>{ translate('mark') }</div>
                                                 <div className="studentLesson__score-num">{ getTest().score }</div>
                                             </div>
                                         </div>
@@ -111,7 +122,7 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
                                             </div>
                                         </div>
                                     </div>
-                            :
+                          :
                             lesson && lesson.QA.length && (!getTest() || !getTest().score) ?
                                 <div className="content__title-actions">
                                     <span className="btn btn_primary" disabled={!isTestUpdated()} onClick={saveProgress}>
@@ -119,7 +130,16 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
                                     </span>
                                 </div>
                                 :
-                                null
+                                !!getTest()?.score && (
+                                  <div className="content__title-actions">
+                                      <div className="studentLesson__score">
+                                          <div className="studentLesson__score-item">
+                                              <div>{ translate('mark') }</div>
+                                              <div className="studentLesson__score-num">{ getTest()?.score }</div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                )
                 }
                 {
                     loading || testsLoading ?
@@ -141,7 +161,7 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
         const QABlocks = [];
 
         if ( lesson['QA'] ) {
-            lesson['QA'].forEach(item => {
+            orderBy(lesson['QA'], v => v.index).forEach(item => {
                 if ( item.type !== 'answers' || !getTest() || !getTest().comments || !getTest().comments.find(comItem => comItem.id === 'comment_' + item.id) ) {
                     QABlocks.push(item);
                 }
@@ -160,16 +180,34 @@ function StudentCourseLesson({user, params, lesson, loading, testsLoading, fetch
         return (
             <>
                 {
-                    !startQuestions ?
+                    !startQuestions && (
+                      !!lesson['content'].length ?
                         <Article content={lesson['content']} type={'content'} />
                         :
-                        null
+                        !getTest() || !getTest().isSent ? (
+                          <div className="studentLesson-testNoContent">
+                            <p>Можна одразу починати проходити тест</p>
+                            <a href="/" className="btn btn_primary" onClick={e => handleStartQuestions(e)}>
+                                { translate('start_quiz') }
+                            </a>
+                          </div>
+                        ) : (
+                          !getTest().score ? (
+                            <div className="studentLesson-testNoContent">
+                              <p style={{marginBottom: 0}}>Тест знаходиться на перевірці</p>
+                            </div>
+                          ) : (
+                            <div className="studentLesson-testNoContent">
+                              <p style={{marginBottom: 0}}>Тест було перевірено</p>
+                            </div>
+                          )
+                        )
+                    )
                 }
                 {
-                    lesson.QA.length && startQuestions ?
-                        <Article content={QABlocks} type={'questions'} answers={answers} setAnswers={setAnswers} finishQuestions={finishQuestions} loading={loading} allAnswersGiven={allAnswersGiven} setAllAnswersGiven={setAllAnswersGiven} readonly={getTest() && getTest().score}/>
-                        :
-                        null
+                    !!lesson.QA.length && !!startQuestions && (
+                      <Article content={QABlocks} type={'questions'} answers={answers} setAnswers={setAnswers} finishQuestions={finishQuestions} loading={loading} allAnswersGiven={allAnswersGiven} setAllAnswersGiven={setAllAnswersGiven} readonly={getTest() && getTest().score} answerMarks={answerMarks}/>
+                    )
                 }
             </>
         )

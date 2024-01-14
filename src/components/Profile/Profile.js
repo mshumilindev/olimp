@@ -31,11 +31,11 @@ function Profile({user, allCoursesList, classesList}) {
                                     user.role === 'student' ?
                                         <div className="profile__class">
                                             {
-                                                user.class && classesList.length ?
-                                                    classesList.find(item => item.id === user.class).title[lang] ?
-                                                        classesList.find(item => item.id === user.class).title[lang]
+                                                !!user?.class && !!classesList?.length ?
+                                                    classesList?.find(item => item.id === user.class)?.title[lang] ?
+                                                        classesList?.find(item => item.id === user.class)?.title[lang]
                                                         :
-                                                        classesList.find(item => item.id === user.class).title['ua']
+                                                        classesList?.find(item => item.id === user.class)?.title['ua']
                                                     :
                                                     <div className="nothingFound">
                                                         { translate('no_class') }

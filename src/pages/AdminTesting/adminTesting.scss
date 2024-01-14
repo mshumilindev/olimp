@@ -40,6 +40,11 @@
         }
       }
     }
+    &.noUser {
+      [class$="__test-content"] {
+        cursor: default !important;
+      }
+    }
     &.noScore {
       [class$="__test-inner"] {
         i:not(.modal__close) {
@@ -66,6 +71,14 @@
       background: $successColor;
       color: $white;
       flex: 0 0 auto;
+
+      &.content_title-icon {
+        border-radius: 4px;
+        min-width: 40px;
+        width: auto;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
       &:not(.fa) {
         font-weight: bold;
         font-style: normal;

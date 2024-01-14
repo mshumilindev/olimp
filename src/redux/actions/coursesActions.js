@@ -1,30 +1,40 @@
 import firebase from "../../db/firestore";
+import {generate} from "generate-password";
 
 const db = firebase.firestore();
 const coursesCollection = db.collection('courses');
-const subjectsList = [];
+let subjectsList = [];
 const allCoursesList = [];
 let lesson = null;
 
 export function fetchSubjects() {
+  let unsubscribe;
     return dispatch => {
-        if ( !subjectsList.length ) {
-            dispatch(coursesBegin());
+        dispatch(coursesBegin());
 
-            return coursesCollection.get().then((snapshot) => {
-                subjectsList.splice(0, subjectsList.length);
-                snapshot.docs.forEach(doc => {
-                    subjectsList.push({
-                        ...doc.data(),
-                        id: doc.id
-                    });
-                });
-                dispatch(coursesSuccess(subjectsList));
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+
+        unsubscribe = coursesCollection.onSnapshot((snapshot) => {
+          let allCoursesInSubject = [];
+
+          subjectsList = snapshot.docs.map((doc) => {
+            allCoursesInSubject.push(db.collection('courses').doc(doc.id).collection('coursesList').get());
+
+            return {
+              ...doc.data(),
+              id: doc.id
+            }
+          });
+
+          Promise.all(allCoursesInSubject).then((data) => {
+            data.forEach((item, index) => {
+              subjectsList[index].children = item.size;
             });
-        }
-        else {
             dispatch(coursesSuccess(subjectsList));
-        }
+          });
+        });
     }
 }
 
@@ -134,7 +144,7 @@ export function fetchModulesLessons(subjectID, courseID) {
     }
 }
 
-export function fetchCoursesList(subjectID, userID) {
+export function fetchCoursesList(subjectID, userID, clearArray) {
     let courseListRef = null;
     let unsubscribe = null;
 
@@ -149,6 +159,9 @@ export function fetchCoursesList(subjectID, userID) {
         dispatch(coursesListBegin());
         if ( unsubscribe ) {
             unsubscribe();
+        }
+        if ( clearArray ) {
+            return dispatch(coursesListSuccess([]));
         }
         unsubscribe = courseListRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
             const modulesList = [];
@@ -165,10 +178,15 @@ export function fetchCoursesList(subjectID, userID) {
 
 export function fetchModules(subjectID, courseID) {
     const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(modulesBegin());
-        return modulesRef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+
+        unsubscribe = modulesRef.onSnapshot(snapshot => {
             const modulesList = [];
             snapshot.docs.forEach(doc => {
                 modulesList.push({
@@ -181,12 +199,32 @@ export function fetchModules(subjectID, courseID) {
     };
 }
 
-export function fetchLessons(subjectID, courseID, moduleID) {
+export function getModules(subjectID, courseID) {
+    const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
+
+    return dispatch => {
+      return modulesRef.get();
+    };
+}
+
+export function getLessons(subjectID, courseID, moduleID) {
     const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
 
     return dispatch => {
+      return lessonsRef.get();
+    };
+}
+
+export function fetchLessons(subjectID, courseID, moduleID) {
+    const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
+    let unsubscribe = null;
+
+    return dispatch => {
         dispatch(lessonsBegin());
-        return lessonsRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = lessonsRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
             const lessonsList = [];
 
             snapshot.docs.forEach(doc => {
@@ -245,22 +283,52 @@ export function updateSubject(subject) {
 
 export function deleteSubject(subjectID) {
     const subjectRef = db.collection('courses').doc(subjectID);
+    const coursesRef = db.collection('courses').doc(subjectID).collection('coursesList');
+    const batch = db.batch();
 
     return dispatch => {
-        dispatch(coursesBegin());
-        return subjectRef.delete().then(() => {
-            subjectsList.splice(subjectsList.indexOf(subjectsList.find(item => item.id === subjectID)), 1);
-            dispatch(coursesSuccess(subjectsList.sort((a, b) => {
-                if ( a.id < b.id ) {
-                    return -1;
-                }
-                else if ( a.id > b.id ) {
-                    return 1;
-                }
-                return 0;
-            })));
+      dispatch(coursesBegin());
+
+      return coursesRef.get().then((courses) => {
+        if ( courses.docs.length ) {
+          courses.forEach((course) => {
+            const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id).collection('modules');
+
+            modulesRef.get().then((modules) => {
+              if ( modules.docs.length ) {
+                modules.forEach((module) => {
+                  const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id).collection('modules').doc(module.id).collection('lessons');
+
+                  lessonsRef.get().then((lessons) => {
+                    if ( lessons.docs.length ) {
+                      lessons.forEach((lesson) => {
+                        batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id).collection('modules').doc(module.id).collection('lessons').doc(lesson.id));
+                      });
+                    }
+                  });
+
+                  batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id).collection('modules').doc(module.id));
+                })
+              }
+              batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(course.id));
+            });
+          });
+        }
+
+        subjectRef.delete().then(() => {
+          batch.commit();
+          dispatch(coursesSuccess(subjectsList.sort((a, b) => {
+              if ( a.id < b.id ) {
+                  return -1;
+              }
+              else if ( a.id > b.id ) {
+                  return 1;
+              }
+              return 0;
+          })));
         });
-    };
+      });
+    }
 }
 
 export function updateCourse(subjectID, course) {
@@ -275,13 +343,35 @@ export function updateCourse(subjectID, course) {
 
 export function deleteCourse(subjectID, courseID) {
     const courseRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID);
+    const modulesRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules');
+    const batch = db.batch();
 
     return dispatch => {
-        dispatch(coursesBegin());
-        return courseRef.delete().then(() => {
-            dispatch(coursesSuccess(subjectsList));
+      dispatch(coursesBegin());
+
+      return modulesRef.get().then((modules) => {
+        if ( modules.docs.length ) {
+          modules.forEach((module) => {
+            const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id).collection('lessons');
+
+            lessonsRef.get().then((lessons) => {
+              if ( lessons.docs.length ) {
+                lessons.forEach((lesson) => {
+                  batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id).collection('lessons').doc(lesson.id));
+                });
+              }
+            });
+
+            batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(module.id));
+          })
+        }
+
+        courseRef.delete().then(() => {
+          batch.commit();
+          dispatch(coursesSuccess(subjectsList));
         });
-    };
+      });
+    }
 }
 
 export function updateModule(subjectID, courseID, module) {
@@ -297,12 +387,20 @@ export function updateModule(subjectID, courseID, module) {
 
 export function deleteModule(subjectID, courseID, moduleID) {
     const moduleRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID);
+    const lessonsRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons');
+    const batch = db.batch();
 
     return dispatch => {
         dispatch(coursesBegin());
-        return moduleRef.delete().then(() => {
+        return lessonsRef.get().then((snapshot) => {
+          snapshot.forEach((doc) => {
+            batch.delete(db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(doc.id));
+          });
+          moduleRef.delete().then(() => {
+            batch.commit();
             dispatch(coursesSuccess(subjectsList));
-        });
+          });
+        })
     };
 }
 
@@ -464,6 +562,49 @@ export function updateLesson(subjectID, courseID, moduleID, newLesson, updateTre
     };
 }
 
+export function copyLesson(subjectID, courseID, moduleID, newLesson) {
+  const contentRef = db.collection('courses').doc(newLesson.subjectID).collection('coursesList').doc(newLesson.courseID).collection('modules').doc(newLesson.moduleID).collection('lessons').doc(newLesson.lesson.id).collection('content');
+  const QARef = db.collection('courses').doc(newLesson.subjectID).collection('coursesList').doc(newLesson.courseID).collection('modules').doc(newLesson.moduleID).collection('lessons').doc(newLesson.lesson.id).collection('QA');
+  const newID = generate({
+      length: 20,
+      numbers: true
+  });
+  const newLessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(newID);
+  let content = null;
+  let qa = null
+  const batch = db.batch();
+
+  return dispatch => {
+    contentRef.get().then(snapshot => {
+      content = snapshot.docs.map((doc) => doc.data());
+      QARef.get().then(snapshot => {
+        qa = snapshot.docs.map((doc) => doc.data())
+        const createLesson = {
+          ...newLesson.lesson,
+          id: newID,
+          name: {
+            ru: '',
+            en: `${newLesson.lesson.name.en || newLesson.lesson.name.ua}-copy`,
+            ua: `${newLesson.lesson.name.ua}-копія`
+          }
+        }
+
+        newLessonRef.set({
+          ...createLesson
+        }).then(() => {
+          content.forEach((doc) => {
+            batch.set(db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(createLesson.id).collection('content').doc(), doc);
+          })
+          qa.forEach((doc) => {
+            batch.set(db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(createLesson.id).collection('QA').doc(), doc);
+          })
+          batch.commit();
+        })
+      })
+    })
+  }
+}
+
 export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
     const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
 
@@ -542,7 +683,7 @@ export const coursesSuccess = subjectsList => {
 
 export const coursesListBegin = () => {
     return {
-        type: COURSES_LIST_BEGIN
+        type: COURSES_LIST_BEGIN,
     }
 };
 export const coursesListSuccess = subjectCoursesList => {

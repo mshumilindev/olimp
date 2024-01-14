@@ -4,10 +4,14 @@ const db = firebase.firestore();
 
 export function fetchLessonMeta(subjectID, courseID, moduleID, lessonID) {
     const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(fetchLessonMetaBegin());
-        return lessonRef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = lessonRef.onSnapshot(snapshot => {
             const lessonMeta = {
                 ...snapshot.data(),
                 id: snapshot.id
@@ -46,10 +50,14 @@ export const fetchLessonMetaSuccess = lessonMeta => {
 
 export function fetchLessonContent(subjectID, courseID, moduleID, lessonID) {
     const lessonContentRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('content');
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(fetchLessonContentBegin());
-        return lessonContentRef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = lessonContentRef.onSnapshot(snapshot => {
             const lessonContent = [];
 
             if ( snapshot.docs.length ) {
@@ -116,10 +124,14 @@ export const fetchLessonContentSuccess = lessonContent => {
 
 export function fetchLessonQA(subjectID, courseID, moduleID, lessonID) {
     const lessonQARef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID).collection('QA');
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(fetchLessonQABegin());
-        return lessonQARef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = lessonQARef.onSnapshot(snapshot => {
             const lessonQA = [];
 
             if ( snapshot.docs.length ) {

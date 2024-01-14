@@ -80,10 +80,14 @@
       color: $greyColor;
       text-transform: uppercase;
       font-size: 14px;
+      * {
+        width: 50%;
+      }
     }
     &-class {
       color: $baseColor;
       font-weight: bold;
+      display: flex;
       &:before {
         font-weight: normal;
         content: '/';

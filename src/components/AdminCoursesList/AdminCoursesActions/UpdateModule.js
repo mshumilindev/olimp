@@ -5,8 +5,8 @@ import {withRouter} from 'react-router-dom';
 import moment from 'moment';
 import {updateModule} from "../../../redux/actions/coursesActions";
 
-const Modal = React.lazy(() => import('../../UI/Modal/Modal'));
-const Form = React.lazy(() => import('../../Form/Form'));
+import Modal from '../../UI/Modal/Modal';
+import Form from '../../Form/Form';
 
 function usePrevious(value) {
     const ref = useRef(null);

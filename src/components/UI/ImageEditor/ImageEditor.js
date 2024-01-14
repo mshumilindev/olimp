@@ -84,7 +84,7 @@ export default function ImageEditor({id, image, settings, handleChange, setSetti
                                     {
                                         isOriginal() ?
                                             <div className="imageEditor__image-holder">
-                                                <img src={image} className="imageEditor__image" ref={$image}/>
+                                                <img src={image} className="imageEditor__image" ref={$image} alt=""/>
                                             </div>
                                             :
                                             <div className="imageEditor__image-holder" style={{

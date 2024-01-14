@@ -4,8 +4,8 @@ import generator from 'generate-password';
 import { updateUser } from "../../redux/actions/usersActions";
 import {connect} from "react-redux";
 
-const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
-const Form = React.lazy(() => import('../../components/Form/Form'));
+import Modal from '../../components/UI/Modal/Modal';
+import Form from '../../components/Form/Form';
 
 function AdminUsersListModal({loading, usersList, currentUser, user, classesList, allCoursesList, modalTrigger, onToggleModal, updateUser}) {
     const { translate, getUserFormFields, lang } = useContext(siteSettingsContext);

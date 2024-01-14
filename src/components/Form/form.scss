@@ -334,6 +334,9 @@
       }
       [class$="__radio-item"] {
         margin-top: 10px;
+        &:first-child {
+          margin-top: 0;
+        }
         &:after {
           display: none;
         }
@@ -360,6 +363,9 @@
     margin-right: 10px;
   }
   &__radio-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     &:after {
       content: '|';
       color: $mediumGreyColor;

@@ -9,7 +9,7 @@ function Chatroom({user, events, params, fetchChat, loading, chat, chatError}) {
     const { translate } = useContext(siteSettingsContext);
 
     useEffect(() => {
-        fetchChat(params.chatID, user.id);
+        fetchChat(params.chatID, user.id, user.role, user.isManagement);
     }, []);
 
     return (
@@ -96,7 +96,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchChat: (chatID, userID) => dispatch(fetchChat(chatID, userID))
+        fetchChat: (chatID, userID, userRole, userIsManagement) => dispatch(fetchChat(chatID, userID, userRole, userIsManagement))
     }
 };
 

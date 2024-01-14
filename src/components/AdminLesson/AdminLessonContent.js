@@ -27,7 +27,7 @@ function AdminLessonContent({title, contentLoading, content, setUpdated, updateC
                         types={{
                             text: ['text'],
                             media: ['image', 'audio', 'video', 'youtube'],
-                            document: ['word'],
+                            document: ['word', 'iframe'],
                             googleDrive: ['googleWord', 'googleExcel', 'googlePowerpoint'],
                             other: ['divider']
                         }}

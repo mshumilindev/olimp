@@ -3,8 +3,8 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import {updateSubject} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 
-const Modal = React.lazy(() => import('../../UI/Modal/Modal'));
-const Form = React.lazy(() => import('../../Form/Form'));
+import Modal from '../../UI/Modal/Modal';
+import Form from '../../Form/Form';
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {

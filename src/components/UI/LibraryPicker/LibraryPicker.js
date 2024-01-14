@@ -3,24 +3,17 @@ import './libraryPicker.scss';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import {connect} from "react-redux";
 import classNames from 'classnames';
-import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import { Scrollbars } from 'react-custom-scrollbars';
 import withFilters from "../../../utils/withFilters";
 
-const Modal = React.lazy(() => import('../Modal/Modal'));
+import Modal from '../Modal/Modal';
 
-function LibraryPicker({user, fetchLibrary, multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
+function LibraryPicker({user, multiple, libraryList, addBooks, selectedList, placeholder, filters, searchQuery}) {
     const { translate } = useContext(siteSettingsContext);
     const [ showLibraryListModal, setShowLibraryListModal ] = useState(false);
     const [ selectedBooks, setSelectedBooks ] = useState(selectedList);
 
     useEffect(() => {
-        if ( user.role === 'admin' ) {
-            fetchLibrary();
-        }
-        else {
-            fetchLibrary(user.id);
-        }
         return () => {
             setShowLibraryListModal(false);
         }
@@ -37,8 +30,8 @@ function LibraryPicker({user, fetchLibrary, multiple, libraryList, addBooks, sel
                     <div className="libraryPicker__selectedList">
                         {
                             selectedList.sort((a, b) => {
-                                const aName = libraryList.find(user => user.id === a).name;
-                                const bName = libraryList.find(user => user.id === b).name;
+                                const aName = libraryList.find(user => user.id === a)?.name;
+                                const bName = libraryList.find(user => user.id === b)?.name;
 
                                 if ( aName < bName ) {
                                     return -1;
@@ -222,7 +215,4 @@ const mapStateToProps = state => ({
     loading: state.libraryReducer.loading,
     user: state.authReducer.currentUser
 });
-const mapDispatchToProps = dispatch => ({
-    fetchLibrary: (userID) => dispatch(fetchLibrary(userID))
-});
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(LibraryPicker, true));
+export default connect(mapStateToProps)(withFilters(LibraryPicker, true));

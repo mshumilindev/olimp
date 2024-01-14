@@ -1,105 +1,297 @@
 @import '../../assets/scss/utils/colors';
 @import '../../assets/scss/utils/fonts';
 
-.journal {
-  &__holder {
+$timeSlotWidth: 50px;
+$timeSlotHeight: 100px;
+$lessonIndent: 10px;
 
+.journal {
+  position: relative;
+  min-width: 900px;
+
+  &-holder {
+    overflow-x: auto;
   }
-  &__date {
+
+  &__prev {
+    position: absolute;
+    left: 15px;
+    top: 28px;
+    color: $white;
+    cursor: pointer;
+    z-index: 1;
+
+    &:hover {
+      color: $orangeColor;
+    }
+  }
+
+  &__next {
+    position: absolute;
+    right: 15px;
+    top: 28px;
+    color: $white;
+    cursor: pointer;
+    z-index: 1;
+
+    &:hover {
+      color: $orangeColor;
+    }
+  }
+
+  &__days {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    justify-content: space-evenly;
+    background: $linkColor;
+  }
+
+  &__day {
+    width: 100%;
+    font-family: $RobotoCondensed;
     font-weight: 300;
-    line-height: 24px;
-    color: $mediumGreyColor;
-    width: 150px;
-    margin: 0 auto;
-    &-day {
-      font-style: normal;
-      text-transform: lowercase;
+    padding: 10px;
+    box-sizing: border-box;
+    color: $white;
+
+    &.isHoliday {
+      opacity: .25;
     }
-    &-month {
-      font-size: 20px;
-      font-weight: 600;
-      color: $white;
+
+    &.first {
+      width: $timeSlotWidth;
+      flex: 0 0 auto;
     }
-  }
-  &__weekend {
-    opacity: .25;
-  }
-  &__today {
-    opacity: 1;
-    color: $greenColor;
-    [class$="__date-month"] {
+
+    &.active {
       color: $greenColor;
     }
+
+    &-date {
+      font-size: 14px;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 5px;
+
+      strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+    }
   }
-  &__course {
-    font-family: $RobotoCondensed;
+
+  &__schedule {
+    font-size: 12px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
     position: relative;
-    height: 80px;
-    &.attended {
-      [class$="-attended"] {
-        color: $successColor;
-      }
-    }
-    &.skipped {
-      [class$="-attended"] {
-        color: $errorColor;
-      }
-    }
-    &-time {
-      font-family: $RobotoCondensed;
-      font-weight: 300;
-      text-align: center;
-      color: $greyColor;
-      height: 80px;
-      display: flex;
-      line-height: 20px;
-      justify-content: center;
-      align-items: center;
-    }
-    &-subject {
-      font-weight: 600;
-    }
-    &-attended {
-      margin: 10px 0;
-      font-size: 14px;
-    }
-    &-mark {
+    margin: -30px 0;
+
+    &:before {
+      content: '';
       position: absolute;
+      left: $timeSlotWidth;
+      top: 50px;
       right: 0;
-      bottom: 0;
-      font-size: 14px;
-      span:last-child {
-        font-weight: 600;
-        font-size: 20px;
-        color: $successColor;
-        border-bottom: 1px solid $successColor;
+      bottom: 50px;
+      background: $lightColor;
+    }
+  }
+
+  &__currentTime-holder {
+    position: absolute;
+    top: $timeSlotHeight / 2;
+    bottom: $timeSlotHeight / 2;
+    left: 0;
+  }
+
+  &__currentTime {
+    border-top: 4px dotted $purpleColor;
+    position: absolute;
+    left: ($timeSlotWidth - 9.5px);
+    right: -9999px;
+    margin-top: -2px;
+    z-index: 1;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -2.5px;
+      background: $purpleColor;
+      height: 1px;
+      opacity: .25;
+    }
+  }
+
+  &__timeSlot-holder {
+    width: $timeSlotWidth;
+    flex: 0 0 auto;
+  }
+
+  &__timeSlot {
+    height: $timeSlotHeight;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 35px;
+      right: -9999px;
+      top: ($timeSlotHeight / 2 - 1px);
+      height: 1px;
+      background: $mediumGreyColor;
+      z-index: -1;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      left: 35px;
+      right: -9999px;
+      top: 100%;
+      height: 1px;
+      border-top: 1px dotted $mediumGreyColor;
+      z-index: -1;
+      margin-top: -0.5px;
+    }
+
+    &:last-child {
+      &:after {
+        display: none;
       }
     }
   }
-  .table {
-    &__body {
-      &-cell {
-        vertical-align: top;
-        padding: 20px;
-        border-left: 1px solid $mediumGreyColor;
-        &:first-child {
-          position: sticky;
-          left: 0;
-          z-index: 1;
-          background: inherit;
-          padding: 0;
-          border: none;
-          [class$="-time"] {
-            margin-right: -1px;
-            padding: 20px;
-            box-shadow: 0 10px 10px 2px rgba(0,0,0,.25);
-            border-right: 1px solid $mediumGreyColor;
+  &__lessons {
+    width: 100%;
+    border-left: 1px solid $mediumGreyColor;
+    position: relative;
+    margin: ($timeSlotHeight / 2) 0;
+    font-family: $RobotoCondensed;
+
+    &.isToday {
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: $lightGreenColor;
+        opacity: .25;
+      }
+    }
+
+    &-item {
+      position: absolute;
+      width: 100%;
+      z-index: 1;
+      padding: ($lessonIndent - 5px) $lessonIndent $lessonIndent;
+      box-sizing: border-box;
+      border-top: 5px solid $mediumGreyColor;
+
+      &.attended {
+        border-color: $greenColor;
+      }
+
+      &.skipped {
+        border-color: $redColor;
+      }
+
+      &.isCurrent {
+        border-color: $purpleColor;
+
+        &:before {
+          background: $lightBlueColor;
+        }
+      }
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background: $lightGreyColor;
+        opacity: .85;
+      }
+
+      &:hover {
+        transform: scale(1.1);
+        z-index: 2;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+        height: auto !important;
+        padding-bottom: 40px;
+        width: 150%;
+
+        &:before {
+          opacity: 1;
+        }
+
+        .journal__lessons-teacher {
+          display: block;
+        }
+
+        .journal__lessons-name {
+          span {
+            display: block;
           }
         }
       }
+    }
+
+    &-teacher {
+      margin-top: 10px;
+      display: none;
+    }
+
+    &-name {
+      font-size: 14px;
+      margin-top: 5px;
+
+      strong {
+        display: block;
+
+        i {
+          margin-right: 5px;
+          font-size: 12px;
+        }
+
+        b {
+          color: $baseColor;
+        }
+      }
+
+      span {
+        margin-top: 5px;
+        font-size: 12px;
+        display: none;
+      }
+    }
+
+    &-mark {
+      color: $successColor;
+      position: absolute;
+      right: $lessonIndent;
+      top: 5px;
+
+      strong {
+        border-bottom: 1px solid $successColor;
+      }
+    }
+
+    &-skipped {
+      color: $errorColor;
+      position: absolute;
+      right: $lessonIndent;
+      top: 5px
     }
   }
 }

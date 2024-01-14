@@ -93,6 +93,10 @@
     filter: grayscale(100%);
     opacity: .5;
   }
+  &.inactive {
+    filter: grayscale(100%);
+    opacity: .5;
+  }
   &.round {
     min-width: 0;
     width: 50px;

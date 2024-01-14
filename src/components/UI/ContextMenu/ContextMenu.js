@@ -37,7 +37,7 @@ export default function ContextMenu({children, links, dontShow}) {
         return (
             link.type !== 'divider' ?
                 <div className="contextmenu__drop-item" key={link.id}>
-                    <a href="/" className={'contextmenu__drop-link' + (link.type ? ' link-' + link.type : '')} onClick={e => handleLink(e, link.action)}>
+                    <a href="/" className={'contextmenu__drop-link' + (link.type ? ' link-' + link.type : '') + (link.disabled ? ' disabled' : '')} onClick={e => handleLink(e, link.action, link.disabled)}>
                         <i className={'content_title-icon ' + link.icon} />
                         { link.name }
                     </a>
@@ -47,9 +47,10 @@ export default function ContextMenu({children, links, dontShow}) {
         )
     }
 
-    function handleLink(e, action) {
+    function handleLink(e, action, disabled = false) {
         e.stopPropagation();
         e.preventDefault();
+        if ( disabled ) return;
 
         toggleContextMenu(false);
         action();

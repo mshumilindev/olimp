@@ -4,6 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import NextSchedule from '../../components/Schedule/NextSchedule';
 import Notifications from '../../components/Notifications/Notifications';
 import StudentChatsList from "../../components/StudentChatsList/StudentChatsList";
+import StudentTests from '../../components/StudentTests';
 
 function Dashboard() {
     const { translate } = useContext(siteSettingsContext);
@@ -22,6 +23,9 @@ function Dashboard() {
             </section>
             <section className="section">
                 <StudentChatsList showTodayOnly />
+            </section>
+            <section className="section">
+                <StudentTests/>
             </section>
         </div>
     )

@@ -27,9 +27,11 @@ function AdminLessonQA({title, QALoading, content, setUpdated, updateContent}) {
                         types={{
                             text: ['text'],
                             media: ['image', 'audio', 'video', 'youtube'],
+                            document: ['iframe'],
                             answers: ['answers'],
                             other: ['divider']
                         }}
+                        contentType={'questions'}
                     />
             }
         </div>

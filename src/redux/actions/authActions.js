@@ -3,7 +3,7 @@ import {generate} from "generate-password";
 
 const db = firebase.firestore();
 
-export function loginUser(login, password) {
+export function loginUser(login, password, remember = false) {
     const userFoundRef = db.collection('users').where('login', '==', login);
     const token = generate({
         length: 500,
@@ -30,6 +30,16 @@ export function loginUser(login, password) {
                     else {
                         const userRef = db.collection('users').doc(snapshot.docs[0].id);
 
+                        if ( remember ) {
+                          const savedUsers = localStorage.getItem('savedUsers') ? JSON.parse(localStorage.getItem('savedUsers')) : [];
+
+                          if ( !savedUsers?.find(user => user.login === foundUser.login) ) {
+                            savedUsers.push(foundUser);
+                          }
+
+                          localStorage.setItem('savedUsers', JSON.stringify(savedUsers));
+                        }
+
                         userRef.update({
                             token: token
                         }).then(() => {
@@ -48,11 +58,16 @@ export function loginUser(login, password) {
 
 export function checkIfLoggedin(token) {
     const userFoundRef = db.collection('users').where('token', '==', token);
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(checkIfLoggedinBegin());
 
-        return userFoundRef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+
+        unsubscribe = userFoundRef.onSnapshot(snapshot => {
             if ( !snapshot.docs.length ) {
                 localStorage.removeItem('token');
                 window.location.replace('/landing');

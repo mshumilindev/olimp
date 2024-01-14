@@ -9,8 +9,8 @@ import Confirm from '../../components/UI/Confirm/Confirm';
 import './adminPages.scss';
 import generator from "generate-password";
 
-const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
-const Form = React.lazy(() => import('../../components/Form/Form'));
+import Modal from '../../components/UI/Modal/Modal';
+import Form from '../../components/Form/Form';
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {

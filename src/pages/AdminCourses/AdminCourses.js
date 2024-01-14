@@ -1,16 +1,17 @@
-import React, {useContext, useState, useEffect, useRef, useCallback} from 'react';
+import React, {useContext, useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import { withRouter } from 'react-router-dom';
+import {connect} from "react-redux";
+import { orderBy } from 'natural-orderby';
+import styled, {keyframes} from 'styled-components';
+
 import Preloader from "../../components/UI/preloader";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import withFilters from "../../utils/withFilters";
-import { withRouter } from 'react-router-dom';
 import {fetchSubjects, updateSubject} from "../../redux/actions/coursesActions";
-import {connect} from "react-redux";
 import AdminCoursesSubject from "../../components/AdminCoursesList/AdminCoursesSubject/AdminCoursesSubject";
 import '../../components/AdminCoursesList/adminCourses.scss';
-import { orderBy } from 'natural-orderby';
 
-const Modal = React.lazy(() => import('../../components/UI/Modal/Modal'));
-const Form = React.lazy(() => import('../../components/Form/Form'));
+import Modal from '../../components/UI/Modal/Modal';
+import Form from '../../components/Form/Form';
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {
@@ -23,7 +24,27 @@ function usePrevious(value) {
     return ref.current;
 }
 
-function AdminCourses({history, filters, list, loading, searchQuery, params, updateSubject, allCoursesList}) {
+function AdminCourses({history, location, filters, list, loading, updateSubject, allCoursesList, isLessonCoppied, setIsLessonCoppied, user}) {
+  const subjectIDRef = useRef(null);
+  const params = useMemo(() => {
+    const locStr = location?.pathname ? location?.pathname : '';
+    const locArr = locStr.split('/');
+    let p = {};
+
+    if ( locArr[2] ) {
+      p.subjectID = locArr[2];
+    }
+
+    if ( locArr[3] ) {
+      p.courseID = locArr[3];
+    }
+
+    if ( locArr[4] ) {
+      p.moduleID = locArr[4];
+    }
+    return p
+  }, [location]);
+
     if ( params ) {
         if ( params.subjectID && list && list.length && !list.find(item => item.id === params.subjectID) ) {
             history.push('/admin-courses');
@@ -83,23 +104,33 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
         setSubjectFields(JSON.stringify(getSubjectFields(getSubjectModel())));
     }, [setShowModal, setSubjectFields, getSubjectFields, getSubjectModel]);
 
-    const filterList = useCallback(() => orderBy(list.filter(item => {
-        // let sameTeacher = user.role === 'admin';
-        //
-        // if ( user.role === 'teacher' ) {
-        //     allCoursesList.forEach(subjectItem => {
-        //         if ( item.id === subjectItem.id && subjectItem.coursesList.length ) {
-        //             subjectItem.coursesList.forEach(courseItem => {
-        //                 if ( courseItem.teacher === user.id ) {
-        //                     sameTeacher = true;
-        //                 }
-        //             });
-        //         }
-        //     });
-        // }
+    const filteredList = useMemo(() => {
+      return orderBy(list, [v => v.name[lang] ? v.name[lang] : v.name['ua']])
+    }, [list, lang]);
 
-        return (searchQuery.trim().length ? item.name[lang].toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    }), [v => v.name[lang] ? v.name[lang] : v.name['ua']]), [searchQuery, list, lang]);
+    const myList = useMemo(() => {
+      return filteredList?.filter((item) => {
+        const coursesList = allCoursesList?.filter((allItem) => allItem.id === item.id)?.[0]?.coursesList;
+        const onlyMyCourses = coursesList?.filter(({teacher}) => teacher === user?.id);
+
+        if ( !!onlyMyCourses?.length ) {
+          return {
+            ...item,
+            children: onlyMyCourses.length
+          }
+        }
+      });
+    }, [filteredList, user, allCoursesList]);
+
+    const getCoursesQty = useCallback((subjectID) => {
+      const coursesList = allCoursesList?.find((allItem) => allItem.id === subjectID)?.coursesList;
+
+      return coursesList?.filter((courseItem) => courseItem.teacher === user?.id)?.length;
+    }, [allCoursesList, user]);
+
+    const otherList = useMemo(() => {
+      return filteredList?.filter((item) => !allCoursesList?.find((allItem) => allItem.id === item.id)?.coursesList?.some(({teacher}) => teacher === user?.id));
+    }, [filteredList, user, allCoursesList]);
 
     const showCreateSubjectModal = useCallback((e) => {
         e.preventDefault();
@@ -131,45 +162,81 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
                 { filters }
                 <div className="adminLibrary__list widget">
                     {
-                        allCoursesList && list ?
-                            list.length ?
-                                <>
-                                    <div className="widget__descr">
-                                        <h3>Правила користування:</h3>
-                                        <p>Ліва кнопка миші - обрати предмет/модуль/урок</p>
-                                        <p>Права кнопка миші - відкрити контекстне меню</p>
-                                        <p><strong>Перед створенням нового основного предмету запевніться, що його ще не існує</strong></p>
-                                    </div>
-                                    <div className="adminCourses__list">
-                                        {
-                                            filterList().map(subject => <AdminCoursesSubject params={params} loading={loading} subject={subject} key={subject.id} />)
-                                        }
-                                    </div>
-                                </>
-                                :
-                                <div className="nothingFound">
-                                    <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
-                                        <i className="content_title-icon fa fa-plus" />
-                                        { translate('create_subject') }
-                                    </a>
-                                </div>
-                            :
-                            loading ?
-                                <Preloader/>
-                                :
-                                <div className="nothingFound">
-                                    <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
-                                        <i className="content_title-icon fa fa-plus" />
-                                        { translate('create_subject') }
-                                    </a>
-                                </div>
+                        <>
+                            <div className="widget__descr">
+                                <h3>Правила користування:</h3>
+                                <p>Ліва кнопка миші - обрати предмет/модуль/урок</p>
+                                <p>Права кнопка миші - відкрити контекстне меню</p>
+                                <p><strong>Перед створенням нового основного предмету запевніться, що його ще не існує</strong></p>
+                            </div>
+                            <div className="adminCourses__list">
+                              {
+                                loading && !filteredList?.length && (
+                                  <AdminCoursesSkeletonsHolderStyled>
+                                    {
+                                      [...Array(20)].map((item, index) => (
+                                        <AdminCoursesSkeletonStyled key={index}>
+                                          <AdminCoursesSkeletonLeftStyled>
+                                            <AdminCoursesSkeletonIconStyled className="fa fa-folder" />
+                                            <AdminCoursesSkeletonTextStyled />
+                                          </AdminCoursesSkeletonLeftStyled>
+                                          <AdminCoursesSkeletonQtyStyled />
+                                        </AdminCoursesSkeletonStyled>
+                                      ))
+                                    }
+                                  </AdminCoursesSkeletonsHolderStyled>
+                                )
+                              }
+                              {
+                                !loading && !filteredList?.length && (
+                                  <div className="nothingFound">
+                                      <a href="/" className="btn btn_primary" onClick={showCreateSubjectModal}>
+                                          <i className="content_title-icon fa fa-plus" />
+                                          { translate('create_subject') }
+                                      </a>
+                                  </div>
+                                )
+                              }
+                              {
+                                !!myList?.length && (
+                                  <>
+                                    {!!otherList?.length && <AdminCoursesListTitle>Мої предмети</AdminCoursesListTitle>}
+                                    {
+                                      myList.map(subject => <AdminCoursesSubject subjectIDRef={subjectIDRef} coursesQty={getCoursesQty(subject.id)} params={params} loading={loading} subject={subject} key={subject.id} isLessonCoppied={isLessonCoppied} setIsLessonCoppied={setIsLessonCoppied} />)
+                                    }
+                                  </>
+                                )
+                              }
+                              {
+                                !!otherList?.length && (
+                                  <>
+                                    {!!myList?.length && <AdminCoursesListTitle>Інші предмети</AdminCoursesListTitle>}
+                                    {
+                                      otherList.map(subject => (
+                                        <AdminCoursesSubject
+                                          subjectIDRef={subjectIDRef}
+                                          params={params}
+                                          loading={loading}
+                                          subject={subject}
+                                          key={subject.id}
+                                          isLessonCoppied={isLessonCoppied}
+                                          setIsLessonCoppied={setIsLessonCoppied}
+                                          coursesQty={user?.role === 'admin' ? subject.children : 0}
+                                        />
+                                      ))
+                                    }
+                                  </>
+                                )
+                              }
+                            </div>
+                        </>
                     }
                 </div>
             </div>
             {
                 showModal ?
                     <Modal onHideModal={() => toggleModal()}>
-                        <Form loading={loading} heading={translate('create_subject')} fields={JSON.parse(subjectFields)} setFieldValue={setFieldValue} formAction={handleCreateSubject} formError={formError} formUpdated={formUpdated}/>
+                      <Form loading={loading} heading={translate('create_subject')} fields={JSON.parse(subjectFields)} setFieldValue={setFieldValue} formAction={handleCreateSubject} formError={formError} formUpdated={formUpdated}/>
                     </Modal>
                     :
                     null
@@ -181,11 +248,84 @@ function AdminCourses({history, filters, list, loading, searchQuery, params, upd
 const mapStateToProps = state => ({
     list: state.coursesReducer.subjectsList,
     loading: state.coursesReducer.loading,
-    allCoursesList: state.coursesReducer.coursesList
+    allCoursesList: state.coursesReducer.coursesList,
+    user: state.authReducer.currentUser,
 });
 const mapDispatchToProps = dispatch => ({
     fetchSubjects: dispatch(fetchSubjects()),
     updateSubject: (subject) => dispatch(updateSubject(subject))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withFilters(AdminCourses, true)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminCourses));
+
+const shimmer = keyframes`
+  0 {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+`;
+
+const AdminCoursesListTitle = styled.h3`
+  font-family: 'Roboto Condensed', Arial, sans-serif;
+  font-weight: bold;
+  padding: 40px 0 20px;
+  width: 100%;
+  text-transform: uppercase;
+
+  &:first-child {
+    padding-top: 0;
+  }
+`;
+
+const AdminCoursesSkeletonsHolderStyled = styled.div`
+
+`;
+
+const AdminCoursesSkeletonStyled = styled.div`
+  padding: 20px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+
+  &:nth-child(2n) {
+    background: #f2f2f2;
+  }
+
+  &:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.5) 60%, rgba(255,255,255,0));
+    animation: ${shimmer} 1s infinite;
+    content: '';
+  }
+`;
+
+const AdminCoursesSkeletonLeftStyled = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const AdminCoursesSkeletonIconStyled = styled.i`
+  margin-right: 10px;
+  color: #ccc;
+`;
+
+const AdminCoursesSkeletonTextStyled = styled.div`
+  height: 10px;
+  width: 250px;
+  background: #ccc;
+`;
+
+const AdminCoursesSkeletonQtyStyled = styled.div`
+  height: 10px;
+  width: 130px;
+  background: #ccc;
+`;

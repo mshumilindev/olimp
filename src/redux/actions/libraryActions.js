@@ -10,15 +10,16 @@ export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
 
 export function fetchLibrary(userID) {
     let libraryCollection = db.collection('library');
-
-    if ( userID ) {
-        libraryCollection = libraryCollection.where('teacher', 'array-contains', userID);
-    }
+    let unsubscribe = null;
 
     return dispatch => {
         dispatch(fetchLibraryBegin());
 
-        return libraryCollection.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+
+        unsubscribe = libraryCollection.onSnapshot(snapshot => {
             const libraryList = [];
 
             snapshot.docs.forEach(doc => {
@@ -29,6 +30,40 @@ export function fetchLibrary(userID) {
             });
             dispatch(fetchLibrarySuccess(libraryList));
         });
+    }
+}
+
+export function fetchLibraryBooks() {
+    const listRef = storageRef.child('library');
+
+    return dispatch => {
+      dispatch(fetchLibraryBooksBegin());
+      let libraryList = [];
+
+      listRef.listAll().then((data) => {
+        let arr = [];
+        let arrMetadata = [];
+        data.items.forEach((item) => {
+          arr.push(item.getDownloadURL());
+          arrMetadata.push(item.getMetadata())
+        });
+        Promise.all(arr).then((data) => {
+          Promise.all(arrMetadata).then((metadata) => {
+            console.log(metadata)
+            libraryList = data.map((item, index) => {
+              return {
+                url: item,
+                metadata: {
+                  name: metadata[index].name,
+                  customMetadata: metadata[index].customMetadata,
+                }
+              }
+            });
+            dispatch(fetchLibraryBooksSuccess(libraryList));
+          })
+        })
+        // updateMetadata()
+      })
     }
 }
 
@@ -73,6 +108,21 @@ export const fetchLibrarySuccess = libraryList => {
         payload: { libraryList }
     }
 };
+
+export const fetchLibraryBooksBegin = () => {
+    return {
+        type: FETCH_LIBRARY_BOOKS_BEGIN
+    }
+};
+export const fetchLibraryBooksSuccess = booksList => {
+    return {
+        type: FETCH_LIBRARY_BOOKS_SUCCESS,
+        payload: { booksList }
+    }
+};
+
+export const FETCH_LIBRARY_BOOKS_BEGIN = 'FETCH_LIBRARY_BOOKS_BEGIN';
+export const FETCH_LIBRARY_BOOKS_SUCCESS = 'FETCH_LIBRARY_BOOKS_SUCCESS';
 
 export const DELETE_DOC_BEGIN = 'DELETE_DOC_BEGIN';
 

@@ -21,7 +21,7 @@ class Jitsi {
         this.toggleScreenShare = this.toggleScreenShare.bind(this);
     }
 
-    start({containers, user, roomName, onDisplayNameChange, usersList}) {
+    start({containers, user, roomName, onDisplayNameChange, usersList, noVideo}) {
         const self = this;
         const chatConfig = {
             "options": {
@@ -56,6 +56,9 @@ class Jitsi {
         };
 
         onLocalTracks = (tracks, noUserCreation) => {
+            if ( noVideo ) {
+              return []
+            }
             self.localTracks = tracks;
             localTracks = tracks;
 

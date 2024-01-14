@@ -18,7 +18,8 @@ export default function SeamlessEditorImage({ block, setBlock }) {
             type: 'text',
             id: block.id + '_caption',
             value: block.value.caption[lang],
-            placeholder: translate('caption')
+            placeholder: translate('caption'),
+            saveSize: 500
         }
     ];
 

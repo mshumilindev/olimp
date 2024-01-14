@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import Form from '../../components/Form/Form';
 import './login.scss';
 import DocumentTitle from "react-document-title";
@@ -15,6 +15,7 @@ const errors = {
 };
 
 function Login({loading, error, loginUser}) {
+    const [ savedUsers, setSavedUsers ] = useState(localStorage.getItem('savedUsers') ? JSON.parse(localStorage.getItem('savedUsers')) : null);
     const { translate, siteName } = useContext(siteSettingsContext);
     const docTitle = siteName + ' | ' + translate('login');
     const [ formError, setFormError ] = useState(null);
@@ -36,6 +37,13 @@ function Login({loading, error, loginUser}) {
             required: true
         },
         {
+            type: 'checkbox',
+            label: translate('remember_me'),
+            checked: true,
+            value: false,
+            id: 'remember'
+        },
+        {
             name: 'login_btn',
             type: 'submit',
             id: 'login_btn'
@@ -43,10 +51,18 @@ function Login({loading, error, loginUser}) {
     ]);
 
     useEffect(() => {
-        if ( error ) {
-            setFormError(translate(errors[error]));
-        }
+      if ( error ) {
+        setFormError(translate(errors[error]));
+      }
     }, [error]);
+
+    const removeSavedUser = useCallback((user) => (e) => {
+      e.stopPropagation();
+      const newSavedUsers = savedUsers.filter((savedUser) => savedUser.login !== user.login) || [];
+
+      localStorage.setItem('savedUsers', JSON.stringify(newSavedUsers))
+      setSavedUsers(newSavedUsers);
+    }, []);
 
     return (
         <DocumentTitle title={ docTitle }>
@@ -59,7 +75,27 @@ function Login({loading, error, loginUser}) {
                             null
                     }
                     <LanguageSelect />
-                    <Form formError={formError} heading={translate('login')} fields={formFields} formAction={sendLogin} setFieldValue={setFieldValue}/>
+                    <h2 className="form__heading">{translate('login')}</h2>
+                    {
+                      !!savedUsers?.length && (
+                        <div className="login__saved">
+                          {
+                            savedUsers.map((user) => (
+                              <div className="login__saved-user" onClick={() => loginUser(user.login, user.password)}>
+                                <div className="login__saved-avatar" style={{backgroundImage: user.avatar ? `url(${user.avatar})` : ''}} key={user.login}>
+                                  {!user.avatar && <i className="fa fa-user"/>}
+                                </div>
+                                <div className="login__saved-name">{user.name}</div>
+                                <div className="login__saved-remove" onClick={removeSavedUser(user)}>
+                                  <i class="fa-regular fa-trash-can"></i>
+                                </div>
+                              </div>
+                            ))
+                          }
+                        </div>
+                      )
+                    }
+                    <Form formError={formError} fields={formFields} formAction={sendLogin} setFieldValue={setFieldValue}/>
                     {
                         loading ?
                             <Preloader/>
@@ -80,7 +116,7 @@ function Login({loading, error, loginUser}) {
     }
 
     function sendLogin() {
-        loginUser(formFields.find(field => field.id === 'login').value, formFields.find(field => field.id === 'password').value);
+      loginUser(formFields.find(field => field.id === 'login').value, formFields.find(field => field.id === 'password').value, formFields.find(field => field.id === 'remember').value);
     }
 }
 
@@ -92,7 +128,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    loginUser: (login, password) => dispatch(loginUser(login, password))
+    loginUser: (login, password, remember) => dispatch(loginUser(login, password, remember))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -10,6 +10,8 @@ import {Provider} from "react-redux";
 import {mainStore} from "./redux/stores/mainStore";
 import {Editor} from "@tinymce/tinymce-react";
 
+import { GlobalNotificationProvider } from "./components/UI/GlobalNotifications/context";
+
 const Login  = React.lazy(() => import('./pages/Login/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
 const StudentProfile = React.lazy(() => import ('./pages/StudentProfile/StudentProfile'));
@@ -22,6 +24,7 @@ const StudentPage = React.lazy(() => import('./pages/StudentPage/StudentPage'));
 const StudentChats = React.lazy(() => import('./pages/StudentChats/StudentChats'));
 const StudentLibrary = React.lazy(() => import('./pages/StudentLibrary/StudentLibrary'));
 const StudentJournal = React.lazy(() => import('./pages/StudentJournal/StudentJournal'));
+const StudentTestsPage = React.lazy(() => import('./pages/StudentTestsPage'));
 
 const AdminPanel = React.lazy(() => import('./pages/AdminPanel/AdminPanel'));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers/AdminUsers'));
@@ -49,6 +52,7 @@ const PageNotFound = React.lazy(() => import('./pages/PageNotFound/PageNotFound'
 
 export default function App() {
     const [ checkedForUpdates, setCheckedForUpdates ] = useState(false);
+    const [isLessonCoppied, setIsLessonCoppied] = useState(null);
 
     useEffect(() => {
         const db = firebase.firestore();
@@ -106,6 +110,7 @@ export default function App() {
     else {
         return (
             <SiteSettingsProvider>
+              <GlobalNotificationProvider>
                 <BrowserRouter>
                     <Switch>
                         <Provider store={mainStore}>
@@ -126,6 +131,7 @@ export default function App() {
                                     <Route path='/contact' component={StudentContact}/>
                                     <Route path='/class' component={StudentClass}/>
                                     <Route path='/library' component={StudentLibrary}/>
+                                    <Route path='/tests' component={StudentTestsPage}/>
                                     <Route exact path='/user/:userLogin' render={props => <StudentProfile {...props.match} />}/>
                                     <Route exact path='/courses' render={props => <StudentCourses {...props.match} />}/>
                                     <Route exact path='/courses/:subjectID/:courseID'
@@ -139,15 +145,9 @@ export default function App() {
                                     <Route exact path='/admin-users' component={AdminUsers}/>
                                     <Route exact path='/admin-users/:userLogin'
                                            render={props => <AdminProfile {...props.match} />}/>
-                                    <Route exact path='/admin-courses' component={AdminCourses}/>
-                                    <Route exact path="/admin-courses/:subjectID"
-                                           render={props => <AdminCourses {...props.match} />}/>
-                                    <Route exact path="/admin-courses/:subjectID/:courseID"
-                                           render={props => <AdminCourses {...props.match} />}/>
-                                    <Route exact path="/admin-courses/:subjectID/:courseID/:moduleID"
-                                           render={props => <AdminCourses {...props.match} />}/>
-                                    <Route exact path="/admin-courses/:subjectID/:courseID/:moduleID/:lessonID"
-                                           render={props => <AdminLesson {...props.match} />}/>
+                                    <Route exact path='/admin-lessons/:subjectID/:courseID/:moduleID/:lessonID'
+                                          render={props => <AdminLesson {...props.match} />}/>
+                                    <Route path='/admin-courses' render={props => <AdminCourses {...props.match} isLessonCoppied={isLessonCoppied} setIsLessonCoppied={setIsLessonCoppied} />}/>
                                     <Route exact path='/admin-classes' component={AdminClasses}/>
                                     <Route exact path='/admin-classes/:classID'
                                            render={props => <AdminClass {...props.match} />}/>
@@ -155,7 +155,7 @@ export default function App() {
                                     <Route exact path='/admin-pages/:pageSlug'
                                            render={props => <AdminPage {...props.match} />}/>
                                     <Route path='/admin-translations' component={AdminTranslations}/>
-                                    <Route path='/admin-library' component={AdminLibrary}/>
+                                    <Route path='/admin-library' render={props => <AdminLibrary {...props.match} />}/>
                                     <Route path='/admin-settings' component={AdminSettings}/>
                                     <Route exact path='/admin-info' render={props => <AdminInfo {...props.match} />}/>
                                     <Route exact path='/admin-info/:id' render={props => <AdminInfo {...props.match} />}/>
@@ -163,7 +163,8 @@ export default function App() {
                                     <Route exact path='/chats' component={StudentChats} />
                                     <Route exact path='/chat/:chatID' render={props => <Chatroom {...props.match} />} />
                                     <Route path='/admin-attendance' component={AdminAttendance}/>
-                                    <Route path='/admin-tests' component={AdminTesting}/>
+                                    <Route exact path='/admin-tests' component={AdminTesting}/>
+                                    <Route path='/admin-tests/:testID' render={props => <AdminTesting testID={props.match.params.testID} />}/>
 
                                     <Route exact path='/guest' component={Guest} />
 
@@ -175,6 +176,7 @@ export default function App() {
                         </Provider>
                     </Switch>
                 </BrowserRouter>
+              </GlobalNotificationProvider>
             </SiteSettingsProvider>
         );
     }

@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import {connect} from "react-redux";
-import Preloader from "../UI/preloader";
-import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from 'react-router-dom';
 import './nextSchedule.scss';
+import styled from 'styled-components';
+
+import Preloader from "../UI/preloader";
+import siteSettingsContext from "../../context/siteSettingsContext";
 
 function NextSchedule({classData, allCoursesList, loadingClasses, loadingCourses}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -21,11 +23,16 @@ function NextSchedule({classData, allCoursesList, loadingClasses, loadingCourses
                     !classData || !allCoursesList ?
                         <div className="nothingFound">{ translate('nothing_found') }</div>
                         :
-                        <div className="nextSchedule__list">
-                            {
-                                filterDays().map(day => _renderDay(day))
-                            }
-                        </div>
+                        <>
+                          <div className="nextSchedule__list">
+                              {
+                                  filterDays().map(day => _renderDay(day))
+                              }
+                          </div>
+                          <BtnHolderStyled>
+                            <Link to={'/schedule'} className="btn btn_primary">Весь розклад</Link>
+                          </BtnHolderStyled>
+                        </>
             }
         </div>
     );
@@ -67,15 +74,15 @@ function NextSchedule({classData, allCoursesList, loadingClasses, loadingCourses
     }
 
     function _renderCourse(lesson, index) {
-        const currentSubject = allCoursesList.find(subject => subject.id === lesson.subject);
-        const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
+        const currentSubject = allCoursesList?.find(subject => subject.id === lesson.subject);
+        const currentCourse = currentSubject?.coursesList?.find(course => course.id === lesson.course);
 
         return (
             <div className="nextSchedule__list-courses-item" key={index + lesson.course}>
                 <div className="nextSchedule__list-courses-icon">
                     <i className="fa fa-graduation-cap" />
                 </div>
-                <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id}>
+                <Link to={'/courses/' + currentSubject?.id + '/' + currentCourse?.id}>
                     {
                         lesson.time ?
                             <span className="nextSchedule__list-courses-item-time">
@@ -84,11 +91,8 @@ function NextSchedule({classData, allCoursesList, loadingClasses, loadingCourses
                             :
                             null
                     }
-                    <span className="nextSchedule__list-courses-item-subject">
-                        { currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] }
-                    </span>
                     <span className="nextSchedule__list-courses-item-course">
-                        { currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] }
+                        { currentCourse?.name[lang] ? currentCourse?.name[lang] : currentCourse?.name['ua'] }
                     </span>
                 </Link>
             </div>
@@ -138,3 +142,9 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(NextSchedule);
+
+const BtnHolderStyled = styled.div`
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+`;

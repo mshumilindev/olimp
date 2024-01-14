@@ -1,12 +1,15 @@
 import React, {useContext} from 'react';
-import Preloader from "../UI/preloader";
 import moment from "moment";
 import {orderBy} from "natural-orderby";
 import classNames from "classnames";
+import {connect} from "react-redux";
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
+import '../../pages/AdminChats/adminChats.scss';
+import Preloader from "../UI/preloader";
 import ChatListItem from "../ChatList/ChatListItem";
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {connect} from "react-redux";
-import '../../pages/AdminChats/adminChats.scss';
 
 function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
     const { translate } = useContext(siteSettingsContext);
@@ -27,7 +30,16 @@ function StudentChatsList({ events, loading, usersList, showTodayOnly }) {
                     <Preloader/>
                     :
                     joinByDate(events.participant).length ?
-                        joinByDate(events.participant).map(block => _renderBlockByDate(block))
+                        <>
+                          { joinByDate(events.participant).map(block => _renderBlockByDate(block)) }
+                          {
+                            showTodayOnly && (
+                              <BtnHolderStyled>
+                                <Link to={'/chats'} className="btn btn_primary">Усі відеочати</Link>
+                              </BtnHolderStyled>
+                            )
+                          }
+                        </>
                         :
                         <div className="nothingFound">
                             {translate('no_videochats_yet')}
@@ -81,3 +93,9 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, null)(StudentChatsList);
+
+const BtnHolderStyled = styled.div`
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+`;

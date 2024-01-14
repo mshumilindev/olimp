@@ -9,6 +9,22 @@
   bottom: $pageIndent;
   z-index: 99999;
   background: $baseColor;
+  #react-mathjax-preview {
+    height: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+    background: inherit;
+    position: relative;
+    z-index: 1;
+  }
+  #react-mathjax-preview-result {
+    height: 100%;
+    color: white;
+  }
+  .tox {
+    height: 100% !important;
+    width: calc(100% - 82px);
+  }
   &:before {
     content: '';
     background: $baseColor;
@@ -47,7 +63,7 @@
     bottom: 0;
     width: 80px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     border: 2px solid $white;
     border-left: 0;
@@ -56,10 +72,6 @@
   &__actionsItem {
     text-align: center;
     margin: 10px 0;
-    &:last-child {
-      position: absolute;
-      bottom: 10px;
-    }
   }
   &__notVisible {
     display: none;

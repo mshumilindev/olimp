@@ -66,12 +66,6 @@
   }
   &__list-courses-item-course {
     font-weight: bold;
-    &:before {
-      content: '/';
-      margin: 0 5px;
-      color: $greyColor;
-      font-weight: normal;
-    }
   }
   &__list-courses-notFound {
     color: $greyColor;

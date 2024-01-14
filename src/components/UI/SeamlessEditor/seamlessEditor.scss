@@ -41,6 +41,18 @@ $blockMinHeight: 100px;
         top: 300px;
       }
     }
+    .article {
+      .preloader {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+
+        &:before {
+          display: none;
+        }
+      }
+    }
   }
   &__toolbar {
     position: sticky;
@@ -441,6 +453,11 @@ $blockMinHeight: 100px;
         cursor: pointer;
         position: relative;
         height: 100%;
+      }
+      &-excel {
+        .table {
+
+        }
       }
       img {
         max-width: 100%;

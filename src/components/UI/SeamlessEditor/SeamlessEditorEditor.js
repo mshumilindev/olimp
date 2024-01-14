@@ -16,6 +16,8 @@ import SeamlessEditorGoogleWord from "./blocks/SeamlessEditorGoogleWord";
 import SeamlessEditorGoogleExcel from "./blocks/SeamlessEditorGoogleExcel";
 import SeamlessEditorGooglePowerpoint from "./blocks/SeamlessEditorGooglePowerpoint";
 import SeamlessEditorWord from "./blocks/SeamlessEditorWord";
+import SeamlessEditorExcel from "./blocks/SeamlessEditorExcel";
+import SeamlessEditorIframe from "./blocks/SeamlessEditorIframe";
 import SeamlessEditorQuestion from "./blocks/SeamlessEditorQuestion/SeamlessEditorQuestion";
 
 const blocksData = blocksJSON.default;
@@ -185,7 +187,7 @@ export default function SeamlessEditorEditor({title, types, type, addBlock, setB
         return (
             <div className={classNames('seamlessEditor__editor-block isNew', {isOver: dragOverNew})} onDragLeave={() => setTimeout(() => { setDragOverNew(false)}, 0)} onDragEnter={() => setDragOverNew(true)}>
                 <div className="seamlessEditor__editor-block-inner">
-                    { translate('seamlessEditor_drag_block_here') }
+                    Почніть додавати блоки
                 </div>
             </div>
         )
@@ -300,6 +302,14 @@ export default function SeamlessEditorEditor({title, types, type, addBlock, setB
             // === Document
             case 'word':
                 return <SeamlessEditorWord block={block} setBlock={setBlock} openTextEditor={openTextEditor}/>;
+
+            // === Document
+            case 'excel':
+                return <SeamlessEditorExcel block={block} setBlock={setBlock}/>;
+
+            // === Document
+            case 'iframe':
+                return <SeamlessEditorIframe block={block} setBlock={setBlock}/>;
 
             // === Google Drive
             case 'googleWord':

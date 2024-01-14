@@ -4,11 +4,152 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+
+  &__title {
+    margin: 40px 0 20px;
+    font-family: $RobotoCondensed;
+    border-bottom: 1px solid $baseColor;
+    padding: 10px;
+    color: $purpleColor;
+    font-size: 18px;
+  }
+
+  &__subtitle {
+    font-family: $RobotoCondensed;
+    color: $purpleColor;
+  }
+
+  &__allAnswerMarks {
+    position: fixed;
+    right: 40px;
+    top: 40px;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,.6);
+    padding: 10px;
+    border-radius: 4px;
+
+    i {
+      margin-top: 10px;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &.fa-circle-check {
+        color: $successColor;
+      }
+
+      &.fa-triangle-exclamation {
+        color: $warningColor;
+      }
+
+      &.fa-square-xmark {
+        color: $errorColor;
+      }
+    }
+  }
+
+  &__testing-answers {
+    background: $lightColor;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+
+    [class$="__subtitle"] {
+      margin-bottom: 10px;
+    }
+
+    &.correct {
+      background: $lightGreenColor;
+
+      [class$="__subtitle"] {
+        color: $successColor;
+      }
+    }
+
+    &.warning {
+      background: $warningTextColor;
+
+      [class$="__subtitle"] {
+        color: $warningColor;
+      }
+    }
+
+    &.incorrect {
+      background: $lightRedColor;
+
+      [class$="__subtitle"] {
+        color: $errorColor;
+      }
+    }
+  }
+
+  &__answer-mark {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+
+    i {
+      padding: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      color: $greyColor;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:hover,
+      &.active {
+        &:first-child {
+          color: $successColor;
+        }
+        &:nth-child(2) {
+          color: $warningColor;
+        }
+        &:last-child {
+          color: $errorColor;
+        }
+      }
+    }
+  }
+
+  &__testing-comments {
+    background: $lightColor;
+    padding: 20px;
+    margin-bottom: 20px;
+
+    [class$="__subtitle"] {
+      margin-bottom: 10px;
+    }
+  }
+
+  &__answerTitle {
+    font-family: $RobotoCondensed;
+    color: $purpleColor;
+  }
+
   img {
     max-width: 100%;
   }
   .tox-statusbar {
     display: none !important;
+  }
+  &__submit-holder {
+    padding: 20px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-top: 1px solid $lightGreyColor;
+    margin-top: 20px;
+  }
+  &__submit-text {
+    font-family: $RobotoCondensed;
+    margin-bottom: 10px;
+    color: $errorColor;
   }
   &__submit {
     text-align: center;
@@ -74,8 +215,6 @@
     &.type-formula {
       position: relative;
       user-select: none;
-      background: $lightColor;
-      padding: 20px;
       overflow: hidden;
       .tox-editor-header {
         display: none !important;
@@ -146,14 +285,53 @@
   &__comment {
     background: $lightColor;
     padding: 20px;
-    margin: 0 -20px;
+    margin-top: 20px;
+
     &-heading {
-      font-weight: bold;
       font-family: $RobotoCondensed;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      color: $purpleColor;
     }
   }
   &__answers {
+    background: $lightColor;
+    padding: 20px;
+    position: relative;
+
+    &-mark {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 18px;
+    }
+
+    &.correct {
+      background: $lightGreenColor;
+
+      .article__answerTitle,
+      i.fa-solid {
+        color: $successColor;
+      }
+    }
+
+    &.warning {
+      background: $warningTextColor;
+
+      .article__answerTitle,
+      i.fa-solid {
+        color: $warningColor;
+      }
+    }
+
+    &.incorrect {
+      background: $lightRedColor;
+
+      .article__answerTitle,
+      i.fa-solid {
+        color: $errorColor;
+      }
+    }
+
     &.isReadonly {
       position: relative;
       &:after {
@@ -165,6 +343,9 @@
         bottom: 0;
         z-index: 1;
       }
+    }
+    .form__radio-item {
+      justify-content: flex-start;
     }
   }
   &__answers-confirm {

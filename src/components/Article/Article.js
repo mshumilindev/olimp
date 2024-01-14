@@ -1,19 +1,45 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import classNames from "classnames";
+import ReactPlayer from 'react-player';
+import MathJax from 'react-mathjax-preview'
+import { connect } from 'react-redux';
+import styled from 'styled-components'
+
+import Form from "../Form/Form";
+import '../UI/ImageEditor/imageEditor.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ArticleAnswer from './ArticleAnswer';
 import Preloader from "../UI/preloader";
-import ReactPlayer from 'react-player';
-import MathJax from 'react-mathjax-preview'
-import Form from "../Form/Form";
-import { connect } from 'react-redux';
-import '../UI/ImageEditor/imageEditor.scss';
 
-function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly}) {
+function Article({user, content, type, finishQuestions, loading, onBlockClick, answers, setAnswers, allAnswersGiven, setAllAnswersGiven, comments, setComments, readonly, answerMarks = [], handleSetAnswerMark}) {
     const { translate, lang } = useContext(siteSettingsContext);
     const [ contentPage, setContentPage ] = useState(0);
     const articleRef = useRef(null);
     const [ size, setSize ] = useState({width: 0, height: 0});
+
+    const getAllAnswersGiven = useCallback(() => {
+      const answersBlocks = answers?.blocks?.length ? answers.blocks.filter(block => content.find(contentBlock => contentBlock.id === block.id)) : answers?.blocks;
+
+      return answersBlocks?.length === content?.filter(item => item.type === 'answers')?.length && answersBlocks?.every(block => block.value && block.value.length && block.value[0].length);
+    }, [answers, content]);
+
+    const emptyAnswersCount = useMemo(() => {
+      const answersBlocks = answers?.blocks?.length ? answers.blocks.filter(block => content.find(contentBlock => contentBlock.id === block.id)) : answers?.blocks;
+      const counter = content?.filter(item => item.type === 'answers')?.length - answersBlocks?.length;
+      let tasksWording = 'завдань';
+
+      if ( counter > 0 && counter < 5 ) {
+        tasksWording = 'завдання';
+      }
+
+      return !!counter ? `Залишилось розвʼязати ${counter} ${tasksWording}` : null;
+    }, [answers, content]);
+
+    useEffect(() => {
+      if ( answers?.blocks?.length && content?.length ) {
+        setAllAnswersGiven(getAllAnswersGiven())
+      }
+    }, [answers, content, setAllAnswersGiven, getAllAnswersGiven]);
 
     useEffect(() => {
         const width = articleRef.current.offsetWidth;
@@ -26,9 +52,58 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
         new ResizeObserver(handleResize).observe(articleRef.current);
     }, []);
 
+    const pageContent = pagifyContent()[contentPage];
+    let questionNumber = 0;
+
     return (
         <article className="article" ref={articleRef}>
-            { pagifyContent()[contentPage].map((block, index) => _renderBlock(block, index)) }
+          {
+            !!answerMarks?.length && type === 'testing' && (
+              <div className="article__allAnswerMarks">
+                {
+                  answerMarks.map(({value}, index) => <i key={`mark_${index}`} className={`fa-solid ${value === 'correct' && 'fa-circle-check'} ${value === 'warning' && 'fa-triangle-exclamation'} ${value === 'incorrect' && 'fa-square-xmark'}`} />)
+                }
+              </div>
+            )
+          }
+            { pageContent.map((block, index) => {
+              const renderQuestionTitle = type === 'questions' && (index === 0 || (content.some(item => item.type === 'comment') ? pageContent[index - 1]?.type === 'comment' : pageContent[index - 1]?.type === 'answers'));
+              const renderQuestionTitleForTesting = type === 'testing' && (index === 0 || pageContent[index - 1]?.type === 'comment');
+              const currentAnswerMark = answerMarks?.find((item) => item.blockID === block.id)?.value;
+              if ( renderQuestionTitle || renderQuestionTitleForTesting ) {
+                questionNumber++;
+              }
+
+              return (
+                <React.Fragment key={block.id}>
+                  {
+                    (renderQuestionTitle || renderQuestionTitleForTesting) && (
+                      <div className="article__title">Завдання №{questionNumber}</div>
+                    )
+                  }
+                  <div className={`${type === 'testing' && (pageContent[index + 1]?.type === 'comment' && 'article__testing-answers' || block.type === 'comment' && 'article__testing-comments')} ${currentAnswerMark}`}>
+                    {
+                      type === 'testing' && pageContent[index + 1]?.type === 'comment' && (
+                        <>
+                          <div className="article__subtitle">Відповідь учня:</div>
+                          <div className="article__answer-mark">
+                            <i className={`fa-solid fa-circle-check ${currentAnswerMark === 'correct' && 'active'}`} onClick={handleSetAnswerMark(block.id, 'correct')}/>
+                            <i className={`fa-solid fa-triangle-exclamation ${currentAnswerMark === 'warning' && 'active'}`} onClick={handleSetAnswerMark(block.id, 'warning')}/>
+                            <i className={`fa-solid fa-square-xmark ${currentAnswerMark === 'incorrect' && 'active'}`} onClick={handleSetAnswerMark(block.id, 'incorrect')}/>
+                          </div>
+                        </>
+                      )
+                    }
+                    {
+                      type === 'testing' && block.type === 'comment' && (
+                        <div className="article__subtitle">Додати коментар:</div>
+                      )
+                    }
+                    { _renderBlock(block, index) }
+                  </div>
+                </React.Fragment>
+              )
+            }) }
             {
                 pagifyContent().length > 1 && type === 'content' ?
                     _renderPager(pagifyContent().length)
@@ -45,11 +120,14 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
             }
             {
                 type === 'questions' && !readonly ?
+                  <div className="article__submit-holder">
+                    {!!emptyAnswersCount && <p className="article__submit-text">{emptyAnswersCount}</p>}
                     <div className="article__submit">
                         <span className="btn btn_primary" onClick={finishQuestions} disabled={!allAnswersGiven}>{ translate('submit') }</span>
                     </div>
-                    :
-                    null
+                  </div>
+                  :
+                  null
             }
         </article>
     );
@@ -71,7 +149,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
     }
 
     function _renderBlock(block, index) {
-        return (
+      return (
             <div className={'article__block type-' + block.type} key={block.id} onClick={() => onBlockClick ? onBlockClick(index) : null}>
                 {
                     block.type === 'text' || block.type === 'word' ?
@@ -82,6 +160,12 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                 {
                     block.type === 'formula' ?
                         <MathJax math={block.value[lang] ? block.value[lang] : block.value['ua']}/>
+                        :
+                        null
+                }
+                {
+                    block.type === 'image' ?
+                        <img src={block.value[lang]} style={{width: '100%'}} />
                         :
                         null
                 }
@@ -268,7 +352,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
                 {
-                    block.type === 'powerpoint' || block.type === 'googlePowerpoint' ?
+                    block.type === 'googlePowerpoint' ?
                         <iframe
                             src={getPowerpointURL(block.value)}
                             style={{width: '100%', height: size.height}} frameBorder="0"
@@ -279,6 +363,20 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
                 {
+                    block.type === 'iframe' ?
+                      <BlockStyled>
+                        <Preloader />
+                        <iframe
+                            src={block.value}
+                            style={{width: '100%', height: size.height}} frameBorder="0"
+                            allowFullScreen={true}
+                            mozAllowFullScreen={true}
+                            webkitAllowFullscreen={true} />
+                      </BlockStyled>
+                      :
+                      null
+                }
+                {
                     block.type === 'divider' ?
                         <hr/>
                         :
@@ -286,19 +384,19 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                 }
                 {
                     block.type === 'answers' ?
-                        <ArticleAnswer block={block} answers={answers} setContentPage={setContentPage} setAnswer={setAnswer} readonly={readonly} />
+                        <ArticleAnswer block={block} answers={answers} setContentPage={setContentPage} setAnswer={setAnswer} readonly={readonly} answerMarks={answerMarks} />
                         :
                         null
                 }
                 {
                     block.type === 'comment' ?
                         user.role === 'teacher' ?
-                            <Form fields={[{type: 'editor', id: block.id, placeholder: translate('add_comment'), value: block.value['ua']}]} setFieldValue={setComment} />
+                            <Form fields={[{type: 'editor', id: block.id, placeholder: translate('add_comment'), initialValue: block.initialValue}]} setFieldValue={setComment} />
                             :
                             block.value ?
                                 <div className="article__comment">
                                     <div className="article__comment-heading">
-                                        { translate('comment_from_teacher') }
+                                      {`${translate('comment_from_teacher')}:`}
                                     </div>
                                     <div dangerouslySetInnerHTML={{__html: block.value}}/>
                                 </div>
@@ -308,7 +406,7 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
                         null
                 }
             </div>
-        )
+    )
     }
 
     function getWordURL(url) {
@@ -414,12 +512,8 @@ function Article({user, content, type, finishQuestions, loading, onBlockClick, a
         setAnswers(Object.assign({}, answers));
 
         if ( type === 'questions' ) {
-            setAllAnswersGiven(checkIfAllAnswersGiven());
+            setAllAnswersGiven(getAllAnswersGiven());
         }
-    }
-
-    function checkIfAllAnswersGiven() {
-        return answers.blocks.length && answers.blocks.every(block => block.value && block.value.length && block.value[0].length) && answers.blocks.length === content.filter(item => item.type === 'answers').length;
     }
 
     function setComment(fieldID, value) {
@@ -488,4 +582,20 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(Article);
+export default connect(mapStateToProps)(memo(Article));
+
+const BlockStyled = styled.div`
+  position: relative;
+
+  iframe {
+    position: relative;
+    z-index: 1;
+  }
+
+  .preloader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+`;

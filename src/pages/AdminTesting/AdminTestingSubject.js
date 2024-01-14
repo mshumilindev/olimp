@@ -4,7 +4,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import AdminTestingCourse from "./AdminTestingCourse";
 import { connect } from 'react-redux';
 
-function AdminTestingSubject({user, subjectItem, tests}) {
+function AdminTestingSubject({user, subjectItem, tests, testID}) {
     const { lang } = useContext(siteSettingsContext);
 
     const filterCourses = useCallback(() => {
@@ -20,7 +20,7 @@ function AdminTestingSubject({user, subjectItem, tests}) {
             {
                 filterCourses().length ?
                     <div className="adminTesting__coursesList">
-                        { orderBy(filterCourses(), v => v.name[lang] ? v.name[lang] : v.name['ua']).filter(courseItem => courseItem.teacher === user.id).map(courseItem => <AdminTestingCourse course={courseItem} tests={tests} subjectID={subjectItem.id} key={courseItem.id}/>) }
+                        { orderBy(filterCourses(), v => v.name[lang] ? v.name[lang] : v.name['ua']).filter(courseItem => courseItem.teacher === user.id).map(courseItem => <AdminTestingCourse course={courseItem} tests={tests} subjectID={subjectItem.id} key={courseItem.id} testID={testID}/>) }
                     </div>
                     :
                     null

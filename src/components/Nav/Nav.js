@@ -8,7 +8,7 @@ import withFilters from "../../utils/withFilters";
 import Preloader from "../UI/preloader";
 import favicon from '../../assets/img/favicon.png';
 
-function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
+function Nav({user, nav, prefix, showLogo, hideItems, logo, location}) {
     const { siteName, translate } = useContext(SiteSettingsContext);
     const [ isNavCollapsed, setIsNavCollapsed ] = useState(localStorage.getItem('isNavCollapsed'));
     const history = useHistory();
@@ -24,6 +24,7 @@ function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
 
     const _renderItem = useCallback((item) => {
         const pathName = history.location.pathname;
+
 
         if ( !hideItems || !hideItems.some(hiddenItem => item.name === hiddenItem) ) {
             return (
@@ -43,7 +44,7 @@ function Nav({user, nav, prefix, showLogo, hideItems, logo}) {
             )
         }
         return false;
-    }, [history, hideItems, isNavCollapsed, prefix, translate]);
+    }, [history, hideItems, isNavCollapsed, prefix, translate, location]);
 
     const collapseNav = useCallback(() => {
         if ( !isNavCollapsed ) {

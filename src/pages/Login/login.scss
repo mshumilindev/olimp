@@ -1,5 +1,6 @@
 @import '../../assets/scss/utils/sizes';
 @import '../../assets/scss/utils/colors';
+@import '../../assets/scss/utils/fonts';
 
 .login {
   padding: $pageIndent;
@@ -89,5 +90,58 @@
     text-align: center;
     margin: -$pageIndent #{-$pageIndent} $pageIndent;
     line-height: 20px;
+  }
+  &__saved {
+    margin: 0 -10px;
+    display: flex;
+    border: 1px solid $lightGreyColor;
+    border-width: 1px 0;
+    padding: 10px 0;
+
+    &-user {
+      cursor: pointer;
+      margin: 0 10px;
+      text-align: center;
+      width: 60px;
+      position: relative;
+
+      &:hover {
+        > div {
+          color: $btnPrimary;
+          filter: grayscale(0);
+        }
+      }
+    }
+    &-remove {
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+      font-size: 12px;
+      color: $baseColor !important;
+
+      &:hover {
+        color: $errorColor !important;
+      }
+    }
+    &-avatar {
+      width: 60px;
+      height: 60px;
+      background-size: cover;
+      border-radius: 100%;
+      background-color: $white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all .25s linear;
+      margin-bottom: 10px;
+      filter: grayscale(100%);
+    }
+    &-name {
+      font-size: 12px;
+      font-family: $RobotoCondensed;
+      color: $greyColor;
+      transition: color .25s linear;
+    }
   }
 }

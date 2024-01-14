@@ -473,6 +473,7 @@ export default class SiteSettingsProvider extends React.Component {
             password: '',
             role: role ? role : '',
             canSeeGuests: false,
+            isManagement: false,
             status: 'suspended',
             isNew: true,
             email: '',
@@ -564,6 +565,29 @@ export default class SiteSettingsProvider extends React.Component {
                 checked: true,
                 unchecked: false,
                 hidden: currentUser.role !== 'admin'
+            },
+            {
+                type: 'radio',
+                id: 'isManagement',
+                name: 'isManagement',
+                placeholder: translate('is_management'),
+                options: [{
+                  name: 'teacher',
+                  icon: 'fas fa-chess-knight',
+                  id: 'teacher'
+                },
+                {
+                  name: 'deputy',
+                  icon: 'fas fa-chess-rook',
+                  id: 'deputy'
+                },
+                {
+                  name: 'headmaster',
+                  icon: 'fas fa-chess-queen',
+                  id: 'headmaster'
+                }],
+                value: user?.isManagement || 'teacher',
+                hidden: currentUser.role !== 'admin' || user.role !== 'teacher'
             },
             {
                 type: 'tabs',

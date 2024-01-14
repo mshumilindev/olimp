@@ -5,7 +5,7 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import './coursesPicker.scss';
 import classNames from 'classnames';
 
-const Modal = React.lazy(() => import('../Modal/Modal'));
+import Modal from '../Modal/Modal';
 
 function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses, noControls}) {
     const { translate, lang } = useContext(siteSettingsContext);
@@ -130,6 +130,7 @@ function CoursesPicker({selectedCourses, coursesList, loading, handleAddCourses,
 
     const _renderSelectedCourse = useCallback((course) => {
         const currentSubject = coursesList.find(item => item.id === course.subject);
+        if ( !currentSubject ) return [];
         const currentCourse = currentSubject.coursesList.find(item => item.id === course.course);
 
         if ( !currentCourse ) {

@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react';
 import siteSettingsContext from "../../context/siteSettingsContext";
-import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import Preloader from "../UI/preloader";
 import AdminClassScheduleDayCourse from "./AdminClassScheduleDayCourse";
 import AdminClassScheduleDayLesson from "./AdminClassScheduleDayLesson";
 
-const Modal = React.lazy(() => import('../UI/Modal/Modal'));
+import Modal from '../UI/Modal/Modal';
 
 function AdminClassScheduleDay({canEdit, day, selectedCourses, coursesList, handleAddSchedule}) {
     const { translate } = useContext(siteSettingsContext);
@@ -128,7 +127,4 @@ const mapStateToProps = state => ({
     coursesList: state.coursesReducer.coursesList,
     loading: state.coursesReducer.loading
 });
-const mapDispatchToProps = dispatch => ({
-    fetchAllCourses: dispatch(fetchAllCourses())
-});
-export default connect(mapStateToProps, mapDispatchToProps)(AdminClassScheduleDay);
+export default connect(mapStateToProps)(AdminClassScheduleDay);

@@ -43,7 +43,7 @@ function Header({user, classesList, setUpdates, logoutUser}) {
                     </div>
                 </div>
                 {
-                    user.role === 'admin' ?
+                    user.role === 'admin' || (!!user?.isManagement && user?.isManagement !== 'teacher') ?
                         <div className="header__flush-storage" style={{marginLeft: 20}}>
                             <span className="btn btn_primary" onClick={setVersion}>Version change</span>
                         </div>

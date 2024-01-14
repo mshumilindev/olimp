@@ -23,6 +23,7 @@ const initialState = {
     lesson: null,
     loading: false,
     subjectCoursesList: null,
+    subjectCoursesListLoading: false,
     lessonsList: null,
     modulesList: null
 };
@@ -45,7 +46,8 @@ export default function usersReducer(state = initialState, action) {
         case LESSONS_BEGIN:
             return Object.assign({}, {
                 ...state,
-                loading: true
+                loading: true,
+                lessonsList: null
             });
 
         case LESSONS_SUCCESS:
@@ -103,20 +105,23 @@ export default function usersReducer(state = initialState, action) {
         case COURSES_LIST_BEGIN:
             return Object.assign({},{
                 ...state,
-                loading: true
+                loading: true,
+                subjectCoursesListLoading: true
             });
 
         case COURSES_LIST_SUCCESS:
             return Object.assign({},{
                 ...state,
                 loading: false,
-                subjectCoursesList: action.payload.subjectCoursesList
+                subjectCoursesList: action.payload.subjectCoursesList,
+                subjectCoursesListLoading: false
             });
 
         case MODULES_BEGIN:
             return Object.assign({},{
                 ...state,
-                loading: true
+                loading: true,
+                modulesList: null
             });
 
         case MODULES_SUCCESS:

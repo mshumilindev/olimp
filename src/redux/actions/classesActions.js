@@ -2,20 +2,23 @@ import firebase from "../../db/firestore";
 
 const db = firebase.firestore();
 const classesCollection = db.collection('classes');
-const classesList = [];
+let classesList = [];
 
 export function fetchClasses() {
+  let unsubscribe = null;
     if ( !classesList.length ) {
         return dispatch => {
             dispatch(classesBegin());
-            return classesCollection.onSnapshot(snapshot => {
-                classesList.splice(0, classesList.length);
-                snapshot.docs.map(doc => {
-                    return classesList.push({
-                        ...doc.data(),
-                        id: doc.id
-                    })
-                });
+            if ( unsubscribe ) {
+              unsubscribe();
+            }
+            unsubscribe = classesCollection.onSnapshot(snapshot => {
+                classesList = snapshot.docs.map((doc) => {
+                  return {
+                    ...doc.data(),
+                    id: doc.id
+                  }
+                })
                 dispatch(classesSuccess(classesList));
             });
         };
@@ -84,10 +87,14 @@ export function updateClass(classID, classData) {
 
 export function fetchClass(classID) {
     const docRef = db.collection('classes').doc(classID);
+    let unsubscribe;
 
     return dispatch => {
         dispatch(classBegin());
-        return docRef.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = docRef.onSnapshot(snapshot => {
             dispatch(classSuccess({
                 ...snapshot.data(),
                 id: snapshot.id

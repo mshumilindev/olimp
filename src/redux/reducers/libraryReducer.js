@@ -9,13 +9,17 @@ import {
     FETCH_TEXTBOOK_BEGIN,
     FETCH_TEXTBOOK_SUCCESS,
     DISCARD_DOC_SUCCESS,
+    FETCH_LIBRARY_BOOKS_BEGIN,
+    FETCH_LIBRARY_BOOKS_SUCCESS
 } from '../actions/libraryActions';
 
 const initialState = {
     libraryList: null,
     textbook: null,
     loading: false,
-    downloadedTextbook: null
+    downloadedTextbook: null,
+    booksLoading: false,
+    booksList: null
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -31,6 +35,19 @@ export default function usersReducer(state = initialState, action) {
                 ...state,
                 loading: false,
                 libraryList: action.payload.libraryList
+            });
+
+        case FETCH_LIBRARY_BOOKS_BEGIN:
+            return Object.assign({}, {
+                ...state,
+                booksLoading: true
+            });
+
+        case FETCH_LIBRARY_BOOKS_SUCCESS:
+            return Object.assign({}, {
+                ...state,
+                booksLoading: false,
+                booksList: action.payload.booksList
             });
 
         case DELETE_DOC_BEGIN:

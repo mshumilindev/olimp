@@ -4,6 +4,7 @@ const db = firebase.firestore();
 
 export function fetchNotifications(userID) {
     let notificationsCollection = db.collection('notifications');
+    let unsubscribe = null;
 
     if ( userID )  {
         notificationsCollection = notificationsCollection.where('targetUsers', 'array-contains', userID);
@@ -11,7 +12,10 @@ export function fetchNotifications(userID) {
 
     return dispatch => {
         dispatch(fetchNotificationsBegin());
-        return notificationsCollection.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = notificationsCollection.onSnapshot(snapshot => {
             const notificationsList = [];
 
             snapshot.docs.forEach(doc => {

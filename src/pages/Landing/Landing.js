@@ -105,7 +105,7 @@ function Landing({ logo, siteName, address, usersList }) {
                                 </h1>
                                 <div className="landing__login">
                                     <Link to="/login">
-                                        <TextTooltip position="top" text={translate('login')} children={
+                                        <TextTooltip position="left" text={translate('login')} children={
                                             <i className="fas fa-key" />
                                         }/>
                                     </Link>
@@ -169,7 +169,7 @@ function Landing({ logo, siteName, address, usersList }) {
     function _renderContact() {
         return (
             <div className="landing__address">
-                <p><i className="content_title-icon fas fa-map-marked-alt" />м. Київ, Північно-Сирецька 1-3 Б</p>
+                <p><i className="content_title-icon fas fa-map-marked-alt" />Проспект Правди 41д</p>
                 <p><i className="content_title-icon fas fa-mobile-alt" /><a href="tel:+380674406769">(067) 440 67 69</a></p>
             </div>
         )

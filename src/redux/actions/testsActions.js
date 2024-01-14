@@ -4,25 +4,27 @@ const db = firebase.firestore();
 
 export function fetchTests(userID) {
     let testsRef = db.collection('tests');
+    let unsubscribe = null;
 
     if ( userID ) {
         testsRef = testsRef.where('userID', '==', userID);
     }
 
     return dispatch => {
-        dispatch(testsBegin());
-        testsRef.onSnapshot(snapshot => {
-            const tests = [];
+      dispatch(testsBegin());
+      if ( unsubscribe ) {
+          unsubscribe();
+      }
+      unsubscribe = testsRef.onSnapshot(snapshot => {
+        const tests = [...snapshot.docs.map((doc) => {
+          return {
+            ...doc.data(),
+            id: doc.id
+          }
+        })];
 
-            snapshot.docs.forEach(doc => {
-                tests.push({
-                    ...doc.data(),
-                    id: doc.id
-                });
-            });
-
-            dispatch(testsSuccess(tests));
-        });
+        dispatch(testsSuccess(tests));
+      });
     }
 }
 
@@ -45,6 +47,17 @@ export function deleteTest(testID) {
     return dispatch => {
         return testItemRef.delete();
     }
+}
+
+export function deleteTests(testIDs) {
+  const batch = db.batch();
+
+  return dispatch => {
+    testIDs.forEach((id) => {
+      batch.delete(db.collection('tests').doc(id))
+    });
+    batch.commit();
+  }
 }
 
 export const TESTS_BEGIN = 'TESTS_BEGIN';

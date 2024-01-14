@@ -2,8 +2,10 @@ import React, {Fragment, useCallback, useContext, useMemo} from 'react';
 import moment from "moment";
 import {orderBy} from "natural-orderby";
 import classNames from "classnames";
-import siteSettingsContext from "../../context/siteSettingsContext";
 import {connect} from "react-redux";
+import styled from 'styled-components';
+
+import siteSettingsContext from "../../context/siteSettingsContext";
 import Preloader from "../UI/preloader";
 
 const AdminAttendanceTable = ({filterByDate, usersList, updateUser, showOnlyMy, coursesList, user, list, usersLoading}) => {
@@ -131,21 +133,32 @@ const AdminAttendanceTable = ({filterByDate, usersList, updateUser, showOnlyMy, 
     }, [subjectsByTeacher]);
 
     const _renderMark = useCallback((lessonItem, index, dayAtt, dayItem, userItem) => {
-        const foundCourse = coursesList.find(subjectItem => subjectItem.id === lessonItem.subject).coursesList.find(courseItem => courseItem.id === lessonItem.course);
+        const foundCourse = coursesList?.find(subjectItem => subjectItem.id === lessonItem.subject)?.coursesList?.find(courseItem => courseItem.id === lessonItem.course);
 
-        if ( user.role !== 'admin' && showOnlyMy && foundCourse.teacher !== user.id ) {
+        if ( user.role !== 'admin' && showOnlyMy && foundCourse?.teacher !== user.id ) {
             return null;
         }
 
         return (
             <div className={classNames('adminAttendance__check', {isWeekend: isWeekend(dayItem), isChecked: dayAtt && dayAtt.courses && checkForMark(dayAtt.courses, lessonItem)})} key={userItem.id + '_' + dayItem + '_' + lessonItem.course + index}>
                 <div className="adminAttendance__check-title">
-                    { foundCourse.name[lang] ? foundCourse.name[lang] : foundCourse.name['ua'] }
+                    { foundCourse?.name[lang] ? foundCourse?.name[lang] : foundCourse?.name['ua'] }
                 </div>
                 <div className="adminAttendance__check-time">
                     { lessonItem.time.start } - { lessonItem.time.end }
                 </div>
-                <div className={classNames('adminAttendance__check-inner')} onClick={() => addAttendance(userItem.id, dayItem, lessonItem.course, lessonItem.time.start)}>
+                {/*
+                  <AdminAttendanceRadioHolderStyled>
+                    <AdminAttendanceRadioStyled>
+                      <i class="fa-regular fa-circle" />
+                      <i class="fa-regular fa-circle-check" />
+                      <i class="fa-regular fa-circle-xmark" />
+                    </AdminAttendanceRadioStyled>
+                    <AdminAttendanceRadioStyled>
+                    </AdminAttendanceRadioStyled>
+                  </AdminAttendanceRadioHolderStyled>
+                */}
+                {<div className={classNames('adminAttendance__check-inner')} onClick={() => addAttendance(userItem.id, dayItem, lessonItem.course, lessonItem.time.start)}>
                     <div className="adminAttendance__check-icon">
                         {
                             dayAtt && dayAtt.courses && checkForMark(dayAtt.courses, lessonItem) ?
@@ -158,6 +171,7 @@ const AdminAttendanceTable = ({filterByDate, usersList, updateUser, showOnlyMy, 
                         { translate('attended') }
                     </div>
                 </div>
+                }
                 <div className={classNames('adminAttendance__mark-input form', {isFilled: dayAtt && dayAtt.courses && checkForMark(dayAtt.courses, lessonItem) && checkForMark(dayAtt.courses, lessonItem).mark})}>
                     <input type="number" min={0} max={12} className="form__field" placeholder={translate('score')} value={dayAtt && dayAtt.courses && checkForMark(dayAtt.courses, lessonItem) ? checkForMark(dayAtt.courses, lessonItem).mark ? checkForMark(dayAtt.courses, lessonItem).mark : '' : ''} onChange={handleMarkChange(userItem.id, dayItem, lessonItem.course, lessonItem.time.start)} />
                 </div>
@@ -284,3 +298,11 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(AdminAttendanceTable);
+
+const AdminAttendanceRadioHolderStyled = styled.div`
+
+`;
+
+const AdminAttendanceRadioStyled = styled.div`
+
+`;

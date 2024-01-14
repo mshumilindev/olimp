@@ -5,9 +5,13 @@ const initialTime = {start: '09:00', end: '09:45'};
 
 export default function AdminClassScheduleDayCourse({selectedLessons, coursesList, item, setSelectedLessons}) {
     const { lang } = useContext(siteSettingsContext);
-    const currentSubject = coursesList.find(subject => subject.id === item.subject);
-    const currentCourse = currentSubject.coursesList.find(course => course.id === item.course);
     const [ time, setTime ] = useState({start: item.time && item.time.start ? item.time.start : initialTime.start, end: item.time && item.time.end ? item.time.end : initialTime.end});
+
+    const currentSubject = coursesList.find(subject => subject.id === item.subject);
+
+    if ( !currentSubject ) return null;
+
+    const currentCourse = currentSubject.coursesList.find(course => course.id === item.course);
 
     return (
         <div className={classNames('adminClass__schedule-courses-item', {selected: JSON.parse(selectedLessons).some(lesson => lesson.subject === item.subject && lesson.course === item.course)})}>

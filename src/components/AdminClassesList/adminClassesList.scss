@@ -39,12 +39,12 @@
       display: block;
       position: relative;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       &:hover {
         background: $anchorColor;
         color: $white;
-        [class$="-item-title"] {
-          margin-top: -120px;
-        }
         .adminClasses__list-item-info {
           transform: translateY(0);
         }
@@ -61,10 +61,6 @@
       font-family: $RobotoCondensed;
       font-size: 60px;
       transition: font-size .15s ease-in-out, margin .15s ease-in-out;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
       width: 70%;
       text-align: center;
     }

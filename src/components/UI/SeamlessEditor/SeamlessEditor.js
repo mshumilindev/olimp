@@ -6,7 +6,7 @@ import SeamlessEditorEditor from "./SeamlessEditorEditor";
 import { generate } from "generate-password";
 import Preloader from "../preloader";
 
-export default function SeamlessEditor({loading, title, type, content, updateContent, types}) {
+export default function SeamlessEditor({loading, title, type, content, updateContent, types, contentType}) {
     const { translate } = useContext(siteSettingsContext);
     const [ isEdited, setIsEdited ] = useState(false);
 
@@ -61,7 +61,7 @@ export default function SeamlessEditor({loading, title, type, content, updateCon
                 {
                     _renderToolbar()
                 }
-                <Article content={content} readonly />
+                <Article content={content} readonly type={contentType} />
                 {
                     loading ?
                         <Preloader/>

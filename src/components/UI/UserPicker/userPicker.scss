@@ -119,6 +119,9 @@
     font-family: $RobotoCondensed;
     white-space: nowrap;
     width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     i {
       font-size: 12px;
     }

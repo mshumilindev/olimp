@@ -113,7 +113,7 @@ function StudentCoursesItem({user, subjectID, courseID, currentUser, tests}) {
                 {
                     checkIfHasScore(moduleID, lesson.id) ?
                         <div className="studentCourse__score">
-                            { translate('score') }: <span>{ checkIfHasScore(moduleID, lesson.id) }</span>
+                            { translate('mark') }: <span>{ checkIfHasScore(moduleID, lesson.id) }</span>
                         </div>
                         :
                         null

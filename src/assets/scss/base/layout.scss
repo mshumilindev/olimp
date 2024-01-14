@@ -1,7 +1,39 @@
+@keyframes animateBG {
+  0% {
+    filter: grayscale(1);
+    opacity: .25;
+  }
+  50% {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+  100% {
+    filter: grayscale(1);
+    opacity: .25;
+  }
+}
+
 .page {
   padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
   background: $pageColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
+  position: relative;
+  .pageBg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-size: 850px;
+    background-position: 50% 140px;
+    opacity: .25;
+    filter: grayscale(1);
+    background-repeat: repeat-x;
+
+    &.animate {
+      animation: animateBG linear 5s infinite;
+    }
+  }
   &__inner {
     display: flex;
     justify-content: space-between;
@@ -10,6 +42,7 @@
     margin: 0 auto;
     padding-bottom: 80px;
     width: 100%;
+    position: relative;
   }
   @media screen and (max-width: $maxMobile) {
     &:after {

@@ -65,15 +65,15 @@ function Schedule({classData, allCoursesList, loadingClasses, loadingCourses}) {
     }
 
     function _renderCourse(lesson, index) {
-        const currentSubject = allCoursesList.find(subject => subject.id === lesson.subject);
-        const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
+        const currentSubject = allCoursesList?.find(subject => subject.id === lesson.subject);
+        const currentCourse = currentSubject?.coursesList?.find(course => course.id === lesson.course);
 
         return (
             <div className="nextSchedule__list-courses-item" key={index + lesson.course}>
                 <div className="nextSchedule__list-courses-icon">
                     <i className="fa fa-graduation-cap" />
                 </div>
-                <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id}>
+                <Link to={'/courses/' + currentSubject?.id + '/' + currentCourse?.id}>
                     {
                         lesson.time ?
                             <span className="nextSchedule__list-courses-item-time">
@@ -82,11 +82,8 @@ function Schedule({classData, allCoursesList, loadingClasses, loadingCourses}) {
                             :
                             null
                     }
-                    <span className="nextSchedule__list-courses-item-subject">
-                        { currentSubject.name[lang] ? currentSubject.name[lang] : currentSubject.name['ua'] }
-                    </span>
                     <span className="nextSchedule__list-courses-item-course">
-                        { currentCourse.name[lang] ? currentCourse.name[lang] : currentCourse.name['ua'] }
+                        { currentCourse?.name[lang] ? currentCourse?.name[lang] : currentCourse?.name['ua'] }
                     </span>
                 </Link>
             </div>

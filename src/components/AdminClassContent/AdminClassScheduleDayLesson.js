@@ -4,6 +4,11 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 export default function AdminClassScheduleDayLesson({canEdit, coursesList, quickRemoveLesson, lesson}) {
     const { lang } = useContext(siteSettingsContext);
     const currentSubject = coursesList.find(subject => subject.id === lesson.subject);
+
+    if ( !currentSubject ) {
+      return null;
+    }
+
     const currentCourse = currentSubject.coursesList.find(course => course.id === lesson.course);
 
     if ( !currentCourse ) {

@@ -1,15 +1,63 @@
-import React, {useContext, useEffect, useMemo} from 'react';
-import Header from '../../components/Header/Header';
-import Nav from '../../components/Nav/Nav';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import DocumentTitle from "react-document-title";
-import SiteSettingsContext from "../../context/siteSettingsContext";
-import ChatWidget from "../../components/ChatBox/ChatWidget";
-import '../../assets/scss/base/chatroom.scss';
-import firebase from "../../db/firestore";
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-function Admin({user, children, location, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant}) {
+import Header from '../../components/Header/Header';
+import Nav from '../../components/Nav/Nav';
+import SiteSettingsContext from "../../context/siteSettingsContext";
+import ChatWidget from "../../components/ChatBox/ChatWidget";
+import ChatReminder from "../../components/ChatBox/ChatReminder";
+import GlobalNotifications from "../../components/UI/GlobalNotifications";
+import { useGlobalNotificationContext } from '../../components/UI/GlobalNotifications/context';
+import '../../assets/scss/base/chatroom.scss';
+import {fetchTests} from "../../redux/actions/testsActions";
+import firebase from "../../db/firestore";
+
+function Admin({user, children, location, isTeacher, fetchEvents, fetchEventsOrganizer, fetchEventsParticipant, tests, coursesList}) {
+  const { addNotification, removeNotification } = useGlobalNotificationContext();
+
+  const myCourses = useMemo(() => {
+    if ( !isTeacher ) return null;
+
+    return coursesList?.flatMap((item) => item.coursesList.filter((course) => course.teacher === user?.id));
+  }, [coursesList, isTeacher]);
+
+  const filteredTests = useMemo(() => {
+    if ( !isTeacher ) return null;
+
+    return tests?.filter((test) => test.isSent && !test.score && myCourses?.find((course) => course.id === test.lesson.courseID));
+  }, [tests, isTeacher, myCourses]);
+
+  useEffect(() => {
+    const savedTests = localStorage.getItem('savedTests') ? JSON.parse(localStorage.getItem('savedTests')) : []
+    const newTests = filteredTests?.filter((filtered) => !savedTests?.some((saved) => saved === filtered.id));
+
+    if ( !!newTests?.length && localStorage.getItem('savedTests') ) {
+      addNotification([
+        ...newTests.map(({id}) => {
+          return {
+            id: id,
+            text: <>Новий <Link to={`/admin-tests/${id}`} onClick={() => removeNotification(id)}>тест</Link> на перевірку</>,
+            icon: 'fas fa-clipboard-check'
+          }
+        })
+      ]);
+    }
+
+    if ( !!newTests?.length ) {
+      const testsToSave = [
+        ...savedTests,
+        ...newTests.map((item) => item.id)
+      ];
+
+      if ( testsToSave.length ) {
+        localStorage.setItem('savedTests', JSON.stringify(testsToSave));
+      }
+    }
+  }, [filteredTests]);
+
     useEffect(() => {
         const db = firebase.firestore();
         const updatesCollection = db.collection('updates');
@@ -46,6 +94,7 @@ function Admin({user, children, location, isTeacher, fetchEvents, fetchEventsOrg
             fetchEvents();
         }
         else {
+            fetchEvents();
             fetchEventsOrganizer(user.id);
             fetchEventsParticipant(user.id);
         }
@@ -224,23 +273,31 @@ function Admin({user, children, location, isTeacher, fetchEvents, fetchEventsOrg
     }, [siteName, currentPage, translate]);
 
     return (
-        <DocumentTitle title={ docTitle }>
-            <div className="admin">
-                <div className={classNames('page page-' + currentPage)}>
-                    <Header/>
-                    <Nav type={'admin'} showLogo nav={isTeacher ? teacherNav : adminNav} prefix="main--"/>
-                    { children }
-                    <ChatWidget/>
-                </div>
-            </div>
-        </DocumentTitle>
+      <DocumentTitle title={ docTitle }>
+          <div className="admin">
+              <div className={classNames('page page-' + currentPage)}>
+                  <Header/>
+                  <Nav type={'admin'} showLogo nav={isTeacher ? teacherNav : adminNav} prefix="main--" location={location}/>
+                  { children }
+                  <ChatWidget/>
+                  <ChatReminder/>
+                  <GlobalNotifications />
+              </div>
+          </div>
+      </DocumentTitle>
     )
 }
 
 const mapStateToProps = state => {
-    return {
-        user: state.authReducer.currentUser
-    }
+  return {
+    user: state.authReducer.currentUser,
+    coursesList: state.coursesReducer.coursesList,
+    tests: state.testsReducer.tests,
+  }
 };
 
-export default connect(mapStateToProps)(Admin);
+const mapDispatchToProps = dispatch => ({
+    fetchTests: dispatch(fetchTests())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);

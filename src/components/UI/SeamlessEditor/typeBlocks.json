@@ -27,6 +27,14 @@
     {
       "icon": "fas fa-file-word",
       "block": "word"
+    },
+    {
+      "icon": "fas fa-file-excel",
+      "block": "excel"
+    },
+    {
+      "icon": "fas fa-code",
+      "block": "iframe"
     }
   ],
   "googleDrive": [

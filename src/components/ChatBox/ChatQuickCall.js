@@ -1,10 +1,10 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, memo} from 'react';
 import { Link } from "react-router-dom";
 import './quickCall.scss';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import ringing from '../../sounds/ringing.mp3';
 
-export default function ChatQuickCall({events, usersList}) {
+const ChatQuickCall = ({events, usersList}) => {
     const { translate } = useContext(siteSettingsContext);
     const [ callStarted, setCallStarted ] = useState(null);
     const [ caller, setCaller ] = useState(null);
@@ -45,3 +45,5 @@ export default function ChatQuickCall({events, usersList}) {
     }
     return null;
 }
+
+export default memo(ChatQuickCall)

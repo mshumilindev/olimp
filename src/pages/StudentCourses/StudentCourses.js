@@ -46,6 +46,10 @@ function StudentCourses({classData, allCoursesList}) {
     );
 
     function _renderCourse(item) {
+      if ( !item?.subject || !item?.course ) {
+        return null
+      }
+
         return (
             <div className="block studentCourses__list-item" key={item.course.id} id={item.course.id}>
                 <h2 className="block__heading">
@@ -75,6 +79,9 @@ function StudentCourses({classData, allCoursesList}) {
                 <div className="alphabetIndex__list">
                     {
                         filterCourses().map((item) => {
+                            if ( !item?.course ) {
+                              return null;
+                            }
                             return (
                                 <div className="alphabetIndex__item" key={item.course.id} onClick={() => scrollTo(item.course.id)}>
                                     { item.course.name[lang] ? item.course.name[lang] : item.course.name['ua'] }
@@ -101,6 +108,9 @@ function StudentCourses({classData, allCoursesList}) {
         if ( classData ) {
             classData.courses.forEach(item => {
                 const selectedSubject = allCoursesList.find(subject => subject.id === item.subject);
+                if ( !selectedSubject ) {
+                  return null;
+                }
                 const selectedCourse = selectedSubject.coursesList.find(course => course.id === item.course);
 
                 selectedCourses.push({

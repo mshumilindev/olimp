@@ -35,6 +35,10 @@ export default function SeamlessEditorQuestion({ block, setBlock }) {
                 {
                     id: 'formula',
                     title: translate('formula')
+                },
+                {
+                    id: 'image',
+                    title: translate('image')
                 }
             ]
         }
@@ -84,6 +88,16 @@ export default function SeamlessEditorQuestion({ block, setBlock }) {
                     <br/>
                     <div className="seamlessEditor__editor-block-placeholder">
                         { translate('formula_will_be_shown') }
+                    </div>
+                </>
+            )
+        }
+        if ( block.value.type === 'image' ) {
+            return (
+                <>
+                    <br/>
+                    <div className="seamlessEditor__editor-block-placeholder">
+                        Учень зможе завантажити зображення
                     </div>
                 </>
             )

@@ -6,12 +6,14 @@ import './adminChats.scss';
 import Modal from "../../components/UI/Modal/Modal";
 import Form from "../../components/Form/Form";
 import { generate } from "generate-password";
-import { updateEvent } from '../../redux/actions/eventsActions';
+import { updateEvent, deleteMultipleEvents } from '../../redux/actions/eventsActions';
 import moment from "moment";
 import Preloader from "../../components/UI/preloader";
+import Confirm from '../../components/UI/Confirm/Confirm';
 
-function AdminChats({user, loading, events, usersList, updateEvent}) {
+function AdminChats({user, loading, events, usersList, updateEvent, deleteMultipleEvents}) {
     const { translate } = useContext(SiteSettingsContext);
+    const [ showConfirm, setShowConfirm ] = useState(false);
     const initialFormFields = useMemo(() => {
         return [
             {
@@ -158,6 +160,14 @@ function AdminChats({user, loading, events, usersList, updateEvent}) {
                     { translate('videochats') }
                 </h2>
                 <div className="section__title-actions">
+                  {
+                    events?.all?.length && (user.role === 'admin' || (!!user?.isManagement && user?.isManagement !== 'teacher')) && (
+                      <span className="btn btn__error" onClick={() => setShowConfirm(true)}>
+                          <i className="content_title-icon fa fa-trash"/>
+                          Видалити всі відеочати
+                      </span>
+                    )
+                  }
                     <span className="btn btn_primary" onClick={() => setShowEditModal({})}>
                         <i className="content_title-icon fa fa-plus"/>
                         { translate('create_videochat') }
@@ -186,6 +196,13 @@ function AdminChats({user, loading, events, usersList, updateEvent}) {
                                     :
                                     null
                             }
+                            {
+                              !!user?.isManagement && user?.isManagement !== 'teacher' && (
+                                <div className="grid_col col-12">
+                                  <ChatList events={events.all} usersList={usersList} loading={loading} mapEventToFormFields={mapEventToFormFields} heading={translate('other_videochats')} />
+                                </div>
+                              )
+                            }
                         </div>
                     :
                     <div className="grid">
@@ -205,6 +222,11 @@ function AdminChats({user, loading, events, usersList, updateEvent}) {
                     :
                     null
             }
+            {
+              showConfirm && (
+                <Confirm message="Ви впевнені, що хочете видалити всі чати?" confirmAction={() => {deleteMultipleEvents(); setShowConfirm(false)}} cancelAction={() => setShowConfirm(false)} />
+              )
+            }
         </section>
     );
 }
@@ -214,13 +236,14 @@ const mapStateToProps = state => {
         loading: state.eventsReducer.loading,
         events: state.eventsReducer.events,
         usersList: state.usersReducer.usersList,
-        user: state.authReducer.currentUser
+        user: state.authReducer.currentUser,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateEvent: (eventID, newEvent) => dispatch(updateEvent(eventID, newEvent))
+        updateEvent: (eventID, newEvent) => dispatch(updateEvent(eventID, newEvent)),
+        deleteMultipleEvents: () => dispatch(deleteMultipleEvents())
     }
 };
 

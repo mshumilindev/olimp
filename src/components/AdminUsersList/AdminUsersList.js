@@ -8,10 +8,9 @@ import {deleteUser} from "../../redux/actions/usersActions";
 import './adminUsersList.scss';
 import { Link, withRouter } from 'react-router-dom';
 import withPager from "../../utils/withPager";
-import {fetchAllCourses} from "../../redux/actions/coursesActions";
 import {orderBy} from "natural-orderby";
 
-const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
+import Confirm from '../../components/UI/Confirm/Confirm';
 
 function AdminUsersList({user, history, deleteUser, loading, filters, pager, list, totalItems, classesList, allCoursesList}) {
     const { translate, lang, getUserModel } = useContext(siteSettingsContext);
@@ -282,8 +281,7 @@ const mapStateToProps = state => ({
     user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
-    deleteUser: (id) => dispatch(deleteUser(id)),
-    fetchAllCourses: dispatch(fetchAllCourses())
+    deleteUser: (id) => dispatch(deleteUser(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withPager(withRouter(AdminUsersList)));

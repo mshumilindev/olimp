@@ -48,6 +48,18 @@
       "en": ""
     }
   },
+  "excel": {
+    "type": "excel",
+    "value": {
+      "ua": "",
+      "ru": "",
+      "en": ""
+    }
+  },
+  "iframe": {
+    "type": "iframe",
+    "value": ""
+  },
   "googleWord": {
     "type": "googleWord",
     "value": ""

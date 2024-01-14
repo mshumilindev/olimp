@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import siteSettingsContext from "../../../context/siteSettingsContext";
 import {Link} from "react-router-dom";
-import {deleteModule, fetchLessons, updateLessonsOrder} from "../../../redux/actions/coursesActions";
+import {deleteModule, fetchLessons, updateLessonsOrder, copyLesson} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
 import classNames from "classnames";
 import AdminCoursesLesson from '../AdminCoursesLesson/AdminCoursesLesson';
@@ -11,14 +11,13 @@ import {sortableContainer, sortableElement, arrayMove } from 'react-sortable-hoc
 import Preloader from "../../UI/preloader";
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
-
-const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
-const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
+import ContextMenu from '../../UI/ContextMenu/ContextMenu';
+import Confirm from '../../UI/Confirm/Confirm';
 
 const SortableContainer = sortableContainer(({children}) => children);
 const SortableItem = sortableElement(({value}) => value);
 
-function AdminCoursesModule({location, subjectID, courseID, module, params, loading, fetchLessons, deleteModule, updateLessonsOrder, lessonsList}) {
+function AdminCoursesModule({location, history, subjectID, courseID, module, params, loading, fetchLessons, deleteModule, updateLessonsOrder, copyLesson, lessonsList, isLessonCoppied, setIsLessonCoppied}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
@@ -34,23 +33,35 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
             id: 0
         },
         {
+            name: 'Вставити урок',
+            icon: 'fas fa-paste',
+            action: handlePasteLesson,
+            id: 1,
+            disabled: !isLessonCoppied
+        },
+        {
             type: 'divider',
-            id: 1
+            id: 2
         },
         {
             name: translate('edit_module'),
             icon: 'fa fa-pencil-alt',
             action: handleEditModule,
-            id: 2
+            id: 3
         },
         {
             name: translate('delete_module'),
             icon: 'fa fa-trash-alt',
             type: 'error',
             action: handleDeleteModule,
-            id: 3
+            id: 4
         }
     ];
+
+    const processDeleteModule = useCallback(() => {
+      deleteModule(subjectID, courseID, module?.id);
+      history.push(`/admin-courses/${subjectID}/${courseID}`);
+    }, [deleteModule, subjectID, courseID, module]);
 
     useEffect(() => {
         if ( editOrder ) {
@@ -62,7 +73,7 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
 
                 newOrder.forEach((newItem, index) => {
                     lessonsToUpdate.push({
-                        id: sortLessons()[newItem].id,
+                        id: sortLessons().find(item => item.index === newItem).id,
                         index: index
                     });
                 });
@@ -79,10 +90,19 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
         }
     }, [location]);
 
+    const moduleLink = useMemo(() => {
+      let link = `/admin-courses/${subjectID}/${courseID}`;
+
+      if ( params?.moduleID !== module.id ) {
+        link += `/${module?.id}`;
+      }
+      return link;
+    }, [params, subjectID, courseID, module]);
+
     return (
-        <div className={classNames('adminCourses__list-item', {someOpen: params && params.moduleID && params.moduleID !== module.id, isOpen: params && params.moduleID === module.id})} style={{marginTop: 10}}>
+        <div className={classNames('adminCourses__list-item', {someOpen: params && params.moduleID && params.moduleID !== module.id, isOpen: params && params.moduleID === module.id})} style={{padding: '5px 0'}}>
             <ContextMenu links={contextLinks}>
-                <Link to={'/admin-courses/' + params.subjectID + '/' + params.courseID + '/' + module.id} className="adminCourses__list-courses-link">
+                <Link to={moduleLink} className="adminCourses__list-courses-link">
                     {
                         checkIfIsOpen() ?
                             loading ?
@@ -120,7 +140,7 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
             }
             {
                 showConfirm ?
-                    <Confirm message={translate('sure_to_delete_module')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteModule(subjectID, courseID, module.id)} />
+                    <Confirm message={translate('sure_to_delete_module')} cancelAction={() => setShowConfirm(false)} confirmAction={processDeleteModule} />
                     :
                     null
             }
@@ -148,7 +168,7 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
                     lessonsList && lessonsList.length ?
                         sortLessons().map((item, index) => _renderLesson(item, index))
                         :
-                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
+                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{margin: '10px 0 0'}}>
                             <i className="content_title-icon fa fa-unlink" />
                             { translate('no_lessons') }
                         </div>
@@ -172,7 +192,7 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
             }
             else {
                 return (
-                    <AdminCoursesLesson lesson={item} params={params} subjectID={subjectID} courseID={courseID} moduleID={module.id} editOrder={editOrder} />
+                    <AdminCoursesLesson lesson={item} params={params} subjectID={subjectID} courseID={courseID} moduleID={module.id} editOrder={editOrder} isLessonCoppied={isLessonCoppied} setIsLessonCoppied={setIsLessonCoppied} key={item.index} />
                 );
             }
         }
@@ -196,6 +216,11 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
         setShowUpdateLesson(true);
     }
 
+    function handlePasteLesson() {
+        copyLesson(subjectID, courseID, module.id, isLessonCoppied);
+        setIsLessonCoppied(null);
+    }
+
     function handleEditModule() {
         setShowUpdateModule(true);
     }
@@ -210,7 +235,7 @@ function AdminCoursesModule({location, subjectID, courseID, module, params, load
 
     function sortLessons() {
         if ( newOrder && editOrder ) {
-            return newOrder.map(newItem => lessonsList[newItem]);
+            return newOrder.map(newItem => lessonsList.find(item => item.index === newItem));
         }
         else {
             return lessonsList.sort((a, b) => {
@@ -234,6 +259,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     fetchLessons: (subjectID, courseID, moduleID) => dispatch(fetchLessons(subjectID, courseID, moduleID)),
     deleteModule: (subjectID, courseID, moduleID) => dispatch(deleteModule(subjectID, courseID, moduleID)),
-    updateLessonsOrder: (subjectID, courseID, moduleID, orderedLessons) => dispatch(updateLessonsOrder(subjectID, courseID, moduleID, orderedLessons))
+    updateLessonsOrder: (subjectID, courseID, moduleID, orderedLessons) => dispatch(updateLessonsOrder(subjectID, courseID, moduleID, orderedLessons)),
+    copyLesson: (subjectID, courseID, moduleID, newLesson) => dispatch(copyLesson(subjectID, courseID, moduleID, newLesson))
 });
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(AdminCoursesModule);

@@ -1,4 +1,4 @@
-import React, {useRef, useState, useContext} from 'react';
+import React, {useRef, useState, useContext, memo, useEffect} from 'react';
 import './form.scss';
 import SiteSettingsContext from "../../context/siteSettingsContext";
 import classNames from 'classnames';
@@ -29,6 +29,7 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
             'visualblocks',
             'paste'
         ],
+        file_browser_callback_types: 'image',
         paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
         paste_retain_style_properties: "all",
         fontsize_formats: "8 9 10 11 12 14 16 18 20 22 24 26 28 36 48 72",
@@ -214,10 +215,10 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                 return (
                     <div className="form__field-holder">
                         <Editor
-                            initialValue={field.value}
-                            onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={{...editorConfig}}
-                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                          initialValue={field.initialValue}
+                          onEditorChange={(value) => setFieldValue(field.id, value)}
+                          init={{...editorConfig}}
+                          apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>
                 );
@@ -226,10 +227,10 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
                 return (
                     <div className="form__field-holder">
                         <Editor
-                            initialValue={field.value}
-                            onEditorChange={(value) => setFieldValue(field.id, value)}
-                            init={{...editorConfig}}
-                            apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
+                          initialValue={field.initialValue}
+                          onEditorChange={(value) => setFieldValue(field.id, value)}
+                          init={{...editorConfig}}
+                          apiKey="5wvj56289tu06v7tziccawdyxaqxkmsxzzlrh6z0aia0pm8y"
                         />
                     </div>
                 );
@@ -349,9 +350,13 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
             case 'checkboxes':
                 return (
                     <div className={classNames('form__field-holder form__radio-holder checkboxes', { hasIcons: field.options[0].icon, alt: field.variant === 'alt' })}>
-                        <div className="form__radio-heading">
-                            { translate(field.name) }:
-                        </div>
+                      {
+                        !field.noTitle && (
+                          <div className="form__radio-heading">
+                              { translate(field.name) }:
+                          </div>
+                        )
+                      }
                         {
                             field.options.map(opt => {
                                 return (
@@ -390,9 +395,13 @@ function Form({user, fields, heading, setFieldValue, formAction, formError, form
             case 'radio':
                 return (
                     <div className={classNames('form__field-holder form__radio-holder', { hasIcons: field.options[0].icon, alt: field.variant === 'alt' })}>
-                        <div className="form__radio-heading">
-                            { translate(field.name) }:
-                        </div>
+                      {
+                        !field.noTitle && (
+                          <div className="form__radio-heading">
+                              { translate(field.name) }:
+                          </div>
+                        )
+                      }
                         {
                             field.options.map(opt => {
                                 return (
@@ -685,4 +694,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(Form);
+export default connect(mapStateToProps)(memo(Form));

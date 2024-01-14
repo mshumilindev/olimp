@@ -1,6 +1,7 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {connect} from "react-redux";
-import {fetchLibrary, deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
+import {withRouter} from 'react-router-dom';
+import {deleteDoc, uploadDoc} from '../../redux/actions/libraryActions';
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from '../../components/UI/Modal/Modal';
 import Form from '../../components/Form/Form';
@@ -11,9 +12,20 @@ import withTags from "../../utils/withTags";
 import Preloader from "../../components/UI/preloader";
 import './adminLibrary.scss';
 
-const Confirm = React.lazy(() => import('../../components/UI/Confirm/Confirm'));
+import Confirm from '../../components/UI/Confirm/Confirm';
 
-function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags, fetchLibrary}) {
+function AdminLibrary({user, loading, libraryList, setTags, searchQuery, deleteDoc, uploadDoc, usersList, filters, showPerPage, showOnlyMy, selectedTags}) {
+  // console.log(booksList);
+
+  // return (
+  //   <div>
+  //     {
+  //       booksList?.map((book) => {
+  //         return book.metadata.name;
+  //       })
+  //     }
+  //   </div>
+  // )
     const { translate, getDocFormFields } = useContext(siteSettingsContext);
     const $fileRef = React.createRef();
     const [ showModal, setShowModal ] = useState(false);
@@ -25,23 +37,6 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
     const uploadFields = getDocFormFields(newFile.name, newFile.tags, newFile.teacher, translate('upload'));
     const [ showConfirmRemove, setShowConfirmRemove ] = useState(false);
     const [ docToDelete, setDocToDelete ] = useState(null);
-
-    useEffect(() => {
-        if ( user.role === 'admin' ) {
-            fetchLibrary();
-        }
-    }, [user, fetchLibrary]);
-
-    useEffect(() => {
-        if ( user.role !== 'admin' ) {
-            if ( showOnlyMy ) {
-                fetchLibrary(user.id);
-            }
-            else {
-                fetchLibrary();
-            }
-        }
-    }, [showOnlyMy, user, fetchLibrary]);
 
     const onConfirmRemove = useCallback(() => {
         deleteDoc(docToDelete.id, docToDelete.ref);
@@ -101,9 +96,8 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
     }, [$fileRef, setShowModal, setFile]);
 
     const filterList = useCallback(() => {
-        return !list ? null : list
-            .filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true);
-    }, [list, searchQuery]);
+        return user.role === 'admin' ? libraryList : libraryList?.filter((item) => showOnlyMy ? (item.teacher && (item.teacher === user.id || item.teacher.indexOf(user.id) !== -1)) : true)?.filter(item => searchQuery && searchQuery.trim().length ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true) || null;
+    }, [libraryList, searchQuery, user, showOnlyMy]);
 
     return (
         <div className="adminLibrary">
@@ -131,7 +125,7 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
                         </a>
                     </div>
                     {
-                        !list ?
+                        !libraryList ?
                             <Preloader size={60}/>
                             :
                             null
@@ -151,13 +145,12 @@ function AdminLibrary({user, loading, list, setTags, searchQuery, deleteDoc, upl
 }
 const mapStateToProps = state => ({
     usersList: state.usersReducer.usersList,
-    list: state.libraryReducer.libraryList,
+    libraryList: state.libraryReducer.libraryList,
     loading: state.libraryReducer.loading,
     user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: (showPerPage, searchQuery) => dispatch(fetchLibrary(showPerPage, searchQuery)),
     deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
     uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withTags(AdminLibrary), true, true, null, null, 'teacher'));
+export default connect(mapStateToProps, mapDispatchToProps)(withFilters(withTags(withRouter(AdminLibrary)), true, true, null, null, 'teacher'));

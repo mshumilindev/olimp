@@ -18,11 +18,51 @@ $courseItemIndent: $pageIndent / 2;
 .adminCourses {
   &__list {
     padding-top: $courseItemIndent;
+
+    > .adminCourses__list-item {
+      &:nth-child(2n) {
+        background: $lightColor;
+      }
+      > .contextmenu {
+        > .adminCourses__list-link {
+          padding: 20px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+
+          &:hover {
+            background: $anchorColor;
+            color: $white;
+          }
+
+          > span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            > i {
+              position: static;
+            }
+          }
+        }
+      }
+
+      &.isOpen {
+        > .contextmenu {
+          > .adminCourses__list-link {
+            background: $anchorColor;
+            color: $white;
+          }
+        }
+      }
+    }
   }
   &__list-item {
-    margin-top: $courseItemIndent;
     .contextmenu {
       z-index: 1;
+      &.active {
+        z-index: 2;
+      }
     }
     &.someOpen {
       a {
@@ -56,6 +96,7 @@ $courseItemIndent: $pageIndent / 2;
     font-family: $RobotoCondensed;
     display: flex;
     align-items: center;
+    width: 100%;
   }
   &__list-item-teacher-name {
     display: flex;
@@ -92,11 +133,13 @@ $courseItemIndent: $pageIndent / 2;
   }
   &__list-link {
     color: $baseColor;
+    text-transform: uppercase;
     @extend %s-content-link;
   }
   &__list-courses {
-    padding: $courseItemIndent / 2 0 0 28px;
+    padding: $courseItemIndent / 2 0 5px 28px;
     position: relative;
+    width: 100%;
     .preloader {
       position: absolute;
       left: 0;
@@ -147,6 +190,7 @@ $courseItemIndent: $pageIndent / 2;
   }
   &__list-item-nothingFound {
     color: $greyColor;
+    margin: 10px 0 0 28px;
     @extend %s-content-link;
     .content_title-icon {
       top: 0;

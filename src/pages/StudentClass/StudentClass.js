@@ -83,8 +83,8 @@ function StudentClass({user, classData, allCoursesList, usersList}) {
     );
 
     function _renderCourse(course) {
-        const currentSubject = allCoursesList.find(item => item.id === course.subject);
-        const currentCourse = currentSubject.coursesList.find(item => item.id === course.course);
+        const currentSubject = allCoursesList?.find(item => item.id === course.subject);
+        const currentCourse = currentSubject?.coursesList?.find(item => item.id === course.course);
 
         return (
             <div className="studentClass__courses-item" key={course.course}>
@@ -92,21 +92,21 @@ function StudentClass({user, classData, allCoursesList, usersList}) {
                     <i className="fa fa-book" />
                 </div>
                 <div className="studentClass__courses-title">
-                    <Link to={'/courses/' + currentSubject.id + '/' + currentCourse.id} className="studentClass__courses-link">
+                    <Link to={'/courses/' + currentSubject?.id + '/' + currentCourse?.id} className="studentClass__courses-link">
                         <span className="studentClass__courses-subject">
                             {
-                                currentSubject.name[lang] ?
-                                    currentSubject.name[lang]
+                                currentSubject?.name[lang] ?
+                                    currentSubject?.name[lang]
                                     :
-                                    currentSubject.name['ua']
+                                    currentSubject?.name['ua']
                             }
                         </span>
                         <span className="studentClass__courses-course">
                             {
-                                currentCourse.name[lang] ?
-                                    currentCourse.name[lang]
+                                currentCourse?.name[lang] ?
+                                    currentCourse?.name[lang]
                                     :
-                                    currentCourse.name['ua']
+                                    currentCourse?.name['ua']
                             }
                         </span>
                     </Link>

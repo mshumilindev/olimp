@@ -87,7 +87,7 @@ export const FETCH_COURSES_SUCCESS = 'FETCH_COURSES_SUCCESS';
 
 export function fetchCourses() {
     return dispatch => {
-        dispatch(fetchCourseSuccess(coursesCollection));
+      dispatch(fetchCourseSuccess(coursesCollection));
     }
 }
 

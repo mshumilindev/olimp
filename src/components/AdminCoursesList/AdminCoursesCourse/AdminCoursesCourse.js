@@ -1,23 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import siteSettingsContext from "../../../context/siteSettingsContext";
+import React, { useContext, useEffect, useState, memo, useMemo } from 'react';
 import {Link} from "react-router-dom";
-import {deleteCourse, fetchModules} from "../../../redux/actions/coursesActions";
 import {connect} from "react-redux";
-import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
 import classNames from "classnames";
-import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
-import UpdateModule from "../AdminCoursesActions/UpdateModule";
-import {fetchLibrary} from "../../../redux/actions/libraryActions";
 import {compose} from "redux";
 import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
 
-const ContextMenu = React.lazy(() => import('../../UI/ContextMenu/ContextMenu'));
-const Confirm = React.lazy(() => import('../../UI/Confirm/Confirm'));
+import siteSettingsContext from "../../../context/siteSettingsContext";
+import {deleteCourse, fetchModules} from "../../../redux/actions/coursesActions";
+import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
+import UpdateCourse from "../AdminCoursesActions/UpdateCourse";
+import ContextMenu from '../../UI/ContextMenu/ContextMenu';
+import Confirm from '../../UI/Confirm/Confirm';
 
-function AdminCoursesCourse({user, fetchLibrary, subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList}) {
+function AdminCoursesCourse({user, subjectID, course, params, loading, fetchModules, deleteCourse, usersList, libraryList, location, modulesList, isLessonCoppied, setIsLessonCoppied, showUpdateModule, setShowUpdateModule, handleCreateModule}) {
     const { lang, translate } = useContext(siteSettingsContext);
     const [ showUpdateCourse, setShowUpdateCourse ] = useState(false);
-    const [ showUpdateModule, setShowUpdateModule ] = useState(false);
     const [ showConfirm, setShowConfirm ] = useState(false);
     const contextLinks = [
         {
@@ -46,135 +44,65 @@ function AdminCoursesCourse({user, fetchLibrary, subjectID, course, params, load
     ];
 
     useEffect(() => {
-        if ( user.role === 'admin' ) {
-            fetchLibrary();
-        }
-        else {
-            fetchLibrary(user.id);
-        }
-    }, []);
-
-    useEffect(() => {
-        if ( checkIfIsOpen() ) {
-            fetchModules(params.subjectID, course.id);
-        }
+      if ( checkIfIsOpen() ) {
+        fetchModules(params.subjectID, course.id);
+      }
     }, [location]);
 
+    const isCourseOpen = useMemo(() => {
+      return params?.subjectID === subjectID && params?.courseID === course?.id;
+    }, [params, subjectID, course]);
+
+    const courseLink = useMemo(() => {
+      let link = `/admin-courses/${subjectID}`;
+
+      if ( !params?.courseID || params.courseID !== course?.id ) {
+        link += `/${course?.id}`;
+      }
+      return link;
+    }, [params, subjectID, course]);
+
     return (
-        <div className={classNames('adminCourses__list-item', {someOpen: params && params.courseID && params.courseID !== course.id, isOpen: params && !params.moduleID && params.courseID === course.id})} style={{marginTop: 10}}>
-            <ContextMenu links={contextLinks}>
-                <Link to={'/admin-courses/' + params.subjectID + '/' + course.id} className="adminCourses__list-courses-link">
-                    {
-                        checkIfIsOpen() ?
-                            loading ?
-                                <i className="content_title-icon fas fa-spinner" />
-                                :
-                                <i className="content_title-icon fa fa-graduation-cap isOpen" />
-                            :
-                            <i className="content_title-icon fa fa-graduation-cap" />
-                    }
+      <>
+        <AdminCoursesCourseStyled>
+          <ContextMenu links={contextLinks}>
+              <CourseLinkStyled to={courseLink} isOpen={isCourseOpen}>
+                  {
+                      checkIfIsOpen() ?
+                          loading ?
+                              <CourseIconStyled className="fas fa-spinner" />
+                              :
+                              <CourseIconStyled className="fa fa-graduation-cap isOpen" />
+                          :
+                          <CourseIconStyled className="fa fa-graduation-cap" />
+                  }
+                  <CourseTitleStyled>
                     { course.name[lang] ? course.name[lang] : course.name['ua'] }
-                </Link>
-            </ContextMenu>
-            {
-                checkIfIsOpen() ?
-                    course.teacher && getUser(course.teacher) && getUser(course.teacher).status === 'active' ?
-                        <div className="adminCourses__list-item-teacher">
-                            {
-                                usersList.length ?
-                                    <div className="adminCourses__list-item-teacher-name">
-                                        <i className="fa fa-user" style={{marginRight: 15}} />
-                                        <span className="adminCourses__list-item-teacher-role">
-                                            { translate(getUser(course.teacher).role) }
-                                        </span>
-                                        <Link to={'/admin-users/' + getUser(course.teacher).login}>{ getUser(course.teacher).name }</Link>
-                                    </div>
-                                    :
-                                    null
-                            }
-                        </div>
-                        :
-                        <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10, marginLeft: 28}}>
-                            <i className="content_title-icon fa fa-user" />
-                            { translate('no_teacher') }
-                        </div>
-                    :
-                    null
-            }
-            {
-                checkIfIsOpen() && course.textbook ?
-                    <div className="adminCourses__list-item-textbook">
-                        <i className="fa fa-bookmark" style={{marginRight: 16}} />
-                        <span className="adminCourses__list-item-textbook-label">
-                            {
-                                translate('textbooks')
-                            }
-                        </span>
-                        {
-                            libraryList && libraryList.length ?
-                                <span className="adminCourses__list-item-textbooks">
-                                    {
-                                        typeof course.textbook === 'object' ?
-                                            course.textbook.map(textbookItem => _renderTextbook(textbookItem))
-                                            :
-                                            _renderTextbook(course.textbook)
-                                    }
-                                </span>
-                                :
-                                null
-                        }
-                    </div>
-                    :
-                    null
-            }
-            {
-                params && params.courseID === course.id ?
-                    <div className="adminCourses__list-courses" style={{marginBottom: 20}}>
-                        <div className="adminCourses__list-item" style={{paddingLeft: 0}}>
-                            <div className="adminCourses__list-courses-link" style={{paddingLeft: 0}}>
-                                { translate('modules') }
-                            </div>
-                        </div>
-                        {
-                            modulesList && modulesList.length ?
-                                sortModules().map(item => <AdminCoursesModule subjectID={subjectID} courseID={course.id} module={item} key={item.index} params={params} loading={loading} />)
-                                :
-                                <div className="adminCourses__list-item adminCourses__list-item-nothingFound" style={{marginTop: 10}}>
-                                    <i className="content_title-icon fa fa-unlink" />
-                                    { translate('no_modules') }
-                                </div>
-                        }
-                    </div>
-                    :
-                    null
-            }
-            {
-                showUpdateCourse ?
-                    <UpdateCourse params={params} subjectID={subjectID} course={course} loading={loading} setShowUpdateCourse={setShowUpdateCourse}/>
-                    :
-                    null
-            }
-            {
-                showUpdateModule ?
-                    <UpdateModule params={params} subjectID={subjectID} courseID={course.id} module={null} loading={loading} setShowUpdateModule={setShowUpdateModule}/>
-                    :
-                    null
-            }
-            {
-                showConfirm ?
-                    <Confirm message={translate('sure_to_delete_course')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteCourse(subjectID, course.id)} />
-                    :
-                    null
-            }
-        </div>
-    );
+                  </CourseTitleStyled>
+              </CourseLinkStyled>
+          </ContextMenu>
+        </AdminCoursesCourseStyled>
+        {
+            showUpdateCourse ?
+                <UpdateCourse params={params} subjectID={subjectID} course={course} loading={loading} setShowUpdateCourse={setShowUpdateCourse}/>
+                :
+                null
+        }
+        {
+            showConfirm ?
+                <Confirm message={translate('sure_to_delete_course')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteCourse(subjectID, course.id)} />
+                :
+                null
+        }
+      </>
+    )
 
     function _renderTextbook(textbook) {
         const foundTextbook = libraryList.find(item => item.id === textbook);
 
         if ( !foundTextbook ) {
             return (
-                <div className="adminCourses__list-item adminCourses__list-item-nothingFound">
+                <div className="adminCourses__list-item adminCourses__list-item-nothingFound" key={textbook}>
                     <i className="content_title-icon fa fa-unlink" />
                     { translate('no_textbook') }
                 </div>
@@ -195,10 +123,6 @@ function AdminCoursesCourse({user, fetchLibrary, subjectID, course, params, load
 
     function checkIfIsOpen() {
         return params && params.courseID === course.id;
-    }
-
-    function handleCreateModule() {
-        setShowUpdateModule(true);
     }
 
     function handleEditCourse() {
@@ -228,8 +152,59 @@ const mapStateToProps = state => ({
     user: state.authReducer.currentUser
 });
 const mapDispatchToProps = dispatch => ({
-    fetchLibrary: (userID) => dispatch(fetchLibrary(userID)),
     fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
     deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID))
 });
-export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(AdminCoursesCourse);
+export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(memo(AdminCoursesCourse));
+
+const AdminCoursesCourseStyled = styled.div`
+  width: 250px;
+  height: 250px;
+  padding: 10px;
+  margin: 10px;
+  box-sizing: border-box;
+
+  span {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const CourseLinkStyled = styled(Link)`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  color: #333;
+
+  &:hover {
+    color: #fff !important;
+    background: #4ec1e2;
+  }
+
+  ${({isOpen}) => isOpen && `
+    color: #fff !important;
+    background: #4ec1e2;
+  `}
+`;
+
+const CourseIconStyled = styled.i`
+  margin-bottom: 40px;
+  font-size: 40px;
+`;
+
+const CourseTitleStyled = styled.p`
+  text-transform: uppercase;
+  font-size: 16px;
+  padding: 0 20px;
+  line-height: 1.25;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;

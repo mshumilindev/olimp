@@ -42,6 +42,9 @@
     &:hover {
       background: $lightBlueColor;
     }
+    &:empty {
+      display: none;
+    }
   }
   &__list-notFound {
     justify-content: flex-start;

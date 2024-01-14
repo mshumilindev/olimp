@@ -503,7 +503,7 @@ $landingIndent: $pageIndent * 1.5;
       font-size: 30px;
     }
   }
-  @media screen and(max-width: $maxMobile) {
+  @media screen and (max-width: $maxMobile) {
     .landing {
       &__scrollDown {
         display: none;

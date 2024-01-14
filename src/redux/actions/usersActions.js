@@ -7,9 +7,14 @@ export const FETCH_USERS_BEGIN = 'FETCH_USERS_BEGIN';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 
 export function fetchUsers(role) {
+  let unsubscribe = null;
+
     return dispatch => {
         dispatch(fetchUsersBegin());
-        return usersCollection.onSnapshot(snapshot => {
+        if ( unsubscribe ) {
+            unsubscribe();
+        }
+        unsubscribe = usersCollection.onSnapshot(snapshot => {
             const usersList = [];
 
             snapshot.docs.forEach(doc => {
