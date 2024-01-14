@@ -1,16 +1,23 @@
-import { collection, deleteDoc, doc, onSnapshot, query, setDoc, where } from 'firebase/firestore'; 
-import { db } from '../../db/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../../db/firestore";
 
 export function fetchNotifications(userID) {
-  let notificationsCollection = collection(db, 'notifications');
+  let notificationsCollection = collection(db, "notifications");
   let unsubscribe = null;
 
   if (userID) {
-    notificationsCollection = query(collection(db, 'notifications'), where(
-      'targetUsers',
-      'array-contains',
-      userID,
-    ));
+    notificationsCollection = query(
+      collection(db, "notifications"),
+      where("targetUsers", "array-contains", userID),
+    );
   }
 
   return (dispatch) => {
@@ -33,7 +40,7 @@ export function fetchNotifications(userID) {
 }
 
 export function updateNotification(newNotification) {
-  const notificationRef = doc(db, 'notifications', newNotification.id);
+  const notificationRef = doc(db, "notifications", newNotification.id);
 
   return (dispatch) => {
     dispatch(fetchNotificationsBegin());
@@ -48,7 +55,7 @@ export function updateNotification(newNotification) {
 }
 
 export function removeNotification(notificationID) {
-  const notificationRef = doc(db, 'notifications', notificationID);
+  const notificationRef = doc(db, "notifications", notificationID);
 
   return (dispatch) => {
     dispatch(fetchNotificationsBegin());

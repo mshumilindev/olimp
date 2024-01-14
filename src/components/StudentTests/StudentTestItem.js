@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { db } from "../../db/firestore";
-import { collection, doc, getDoc } from "firebase/firestore"; 
+import { collection, doc, getDoc } from "firebase/firestore";
 import siteSettingsContext from "../../context/siteSettingsContext";
 
 const StudentTestItem = ({ showScore = false, test, icon }) => {
@@ -15,7 +15,17 @@ const StudentTestItem = ({ showScore = false, test, icon }) => {
 
   useEffect(() => {
     if (test) {
-      const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
+      const lessonRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        lessonID,
+      );
 
       getDoc(lessonRef).then((snapshot) => {
         setLesson(snapshot.data());

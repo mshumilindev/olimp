@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore"; 
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 const translationsCollection = collection(db, "translations");
@@ -64,38 +64,37 @@ export const UPDATE_TRANSLATION_BEGIN = "UPDATE_TRANSLATION_BEGIN";
 export const UPDATE_TRANSLATION_SUCCESS = "UPDATE_TRANSLATION_SUCCESS";
 
 export function updateTranslation(id, key, value) {
-  const translationDoc = doc(db, 'translations', id);
+  const translationDoc = doc(db, "translations", id);
 
   return (dispatch) => {
     dispatch(updateTranslationBegin());
     return updateDoc(translationDoc, {
-        [key]: value,
-      })
-      .then(() => {
-        return getDocs(translationsCollection).then((data) => {
-          translationsList.length = 0;
-          Object.keys(data.docs[0].data()).forEach((itemKey) => {
-            translationsList.push({
-              id: itemKey,
-              langs: [],
-            });
-            data.docs.forEach((lang) => {
-              const translationsListItem = translationsList.find(
-                (item) => item.id === itemKey,
-              );
-
-              if (translationsListItem) {
-                translationsListItem.langs.push({
-                  [lang.id]: data.docs.find((doc) => doc.id === lang.id).data()[
-                    itemKey
-                  ],
-                });
-              }
-            });
+      [key]: value,
+    }).then(() => {
+      return getDocs(translationsCollection).then((data) => {
+        translationsList.length = 0;
+        Object.keys(data.docs[0].data()).forEach((itemKey) => {
+          translationsList.push({
+            id: itemKey,
+            langs: [],
           });
-          dispatch(updateTranslationSuccess());
+          data.docs.forEach((lang) => {
+            const translationsListItem = translationsList.find(
+              (item) => item.id === itemKey,
+            );
+
+            if (translationsListItem) {
+              translationsListItem.langs.push({
+                [lang.id]: data.docs.find((doc) => doc.id === lang.id).data()[
+                  itemKey
+                ],
+              });
+            }
+          });
         });
+        dispatch(updateTranslationSuccess());
       });
+    });
   };
 }
 

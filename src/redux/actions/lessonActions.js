@@ -1,8 +1,24 @@
 import { db } from "../../db/firestore";
-import { collection, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore"; 
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 
 export function fetchLessonMeta(subjectID, courseID, moduleID, lessonID) {
-  const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
+  const lessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -27,7 +43,17 @@ export function updateLessonMeta(
   lessonID,
   newMeta,
 ) {
-  const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
+  const lessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+  );
 
   return (dispatch) => {
     dispatch(fetchLessonMetaBegin());
@@ -58,7 +84,18 @@ export const fetchLessonMetaSuccess = (lessonMeta) => {
 };
 
 export function fetchLessonContent(subjectID, courseID, moduleID, lessonID) {
-  const lessonContentRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'content');
+  const lessonContentRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "content",
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -89,7 +126,18 @@ export function updateLessonContent(
   lessonID,
   newContent,
 ) {
-  const lessonContentRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'content');
+  const lessonContentRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "content",
+  );
 
   return (dispatch) => {
     dispatch(fetchLessonContentBegin());
@@ -149,7 +197,18 @@ export const fetchLessonContentSuccess = (lessonContent) => {
 };
 
 export function fetchLessonQA(subjectID, courseID, moduleID, lessonID) {
-  const lessonQARef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'QA');
+  const lessonQARef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "QA",
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -174,7 +233,18 @@ export function fetchLessonQA(subjectID, courseID, moduleID, lessonID) {
 }
 
 export function updateLessonQA(subjectID, courseID, moduleID, lessonID, newQA) {
-  const lessonQARef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'QA');
+  const lessonQARef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "QA",
+  );
 
   return (dispatch) => {
     dispatch(fetchLessonQABegin());

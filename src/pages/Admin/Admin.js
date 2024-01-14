@@ -13,7 +13,7 @@ import GlobalNotifications from "../../components/UI/GlobalNotifications";
 import { useGlobalNotificationContext } from "../../components/UI/GlobalNotifications/context";
 import "../../assets/scss/base/chatroom.scss";
 import { fetchTests } from "../../redux/actions/testsActions";
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 function Admin({
@@ -90,13 +90,13 @@ function Admin({
   }, [filteredTests]);
 
   useEffect(() => {
-    const updatesCollection = collection(db, 'updates');
-    const savedUpdates = localStorage.getItem('updates')
-      ? JSON.parse(localStorage.getItem('updates'))
+    const updatesCollection = collection(db, "updates");
+    const savedUpdates = localStorage.getItem("updates")
+      ? JSON.parse(localStorage.getItem("updates"))
       : null;
 
     getDocs(updatesCollection).then((snapshot) => {
-      const version = snapshot.docs.find((doc) => doc.id === 'version');
+      const version = snapshot.docs.find((doc) => doc.id === "version");
 
       if (savedUpdates) {
         if (

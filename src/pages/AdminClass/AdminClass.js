@@ -212,7 +212,7 @@ const AdminClass = ({
       </section>
     </div>
   );
-}
+};
 const mapStateToProps = (state) => ({
   classData: state.classesReducer.classData,
   loading: state.classesReducer.loading,
@@ -224,7 +224,4 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateClass(classID, classData)),
   discardClass: () => dispatch(discardClass()),
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AdminClass);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminClass);

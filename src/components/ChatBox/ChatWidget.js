@@ -16,7 +16,7 @@ import ChatCallBox from "./ChatCallBox";
 import ChatStoppedActions from "./ChatStoppedActions";
 import { useChatWidget } from "./hooks/useChatWidget";
 import { db } from "../../db/firestore";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore"; 
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 
 let mediaRecorder = null;
 let chunks = [];
@@ -115,8 +115,29 @@ const ChatWidget = (props) => {
         chat.lesson.courseID &&
         (!chatLesson || chatLesson.id !== chat.lesson.lessonID)
       ) {
-        const lessonRef = doc(db, 'courses', chat.lesson.subjectID, 'coursesList', chat.lesson.courseID, 'modules', chat.lesson.moduleID, 'lessons', chat.lesson.lessonID);
-        const lessonContentRef = collection(db, 'courses', chat.lesson.subjectID, 'coursesList', chat.lesson.courseID, 'modules', chat.lesson.moduleID, 'lessons', chat.lesson.lessonID, 'content');
+        const lessonRef = doc(
+          db,
+          "courses",
+          chat.lesson.subjectID,
+          "coursesList",
+          chat.lesson.courseID,
+          "modules",
+          chat.lesson.moduleID,
+          "lessons",
+          chat.lesson.lessonID,
+        );
+        const lessonContentRef = collection(
+          db,
+          "courses",
+          chat.lesson.subjectID,
+          "coursesList",
+          chat.lesson.courseID,
+          "modules",
+          chat.lesson.moduleID,
+          "lessons",
+          chat.lesson.lessonID,
+          "content",
+        );
         let newLesson = null;
 
         getDoc(lessonRef).then((doc) => {
@@ -271,7 +292,7 @@ const ChatWidget = (props) => {
   function handleOpenLesson() {
     toggleLesson(chat.id, chat.lessonOpen ? null : 1);
   }
-}
+};
 
 const mapStateToProps = (state) => {
   return {

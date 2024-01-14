@@ -6,7 +6,7 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 
 function StudentCoursesItem({ user, subjectID, courseID, currentUser, tests }) {
   const { translate, lang } = useContext(siteSettingsContext);
@@ -116,13 +116,29 @@ function StudentCoursesItem({ user, subjectID, courseID, currentUser, tests }) {
   }
 
   function fetchModulesLessons() {
-    const modulesRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules');
+    const modulesRef = collection(
+      db,
+      "courses",
+      subjectID,
+      "coursesList",
+      courseID,
+      "modules",
+    );
     const modulesLessons = [];
     let modulesI = 0;
 
     const getLessons = (snapshot) => {
       const module = snapshot.docs[modulesI];
-      const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id, 'lessons');
+      const lessonsRef = collection(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        module.id,
+        "lessons",
+      );
 
       modulesLessons.push({
         ...module.data(),

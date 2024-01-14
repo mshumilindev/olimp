@@ -3,7 +3,7 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import LessonPickerModule from "./LessonPickerModule";
 import { orderBy } from "natural-orderby";
 import { db } from "../../../db/firestore";
-import { collection } from "firebase/firestore"; 
+import { collection } from "firebase/firestore";
 
 export default function LessonPickerCourse({
   subjectID,

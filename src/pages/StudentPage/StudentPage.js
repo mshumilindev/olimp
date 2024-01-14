@@ -5,9 +5,11 @@ import Preloader from "../../components/UI/preloader";
 import Article from "../../components/Article/Article";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import "./studentPage.scss";
+import { useParams } from "react-router-dom";
 
-function StudentPage({ params, page, fetchPage, loading }) {
+function StudentPage({ page, fetchPage, loading }) {
   const { translate, lang } = useContext(siteSettingsContext);
+  const params = useParams();
 
   useEffect(() => {
     fetchPage(params.pageSlug);

@@ -1,5 +1,5 @@
 import React from "react";
-import { doc } from "firebase/firestore"; 
+import { doc } from "firebase/firestore";
 
 const withSaveCourse = (WrappedComponent) => {
   return class SaveCourse extends React.Component {

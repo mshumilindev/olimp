@@ -164,7 +164,7 @@ const AdminCoursesCourse = ({
       return 0;
     });
   }
-}
+};
 const mapStateToProps = (state) => ({
   usersList: state.usersReducer.usersList,
   libraryList: state.libraryReducer.libraryList,
@@ -177,9 +177,9 @@ const mapDispatchToProps = (dispatch) => ({
   deleteCourse: (subjectID, courseID) =>
     dispatch(deleteCourse(subjectID, courseID)),
 });
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-)(memo(AdminCoursesCourse));
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  memo(AdminCoursesCourse),
+);
 
 const AdminCoursesCourseStyled = styled.div`
   width: 250px;

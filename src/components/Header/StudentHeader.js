@@ -10,13 +10,7 @@ import Preloader from "../UI/preloader";
 import classNames from "classnames";
 import { logoutUser } from "../../redux/actions/authActions";
 
-const StudentHeader = ({
-  user,
-  fetchClass,
-  logo,
-  siteName,
-  logoutUser,
-}) => {
+const StudentHeader = ({ user, fetchClass, logo, siteName, logoutUser }) => {
   const location = useLocation();
   const { translate, lang } = useContext(SiteSettingsContext);
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
@@ -146,7 +140,7 @@ const StudentHeader = ({
 
     touchStart = null;
   }
-}
+};
 const mapStateToProps = (state) => ({
   logo: state.siteSettingsReducer.siteSettingsList
     ? state.siteSettingsReducer.siteSettingsList.logo
@@ -161,7 +155,4 @@ const mapDispatchToProps = (dispatch) => ({
   logoutUser: (userID) => dispatch(logoutUser(userID)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(StudentHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentHeader);

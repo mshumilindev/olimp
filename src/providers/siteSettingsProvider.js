@@ -1,6 +1,6 @@
 import React from "react";
 import SiteSettingsContext from "../context/siteSettingsContext";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore"; 
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../db/firestore";
 
 // === Methods must be moved to redux, properties must be moved to context to make stateless components
@@ -156,7 +156,7 @@ export default class SiteSettingsProvider extends React.Component {
     const { lang } = this.state;
 
     if (!localStorage.getItem("translations" + lang)) {
-      const navCollection = doc(db, 'translations', lang);
+      const navCollection = doc(db, "translations", lang);
 
       getDoc(navCollection).then((doc) => {
         newTranslations[lang] = doc.data();

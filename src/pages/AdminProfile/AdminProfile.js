@@ -14,12 +14,12 @@ import Profile from "../../components/Profile/Profile";
 import generator from "generate-password";
 import "./adminProfile.scss";
 import Journal from "../../components/Journal/Journal";
+import { useParams } from "react-router-dom";
 
 function AdminProfile({
   user,
   profile,
   fetchProfile,
-  params,
   usersLoading,
   classesLoading,
   coursesLoading,
@@ -28,6 +28,7 @@ function AdminProfile({
   allCoursesList,
   updateUser,
 }) {
+  const params = useParams();
   const { translate, getUserFormFields, lang } =
     useContext(siteSettingsContext);
   const [profileUpdated, setProfileUpdated] = useState(false);

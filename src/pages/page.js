@@ -83,7 +83,7 @@ const Page = (props) => {
     location.pathname.includes("login") ? (
     children
   ) : null;
-}
+};
 
 const mapStateToProps = (state) => {
   return {

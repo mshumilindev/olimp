@@ -5,14 +5,10 @@ import { downloadDoc } from "../../redux/actions/libraryActions";
 import { fetchModulesLessons } from "../../redux/actions/coursesActions";
 import StudentCourseItem from "../../components/StudentCourse/StudentCourseItem";
 import StudentCourseLesson from "../../components/StudentCourse/StudentCourseLesson";
+import { useParams } from "react-router-dom";
 
-function StudentCourse({
-  allCoursesList,
-  usersList,
-  params,
-  fetchTextbook,
-  textbook,
-}) {
+function StudentCourse({ allCoursesList, usersList, textbook }) {
+  const params = useParams();
   return params.lessonID ? (
     <StudentCourseLesson params={params} allCoursesList={allCoursesList} />
   ) : (

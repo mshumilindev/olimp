@@ -1,12 +1,21 @@
 import { db } from "../../db/firestore";
-import { collection, onSnapshot, doc, setDoc, where, query, deleteDoc, writeBatch } from "firebase/firestore"; 
+import {
+  collection,
+  onSnapshot,
+  doc,
+  setDoc,
+  where,
+  query,
+  deleteDoc,
+  writeBatch,
+} from "firebase/firestore";
 
 export function fetchTests(userID) {
-  let testsRef = collection(db, 'tests');
+  let testsRef = collection(db, "tests");
   let unsubscribe = null;
 
   if (userID) {
-    testsRef = query(testsRef, where('userID', '==', userID));
+    testsRef = query(testsRef, where("userID", "==", userID));
   }
 
   return (dispatch) => {
@@ -43,7 +52,7 @@ export function updateTest(newTest) {
 
   return (dispatch) => {
     dispatch(testsBegin());
-    const testItemRef = doc(db, 'tests', id);
+    const testItemRef = doc(db, "tests", id);
 
     setDoc(
       testItemRef,
@@ -56,7 +65,7 @@ export function updateTest(newTest) {
 }
 
 export function deleteTest(testID) {
-  const testItemRef = doc(db, 'tests', testID);
+  const testItemRef = doc(db, "tests", testID);
 
   return () => {
     return deleteDoc(testItemRef);

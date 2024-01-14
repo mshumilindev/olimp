@@ -308,7 +308,7 @@ const AdminUsersList = ({
     setShowConfirmRemove(false);
     setUserToDelete(null);
   }
-}
+};
 
 const mapStateToProps = (state) => ({
   classesList: state.classesReducer.classesList,

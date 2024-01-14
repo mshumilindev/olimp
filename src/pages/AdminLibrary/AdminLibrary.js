@@ -218,13 +218,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(
-  withFilters(
-    withTags(AdminLibrary),
-    true,
-    true,
-    null,
-    null,
-    "teacher",
-  ),
-);
+)(withFilters(withTags(AdminLibrary), true, true, null, null, "teacher"));

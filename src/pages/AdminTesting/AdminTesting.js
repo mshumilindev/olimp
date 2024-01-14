@@ -14,18 +14,21 @@ import siteSettingsContext from "../../context/siteSettingsContext";
 import { deleteTests } from "../../redux/actions/testsActions";
 import AdminTestingCourse from "./AdminTestingCourse";
 import "./adminTesting.scss";
+import { useParams } from "react-router-dom";
 
 function AdminTesting({
   user,
   coursesList,
   tests,
-  testID,
   usersList,
   deleteTests,
   loading,
 }) {
+  const params = useParams();
   const { translate, lang } = useContext(siteSettingsContext);
   const [activeTab, setActiveTab] = useState("toCheck");
+
+  const testID = params.testID;
 
   useEffect(() => {
     if (tests && usersList) {

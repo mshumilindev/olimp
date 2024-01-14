@@ -125,6 +125,6 @@ const AdminInfo = () => {
       </div>
     </section>
   );
-}
+};
 
 export default AdminInfo;

@@ -3,7 +3,7 @@ import siteSettingsContext from "../../../context/siteSettingsContext";
 import LessonPickerLesson from "./LessonPickerLesson";
 import { orderBy } from "natural-orderby";
 import { db } from "../../../db/firestore";
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 
 export default function LessonPickerModule({
   subjectID,
@@ -18,7 +18,16 @@ export default function LessonPickerModule({
   const [lessonsList, setLessonsList] = useState(null);
 
   useEffect(() => {
-    const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id, 'lessons');
+    const lessonsRef = collection(
+      db,
+      "courses",
+      subjectID,
+      "coursesList",
+      courseID,
+      "modules",
+      module.id,
+      "lessons",
+    );
 
     getDocs(lessonsRef).then((snapshot) => {
       if (snapshot.docs.length) {

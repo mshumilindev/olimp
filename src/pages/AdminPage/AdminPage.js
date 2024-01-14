@@ -218,7 +218,7 @@ const AdminPage = ({ fetchPage, pageData, updatePage, loading }) => {
       ]);
     }
   }
-}
+};
 const mapStateToProps = (state) => ({
   pageData: state.staticInfoReducer.page,
   loading: state.staticInfoReducer.loading,
@@ -227,7 +227,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchPage: (slug) => dispatch(fetchPage(slug)),
   updatePage: (pageID, info) => dispatch(updatePage(pageID, info)),
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AdminPage);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminPage);

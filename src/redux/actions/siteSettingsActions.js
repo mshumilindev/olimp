@@ -1,7 +1,7 @@
-import { collection, doc, getDocs, setDoc } from "firebase/firestore"; 
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../db/firestore";
 
-const siteSettingsCollection = collection(db, 'config');
+const siteSettingsCollection = collection(db, "config");
 let siteSettingsList = null;
 
 export function fetchSiteSettings() {
@@ -30,39 +30,36 @@ export function fetchSiteSettings() {
 }
 
 export function updateSiteSettings(newSiteSettings) {
-  const logoRef = doc(db, 'config', 'logo');
-  const siteNameRef = doc(db, 'config', 'siteName');
-  const addressRef = doc(db, 'config', 'address');
+  const logoRef = doc(db, "config", "logo");
+  const siteNameRef = doc(db, "config", "siteName");
+  const addressRef = doc(db, "config", "address");
 
   return (dispatch) => {
     dispatch(siteSettingsBegin());
     return setDoc(logoRef, {
-        ...newSiteSettings.logo,
-      })
-      .then(() => {
-        setDoc(siteNameRef, {
-            ...newSiteSettings.siteName,
-          })
-          .then(() => {
-            setDoc(addressRef, {
-                ...newSiteSettings.address,
-              })
-              .then(() => {
-                return getDocs(siteSettingsCollection).then((data) => {
-                  siteSettingsList.data = {};
-                  data.docs.map(
-                    (doc) => (siteSettingsList.data[doc.id] = doc.data()),
-                  );
-                  localStorage.setItem(
-                    "siteSettings",
-                    JSON.stringify({ data: siteSettingsList }),
-                  );
+      ...newSiteSettings.logo,
+    }).then(() => {
+      setDoc(siteNameRef, {
+        ...newSiteSettings.siteName,
+      }).then(() => {
+        setDoc(addressRef, {
+          ...newSiteSettings.address,
+        }).then(() => {
+          return getDocs(siteSettingsCollection).then((data) => {
+            siteSettingsList.data = {};
+            data.docs.map(
+              (doc) => (siteSettingsList.data[doc.id] = doc.data()),
+            );
+            localStorage.setItem(
+              "siteSettings",
+              JSON.stringify({ data: siteSettingsList }),
+            );
 
-                  dispatch(siteSettingsSuccess(siteSettingsList.data));
-                });
-              });
+            dispatch(siteSettingsSuccess(siteSettingsList.data));
           });
+        });
       });
+    });
   };
 }
 

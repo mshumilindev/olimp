@@ -126,7 +126,7 @@ const ChatListItem = ({
   function getUser(userID) {
     return usersList.find((item) => item.id === userID);
   }
-}
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -141,7 +141,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ChatListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatListItem);

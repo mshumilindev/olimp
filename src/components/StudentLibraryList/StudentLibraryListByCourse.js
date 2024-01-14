@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import { Link } from "react-router-dom";
 import StudentTextbook from "../StudentTextbook/StudentTextbook";
-import { collection, doc, getDoc } from "firebase/firestore"; 
+import { collection, doc, getDoc } from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 export default function StudentLibraryListByCourse({ courseItem, list }) {
@@ -12,7 +12,7 @@ export default function StudentLibraryListByCourse({ courseItem, list }) {
   const { translate } = useContext(siteSettingsContext);
 
   useEffect(() => {
-    const subjectRef = doc(db, 'courses', courseItem.subject);
+    const subjectRef = doc(db, "courses", courseItem.subject);
 
     getDoc(subjectRef).then((doc) => {
       if (doc.exists) {
@@ -26,7 +26,13 @@ export default function StudentLibraryListByCourse({ courseItem, list }) {
 
   useEffect(() => {
     if (currentSubject) {
-      const courseRef = doc(db, 'courses', courseItem.subject, 'coursesList', courseItem.course);
+      const courseRef = doc(
+        db,
+        "courses",
+        courseItem.subject,
+        "coursesList",
+        courseItem.course,
+      );
 
       getDoc(courseRef).then((doc) => {
         if (doc.exists) {

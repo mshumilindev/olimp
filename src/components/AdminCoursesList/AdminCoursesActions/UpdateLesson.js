@@ -47,9 +47,7 @@ const UpdateLesson = ({
   useEffect(() => {
     if (prevLoading === true && loading === false) {
       if (!params || !params.courseID || params.courseID !== courseID) {
-        navigate(
-          location.pathname + "/" + subjectID + "/" + courseID,
-        );
+        navigate(location.pathname + "/" + subjectID + "/" + courseID);
       } else {
         setShowUpdateLesson(false);
       }
@@ -100,7 +98,7 @@ const UpdateLesson = ({
 
     setLessonFields(JSON.stringify(newLessonFields));
   }
-}
+};
 const mapDispatchToProps = (dispatch) => ({
   updateLesson: (subjectID, courseID, moduleID, lesson) =>
     dispatch(updateLesson(subjectID, courseID, moduleID, lesson, true)),

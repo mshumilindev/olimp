@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 const level = "1a"; // === THIS IS PLACEHOLDER, NEEDS TO BE DYNAMIC

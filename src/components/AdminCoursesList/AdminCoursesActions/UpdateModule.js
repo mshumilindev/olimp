@@ -46,9 +46,7 @@ const UpdateModule = ({
   useEffect(() => {
     if (prevLoading === true && loading === false) {
       if (!params || !params.courseID || params.courseID !== courseID) {
-        navigate(
-          location.pathname + "/" + subjectID + "/" + courseID,
-        );
+        navigate(location.pathname + "/" + subjectID + "/" + courseID);
       } else {
         setShowUpdateModule(false);
       }
@@ -99,7 +97,7 @@ const UpdateModule = ({
 
     setModuleFields(JSON.stringify(newModuleFields));
   }
-}
+};
 const mapDispatchToProps = (dispatch) => ({
   updateModule: (subjectID, courseID, module) =>
     dispatch(updateModule(subjectID, courseID, module)),

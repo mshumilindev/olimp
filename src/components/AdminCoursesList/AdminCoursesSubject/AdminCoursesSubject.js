@@ -276,7 +276,7 @@ const AdminCoursesSubject = ({
   function handleShowCourseUpdate() {
     setShowUpdateCourse("create");
   }
-}
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -292,9 +292,9 @@ const mapDispatchToProps = (dispatch) => ({
   deleteCourse: (subjectID, courseID) =>
     dispatch(deleteCourse(subjectID, courseID)),
 });
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-)(memo(AdminCoursesSubject));
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  memo(AdminCoursesSubject),
+);
 
 const shimmer = keyframes`
   0 {

@@ -12,7 +12,7 @@ import Preloader from "../components/UI/preloader";
 import ChatWidget from "../components/ChatBox/ChatWidget";
 import ChatReminder from "../components/ChatBox/ChatReminder";
 import GlobalNotifications from "../components/UI/GlobalNotifications";
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 import { fetchTests } from "../redux/actions/testsActions";
 import { fetchEventsParticipant } from "../redux/actions/eventsActions";
 import { checkIfLoggedin } from "../redux/actions/authActions";

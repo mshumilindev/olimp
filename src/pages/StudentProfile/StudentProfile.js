@@ -8,17 +8,18 @@ import Profile from "../../components/Profile/Profile";
 import generator from "generate-password";
 import "./studentProfile.scss";
 import Notifications from "../../components/Notifications/Notifications";
+import { useParams } from "react-router-dom";
 
 function StudentProfile({
   user,
   profile,
   fetchProfile,
-  params,
   loading,
   classData,
   allCoursesList,
   updateUser,
 }) {
+  const params = useParams();
   const { translate, getUserFormFields, lang } =
     useContext(siteSettingsContext);
   const [profileUpdated, setProfileUpdated] = useState(false);

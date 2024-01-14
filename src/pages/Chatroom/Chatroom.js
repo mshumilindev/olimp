@@ -4,16 +4,10 @@ import { fetchChat } from "../../redux/actions/eventsActions";
 import { connect } from "react-redux";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import "../../assets/scss/base/chatroom.scss";
+import { useParams } from "react-router-dom";
 
-function Chatroom({
-  user,
-  events,
-  params,
-  fetchChat,
-  loading,
-  chat,
-  chatError,
-}) {
+function Chatroom({ user, fetchChat, loading, chat, chatError }) {
+  const params = useParams();
   const { translate } = useContext(siteSettingsContext);
 
   useEffect(() => {

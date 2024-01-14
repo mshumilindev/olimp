@@ -12,7 +12,7 @@ import { updateTest, deleteTest } from "../../redux/actions/testsActions";
 import Confirm from "../../components/UI/Confirm/Confirm";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../db/firestore";
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs } from "firebase/firestore";
 
 const AdminTestingTest = ({
   test,
@@ -69,7 +69,18 @@ const AdminTestingTest = ({
 
   useEffect(() => {
     if (showModal && !lessonQA) {
-      const QARef = collection(db, 'courses', test.lesson.subjectID, 'coursesList', test.lesson.courseID, 'modules', test.lesson.moduleID, 'lessons', test.lesson.lessonID, 'QA');
+      const QARef = collection(
+        db,
+        "courses",
+        test.lesson.subjectID,
+        "coursesList",
+        test.lesson.courseID,
+        "modules",
+        test.lesson.moduleID,
+        "lessons",
+        test.lesson.lessonID,
+        "QA",
+      );
 
       getDocs(QARef).then((snapshot) => {
         const QA = [];
@@ -259,7 +270,7 @@ const AdminTestingTest = ({
       ) : null}
     </AdminTestingTestStyled>
   );
-}
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateTest: (newTest) => dispatch(updateTest(newTest)),

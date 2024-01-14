@@ -1,4 +1,13 @@
-import { collection, onSnapshot, query, where, doc, getDocs, setDoc, deleteDoc } from "firebase/firestore"; 
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  doc,
+  getDocs,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 const usersCollection = collection(db, "users");
@@ -49,7 +58,10 @@ export const FETCH_PROFILE_BEGIN = "FETCH_PROFILE_BEGIN";
 export const FETCH_PROFILE_SUCCESS = "FETCH_PROFILE_SUCCESS";
 
 export function fetchProfile(profileLogin) {
-  const profileRef = query(collection(db, "users"), where("login", "==", profileLogin));
+  const profileRef = query(
+    collection(db, "users"),
+    where("login", "==", profileLogin),
+  );
 
   return (dispatch) => {
     dispatch(fetchProfileBegin());
@@ -62,6 +74,7 @@ export function fetchProfile(profileLogin) {
         };
       }
 
+      console.log(profile);
       dispatch(fetchProfileSuccess(profile));
     });
   };
@@ -83,7 +96,7 @@ export const UPDATE_USER_BEGIN = "UPDATE_USER_BEGIN";
 export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS";
 
 export function updateUser(id, updatedFields) {
-  const userDoc = doc(db, 'users', id);
+  const userDoc = doc(db, "users", id);
 
   return () => {
     return setDoc(
@@ -112,7 +125,7 @@ export const DELETE_USER_BEGIN = "DELETE_USER_BEGIN";
 export const DELETE_USER_SUCCESS = "DELETE_USER_SUCCESS";
 
 export function deleteUser(id) {
-  const userDoc = doc(db, 'users', id);
+  const userDoc = doc(db, "users", id);
 
   return () => {
     return deleteDoc(userDoc);

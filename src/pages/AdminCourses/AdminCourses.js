@@ -21,7 +21,7 @@ import "../../components/AdminCoursesList/adminCourses.scss";
 
 import Modal from "../../components/UI/Modal/Modal";
 import Form from "../../components/Form/Form";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {
@@ -35,7 +35,7 @@ function usePrevious(value) {
 }
 
 function AdminCourses({
-  filters,
+  // filters,
   list,
   loading,
   updateSubject,
@@ -44,27 +44,29 @@ function AdminCourses({
   setIsLessonCoppied,
   user,
 }) {
+  const filters = "";
+  const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const subjectIDRef = useRef(null);
-  const params = useMemo(() => {
-    const locStr = location?.pathname ? location?.pathname : "";
-    const locArr = locStr.split("/");
-    let p = {};
+  // const params = useMemo(() => {
+  //   const locStr = location?.pathname ? location?.pathname : "";
+  //   const locArr = locStr.split("/");
+  //   let p = {};
 
-    if (locArr[2]) {
-      p.subjectID = locArr[2];
-    }
+  //   if (locArr[2]) {
+  //     p.subjectID = locArr[2];
+  //   }
 
-    if (locArr[3]) {
-      p.courseID = locArr[3];
-    }
+  //   if (locArr[3]) {
+  //     p.courseID = locArr[3];
+  //   }
 
-    if (locArr[4]) {
-      p.moduleID = locArr[4];
-    }
-    return p;
-  }, [location]);
+  //   if (locArr[4]) {
+  //     p.moduleID = locArr[4];
+  //   }
+  //   return p;
+  // }, [location]);
 
   if (params) {
     if (
@@ -104,9 +106,7 @@ function AdminCourses({
         .coursesList.find((item) => item.id === params.courseID)
         .modules.find((item) => item.id === params.moduleID)
     ) {
-      navigate(
-        "/admin-courses/" + params.subjectID + "/" + params.courseID,
-      );
+      navigate("/admin-courses/" + params.subjectID + "/" + params.courseID);
     }
   }
   const {
@@ -375,10 +375,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateSubject: (subject) => dispatch(updateSubject(subject)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AdminCourses);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminCourses);
 
 const shimmer = keyframes`
   0 {

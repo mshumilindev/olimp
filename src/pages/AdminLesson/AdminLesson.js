@@ -476,4 +476,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateLessonQA(subjectID, courseID, moduleID, lessonID, newQA)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAdminLesson(AdminLesson));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withAdminLesson(AdminLesson));

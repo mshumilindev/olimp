@@ -1,9 +1,20 @@
-import { collection, query, getDocs, where, onSnapshot, doc, updateDoc } from "firebase/firestore"; 
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { generate } from "generate-password";
 import { db } from "../../db/firestore";
 
 export function loginUser(login, password, remember = false) {
-  const userFoundRef = query(collection(db, "users"), where("login", "==", login));
+  const userFoundRef = query(
+    collection(db, "users"),
+    where("login", "==", login),
+  );
   const token = generate({
     length: 500,
     numbers: true,
@@ -24,11 +35,11 @@ export function loginUser(login, password, remember = false) {
           if (foundUser.status !== "active") {
             return dispatch(loginUserError("inactiveUser"));
           } else {
-            const userRef = doc(db, 'users', snapshot.docs[0].id);
+            const userRef = doc(db, "users", snapshot.docs[0].id);
 
             if (remember) {
-              const savedUsers = localStorage.getItem('savedUsers')
-                ? JSON.parse(localStorage.getItem('savedUsers'))
+              const savedUsers = localStorage.getItem("savedUsers")
+                ? JSON.parse(localStorage.getItem("savedUsers"))
                 : [];
 
               if (!savedUsers?.find((user) => user.login === foundUser.login)) {
@@ -39,17 +50,16 @@ export function loginUser(login, password, remember = false) {
             }
 
             updateDoc(userRef, {
-                token: token,
-              })
-              .then(() => {
-                localStorage.setItem("token", token);
-                return dispatch(
-                  loginUserSuccess({
-                    ...foundUser,
-                    id: snapshot.docs[0].id,
-                  }),
-                );
-              });
+              token: token,
+            }).then(() => {
+              localStorage.setItem("token", token);
+              return dispatch(
+                loginUserSuccess({
+                  ...foundUser,
+                  id: snapshot.docs[0].id,
+                }),
+              );
+            });
           }
         }
       }
@@ -58,7 +68,10 @@ export function loginUser(login, password, remember = false) {
 }
 
 export function checkIfLoggedin(token) {
-  const userFoundRef = query(collection(db, "users"), where("token", "==", token));
+  const userFoundRef = query(
+    collection(db, "users"),
+    where("token", "==", token),
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -90,7 +103,7 @@ export function checkIfLoggedin(token) {
 }
 
 export function logoutUser(userID) {
-  const userRef = doc(db, 'users', userID);
+  const userRef = doc(db, "users", userID);
 
   return (dispatch) => {
     dispatch(checkIfLoggedinBegin());

@@ -101,12 +101,9 @@ const AdminCoursesLesson = ({
     deleteLesson(subjectID, courseID, moduleID, lesson.id);
     setShowConfirm(false);
   }
-}
+};
 const mapDispatchToProps = (dispatch) => ({
   deleteLesson: (subjectID, courseID, moduleID, lessonID) =>
     dispatch(deleteLesson(subjectID, courseID, moduleID, lessonID)),
 });
-export default connect(
-  null,
-  mapDispatchToProps,
-)(AdminCoursesLesson);
+export default connect(null, mapDispatchToProps)(AdminCoursesLesson);

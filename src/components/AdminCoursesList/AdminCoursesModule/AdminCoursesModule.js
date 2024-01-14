@@ -312,7 +312,7 @@ const AdminCoursesModule = ({
       });
     }
   }
-}
+};
 const mapStateToProps = (state) => {
   return {
     lessonsList: state.coursesReducer.lessonsList,
@@ -329,6 +329,6 @@ const mapDispatchToProps = (dispatch) => ({
   copyLesson: (subjectID, courseID, moduleID, newLesson) =>
     dispatch(copyLesson(subjectID, courseID, moduleID, newLesson)),
 });
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-)(AdminCoursesModule);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  AdminCoursesModule,
+);

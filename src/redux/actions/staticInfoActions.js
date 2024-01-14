@@ -1,7 +1,15 @@
-import { collection, deleteDoc, doc, getDocs, query, setDoc, where } from "firebase/firestore"; 
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../../db/firestore";
 
-const staticInfoCollection = collection(db, 'staticInfo');
+const staticInfoCollection = collection(db, "staticInfo");
 const newStaticInfoList = [];
 
 export function fetchStaticInfo() {
@@ -27,7 +35,7 @@ export function fetchStaticInfo() {
 }
 
 export function fetchPage(slug) {
-  const docRef = query(collection(db, 'staticInfo'), where('slug', '==', slug));
+  const docRef = query(collection(db, "staticInfo"), where("slug", "==", slug));
   let page = null;
 
   return (dispatch) => {
@@ -35,7 +43,7 @@ export function fetchPage(slug) {
     return getDocs(docRef).then((snapshot) => {
       if (snapshot.docs.length) {
         const doc = snapshot.docs[0];
-        const contentRef = collection(db, 'staticInfo', doc.id, 'content');
+        const contentRef = collection(db, "staticInfo", doc.id, "content");
 
         page = {
           ...doc.data(),
@@ -63,7 +71,7 @@ export function fetchPage(slug) {
 }
 
 export function removePage(pageID) {
-  const pageRef = doc(db, 'staticInfo', pageID);
+  const pageRef = doc(db, "staticInfo", pageID);
 
   return (dispatch) => {
     dispatch(staticInfoBegin());
@@ -83,34 +91,33 @@ export function removePage(pageID) {
 }
 
 export function createPage(pageID, page) {
-  const pageRef = doc(db, 'staticInfo', pageID);
+  const pageRef = doc(db, "staticInfo", pageID);
   delete page.id;
   delete page.content;
 
   return (dispatch) => {
     dispatch(staticInfoBegin());
     return setDoc(pageRef, {
-        ...page,
-      })
-      .then(() => {
-        return getDocs(staticInfoCollection).then((data) => {
-          newStaticInfoList.splice(0, newStaticInfoList.length);
-          data.docs.map((doc) => {
-            return newStaticInfoList.push({
-              ...doc.data(),
-              id: doc.id,
-            });
+      ...page,
+    }).then(() => {
+      return getDocs(staticInfoCollection).then((data) => {
+        newStaticInfoList.splice(0, newStaticInfoList.length);
+        data.docs.map((doc) => {
+          return newStaticInfoList.push({
+            ...doc.data(),
+            id: doc.id,
           });
-          dispatch(staticInfoSuccess(newStaticInfoList));
         });
+        dispatch(staticInfoSuccess(newStaticInfoList));
       });
+    });
   };
 }
 
 export function updatePage(pageID, page) {
-  const pageRef = doc(db, 'staticInfo', pageID);
+  const pageRef = doc(db, "staticInfo", pageID);
   const slug = page.slug;
-  const contentRef = collection(db, 'staticInfo', pageID, 'content');
+  const contentRef = collection(db, "staticInfo", pageID, "content");
   const content = page.content;
   let toDeleteI = 0;
   let toCreateI = 0;
@@ -153,29 +160,31 @@ export function updatePage(pageID, page) {
 
   const createDoc = (dispatch) => {
     const block = content[toCreateI];
-    const docRef = doc(db, 'staticInfo', pageID, 'content', block.id);
+    const docRef = doc(db, "staticInfo", pageID, "content", block.id);
 
     setDoc(docRef, {
-        ...block,
-        order: toCreateI,
-      })
-      .then(() => {
-        toCreateI++;
-        if (toCreateI < content.length) {
-          createDoc(dispatch);
-        } else {
-          return redoList(dispatch);
-        }
-      });
+      ...block,
+      order: toCreateI,
+    }).then(() => {
+      toCreateI++;
+      if (toCreateI < content.length) {
+        createDoc(dispatch);
+      } else {
+        return redoList(dispatch);
+      }
+    });
   };
 
   const redoList = (dispatch) => {
-    const docRef = query(collection(db, 'staticInfo'), where('slug', '==', slug));
+    const docRef = query(
+      collection(db, "staticInfo"),
+      where("slug", "==", slug),
+    );
     let page = null;
 
     return getDocs(docRef).then((snapshot) => {
       const doc = snapshot.docs[0];
-      const contentRef = collection(db, 'staticInfo', doc.id, 'content');
+      const contentRef = collection(db, "staticInfo", doc.id, "content");
 
       page = {
         ...doc.data(),
@@ -212,11 +221,10 @@ export function updatePage(pageID, page) {
   return (dispatch) => {
     dispatch(pageBegin());
     return setDoc(pageRef, {
-        ...page,
-      })
-      .then(() => {
-        handleContent(dispatch);
-      });
+      ...page,
+    }).then(() => {
+      handleContent(dispatch);
+    });
   };
 }
 

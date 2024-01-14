@@ -1,4 +1,10 @@
-import { collection, getDocs, doc, deleteDoc, setDoc } from "firebase/firestore"; 
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 const contactCollection = collection(db, "contact");
@@ -38,7 +44,7 @@ export function updateContact(newContacts) {
 
     const removeContactItem = (snapshot) => {
       if (snapshot.docs.length) {
-        const docRef = doc(db, 'contact', snapshot.docs[i].id);
+        const docRef = doc(db, "contact", snapshot.docs[i].id);
 
         deleteDoc(docRef).then(() => {
           i++;
@@ -57,15 +63,14 @@ export function updateContact(newContacts) {
     const saveContactItem = () => {
       if (sortedList.length) {
         const currentItem = sortedList[x];
-        const docRef = doc(db, 'contact', currentItem.id);
+        const docRef = doc(db, "contact", currentItem.id);
 
         delete currentItem.id;
 
         setDoc(docRef, {
           ...currentItem,
           order: x,
-        })
-        .then(() => {
+        }).then(() => {
           x++;
 
           if (x < sortedList.length) {

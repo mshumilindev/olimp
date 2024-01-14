@@ -1,14 +1,27 @@
-import { db, storage } from '../../db/firestore';
-import { collection, doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore'; 
-import { ref, listAll, deleteObject, uploadBytes, getDownloadURL, getMetadata } from 'firebase/storage';
+import { db, storage } from "../../db/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
+import {
+  ref,
+  listAll,
+  deleteObject,
+  uploadBytes,
+  getDownloadURL,
+  getMetadata,
+} from "firebase/storage";
 
 const storageRef = ref(storage);
 
-export const FETCH_LIBRARY_BEGIN = 'FETCH_LIBRARY_BEGIN';
-export const FETCH_LIBRARY_SUCCESS = 'FETCH_LIBRARY_SUCCESS';
+export const FETCH_LIBRARY_BEGIN = "FETCH_LIBRARY_BEGIN";
+export const FETCH_LIBRARY_SUCCESS = "FETCH_LIBRARY_SUCCESS";
 
 export function fetchLibrary(userID) {
-  let libraryCollection = collection(db, 'library');
+  let libraryCollection = collection(db, "library");
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -33,7 +46,7 @@ export function fetchLibrary(userID) {
 }
 
 export function fetchLibraryBooks() {
-  const listRef = ref(storage, 'library');
+  const listRef = ref(storage, "library");
 
   return (dispatch) => {
     dispatch(fetchLibraryBooksBegin());
@@ -69,7 +82,11 @@ export const FETCH_TEXTBOOK_BEGIN = "FETCH_TEXTBOOK_BEGIN";
 export const FETCH_TEXTBOOK_SUCCESS = "FETCH_TEXTBOOK_SUCCESS";
 
 export function fetchTextbook(textbookID) {
-  const textbookRef = doc(db, 'library', typeof textbookID === "object" ? textbookID[0] : textbookID);
+  const textbookRef = doc(
+    db,
+    "library",
+    typeof textbookID === "object" ? textbookID[0] : textbookID,
+  );
 
   return (dispatch) => {
     dispatch(fetchTextbookBegin());
@@ -128,7 +145,7 @@ export const DELETE_DOC_BEGIN = "DELETE_DOC_BEGIN";
 
 export function deleteDoc(docID, docRef) {
   const documentRef = ref(storage, `library/${docRef}`);
-  const documentDoc = doc(db, 'library', docID);
+  const documentDoc = doc(db, "library", docID);
 
   return (dispatch) => {
     dispatch(deleteDocBegin());
@@ -151,8 +168,8 @@ export const deleteDocBegin = () => {
 export const UPLOAD_DOC_BEGIN = "UPLOAD_DOC_BEGIN";
 
 export function uploadDoc(newFile, file, id) {
-  const documentRef = ref(storage, 'library/' + file.name);
-  const documentDoc = doc(db, 'library', id);
+  const documentRef = ref(storage, "library/" + file.name);
+  const documentDoc = doc(db, "library", id);
 
   return (dispatch) => {
     dispatch(uploadDocBegin());
@@ -171,7 +188,7 @@ export const uploadDocBegin = () => {
 export const UPDATE_DOC_BEGIN = "UPDATE_DOC_BEGIN";
 
 export function updateDoc(newFile, id) {
-  const documentDoc = doc(db, 'library', id);
+  const documentDoc = doc(db, "library", id);
   const teacherArray = Array.isArray(newFile.teacher)
     ? newFile.teacher
     : [newFile.teacher];

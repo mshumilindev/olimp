@@ -1,6 +1,16 @@
 import { db } from "../../db/firestore";
 import moment from "moment";
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, setDoc, where, writeBatch } from "firebase/firestore"; 
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 
 const events = [];
 
@@ -12,7 +22,10 @@ export function fetchEvents() {
   const batch = writeBatch(db);
 
   return (dispatch) => {
-    const eventsCollection = query(collection(db, 'events'), orderBy('datetime'));
+    const eventsCollection = query(
+      collection(db, "events"),
+      orderBy("datetime"),
+    );
 
     dispatch(fetchEventsBegin());
     if (unsubscribe) {
@@ -47,7 +60,10 @@ export function fetchEventsOrganizer(userID) {
   let unsubscribe = null;
 
   return (dispatch) => {
-    const eventsCollectionQuery = query(collection(db, "events"), where("organizer", "==", userID));
+    const eventsCollectionQuery = query(
+      collection(db, "events"),
+      where("organizer", "==", userID),
+    );
 
     dispatch(fetchEventsBegin());
     if (unsubscribe) {
@@ -70,7 +86,16 @@ export function fetchEventsParticipant(userID, date) {
   let unsubscribe = null;
 
   return (dispatch) => {
-    let eventsCollection = date ? query(collection(db, 'events'), where('participants', 'array-contains', userID)) : query(collection(db, 'events'), where('participants', 'array-contains', userID), where('datetime', '>=', date));
+    let eventsCollection = date
+      ? query(
+          collection(db, "events"),
+          where("participants", "array-contains", userID),
+        )
+      : query(
+          collection(db, "events"),
+          where("participants", "array-contains", userID),
+          where("datetime", ">=", date),
+        );
 
     dispatch(fetchEventsBegin());
     if (unsubscribe) {
@@ -114,7 +139,7 @@ export function fetchChat(
   userIsManagement = "teacher",
 ) {
   let unsubscribe = null;
-  const eventRef = doc(db, 'events', chatID);
+  const eventRef = doc(db, "events", chatID);
 
   return (dispatch) => {
     dispatch(fetchChatBegin());
@@ -168,7 +193,7 @@ export const fetchChatSuccess = (chat) => {
 
 // === CHAT
 export function setChatStart(chatID, isStarted) {
-  const chatRef = doc(db, 'events', chatID);
+  const chatRef = doc(db, "events", chatID);
 
   return () => {
     return setDoc(
@@ -182,7 +207,7 @@ export function setChatStart(chatID, isStarted) {
 }
 
 export function setStopChat(chatID) {
-  const chatRef = doc(db, 'events', chatID);
+  const chatRef = doc(db, "events", chatID);
 
   return () => {
     return setDoc(
@@ -210,7 +235,7 @@ export function setOnACall(value) {
 
 export function sendChalkBoard(chatID, value) {
   return (dispatch) => {
-    const chatRef = doc(db, 'events', chatID);
+    const chatRef = doc(db, "events", chatID);
 
     return setDoc(
       chatRef,
@@ -224,7 +249,7 @@ export function sendChalkBoard(chatID, value) {
 
 export function toggleChalkBoard(chatID, value) {
   return () => {
-    const chatRef = doc(db, 'events', chatID);
+    const chatRef = doc(db, "events", chatID);
 
     return setDoc(
       chatRef,
@@ -238,7 +263,7 @@ export function toggleChalkBoard(chatID, value) {
 
 export function toggleLesson(chatID, value) {
   return (dispatch) => {
-    const chatRef = doc(db, 'events', chatID);
+    const chatRef = doc(db, "events", chatID);
 
     return setDoc(
       chatRef,
@@ -260,7 +285,7 @@ export const setOnACallSuccess = (value) => {
 };
 
 export function deleteEvent(eventID) {
-  const chatRef = doc(db, 'events', eventID);
+  const chatRef = doc(db, "events", eventID);
 
   return (dispatch) => {
     return deleteDoc(chatRef);
@@ -273,7 +298,7 @@ export function deleteMultipleEvents() {
     const filteredEvents = events.all.filter((ev, index) => index < 500);
 
     filteredEvents.forEach((ev) => {
-      const eventRef = doc(db, 'events', ev.id);
+      const eventRef = doc(db, "events", ev.id);
       batch.delete(eventRef);
     });
     batch.commit();
@@ -281,7 +306,7 @@ export function deleteMultipleEvents() {
 }
 
 export function updateEvent(eventID, newEvent) {
-  const chatRef = doc(db, 'events', eventID);
+  const chatRef = doc(db, "events", eventID);
 
   return (dispatch) => {
     return setDoc(

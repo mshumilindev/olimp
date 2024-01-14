@@ -16,7 +16,7 @@ const usePrevious = (value) => {
   }, [value]);
 
   return ref.current;
-}
+};
 
 const UpdateCourse = ({
   user,
@@ -120,7 +120,7 @@ const UpdateCourse = ({
 
     setCourseFields(JSON.stringify(newCourseFields));
   }
-}
+};
 const mapStateToProps = (state) => ({
   user: state.authReducer.currentUser,
 });
@@ -128,7 +128,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateCourse: (subjectID, course) =>
     dispatch(updateCourse(subjectID, course)),
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UpdateCourse);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateCourse);

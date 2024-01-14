@@ -1,4 +1,10 @@
-import { collection, onSnapshot, doc, getDocs, deleteDoc } from "firebase/firestore"; 
+import {
+  collection,
+  onSnapshot,
+  doc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../../db/firestore";
 
 const classesCollection = collection(db, "classes");
@@ -76,7 +82,7 @@ export function createClass(classID, classData) {
 }
 
 export function updateClass(classID, classData) {
-  const classRef = doc(db, 'classes', classID);
+  const classRef = doc(db, "classes", classID);
 
   return (dispatch) => {
     dispatch(classBegin());
@@ -87,7 +93,7 @@ export function updateClass(classID, classData) {
 }
 
 export function fetchClass(classID) {
-  const docRef = doc(db, 'classes', classID);
+  const docRef = doc(db, "classes", classID);
   let unsubscribe;
 
   return (dispatch) => {

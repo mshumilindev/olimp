@@ -55,11 +55,12 @@ const AdminPanel = ({ user, loading }) => {
       </section>
     </div>
   );
-}
+};
 
 const mapStateToProps = (state) => {
   return {
     user: state.authReducer.currentUser,
+    loading: state.authReducer.loading,
   };
 };
 

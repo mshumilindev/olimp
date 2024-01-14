@@ -1,4 +1,15 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch } from "firebase/firestore"; 
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { generate } from "generate-password";
 import { db } from "../../db/firestore";
 
@@ -21,7 +32,7 @@ export function fetchSubjects() {
 
       subjectsList = snapshot.docs.map((doc) => {
         allCoursesInSubject.push(
-          getDocs(collection(db, 'courses', doc.id, 'coursesList')),
+          getDocs(collection(db, "courses", doc.id, "coursesList")),
         );
 
         return {
@@ -50,7 +61,12 @@ export function fetchAllCourses() {
 
       if (snapshot.docs.length) {
         snapshot.docs.forEach((doc) => {
-          const coursesListRef = collection(db, 'courses', doc.id, 'coursesList');
+          const coursesListRef = collection(
+            db,
+            "courses",
+            doc.id,
+            "coursesList",
+          );
 
           if (!allCoursesList.some((item) => item.id === doc.id)) {
             allCoursesList.push({
@@ -90,7 +106,14 @@ export function fetchAllCourses() {
 }
 
 export function fetchModulesLessons(subjectID, courseID) {
-  const modulesRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules');
+  const modulesRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+  );
   const modulesLessons = [];
   let modulesI = 0;
 
@@ -101,7 +124,16 @@ export function fetchModulesLessons(subjectID, courseID) {
 
     const getLessons = (snapshot) => {
       const module = snapshot.docs[modulesI];
-      const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id, 'lessons');
+      const lessonsRef = collection(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        module.id,
+        "lessons",
+      );
 
       modulesLessons.push({
         ...module.data(),
@@ -154,9 +186,12 @@ export function fetchCoursesList(subjectID, userID, clearArray) {
   let unsubscribe = null;
 
   if (userID) {
-    courseListRef = query(collection(db, 'courses', subjectID, 'coursesList'), where('teacher', '==', userID));
+    courseListRef = query(
+      collection(db, "courses", subjectID, "coursesList"),
+      where("teacher", "==", userID),
+    );
   } else {
-    courseListRef = collection(db, 'courses', subjectID, 'coursesList');
+    courseListRef = collection(db, "courses", subjectID, "coursesList");
   }
 
   return (dispatch) => {
@@ -185,7 +220,14 @@ export function fetchCoursesList(subjectID, userID, clearArray) {
 }
 
 export function fetchModules(subjectID, courseID) {
-  const modulesRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules');
+  const modulesRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -208,7 +250,14 @@ export function fetchModules(subjectID, courseID) {
 }
 
 export function getModules(subjectID, courseID) {
-  const modulesRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules');
+  const modulesRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+  );
 
   return (dispatch) => {
     return getDocs(modulesRef);
@@ -216,7 +265,16 @@ export function getModules(subjectID, courseID) {
 }
 
 export function getLessons(subjectID, courseID, moduleID) {
-  const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons');
+  const lessonsRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+  );
 
   return (dispatch) => {
     return getDocs(lessonsRef);
@@ -224,7 +282,16 @@ export function getLessons(subjectID, courseID, moduleID) {
 }
 
 export function fetchLessons(subjectID, courseID, moduleID) {
-  const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons');
+  const lessonsRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+  );
   let unsubscribe = null;
 
   return (dispatch) => {
@@ -258,7 +325,17 @@ export function updateLessonsOrder(
 ) {
   return (dispatch) => {
     lessonsToUpdate.forEach((item, index) => {
-      const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', item.id);
+      const lessonRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        item.id,
+      );
 
       setDoc(
         lessonRef,
@@ -266,14 +343,13 @@ export function updateLessonsOrder(
           index: item.index,
         },
         { merge: true },
-      )
-      .then();
+      ).then();
     });
   };
 }
 
 export function updateSubject(subject) {
-  const subjectRef = doc(db, 'courses', subject.id);
+  const subjectRef = doc(db, "courses", subject.id);
   const subjectID = subject.id;
 
   delete subject.id;
@@ -281,44 +357,43 @@ export function updateSubject(subject) {
   return (dispatch) => {
     dispatch(coursesBegin());
     return setDoc(subjectRef, {
-        ...subject,
-      })
-      .then(() => {
-        if (
+      ...subject,
+    }).then(() => {
+      if (
+        subjectsList.indexOf(
+          subjectsList.find((item) => item.id === subjectID),
+        ) !== -1
+      ) {
+        subjectsList.splice(
           subjectsList.indexOf(
             subjectsList.find((item) => item.id === subjectID),
-          ) !== -1
-        ) {
-          subjectsList.splice(
-            subjectsList.indexOf(
-              subjectsList.find((item) => item.id === subjectID),
-            ),
-            1,
-          );
-        }
-        subjectsList.push({
-          ...subject,
-          id: subjectID,
-        });
-        dispatch(
-          coursesSuccess(
-            subjectsList.sort((a, b) => {
-              if (a.id < b.id) {
-                return -1;
-              } else if (a.id > b.id) {
-                return 1;
-              }
-              return 0;
-            }),
           ),
+          1,
         );
+      }
+      subjectsList.push({
+        ...subject,
+        id: subjectID,
       });
+      dispatch(
+        coursesSuccess(
+          subjectsList.sort((a, b) => {
+            if (a.id < b.id) {
+              return -1;
+            } else if (a.id > b.id) {
+              return 1;
+            }
+            return 0;
+          }),
+        ),
+      );
+    });
   };
 }
 
 export function deleteSubject(subjectID) {
-  const subjectRef = doc(db, 'courses', subjectID);
-  const coursesRef = collection(db, 'courses', subjectID, 'coursesList');
+  const subjectRef = doc(db, "courses", subjectID);
+  const coursesRef = collection(db, "courses", subjectID, "coursesList");
   const batch = writeBatch(db);
 
   return (dispatch) => {
@@ -327,30 +402,64 @@ export function deleteSubject(subjectID) {
     return getDocs(coursesRef).then((courses) => {
       if (courses.docs.length) {
         courses.forEach((course) => {
-          const modulesRef = collection(db, 'courses', subjectID, 'coursesList', course.id, 'modules');
+          const modulesRef = collection(
+            db,
+            "courses",
+            subjectID,
+            "coursesList",
+            course.id,
+            "modules",
+          );
 
           getDocs(modulesRef).then((modules) => {
             if (modules.docs.length) {
               modules.forEach((module) => {
-                const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', course.id, 'modules', module.id, 'lessons');
+                const lessonsRef = collection(
+                  db,
+                  "courses",
+                  subjectID,
+                  "coursesList",
+                  course.id,
+                  "modules",
+                  module.id,
+                  "lessons",
+                );
 
                 getDocs(lessonsRef).then((lessons) => {
                   if (lessons.docs.length) {
                     lessons.forEach((lesson) => {
                       batch.delete(
-                        doc(db, 'courses', subjectID, 'coursesList', course.id, 'modules', module.id, 'lessons', lesson.id),
+                        doc(
+                          db,
+                          "courses",
+                          subjectID,
+                          "coursesList",
+                          course.id,
+                          "modules",
+                          module.id,
+                          "lessons",
+                          lesson.id,
+                        ),
                       );
                     });
                   }
                 });
 
                 batch.delete(
-                  doc(db, 'courses', subjectID, 'coursesList', course.id, 'modules', module.id),
+                  doc(
+                    db,
+                    "courses",
+                    subjectID,
+                    "coursesList",
+                    course.id,
+                    "modules",
+                    module.id,
+                  ),
                 );
               });
             }
             batch.delete(
-              doc(db, 'courses', subjectID, 'coursesList', course.id),
+              doc(db, "courses", subjectID, "coursesList", course.id),
             );
           });
         });
@@ -376,20 +485,25 @@ export function deleteSubject(subjectID) {
 }
 
 export function updateCourse(subjectID, course) {
-  const courseRef = doc(db, 'courses', subjectID, 'coursesList', course.id);
+  const courseRef = doc(db, "courses", subjectID, "coursesList", course.id);
 
   return (dispatch) => {
-    return setDoc(
-      courseRef,
-      {
+    return setDoc(courseRef, {
       ...course,
     });
   };
 }
 
 export function deleteCourse(subjectID, courseID) {
-  const courseRef = doc(db, 'courses', subjectID, 'coursesList', courseID);
-  const modulesRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules');
+  const courseRef = doc(db, "courses", subjectID, "coursesList", courseID);
+  const modulesRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+  );
   const batch = writeBatch(db);
 
   return (dispatch) => {
@@ -398,20 +512,47 @@ export function deleteCourse(subjectID, courseID) {
     return getDocs(modulesRef).then((modules) => {
       if (modules.docs.length) {
         modules.forEach((module) => {
-          const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id, 'lessons');
+          const lessonsRef = collection(
+            db,
+            "courses",
+            subjectID,
+            "coursesList",
+            courseID,
+            "modules",
+            module.id,
+            "lessons",
+          );
 
           getDocs(lessonsRef).then((lessons) => {
             if (lessons.docs.length) {
               lessons.forEach((lesson) => {
                 batch.delete(
-                  doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id, 'lessons', lesson.id),
+                  doc(
+                    db,
+                    "courses",
+                    subjectID,
+                    "coursesList",
+                    courseID,
+                    "modules",
+                    module.id,
+                    "lessons",
+                    lesson.id,
+                  ),
                 );
               });
             }
           });
 
           batch.delete(
-            doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id),
+            doc(
+              db,
+              "courses",
+              subjectID,
+              "coursesList",
+              courseID,
+              "modules",
+              module.id,
+            ),
           );
         });
       }
@@ -425,7 +566,15 @@ export function deleteCourse(subjectID, courseID) {
 }
 
 export function updateModule(subjectID, courseID, module) {
-  const moduleRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', module.id);
+  const moduleRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    module.id,
+  );
 
   return (dispatch) => {
     dispatch(coursesBegin());
@@ -436,8 +585,25 @@ export function updateModule(subjectID, courseID, module) {
 }
 
 export function deleteModule(subjectID, courseID, moduleID) {
-  const moduleRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID);
-  const lessonsRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons');
+  const moduleRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+  );
+  const lessonsRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+  );
   const batch = writeBatch(db);
 
   return (dispatch) => {
@@ -445,7 +611,17 @@ export function deleteModule(subjectID, courseID, moduleID) {
     return getDocs(lessonsRef).then((snapshot) => {
       snapshot.forEach((doc) => {
         batch.delete(
-          doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', doc.id),
+          doc(
+            db,
+            "courses",
+            subjectID,
+            "coursesList",
+            courseID,
+            "modules",
+            moduleID,
+            "lessons",
+            doc.id,
+          ),
         );
       });
       deleteDoc(moduleRef).then(() => {
@@ -463,9 +639,41 @@ export function updateLesson(
   newLesson,
   updateTree,
 ) {
-  const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', newLesson.id);
-  const contentRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', newLesson.id, 'content');
-  const QARef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', newLesson.id, 'QA');
+  const lessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    newLesson.id,
+  );
+  const contentRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    newLesson.id,
+    "content",
+  );
+  const QARef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    newLesson.id,
+    "QA",
+  );
   const lessonID = newLesson.id;
   const content = JSON.stringify(newLesson.content);
   const QA = JSON.stringify(newLesson.QA);
@@ -494,7 +702,19 @@ export function updateLesson(
     };
 
     const deleteDocument = (snapshot) => {
-      const docRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'content', snapshot.docs[toDeleteI].id);
+      const docRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        lessonID,
+        "content",
+        snapshot.docs[toDeleteI].id,
+      );
       deleteDoc(docRef).then(() => {
         toDeleteI++;
         if (toDeleteI < snapshot.docs.length) {
@@ -511,22 +731,33 @@ export function updateLesson(
 
     const createDoc = () => {
       const block = JSON.parse(content)[toCreateI];
-      const docRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'content', block.id);
+      const docRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        lessonID,
+        "content",
+        block.id,
+      );
 
       delete block.id;
 
       setDoc(docRef, {
-          ...block,
-          order: toCreateI,
-        })
-        .then(() => {
-          toCreateI++;
-          if (toCreateI < JSON.parse(content).length) {
-            createDoc();
-          } else {
-            handleQuestions();
-          }
-        });
+        ...block,
+        order: toCreateI,
+      }).then(() => {
+        toCreateI++;
+        if (toCreateI < JSON.parse(content).length) {
+          createDoc();
+        } else {
+          handleQuestions();
+        }
+      });
     };
 
     const handleQuestions = () => {
@@ -556,7 +787,19 @@ export function updateLesson(
     };
 
     const deleteQuestion = (snapshot) => {
-      const docRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'QA', snapshot.docs[toDeleteX].id);
+      const docRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        lessonID,
+        "QA",
+        snapshot.docs[toDeleteX].id,
+      );
       deleteDoc(docRef).then(() => {
         toDeleteX++;
         if (toDeleteX < snapshot.docs.length) {
@@ -581,51 +824,93 @@ export function updateLesson(
 
     const createQuestion = () => {
       const block = JSON.parse(QA)[toCreateX];
-      const docRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'QA', block.id);
+      const docRef = doc(
+        db,
+        "courses",
+        subjectID,
+        "coursesList",
+        courseID,
+        "modules",
+        moduleID,
+        "lessons",
+        lessonID,
+        "QA",
+        block.id,
+      );
 
       delete block.id;
 
       setDoc(docRef, {
-          ...block,
-          order: toCreateX,
-        })
-        .then(() => {
-          toCreateX++;
-          if (toCreateX < JSON.parse(QA).length) {
-            createQuestion();
-          } else {
-            lesson = {
-              ...newLesson,
-              id: lessonID,
-            };
-            lesson.content = JSON.parse(content).sort(
-              (a, b) => a.order - b.order,
-            );
-            lesson.QA = JSON.parse(QA).sort((a, b) => a.order - b.order);
-            dispatch(lessonSuccess(lesson));
-          }
-        });
+        ...block,
+        order: toCreateX,
+      }).then(() => {
+        toCreateX++;
+        if (toCreateX < JSON.parse(QA).length) {
+          createQuestion();
+        } else {
+          lesson = {
+            ...newLesson,
+            id: lessonID,
+          };
+          lesson.content = JSON.parse(content).sort(
+            (a, b) => a.order - b.order,
+          );
+          lesson.QA = JSON.parse(QA).sort((a, b) => a.order - b.order);
+          dispatch(lessonSuccess(lesson));
+        }
+      });
     };
 
     dispatch(coursesBegin());
 
     return setDoc(lessonRef, {
-        ...newLesson,
-      })
-      .then(() => {
-        handleContent();
-      });
+      ...newLesson,
+    }).then(() => {
+      handleContent();
+    });
   };
 }
 
 export function copyLesson(subjectID, courseID, moduleID, newLesson) {
-  const contentRef = collection(db, 'courses', newLesson.subjectID, 'coursesList', newLesson.courseID, 'modules', newLesson.moduleID, 'lessons', newLesson.lesson.id, 'content');
-  const QARef = collection(db, 'courses', newLesson.subjectID, 'coursesList', newLesson.courseID, 'modules', newLesson.moduleID, 'lessons', newLesson.lesson.id, 'QA');
+  const contentRef = collection(
+    db,
+    "courses",
+    newLesson.subjectID,
+    "coursesList",
+    newLesson.courseID,
+    "modules",
+    newLesson.moduleID,
+    "lessons",
+    newLesson.lesson.id,
+    "content",
+  );
+  const QARef = collection(
+    db,
+    "courses",
+    newLesson.subjectID,
+    "coursesList",
+    newLesson.courseID,
+    "modules",
+    newLesson.moduleID,
+    "lessons",
+    newLesson.lesson.id,
+    "QA",
+  );
   const newID = generate({
     length: 20,
     numbers: true,
   });
-  const newLessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', newID);
+  const newLessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    newID,
+  );
   let content = null;
   let qa = null;
   const batch = writeBatch(db);
@@ -646,30 +931,61 @@ export function copyLesson(subjectID, courseID, moduleID, newLesson) {
         };
 
         setDoc(newLessonRef, {
-            ...createLesson,
-          })
-          .then(() => {
-            content.forEach((doc) => {
-              batch.set(
-                doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', createLesson.id, 'content').doc(),
-                doc,
-              );
-            });
-            qa.forEach((doc) => {
-              batch.set(
-                doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', createLesson.id, 'QA').doc(),
-                doc,
-              );
-            });
-            batch.commit();
+          ...createLesson,
+        }).then(() => {
+          content.forEach((doc) => {
+            batch.set(
+              doc(
+                db,
+                "courses",
+                subjectID,
+                "coursesList",
+                courseID,
+                "modules",
+                moduleID,
+                "lessons",
+                createLesson.id,
+                "content",
+              ).doc(),
+              doc,
+            );
           });
+          qa.forEach((doc) => {
+            batch.set(
+              doc(
+                db,
+                "courses",
+                subjectID,
+                "coursesList",
+                courseID,
+                "modules",
+                moduleID,
+                "lessons",
+                createLesson.id,
+                "QA",
+              ).doc(),
+              doc,
+            );
+          });
+          batch.commit();
+        });
       });
     });
   };
 }
 
 export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
-  const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
+  const lessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+  );
 
   return (dispatch) => {
     dispatch(coursesBegin());
@@ -680,9 +996,41 @@ export function deleteLesson(subjectID, courseID, moduleID, lessonID) {
 }
 
 export function fetchLesson(subjectID, courseID, moduleID, lessonID) {
-  const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
-  const contentRef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'content');
-  const QARef = collection(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID, 'QA');
+  const lessonRef = doc(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+  );
+  const contentRef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "content",
+  );
+  const QARef = collection(
+    db,
+    "courses",
+    subjectID,
+    "coursesList",
+    courseID,
+    "modules",
+    moduleID,
+    "lessons",
+    lessonID,
+    "QA",
+  );
 
   return (dispatch) => {
     dispatch(lessonBegin());
