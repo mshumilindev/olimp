@@ -1,3 +1,9 @@
+export type UserRole = "admin" | "teacher" | "student" | "guest";
+
+export type UserStatus = "active" | "suspended";
+
+export type UserManagementType = "teacher" | "deputy" | "headmaster";
+
 export type User = {
   canSeeGuests: boolean;
   email: string;
@@ -5,13 +11,13 @@ export type User = {
   login: string;
   name: string;
   password: string;
-  role: "admin" | "teacher" | "student" | "guest";
+  role: UserRole;
   skype: string;
-  status: "active" | "suspended";
+  status: UserStatus;
   tel: string;
-  token: string;
-  isManagement: "teacher" | "deputy" | "headmaster";
-  courses: Course[];
+  token?: string;
+  isManagement?: UserManagementType;
+  courses?: Course[];
 };
 
 export type Course = {};
