@@ -1,39 +1,134 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-const mapStateToProps = state => {
-    return {
-        user: state.authReducer.currentUser
-    }
+const mapStateToProps = (state) => {
+  return {
+    user: state.authReducer.currentUser,
+  };
 };
 
-export default connect(mapStateToProps)(function Preloader({size = 100}) {
-    return (
-        <div className="preloader">
-            <div className="preloader__inner">
-                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-                    <circle cx="84" cy="50" r="10" fill="#ff8a00">
-                        <animate attributeName="r" repeatCount="indefinite" dur="0.25s" calcMode="spline" keyTimes="0;1" values="10;0" keySplines="0 0.5 0.5 1" begin="0s"/>
-                        <animate attributeName="fill" repeatCount="indefinite" dur="1s" calcMode="discrete" keyTimes="0;0.25;0.5;0.75;1" values="#ff8a00;#a1d042;#4ec1e2;#7f00a3;#ff8a00" begin="0s"/>
-                    </circle>
-                    <circle cx="16" cy="50" r="10" fill="#ff8a00">
-                        <animate attributeName="r" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="0;0;10;10;10" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="0s"/>
-                        <animate attributeName="cx" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="16;16;16;50;84" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="0s"/>
-                    </circle>
-                    <circle cx="50" cy="50" r="10" fill="#7f00a3">
-                        <animate attributeName="r" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="0;0;10;10;10" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.25s"/>
-                        <animate attributeName="cx" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="16;16;16;50;84" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.25s"/>
-                    </circle>
-                    <circle cx="84" cy="50" r="10" fill="#4ec1e2">
-                        <animate attributeName="r" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="0;0;10;10;10" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.5s"/>
-                        <animate attributeName="cx" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="16;16;16;50;84" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.5s"/>
-                    </circle>
-                    <circle cx="16" cy="50" r="10" fill="#a1d042">
-                        <animate attributeName="r" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="0;0;10;10;10" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.75s"/>
-                        <animate attributeName="cx" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.25;0.5;0.75;1" values="16;16;16;50;84" keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.75s"/>
-                    </circle>
-                </svg>
-            </div>
-        </div>
-    )
+export default connect(mapStateToProps)(function Preloader({ size = 100 }) {
+  return (
+    <div className="preloader">
+      <div className="preloader__inner">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid"
+        >
+          <circle cx="84" cy="50" r="10" fill="#ff8a00">
+            <animate
+              attributeName="r"
+              repeatCount="indefinite"
+              dur="0.25s"
+              calcMode="spline"
+              keyTimes="0;1"
+              values="10;0"
+              keySplines="0 0.5 0.5 1"
+              begin="0s"
+            />
+            <animate
+              attributeName="fill"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="discrete"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="#ff8a00;#a1d042;#4ec1e2;#7f00a3;#ff8a00"
+              begin="0s"
+            />
+          </circle>
+          <circle cx="16" cy="50" r="10" fill="#ff8a00">
+            <animate
+              attributeName="r"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="0;0;10;10;10"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="0s"
+            />
+            <animate
+              attributeName="cx"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="16;16;16;50;84"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="0s"
+            />
+          </circle>
+          <circle cx="50" cy="50" r="10" fill="#7f00a3">
+            <animate
+              attributeName="r"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="0;0;10;10;10"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.25s"
+            />
+            <animate
+              attributeName="cx"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="16;16;16;50;84"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.25s"
+            />
+          </circle>
+          <circle cx="84" cy="50" r="10" fill="#4ec1e2">
+            <animate
+              attributeName="r"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="0;0;10;10;10"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.5s"
+            />
+            <animate
+              attributeName="cx"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="16;16;16;50;84"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.5s"
+            />
+          </circle>
+          <circle cx="16" cy="50" r="10" fill="#a1d042">
+            <animate
+              attributeName="r"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="0;0;10;10;10"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.75s"
+            />
+            <animate
+              attributeName="cx"
+              repeatCount="indefinite"
+              dur="1s"
+              calcMode="spline"
+              keyTimes="0;0.25;0.5;0.75;1"
+              values="16;16;16;50;84"
+              keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
+              begin="-0.75s"
+            />
+          </circle>
+        </svg>
+      </div>
+    </div>
+  );
 });

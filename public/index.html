@@ -3,33 +3,66 @@
   Author: Mykola Lukianov
   Exclusive owner: Mykola Lukianov
 -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" translate="no">
   <head>
     <meta charset="utf-8" />
 
     <meta property="og:title" content='Колегіум "Олімп"' />
-    <meta property="og:description" content="Платформа дистанційного навчання" />
+    <meta
+      property="og:description"
+      content="Платформа дистанційного навчання"
+    />
     <meta property="og:url" content="https://k-olimp.school/landing" />
     <meta property="og:image" content="https://k-olimp.school/img01.jpg" />
 
-    <link rel="apple-touch-icon" sizes="144x144" href="%PUBLIC_URL%/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon/favicon-16x16.png">
-    <link rel="manifest" href="%PUBLIC_URL%/favicon/site.webmanifest">
-    <link rel="mask-icon" href="%PUBLIC_URL%/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="%PUBLIC_URL%/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="%PUBLIC_URL%/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="%PUBLIC_URL%/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="%PUBLIC_URL%/favicon/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="%PUBLIC_URL%/favicon/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
 
-    <meta name="google" content="notranslate">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,700,700i&display=swap&subset=cyrillic" rel="stylesheet">
+    <meta name="google" content="notranslate" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,700,700i&display=swap&subset=cyrillic"
+      rel="stylesheet"
+    />
     <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous"> -->
-    <script src="https://kit.fontawesome.com/4e4db6c95d.js" crossorigin="anonymous"></script>
-    <script src='https://meet.jit.si/external_api.js'></script>
+    <script
+      src="https://kit.fontawesome.com/4e4db6c95d.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://meet.jit.si/external_api.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://meet.jit.si/libs/lib-jitsi-meet.min.js"></script>
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyAP1mtGvLFJGu-LMzwIOJrqabTF3oDKgMw&libraries=places"></script>
+    <script
+      type="text/javascript"
+      src="https://maps.google.com/maps/api/js?key=AIzaSyAP1mtGvLFJGu-LMzwIOJrqabTF3oDKgMw&libraries=places"
+    ></script>
   </head>
   <body class="notranslate">
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -37,13 +70,21 @@
 
     <script>
       (function () {
+        if (typeof window.CustomEvent === "function") return false;
 
-        if ( typeof window.CustomEvent === "function" ) return false;
-
-        function CustomEvent ( event, params ) {
-          params = params || { bubbles: false, cancelable: false, detail: undefined };
-          var evt = document.createEvent( 'CustomEvent' );
-          evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+        function CustomEvent(event, params) {
+          params = params || {
+            bubbles: false,
+            cancelable: false,
+            detail: undefined,
+          };
+          var evt = document.createEvent("CustomEvent");
+          evt.initCustomEvent(
+            event,
+            params.bubbles,
+            params.cancelable,
+            params.detail,
+          );
           return evt;
         }
 
@@ -51,18 +92,21 @@
 
         window.CustomEvent = CustomEvent;
       })();
-      const onTranslationsUpdate = new CustomEvent('onTranslationsUpdate');
-      const onSiteSettingsUpdate = new CustomEvent('onSiteSettingsUpdate');
+      const onTranslationsUpdate = new CustomEvent("onTranslationsUpdate");
+      const onSiteSettingsUpdate = new CustomEvent("onSiteSettingsUpdate");
 
-      window.addEventListener('onTranslationsUpdate', function() {
+      window.addEventListener("onTranslationsUpdate", function () {
         const dateToUpdate = new Date();
 
-        localStorage.removeItem('translationsua');
-        localStorage.removeItem('translationsru');
-        localStorage.removeItem('translationsen');
-        localStorage.removeItem('translationsList');
+        localStorage.removeItem("translationsua");
+        localStorage.removeItem("translationsru");
+        localStorage.removeItem("translationsen");
+        localStorage.removeItem("translationsList");
 
-        localStorage.setItem('updates', JSON.stringify({translations: dateToUpdate.getTime()}));
+        localStorage.setItem(
+          "updates",
+          JSON.stringify({ translations: dateToUpdate.getTime() }),
+        );
       });
     </script>
   </body>

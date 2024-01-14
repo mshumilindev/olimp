@@ -1,70 +1,88 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
+import React, { useContext, useState, useEffect, useRef } from "react";
 import siteSettingsContext from "../../../context/siteSettingsContext";
-import {updateSubject} from "../../../redux/actions/coursesActions";
-import {connect} from "react-redux";
+import { updateSubject } from "../../../redux/actions/coursesActions";
+import { connect } from "react-redux";
 
-import Modal from '../../UI/Modal/Modal';
-import Form from '../../Form/Form';
+import Modal from "../../UI/Modal/Modal";
+import Form from "../../Form/Form";
 
 // === Need to move this to a separate file from all the files it's used in
 function usePrevious(value) {
-    const ref = useRef(null);
+  const ref = useRef(null);
 
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
 
-    return ref.current;
+  return ref.current;
 }
 
-function UpdateSubject({subject, loading, setShowUpdateSubject, updateSubject}) {
-    const { translate, getSubjectFields } = useContext(siteSettingsContext);
-    const [ subjectFields, setSubjectFields ] = useState(JSON.stringify(getSubjectFields(subject)));
-    const prevSubject = usePrevious(subject);
-    const [ formUpdated, setFormUpdated ] = useState(false);
+function UpdateSubject({
+  subject,
+  loading,
+  setShowUpdateSubject,
+  updateSubject,
+}) {
+  const { translate, getSubjectFields } = useContext(siteSettingsContext);
+  const [subjectFields, setSubjectFields] = useState(
+    JSON.stringify(getSubjectFields(subject)),
+  );
+  const prevSubject = usePrevious(subject);
+  const [formUpdated, setFormUpdated] = useState(false);
 
-    useEffect(() => {
-        if ( prevSubject && subject && JSON.stringify(prevSubject) !== JSON.stringify(subject) ) {
-            toggleModal();
-        }
-    });
-
-    return (
-        <Modal onHideModal={() => toggleModal()}>
-            <Form loading={loading} heading={translate('edit_subject')} fields={JSON.parse(subjectFields)} setFieldValue={setFieldValue} formAction={handleEditSubject} formUpdated={formUpdated}/>
-        </Modal>
-    );
-
-    function toggleModal() {
-        setShowUpdateSubject(false);
+  useEffect(() => {
+    if (
+      prevSubject &&
+      subject &&
+      JSON.stringify(prevSubject) !== JSON.stringify(subject)
+    ) {
+      toggleModal();
     }
+  });
 
-    function handleEditSubject() {
-        const newSubjectFields = JSON.parse(subjectFields);
-        const newSubject = {};
+  return (
+    <Modal onHideModal={() => toggleModal()}>
+      <Form
+        loading={loading}
+        heading={translate("edit_subject")}
+        fields={JSON.parse(subjectFields)}
+        setFieldValue={setFieldValue}
+        formAction={handleEditSubject}
+        formUpdated={formUpdated}
+      />
+    </Modal>
+  );
 
-        newSubject.name = {
-            en: newSubjectFields.find(item => item.id === 'subjectName_en').value,
-            ru: newSubjectFields.find(item => item.id === 'subjectName_ru').value,
-            ua: newSubjectFields.find(item => item.id === 'subjectName_ua').value
-        };
-        newSubject.id = subject.id;
+  function toggleModal() {
+    setShowUpdateSubject(false);
+  }
 
-        updateSubject(newSubject);
-    }
+  function handleEditSubject() {
+    const newSubjectFields = JSON.parse(subjectFields);
+    const newSubject = {};
 
-    function setFieldValue(fieldID, value) {
-        const newSubjectFields = JSON.parse(subjectFields);
+    newSubject.name = {
+      en: newSubjectFields.find((item) => item.id === "subjectName_en").value,
+      ru: newSubjectFields.find((item) => item.id === "subjectName_ru").value,
+      ua: newSubjectFields.find((item) => item.id === "subjectName_ua").value,
+    };
+    newSubject.id = subject.id;
 
-        newSubjectFields.find(item => item.id === fieldID).value = value;
-        newSubjectFields.find(item => item.id === fieldID).updated = true;
+    updateSubject(newSubject);
+  }
 
-        setFormUpdated(true);
+  function setFieldValue(fieldID, value) {
+    const newSubjectFields = JSON.parse(subjectFields);
 
-        setSubjectFields(JSON.stringify(newSubjectFields));
-    }
+    newSubjectFields.find((item) => item.id === fieldID).value = value;
+    newSubjectFields.find((item) => item.id === fieldID).updated = true;
+
+    setFormUpdated(true);
+
+    setSubjectFields(JSON.stringify(newSubjectFields));
+  }
 }
-const mapDispatchToProps = dispatch => ({
-    updateSubject: (subject) => dispatch(updateSubject(subject))
+const mapDispatchToProps = (dispatch) => ({
+  updateSubject: (subject) => dispatch(updateSubject(subject)),
 });
 export default connect(null, mapDispatchToProps)(UpdateSubject);

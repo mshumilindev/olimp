@@ -1,4 +1,4 @@
-@import '../../assets/scss/utils/colors';
+@import "../../assets/scss/utils/colors";
 
 .adminTranslations {
   &__list {
@@ -24,14 +24,14 @@
       justify-content: center;
       align-items: center;
       &:before {
-        content: '';
+        content: "";
         background: $white;
         position: absolute;
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
-        opacity: .75;
+        opacity: 0.75;
         z-index: -1;
       }
     }

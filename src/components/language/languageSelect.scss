@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .languageSelect {
   position: relative;
@@ -30,7 +30,7 @@
     font-size: 14px;
     text-transform: uppercase;
     font-family: $RobotoCondensed;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
   }
   .dropdown_block {
     [class$="_icon"] {

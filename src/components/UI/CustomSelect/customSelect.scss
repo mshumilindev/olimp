@@ -1,56 +1,56 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/sizes';
-@import '../../../assets/scss/utils/fonts';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/sizes";
+@import "../../../assets/scss/utils/fonts";
 
 .customSelect {
-    position: relative;
-    &__value {
-        cursor: pointer;
-        padding-right: 34px;
-        text-overflow: ellipsis;
-        &.isActive {
-            ~ [class$="__drop"] {
-                max-height: 200px;
-                overflow: hidden;
-            }
-            ~ [class$="__arrow"] {
-                transform: translateY(-50%) rotate(-180deg);
-            }
-        }
-    }
-    &__drop {
-        position: absolute;
-        z-index: 10;
-        background: $white;
-        box-shadow: 0 5px 5px 0 rgba(0,0,0,.25);
-        box-sizing: border-box;
-        top: 100%;
-        left: 0;
-        right: 0;
-        max-height: 0;
-        transition: max-height .25s ease-in-out;
+  position: relative;
+  &__value {
+    cursor: pointer;
+    padding-right: 34px;
+    text-overflow: ellipsis;
+    &.isActive {
+      ~ [class$="__drop"] {
+        max-height: 200px;
         overflow: hidden;
+      }
+      ~ [class$="__arrow"] {
+        transform: translateY(-50%) rotate(-180deg);
+      }
     }
-    &__drop-opt {
-        font-family: $RobotoCondensed;
-        font-size: 14px;
-        padding: 10px;
-        cursor: pointer;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        &:hover {
-            background: $lightGreyColor;
-        }
-        &.isReset {
-            color: $errorColor;
-        }
+  }
+  &__drop {
+    position: absolute;
+    z-index: 10;
+    background: $white;
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    transition: max-height 0.25s ease-in-out;
+    overflow: hidden;
+  }
+  &__drop-opt {
+    font-family: $RobotoCondensed;
+    font-size: 14px;
+    padding: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &:hover {
+      background: $lightGreyColor;
     }
-    &__arrow {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%) rotate(0);
-        transition: transform .25s ease-in-out;
-        font-size: 12px;
+    &.isReset {
+      color: $errorColor;
     }
+  }
+  &__arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0);
+    transition: transform 0.25s ease-in-out;
+    font-size: 12px;
+  }
 }

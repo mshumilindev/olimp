@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 $timeSlotWidth: 50px;
 $timeSlotHeight: 100px;
@@ -54,7 +54,7 @@ $lessonIndent: 10px;
     color: $white;
 
     &.isHoliday {
-      opacity: .25;
+      opacity: 0.25;
     }
 
     &.first {
@@ -89,7 +89,7 @@ $lessonIndent: 10px;
     margin: -30px 0;
 
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: $timeSlotWidth;
       top: 50px;
@@ -115,14 +115,14 @@ $lessonIndent: 10px;
     z-index: 1;
 
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       right: 0;
       top: -2.5px;
       background: $purpleColor;
       height: 1px;
-      opacity: .25;
+      opacity: 0.25;
     }
   }
 
@@ -139,7 +139,7 @@ $lessonIndent: 10px;
     z-index: 1;
 
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: 35px;
       right: -9999px;
@@ -150,7 +150,7 @@ $lessonIndent: 10px;
     }
 
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       left: 35px;
       right: -9999px;
@@ -176,14 +176,14 @@ $lessonIndent: 10px;
 
     &.isToday {
       &:before {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
         background: $lightGreenColor;
-        opacity: .25;
+        opacity: 0.25;
       }
     }
 
@@ -212,7 +212,7 @@ $lessonIndent: 10px;
       }
 
       &:before {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         top: 0;
@@ -220,13 +220,13 @@ $lessonIndent: 10px;
         bottom: 0;
         z-index: -1;
         background: $lightGreyColor;
-        opacity: .85;
+        opacity: 0.85;
       }
 
       &:hover {
         transform: scale(1.1);
         z-index: 2;
-        box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
         height: auto !important;
         padding-bottom: 40px;
         width: 150%;
@@ -291,7 +291,7 @@ $lessonIndent: 10px;
       color: $errorColor;
       position: absolute;
       right: $lessonIndent;
-      top: 5px
+      top: 5px;
     }
   }
 }

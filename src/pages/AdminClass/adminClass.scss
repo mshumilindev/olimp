@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .adminClass {
   &__schedule {
@@ -22,7 +22,7 @@
     padding: 10px;
     color: $mediumGreyColor;
     cursor: pointer;
-    transition: background .25s ease-in-out;
+    transition: background 0.25s ease-in-out;
     &:hover {
       background: $lightBlueColor;
       color: $anchorColor;
@@ -71,7 +71,7 @@
   }
   &__schedule-courses-item-subject {
     &:after {
-      content: '/';
+      content: "/";
       margin: 0 5px;
     }
   }

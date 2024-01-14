@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/sizes';
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/sizes";
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .login {
   padding: $pageIndent;
@@ -11,7 +11,7 @@
   justify-content: center;
   align-items: center;
   &__box {
-    box-shadow: 0 5px 5px 0 rgba(0,0,0,.5);
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
     padding: $pageIndent;
     background: $white;
     border-radius: 4px;
@@ -32,7 +32,7 @@
     align-items: center;
     z-index: 1;
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 0;
@@ -40,7 +40,7 @@
       bottom: 0;
       z-index: -1;
       background: $white;
-      opacity: .75;
+      opacity: 0.75;
     }
   }
   .languageSelect {
@@ -133,7 +133,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: all .25s linear;
+      transition: all 0.25s linear;
       margin-bottom: 10px;
       filter: grayscale(100%);
     }
@@ -141,7 +141,7 @@
       font-size: 12px;
       font-family: $RobotoCondensed;
       color: $greyColor;
-      transition: color .25s linear;
+      transition: color 0.25s linear;
     }
   }
 }

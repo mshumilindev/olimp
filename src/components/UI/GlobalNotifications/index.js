@@ -1,34 +1,44 @@
-import React, {memo, useCallback} from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import React, { memo, useCallback } from "react";
+import styled, { keyframes, css } from "styled-components";
 
-import TextTooltip from '../TextTooltip/TextTooltip';
-import { useGlobalNotificationContext } from './context';
+import TextTooltip from "../TextTooltip/TextTooltip";
+import { useGlobalNotificationContext } from "./context";
 
 const GlobalNotifications = () => {
   const { notifications, removeNotification } = useGlobalNotificationContext();
-  
-  const handleRemoveNotification = useCallback((id) => () => {
-    removeNotification(id);
-  }, []);
+
+  const handleRemoveNotification = useCallback(
+    (id) => () => {
+      removeNotification(id);
+    },
+    [],
+  );
 
   return (
     <GlobalNotificationsHolderStyled>
-      {
-        notifications.map((item) => (
-          <GlobalNotificationStyled key={item.id} isRemoved={item.isRemoved}>
-            <GlobalNotificationTextStyled>
-              <i className={item.icon}/>
-              { item.text }
-            </GlobalNotificationTextStyled>
-            <GlobalNotificationCloseBtnStyled>
-              <TextTooltip text={'Закрити'} children={<i className="far fa-times-circle" onClick={item.onClose || handleRemoveNotification(item.id)}/>} position="left" />
-            </GlobalNotificationCloseBtnStyled>
-          </GlobalNotificationStyled>
-        ))
-      }
+      {notifications.map((item) => (
+        <GlobalNotificationStyled key={item.id} isRemoved={item.isRemoved}>
+          <GlobalNotificationTextStyled>
+            <i className={item.icon} />
+            {item.text}
+          </GlobalNotificationTextStyled>
+          <GlobalNotificationCloseBtnStyled>
+            <TextTooltip
+              text={"Закрити"}
+              children={
+                <i
+                  className="far fa-times-circle"
+                  onClick={item.onClose || handleRemoveNotification(item.id)}
+                />
+              }
+              position="left"
+            />
+          </GlobalNotificationCloseBtnStyled>
+        </GlobalNotificationStyled>
+      ))}
     </GlobalNotificationsHolderStyled>
-  )
-}
+  );
+};
 
 export default memo(GlobalNotifications);
 
@@ -58,15 +68,17 @@ const GlobalNotificationStyled = styled.div`
   box-shadow: 0 2px 5px 0 rgb(0 0 0 / 15%);
   margin-top: 10px;
   animation-name: ${showNotification};
-  animation-duration: .25s;
+  animation-duration: 0.25s;
 
   &:first-child {
     margin-top: 0;
   }
 
-  ${({isRemoved}) => isRemoved && css`
-    animation-name: ${hideNotification};
-  `}
+  ${({ isRemoved }) =>
+    isRemoved &&
+    css`
+      animation-name: ${hideNotification};
+    `}
 `;
 
 const GlobalNotificationTextStyled = styled.div`

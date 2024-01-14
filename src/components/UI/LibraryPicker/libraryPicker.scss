@@ -1,9 +1,8 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/fonts';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/fonts";
 
 .libraryPicker {
   &__add {
-
   }
   &__add-btn {
     color: $mediumGreyColor;
@@ -12,7 +11,7 @@
     justify-content: center;
     background: $lightColor;
     padding: 10px;
-    transition: background .25s ease-in-out;
+    transition: background 0.25s ease-in-out;
     &:hover {
       background: $lightBlueColor;
       color: $anchorColor;
@@ -104,7 +103,7 @@
     padding: 0 20px 10px;
     margin: 0 -20px 25px;
     border-bottom: 1px solid $lightGreyColor;
-    box-shadow: 0 5px 5px 0 rgba(0,0,0,.05);
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.05);
     &__heading {
       display: none;
     }

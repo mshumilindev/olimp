@@ -1,4 +1,4 @@
-@import '../../assets/scss/utils/colors';
+@import "../../assets/scss/utils/colors";
 @import "../../assets/scss/utils/fonts";
 @import "../../assets/scss/utils/sizes";
 
@@ -184,9 +184,9 @@ $landingIndent: $pageIndent * 1.5;
   &__content {
     padding: $landingIndent;
     filter: grayscale(0) blur(0);
-    transition: filter .15s ease-in-out;
+    transition: filter 0.15s ease-in-out;
     &:before {
-      content: '';
+      content: "";
       position: fixed;
       left: $landingIndent;
       top: $landingIndent;
@@ -194,7 +194,7 @@ $landingIndent: $pageIndent * 1.5;
       bottom: $landingIndent;
       z-index: 2;
       background: $white;
-      opacity: .75;
+      opacity: 0.75;
       display: none;
     }
   }
@@ -212,17 +212,17 @@ $landingIndent: $pageIndent * 1.5;
     top: $landingIndent;
     &.hasImage {
       &:before {
-        content: '';
+        content: "";
         background: $baseColor;
         position: absolute;
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
-        opacity: .75;
+        opacity: 0.75;
       }
       h2 {
-        text-shadow: 0 0 10px rgba(0,0,0,.5);
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         color: $white;
         border-bottom-color: $white;
         margin-bottom: $pageIndent;
@@ -272,7 +272,7 @@ $landingIndent: $pageIndent * 1.5;
       background: $white;
       padding: $pageIndent / 2;
       margin: #{-$pageIndent / 4};
-      box-shadow: 0 5px 5px 0 rgba(0,0,0,.05);
+      box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.05);
     }
     &-image-holder {
       width: calc(100% + #{$pageIndent});
@@ -287,7 +287,7 @@ $landingIndent: $pageIndent * 1.5;
     &-heading {
       text-transform: uppercase;
       font-size: 20px;
-      letter-spacing: .5px;
+      letter-spacing: 0.5px;
       font-family: $RobotoCondensed;
       text-align: center;
     }
@@ -415,7 +415,7 @@ $landingIndent: $pageIndent * 1.5;
       width: 100%;
       height: 100%;
       transform: translateX(0);
-      transition: transform .15s ease-in-out;
+      transition: transform 0.15s ease-in-out;
     }
     &-slide {
       flex: 0 0 auto;

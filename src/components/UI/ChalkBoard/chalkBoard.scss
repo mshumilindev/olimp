@@ -1,5 +1,5 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/sizes';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/sizes";
 
 .chalkBoard {
   position: fixed;
@@ -26,14 +26,14 @@
     width: calc(100% - 82px);
   }
   &:before {
-    content: '';
+    content: "";
     background: $baseColor;
     position: absolute;
     left: -$pageIndent;
     top: -$pageIndent;
     right: -$pageIndent;
     bottom: -$pageIndent;
-    opacity: .75;
+    opacity: 0.75;
   }
   ~ [class="__users"],
   ~ [class="__chatContainer"] {

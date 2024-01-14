@@ -1,10 +1,9 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
-@import '../../assets/scss/utils/sizes';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
+@import "../../assets/scss/utils/sizes";
 
 .library {
   &__list {
-
   }
   &__list-course {
     margin: 40px -10px 0;
@@ -15,7 +14,7 @@
   &__list-courseName-subject {
     color: $greyColor;
     &:after {
-      content: '/';
+      content: "/";
       margin: 0 5px;
     }
   }

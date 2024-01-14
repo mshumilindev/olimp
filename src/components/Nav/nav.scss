@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/sizes';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/sizes";
+@import "../../assets/scss/utils/fonts";
 
 $navIndent: 20px;
 
@@ -13,7 +13,7 @@ $navIndent: 20px;
   background: $white;
   font-family: $RobotoCondensed;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   &_list {
     padding: $navIndent;
   }
@@ -34,7 +34,7 @@ $navIndent: 20px;
     &-inner {
       cursor: pointer;
       color: $baseColor;
-      transition: color .15s ease-in-out;
+      transition: color 0.15s ease-in-out;
       &:hover {
         color: $linkHoverColor;
       }

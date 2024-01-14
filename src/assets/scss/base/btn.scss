@@ -7,7 +7,7 @@
   min-width: 100px;
   text-transform: uppercase;
   font-family: $RobotoCondensed;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   font-size: 14px;
   font-weight: 300;
   cursor: pointer;
@@ -83,7 +83,7 @@
     }
   }
   &:hover {
-    opacity: .75;
+    opacity: 0.75;
     i {
       color: $white;
     }
@@ -91,11 +91,11 @@
   &[disabled] {
     cursor: not-allowed !important;
     filter: grayscale(100%);
-    opacity: .5;
+    opacity: 0.5;
   }
   &.inactive {
     filter: grayscale(100%);
-    opacity: .5;
+    opacity: 0.5;
   }
   &.round {
     min-width: 0;
@@ -116,7 +116,7 @@
   &__working {
     position: relative;
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: -4px;
       top: -4px;
@@ -125,10 +125,10 @@
       background: inherit;
       z-index: -1;
       border-radius: 100%;
-      opacity: .25;
+      opacity: 0.25;
     }
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       left: -4px;
       top: -4px;
@@ -137,7 +137,7 @@
       border-top: 4px solid $successColor;
       border-radius: 100%;
       z-index: -1;
-      opacity: .5;
+      opacity: 0.5;
       animation: workingBtn 1s linear infinite;
       will-change: transform;
     }

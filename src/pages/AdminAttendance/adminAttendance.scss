@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
-@import '../../assets/scss/utils/sizes';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
+@import "../../assets/scss/utils/sizes";
 
 .adminAttendance {
   .filters__selectClass {
@@ -60,7 +60,7 @@
       color: $mediumGreyColor;
     }
     &.isWeekend {
-      opacity: .5;
+      opacity: 0.5;
     }
     &.isToday {
       background: $successColor;
@@ -100,14 +100,14 @@
       margin-bottom: -10px;
     }
     &.isWeekend {
-      opacity: .25;
+      opacity: 0.25;
     }
     &.isChecked {
       border-color: $successColor;
       [class$="-inner"] {
         color: $successColor;
         &:hover {
-          opacity: .75;
+          opacity: 0.75;
         }
       }
       [class$="-title"] {
@@ -141,7 +141,7 @@
       font-family: $RobotoCondensed;
       font-size: 16px;
       font-weight: 600;
-      letter-spacing: .5px;
+      letter-spacing: 0.5px;
       padding-right: 10px;
       white-space: nowrap;
       overflow: hidden;

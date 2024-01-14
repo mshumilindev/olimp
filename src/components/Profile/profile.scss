@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .profile {
   position: relative;
@@ -51,7 +51,6 @@
     }
   }
   &__info {
-
   }
   &__name {
     text-align: center;
@@ -74,7 +73,7 @@
     display: flex;
     &:before {
       margin: 0 5px;
-      content: '/';
+      content: "/";
       font-weight: normal;
       color: $greyColor;
     }

@@ -1,6 +1,6 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/fonts';
-@import '../../../assets/scss/utils/sizes';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/fonts";
+@import "../../../assets/scss/utils/sizes";
 
 $confirmIndent: 20px;
 
@@ -19,12 +19,12 @@ $confirmIndent: 20px;
     right: 0;
     bottom: 0;
     background: $baseColor;
-    opacity: .75;
+    opacity: 0.75;
     z-index: -1;
   }
   &__box {
     background: $white;
-    box-shadow: 0 2px 5px rgba(0,0,0,.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     padding: $confirmIndent;
     border-radius: 4px;
     left: 50%;

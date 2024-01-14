@@ -1,7 +1,7 @@
 @keyframes animateBG {
   0% {
     filter: grayscale(1);
-    opacity: .25;
+    opacity: 0.25;
   }
   50% {
     filter: grayscale(0);
@@ -9,12 +9,13 @@
   }
   100% {
     filter: grayscale(1);
-    opacity: .25;
+    opacity: 0.25;
   }
 }
 
 .page {
-  padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent ($pageIndent + $navWidth);
+  padding: ($headerHeight + $pageIndent) $pageIndent $pageIndent
+    ($pageIndent + $navWidth);
   background: $pageColor;
   min-height: calc(100vh - (#{$headerHeight} + #{$pageIndent} * 2));
   position: relative;
@@ -26,7 +27,7 @@
     bottom: 0;
     background-size: 850px;
     background-position: 50% 140px;
-    opacity: .25;
+    opacity: 0.25;
     filter: grayscale(1);
     background-repeat: repeat-x;
 
@@ -46,7 +47,7 @@
   }
   @media screen and (max-width: $maxMobile) {
     &:after {
-      content: 'Контент недоступний для мобільних пристроїв';
+      content: "Контент недоступний для мобільних пристроїв";
       position: fixed;
       left: 0;
       top: 0;
@@ -69,8 +70,15 @@
     }
   }
   &.student {
-    padding: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}) $pageIndent 0;
-    min-height: calc(100vh - calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}));
+    padding: calc(
+        #{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}
+      )
+      $pageIndent 0;
+    min-height: calc(
+      100vh - calc(
+          #{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent}
+        )
+    );
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -88,7 +96,7 @@
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       &:after {
-        content: '';
+        content: "";
         position: fixed;
         left: 0;
         top: 0;
@@ -96,7 +104,7 @@
         bottom: 0;
         background: $baseColor;
         opacity: 0;
-        transition: all .25s ease-in-out;
+        transition: all 0.25s ease-in-out;
         visibility: hidden;
         z-index: 1;
       }
@@ -105,7 +113,7 @@
       &:after {
         visibility: visible;
         left: $studentNavWidth;
-        opacity: .85;
+        opacity: 0.85;
       }
       .content {
         margin-left: $studentNavWidth;
@@ -117,7 +125,7 @@
       }
       .studentNav {
         left: 0;
-        box-shadow: 0 0 20px 0 rgba(0,0,0,.25);
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
       }
     }
   }
@@ -136,14 +144,14 @@
   bottom: 0;
   z-index: 99999;
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
     background: $white;
-    opacity: .75;
+    opacity: 0.75;
     z-index: -1;
   }
 }
@@ -289,7 +297,7 @@
       position: relative;
       padding-left: 15px;
       &:before {
-        content: '•';
+        content: "•";
         position: absolute;
         left: 0;
         top: 0;
@@ -305,7 +313,7 @@
       padding-left: 15px;
       &:before {
         counter-increment: section;
-        content: counter(section)". ";
+        content: counter(section) ". ";
         position: absolute;
         left: 0;
         top: 0;

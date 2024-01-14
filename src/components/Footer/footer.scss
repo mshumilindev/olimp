@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
-@import '../../assets/scss/utils/sizes';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
+@import "../../assets/scss/utils/sizes";
 
 .footer {
   background: $baseColor;
@@ -61,7 +61,7 @@
   }
   @media screen and (max-width: $maxTablet) {
     margin: 0;
-    transition: all .25s ease-in-out;
+    transition: all 0.25s ease-in-out;
     width: 100%;
     box-sizing: border-box;
     &__logo {

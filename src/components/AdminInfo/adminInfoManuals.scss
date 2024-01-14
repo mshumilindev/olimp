@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/fonts';
-@import '../../assets/scss/utils/sizes';
-@import '../../assets/scss/utils/colors';
+@import "../../assets/scss/utils/fonts";
+@import "../../assets/scss/utils/sizes";
+@import "../../assets/scss/utils/colors";
 
 .manuals {
   line-height: 1.5;
@@ -26,7 +26,7 @@
   }
   &__sectionTitle {
     margin-bottom: 20px;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
     display: flex;
     span {
       margin-right: 5px;

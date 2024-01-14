@@ -1,5 +1,5 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/fonts';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/fonts";
 
 .tabs {
   &__nav {
@@ -15,7 +15,7 @@
     cursor: pointer;
     margin-left: 20px;
     color: $baseColor;
-    transition: color .25s ease-in-out;
+    transition: color 0.25s ease-in-out;
     &:first-child {
       margin-left: 0;
     }

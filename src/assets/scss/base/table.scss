@@ -3,7 +3,7 @@
   &.disabled {
     td {
       > *:not(.table__actions):not(.status):not(.modal) {
-        opacity: .35;
+        opacity: 0.35;
       }
     }
   }
@@ -35,10 +35,10 @@
       align-items: center;
       z-index: 1;
       &:before {
-        content: '';
+        content: "";
         background: $white;
         z-index: -1;
-        opacity: .75;
+        opacity: 0.75;
         position: absolute;
         left: 0;
         top: 0;

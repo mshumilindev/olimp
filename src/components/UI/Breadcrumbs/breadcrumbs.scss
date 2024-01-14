@@ -1,5 +1,5 @@
-@import '../../../assets/scss/utils/fonts';
-@import '../../../assets/scss/utils/colors';
+@import "../../../assets/scss/utils/fonts";
+@import "../../../assets/scss/utils/colors";
 
 .breadcrumbs {
   display: flex;
@@ -7,9 +7,9 @@
     text-transform: uppercase;
     font-family: $RobotoCondensed;
     &:before {
-      content: '/';
+      content: "/";
       margin: 0 10px;
-      opacity: .5;
+      opacity: 0.5;
     }
     &:first-child {
       &:before {
@@ -18,10 +18,8 @@
     }
   }
   &__noLink {
-
   }
   &__link {
-
   }
   &__modifier {
     color: $greyColor;

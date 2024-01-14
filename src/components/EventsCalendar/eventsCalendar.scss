@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 $datePadding: 10px;
 $dateOpenIndent: 20px;
@@ -35,7 +35,7 @@ $dateOpenIndent: 20px;
     text-align: center;
   }
   &__data {
-    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.15);
   }
   &__daysList {
     background: $baseColor;
@@ -59,7 +59,7 @@ $dateOpenIndent: 20px;
     border-top: 1px solid $mediumGreyColor;
     @extend %s-eventsCalendar-list-item;
     &.isDisabled {
-      opacity: .25;
+      opacity: 0.25;
     }
     &.isWeekend {
       background: $lightRedColor;
@@ -110,7 +110,7 @@ $dateOpenIndent: 20px;
         background: $white;
         padding: 20px;
         border-radius: 4px;
-        box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+        box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.15);
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
@@ -121,7 +121,7 @@ $dateOpenIndent: 20px;
         opacity: 1;
         font-size: 20px;
         transform: rotate(0);
-        transition: transform .25s ease-in-out;
+        transition: transform 0.25s ease-in-out;
         &:hover {
           transform: rotate(180deg);
         }
@@ -130,7 +130,7 @@ $dateOpenIndent: 20px;
   }
   &__date-overflow {
     background: $baseColor;
-    opacity: .5;
+    opacity: 0.5;
     position: absolute;
     left: -$dateOpenIndent;
     top: -$dateOpenIndent;

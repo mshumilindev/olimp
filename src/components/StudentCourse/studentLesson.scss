@@ -1,6 +1,6 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
-@import '../../assets/scss/utils/sizes';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
+@import "../../assets/scss/utils/sizes";
 
 .studentLesson {
   &__score {
@@ -20,7 +20,7 @@
     padding: 0 10px;
     box-sizing: border-box;
     &:hover {
-      opacity: .85;
+      opacity: 0.85;
     }
   }
   &__score-item {
@@ -61,7 +61,7 @@
       font-size: 20px;
       > div:first-child {
         &:after {
-          content: ':';
+          content: ":";
         }
       }
     }

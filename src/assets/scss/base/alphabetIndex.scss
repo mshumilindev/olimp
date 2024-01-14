@@ -8,8 +8,10 @@
   user-select: none;
   &__list {
     position: sticky;
-    top: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent / 2});
-    opacity: .5;
+    top: calc(
+      #{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent / 2}
+    );
+    opacity: 0.5;
     &:hover {
       opacity: 1;
     }
@@ -50,7 +52,10 @@
     }
     &__btn {
       position: sticky;
-      top: calc(#{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent / 2});
+      top: calc(
+        #{$studentHeaderHeight} + #{$studentHeaderIndent * 2} + #{$pageIndent /
+          2}
+      );
       margin: 20px 20px 0 0;
       background: $baseColor;
       color: $white;

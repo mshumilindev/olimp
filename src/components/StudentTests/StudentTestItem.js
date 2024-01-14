@@ -1,53 +1,57 @@
-import React, { memo, useEffect, useContext, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { memo, useEffect, useContext, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-import firebase from "../../db/firestore";
+import { db } from "../../db/firestore";
+import { collection, doc, getDoc } from "firebase/firestore"; 
 import siteSettingsContext from "../../context/siteSettingsContext";
 
-const db = firebase.firestore();
-
-const StudentTestItem = ({showScore = false, test, icon}) => {
-  const { lesson: {subjectID, courseID, moduleID, lessonID} } = test;
+const StudentTestItem = ({ showScore = false, test, icon }) => {
+  const {
+    lesson: { subjectID, courseID, moduleID, lessonID },
+  } = test;
   const { lang } = useContext(siteSettingsContext);
   const [lesson, setLesson] = useState(null);
 
   useEffect(() => {
-    if ( test ) {
-      const lessonRef = db.collection('courses').doc(subjectID).collection('coursesList').doc(courseID).collection('modules').doc(moduleID).collection('lessons').doc(lessonID);
+    if (test) {
+      const lessonRef = doc(db, 'courses', subjectID, 'coursesList', courseID, 'modules', moduleID, 'lessons', lessonID);
 
-      lessonRef.get().then((snapshot) => {
-        setLesson(snapshot.data())
-      })
+      getDoc(lessonRef).then((snapshot) => {
+        setLesson(snapshot.data());
+      });
     }
   }, [test]);
 
   const lessonName = useMemo(() => {
-    return lesson?.name?.[lang] || lesson?.name?.['ua'];
+    return lesson?.name?.[lang] || lesson?.name?.["ua"];
   }, [lesson]);
 
-  if ( !lessonName ) {
+  if (!lessonName) {
     return null;
   }
 
   return (
     <TestStyled>
-      <LinkStyled to={`/courses/${subjectID}/${courseID}/${moduleID}/${lessonID}`} hasScore={showScore && !!test.score}>
+      <LinkStyled
+        to={`/courses/${subjectID}/${courseID}/${moduleID}/${lessonID}`}
+        hasScore={showScore && !!test.score}
+      >
         <TestTextStyled>
           <TestIconStyled>
-            <i class={icon}/>
+            <i class={icon} />
           </TestIconStyled>
-          <span>{ lessonName }</span>
+          <span>{lessonName}</span>
         </TestTextStyled>
       </LinkStyled>
-      {
-        showScore && !!test.score && (
-          <ScoreStyled>&nbsp;&mdash; Оцінка: <span>{test.score}</span></ScoreStyled>
-        )
-      }
+      {showScore && !!test.score && (
+        <ScoreStyled>
+          &nbsp;&mdash; Оцінка: <span>{test.score}</span>
+        </ScoreStyled>
+      )}
     </TestStyled>
-  )
-}
+  );
+};
 
 export default memo(StudentTestItem);
 
@@ -64,13 +68,13 @@ const TestStyled = styled.div`
 const LinkStyled = styled(Link)`
   max-width: 80%;
 
-  ${({hasScore}) => !hasScore && `max-width: 100%;`}
-`
+  ${({ hasScore }) => !hasScore && `max-width: 100%;`}
+`;
 
 const TestTextStyled = styled.p`
   display: inline-flex;
   align-items: center;
-  font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+  font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
   max-width: 100%;
 
   span {
@@ -95,7 +99,7 @@ const TestIconStyled = styled.strong`
 `;
 
 const ScoreStyled = styled.span`
-  font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+  font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
   width: 150px;
   flex: 0 0 auto;
 

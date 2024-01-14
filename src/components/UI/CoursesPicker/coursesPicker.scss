@@ -1,9 +1,8 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/fonts';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/fonts";
 
 .coursesPicker {
   &__add {
-
   }
   &__add-btn {
     color: $mediumGreyColor;
@@ -12,7 +11,7 @@
     justify-content: center;
     background: $lightColor;
     padding: 10px;
-    transition: background .25s ease-in-out;
+    transition: background 0.25s ease-in-out;
     &:hover {
       background: $lightBlueColor;
       color: $anchorColor;
@@ -38,7 +37,7 @@
     color: $greyColor;
     flex: 0 0 auto;
     &:after {
-      content: '/';
+      content: "/";
       margin: 0 5px;
     }
   }
@@ -61,7 +60,7 @@
   }
   &__list-item {
     margin-top: 20px;
-    transition: color .25s ease-in-out;
+    transition: color 0.25s ease-in-out;
     font-family: $RobotoCondensed;
   }
   &__list-btn {

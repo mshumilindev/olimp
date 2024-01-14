@@ -1,36 +1,41 @@
-import React, { useContext } from 'react';
+import React, { useContext } from "react";
 import siteSettingsContext from "../../../../context/siteSettingsContext";
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 
 export default function SeamlessEditorYoutube({ block, setBlock }) {
-    const { translate } = useContext(siteSettingsContext);
-    block.value = block.value || '';
+  const { translate } = useContext(siteSettingsContext);
+  block.value = block.value || "";
 
-    return (
-        <div className="seamlessEditor__editor-block-youtube">
-            <form className="form">
-                <div className="form__row">
-                    <input type="text" className="form__field" value={block.value} onChange={e => handleChange(e.target.value)} placeholder={translate('enter_youtube_url')}/>
-                </div>
-            </form>
-            <br/>
-            {
-                block.value ?
-                    <div className="seamlessEditor__editor-block-youtube-holder">
-                        <ReactPlayer url={block.value} width={'auto'} height={'auto'} />
-                    </div>
-                    :
-                    <div className="seamlessEditor__editor-block-placeholder">
-                        { translate('video_will_be_here') }
-                    </div>
-            }
+  return (
+    <div className="seamlessEditor__editor-block-youtube">
+      <form className="form">
+        <div className="form__row">
+          <input
+            type="text"
+            className="form__field"
+            value={block.value}
+            onChange={(e) => handleChange(e.target.value)}
+            placeholder={translate("enter_youtube_url")}
+          />
         </div>
-    );
+      </form>
+      <br />
+      {block.value ? (
+        <div className="seamlessEditor__editor-block-youtube-holder">
+          <ReactPlayer url={block.value} width={"auto"} height={"auto"} />
+        </div>
+      ) : (
+        <div className="seamlessEditor__editor-block-placeholder">
+          {translate("video_will_be_here")}
+        </div>
+      )}
+    </div>
+  );
 
-    function handleChange(value) {
-        setBlock({
-            ...block,
-            value: value
-        })
-    }
+  function handleChange(value) {
+    setBlock({
+      ...block,
+      value: value,
+    });
+  }
 }

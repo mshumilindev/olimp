@@ -1,13 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default class EventsCalendarDay extends React.PureComponent {
-    render() {
-        const { day } = this.props;
+  render() {
+    const { day } = this.props;
 
-        return (
-            <div className="eventsCalendar__day">
-                { day }
-            </div>
-        )
-    }
+    return <div className="eventsCalendar__day">{day}</div>;
+  }
 }

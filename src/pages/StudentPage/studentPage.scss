@@ -1,4 +1,4 @@
-@import '../../assets/scss/utils/colors';
+@import "../../assets/scss/utils/colors";
 
 .studentPage {
   &__featured {
@@ -19,7 +19,7 @@
     justify-content: center;
     align-items: center;
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 0;
@@ -27,7 +27,7 @@
       bottom: 0;
       z-index: -1;
       background: $white;
-      opacity: .75;
+      opacity: 0.75;
     }
   }
 }

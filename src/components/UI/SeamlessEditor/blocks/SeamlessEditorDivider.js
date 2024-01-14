@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default function SeamlessEditorDivider() {
-    return (
-        <div className="seamlessEditor__editor-block-divider">
-            <hr/>
-        </div>
-    );
+  return (
+    <div className="seamlessEditor__editor-block-divider">
+      <hr />
+    </div>
+  );
 }

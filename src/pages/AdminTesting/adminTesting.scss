@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .adminTesting {
   &__subjectsList {
@@ -87,7 +87,7 @@
     }
     [class$="__deleteTest"] {
       &:hover {
-        opacity: .75;
+        opacity: 0.75;
         cursor: pointer;
       }
       i {
@@ -100,7 +100,7 @@
     display: flex;
     align-items: center;
     &:hover {
-      opacity: .75;
+      opacity: 0.75;
       cursor: pointer;
     }
   }

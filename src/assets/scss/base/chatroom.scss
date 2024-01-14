@@ -1,6 +1,6 @@
-@import '../utils/colors';
-@import '../utils/fonts';
-@import '../utils/sizes';
+@import "../utils/colors";
+@import "../utils/fonts";
+@import "../utils/sizes";
 
 %-s-message {
   display: flex;
@@ -32,7 +32,7 @@ hr {
   margin: 10px 0;
   border: none;
   border-top: 1px solid $white;
-  opacity: .25;
+  opacity: 0.25;
 }
 
 .chatroom {
@@ -107,12 +107,12 @@ hr {
     padding: 10px;
     transform: translateX(-50%);
     left: 50%;
-    box-shadow: 0 0 5px 0 rgba(0,0,0,.25);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
     border-radius: 4px;
     display: none;
     z-index: 1;
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       left: 50%;
       bottom: -7px;
@@ -165,11 +165,11 @@ hr {
       width: 460px;
       max-width: 100%;
       padding: 20px;
-      box-shadow: 0 0 20px 0 rgba(0,0,0,.25);
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
       background: $baseColor;
-      opacity: .75;
+      opacity: 0.75;
       box-sizing: border-box;
-      transition: all .15s ease-in-out;
+      transition: all 0.15s ease-in-out;
       .btn {
         width: 40px;
         height: 40px;
@@ -224,7 +224,7 @@ hr {
     line-height: 1.25;
     font-size: 12px;
     color: $white;
-    opacity: .25;
+    opacity: 0.25;
     &.isPresent {
       opacity: 1;
       color: $successColor;
@@ -256,7 +256,7 @@ hr {
   }
   &__user-name {
     font-family: $RobotoCondensed;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
   }
   &__error {
     color: $errorColor;
@@ -343,8 +343,8 @@ hr {
         top: 0;
         left: 80px;
         padding: 20px 100px 20px 20px;
-        background: rgba(248,80,50,1);
-        background: linear-gradient(rgba(0,0,0,.75), transparent);
+        background: rgba(248, 80, 50, 1);
+        background: linear-gradient(rgba(0, 0, 0, 0.75), transparent);
       }
       [class$="__users"] {
         height: 100%;
@@ -380,7 +380,7 @@ hr {
     position: relative;
     padding-top: 56.25%;
     overflow: hidden;
-    transition: padding .15s ease-in-out;
+    transition: padding 0.15s ease-in-out;
     iframe {
       position: absolute;
       left: 0;
@@ -483,11 +483,11 @@ hr {
       &:hover {
         &:after {
           background: $anchorColor;
-          opacity: .25;
+          opacity: 0.25;
         }
       }
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         top: 0;
@@ -495,7 +495,7 @@ hr {
         bottom: 0;
         z-index: 1;
         opacity: 0;
-        transition: all .15s ease-in-out;
+        transition: all 0.15s ease-in-out;
       }
       * {
         user-select: none;
@@ -634,7 +634,7 @@ hr {
         top: 20px;
         font-size: 30px;
         color: $white;
-        text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         z-index: 2;
         display: none;
       }
@@ -643,7 +643,7 @@ hr {
           display: block;
           cursor: pointer;
           transform: none;
-          transition: transform .15s ease-in-out;
+          transition: transform 0.15s ease-in-out;
           &:hover {
             transform: scale(1.15);
           }
@@ -827,5 +827,4 @@ hr {
   100% {
     width: 100%;
   }
-
 }

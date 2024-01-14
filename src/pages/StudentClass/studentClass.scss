@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .studentClass {
   &__description-text {
@@ -56,10 +56,10 @@
   }
   &__courses-link {
     > * {
-      transition: color .15s ease-in-out;
+      transition: color 0.15s ease-in-out;
     }
     &:hover {
-     [class$="__courses-course"] {
+      [class$="__courses-course"] {
         color: $linkHoverColor;
       }
     }
@@ -67,7 +67,7 @@
   &__courses-subject {
     color: $greyColor;
     &:after {
-      content: '/';
+      content: "/";
       margin: 0 5px;
     }
   }

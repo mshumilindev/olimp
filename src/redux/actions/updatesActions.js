@@ -1,52 +1,55 @@
 /* global onTranslationsUpdate */
 
-import firebase from "../../db/firestore";
+import { doc, setDoc } from "firebase/firestore"; 
+import { db } from "../../db/firestore";
 
-const db = firebase.firestore();
-const translationsRef = db.collection('updates').doc('translations');
-const siteSettingsRef = db.collection('updates').doc('siteSettings');
-const versionRef = db.collection('updates').doc('version');
+const translationsRef = doc(db, 'updates', 'translations');
+const siteSettingsRef = doc(db, 'updates', 'siteSettings');
+const versionRef = doc(db, 'updates', 'version');
 
 export function setUpdates(type) {
-    const date = new Date();
-    return dispatch => {
-        dispatch(updatesBegin());
+  const date = new Date();
+  return (dispatch) => {
+    dispatch(updatesBegin());
 
-        if ( type === 'translations' ) {
-            return translationsRef.set({
-                date: date.getTime()
-            }).then(() => {
-                window.dispatchEvent(onTranslationsUpdate);
-                dispatch(updatesSuccess());
-            });
-        }
-        if ( type === 'siteSettings' ) {
-            return siteSettingsRef.set({
-                date: date.getTime()
-            }).then(() => {
-                dispatch(updatesSuccess());
-            });
-        }
-        if ( type === 'version' ) {
-            return versionRef.set({
-                date: date.getTime()
-            }).then(() => {
-                dispatch(updatesSuccess());
-            });
-        }
+    if (type === "translations") {
+      return setDoc(translationsRef, {
+          date: date.getTime(),
+        })
+        .then(() => {
+          window.dispatchEvent(onTranslationsUpdate);
+          dispatch(updatesSuccess());
+        });
     }
+    if (type === "siteSettings") {
+      return setDoc(siteSettingsRef, {
+          date: date.getTime(),
+        })
+        .then(() => {
+          dispatch(updatesSuccess());
+        });
+    }
+    if (type === "version") {
+      return setDoc(versionRef, {
+          date: date.getTime(),
+        })
+        .then(() => {
+          dispatch(updatesSuccess());
+        });
+    }
+  };
 }
 
-export const UPDATES_BEGIN = 'UPDATES_BEGIN';
-export const UPDATES_SUCCESS = 'UPDATES_SUCCESS';
+export const UPDATES_BEGIN = "UPDATES_BEGIN";
+export const UPDATES_SUCCESS = "UPDATES_SUCCESS";
 
 export const updatesBegin = () => {
-    return {
-        type: UPDATES_BEGIN
-    }
+  return {
+    type: UPDATES_BEGIN,
+  };
 };
 export const updatesSuccess = () => {
-    return {
-        type: UPDATES_SUCCESS
-    }
+  return {
+    type: UPDATES_SUCCESS,
+  };
 };

@@ -1,6 +1,6 @@
-@import '../../../assets/scss/utils/colors';
-@import '../../../assets/scss/utils/sizes';
-@import '../../../assets/scss/utils/fonts';
+@import "../../../assets/scss/utils/colors";
+@import "../../../assets/scss/utils/sizes";
+@import "../../../assets/scss/utils/fonts";
 
 .modal {
   position: fixed;
@@ -16,7 +16,7 @@
     right: 0;
     bottom: 0;
     background: $baseColor;
-    opacity: .8;
+    opacity: 0.8;
     z-index: -1;
   }
   &__inner {
@@ -53,7 +53,7 @@
   &__box-inner {
     border-radius: 4px;
     padding: $pageIndent / 2;
-    box-shadow: 0 5px 5px 0 rgba(0,0,0,.15);
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.15);
     background: $white;
   }
   &__close {
@@ -64,7 +64,7 @@
     cursor: pointer;
     font-size: 20px;
     transform: rotate(0);
-    transition: all .25s ease-in-out;
+    transition: all 0.25s ease-in-out;
     z-index: 5;
     &:hover {
       color: $linkHoverColor;
@@ -93,9 +93,9 @@
     color: $white;
     font-size: 40px;
     cursor: pointer;
-    transition: color .15s ease-in-out;
+    transition: color 0.15s ease-in-out;
     &:hover {
-      color: $linkHoverColor
+      color: $linkHoverColor;
     }
   }
 }

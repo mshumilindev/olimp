@@ -1,24 +1,44 @@
-import React, { memo, useContext, useMemo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import {connect} from "react-redux";
+import React, { memo, useContext, useMemo, useEffect, useState } from "react";
+import styled from "styled-components";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import {deleteCourse, fetchModules} from "../../../redux/actions/coursesActions";
-import siteSettingsContext from '../../../context/siteSettingsContext';
+import {
+  deleteCourse,
+  fetchModules,
+} from "../../../redux/actions/coursesActions";
+import siteSettingsContext from "../../../context/siteSettingsContext";
 import TextTooltip from "../../UI/TextTooltip/TextTooltip";
-import AdminCoursesModule from '../AdminCoursesModule/AdminCoursesModule';
-import Confirm from '../../UI/Confirm/Confirm';
+import AdminCoursesModule from "../AdminCoursesModule/AdminCoursesModule";
+import Confirm from "../../UI/Confirm/Confirm";
 
-const AdminCoursesCourseSidebar = ({ course, subjectID, usersList, user, libraryList, modulesList, fetchModules, moduleCreate, courseUpdate, params, loading, isLessonCoppied, setIsLessonCoppied, deleteCourse }) => {
+const AdminCoursesCourseSidebar = ({
+  course,
+  subjectID,
+  usersList,
+  user,
+  libraryList,
+  modulesList,
+  fetchModules,
+  moduleCreate,
+  courseUpdate,
+  params,
+  loading,
+  isLessonCoppied,
+  setIsLessonCoppied,
+  deleteCourse,
+}) => {
   const { lang, translate } = useContext(siteSettingsContext);
-  const [ showConfirm, setShowConfirm ] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const teacher = useMemo(() => {
     return usersList?.find((item) => item.id === course?.teacher);
   }, [usersList, course]);
 
   const textbooks = useMemo(() => {
-    return typeof course?.textbook === 'object' ? course?.textbook : [course?.textbook] || [];
+    return typeof course?.textbook === "object"
+      ? course?.textbook
+      : [course?.textbook] || [];
   }, [course]);
 
   useEffect(() => {
@@ -30,110 +50,147 @@ const AdminCoursesCourseSidebar = ({ course, subjectID, usersList, user, library
   }, [modulesList]);
 
   const sortedLibrary = useMemo(() => {
-    return libraryList?.filter((item) => textbooks?.find((book) => book === item.id))
+    return libraryList?.filter((item) =>
+      textbooks?.find((book) => book === item.id),
+    );
   }, [libraryList, textbooks]);
 
   return (
     <SidebarStyled>
       <SidebarTitleStyled>
-        <SidebarTitleTextStyled>{ course.name[lang] || course.name['ua'] }</SidebarTitleTextStyled>
+        <SidebarTitleTextStyled>
+          {course.name[lang] || course.name["ua"]}
+        </SidebarTitleTextStyled>
         <SidebarActionsStyled>
           <SidebarActionHolderStyled>
-            <TextTooltip text={translate('create_module')} children={
-              <SidebarActionStyled className="fa fa-plus" onClick={moduleCreate} />
-            } />
+            <TextTooltip
+              text={translate("create_module")}
+              children={
+                <SidebarActionStyled
+                  className="fa fa-plus"
+                  onClick={moduleCreate}
+                />
+              }
+            />
           </SidebarActionHolderStyled>
           <SidebarActionHolderStyled>
-            <TextTooltip text={translate('edit_course')} children={
-              <SidebarActionStyled className="fa fa-pencil-alt" onClick={courseUpdate} />
-            } />
+            <TextTooltip
+              text={translate("edit_course")}
+              children={
+                <SidebarActionStyled
+                  className="fa fa-pencil-alt"
+                  onClick={courseUpdate}
+                />
+              }
+            />
           </SidebarActionHolderStyled>
           <SidebarActionHolderStyled>
-            <TextTooltip text={translate('delete_course')} children={
-              <SidebarActionStyled className="fa fa-trash-alt error" onClick={() => setShowConfirm(true)} />
-            } />
+            <TextTooltip
+              text={translate("delete_course")}
+              children={
+                <SidebarActionStyled
+                  className="fa fa-trash-alt error"
+                  onClick={() => setShowConfirm(true)}
+                />
+              }
+            />
           </SidebarActionHolderStyled>
         </SidebarActionsStyled>
       </SidebarTitleStyled>
       <SidebarTeacherStyled>
-        <SidebarTeacherTitleStyled>{ translate('teacher') }:</SidebarTeacherTitleStyled>
-        {
-          teacher ? (
-            <>
-              <SidebarTeacherAvatarStyled style={{backgroundImage: `url(${teacher?.avatar})`}} />
-              <SidebarTeacherNameStyled>
-                <Link to={`/admin-users/${teacher?.login}`}>
-                  {teacher?.name}
-                </Link>
-              </SidebarTeacherNameStyled>
-            </>
-          ) : (
-            <SidebarNotFoundStyled>
-              <SidebarNotFoundIconStyled className="fa fa-user" />
-              { translate('no_teacher') }
-            </SidebarNotFoundStyled>
-          )
-        }
-      </SidebarTeacherStyled>
-      <SidebarTeacherTitleStyled>{ translate('textbooks') }:</SidebarTeacherTitleStyled>
-      {
-        !!sortedLibrary?.length ? (
-          <SidebarTextbooksHolderStyled>
-            {
-              sortedLibrary.map((textbook) => (
-                <>
-                  <SidebarTextbookStyled>
-                    <SidebarTextbookIconStyled className="fa fa-bookmark" />
-                    <Link to={'/admin-library/?item=' + textbook.id}>{ textbook.name }</Link>
-                  </SidebarTextbookStyled>
-                </>
-              ))
-            }
-          </SidebarTextbooksHolderStyled>
+        <SidebarTeacherTitleStyled>
+          {translate("teacher")}:
+        </SidebarTeacherTitleStyled>
+        {teacher ? (
+          <>
+            <SidebarTeacherAvatarStyled
+              style={{ backgroundImage: `url(${teacher?.avatar})` }}
+            />
+            <SidebarTeacherNameStyled>
+              <Link to={`/admin-users/${teacher?.login}`}>{teacher?.name}</Link>
+            </SidebarTeacherNameStyled>
+          </>
         ) : (
           <SidebarNotFoundStyled>
-            <SidebarNotFoundIconStyled className="fa fa-bookmark" />
-            { translate('no_textbook') }
+            <SidebarNotFoundIconStyled className="fa fa-user" />
+            {translate("no_teacher")}
           </SidebarNotFoundStyled>
-        )
-      }
-      <SidebarTeacherTitleStyled>{ translate('modules') }:</SidebarTeacherTitleStyled>
+        )}
+      </SidebarTeacherStyled>
+      <SidebarTeacherTitleStyled>
+        {translate("textbooks")}:
+      </SidebarTeacherTitleStyled>
+      {!!sortedLibrary?.length ? (
+        <SidebarTextbooksHolderStyled>
+          {sortedLibrary.map((textbook) => (
+            <>
+              <SidebarTextbookStyled>
+                <SidebarTextbookIconStyled className="fa fa-bookmark" />
+                <Link to={"/admin-library/?item=" + textbook.id}>
+                  {textbook.name}
+                </Link>
+              </SidebarTextbookStyled>
+            </>
+          ))}
+        </SidebarTextbooksHolderStyled>
+      ) : (
+        <SidebarNotFoundStyled>
+          <SidebarNotFoundIconStyled className="fa fa-bookmark" />
+          {translate("no_textbook")}
+        </SidebarNotFoundStyled>
+      )}
+      <SidebarTeacherTitleStyled>
+        {translate("modules")}:
+      </SidebarTeacherTitleStyled>
       <SidebarModulesListStyled>
-        {
-          !!sortedModules?.length ? (
-            sortedModules.map((module) => (
-              <AdminCoursesModule subjectID={subjectID} courseID={course.id} module={module} key={module.id} params={params} loading={loading} isLessonCoppied={isLessonCoppied} setIsLessonCoppied={setIsLessonCoppied} />
-            ))
-          ) : (
-            <SidebarNotFoundStyled>
-              <SidebarNotFoundIconStyled className="fa fa-book" />
-              { translate('no_modules') }
-            </SidebarNotFoundStyled>
-          )
-        }
+        {!!sortedModules?.length ? (
+          sortedModules.map((module) => (
+            <AdminCoursesModule
+              subjectID={subjectID}
+              courseID={course.id}
+              module={module}
+              key={module.id}
+              params={params}
+              loading={loading}
+              isLessonCoppied={isLessonCoppied}
+              setIsLessonCoppied={setIsLessonCoppied}
+            />
+          ))
+        ) : (
+          <SidebarNotFoundStyled>
+            <SidebarNotFoundIconStyled className="fa fa-book" />
+            {translate("no_modules")}
+          </SidebarNotFoundStyled>
+        )}
       </SidebarModulesListStyled>
-      {
-        showConfirm ?
-          <Confirm message={translate('sure_to_delete_course')} cancelAction={() => setShowConfirm(false)} confirmAction={() => deleteCourse(subjectID, course.id)} />
-          :
-          null
-      }
+      {showConfirm ? (
+        <Confirm
+          message={translate("sure_to_delete_course")}
+          cancelAction={() => setShowConfirm(false)}
+          confirmAction={() => deleteCourse(subjectID, course.id)}
+        />
+      ) : null}
     </SidebarStyled>
-  )
-}
+  );
+};
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   usersList: state.usersReducer.usersList,
   libraryList: state.libraryReducer.libraryList,
   modulesList: state.coursesReducer.modulesList,
-  user: state.authReducer.currentUser
+  user: state.authReducer.currentUser,
 });
-const mapDispatchToProps = dispatch => ({
-  fetchModules: (subjectID, courseID) => dispatch(fetchModules(subjectID, courseID)),
-  deleteCourse: (subjectID, courseID) => dispatch(deleteCourse(subjectID, courseID)),
+const mapDispatchToProps = (dispatch) => ({
+  fetchModules: (subjectID, courseID) =>
+    dispatch(fetchModules(subjectID, courseID)),
+  deleteCourse: (subjectID, courseID) =>
+    dispatch(deleteCourse(subjectID, courseID)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(memo(AdminCoursesCourseSidebar));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(memo(AdminCoursesCourseSidebar));
 
 const SidebarStyled = styled.div`
   align-self: flex-start;
@@ -247,9 +304,7 @@ const SidebarTeacherAvatarStyled = styled.div`
   background-color: #ccc;
 `;
 
-const SidebarTeacherNameStyled = styled.p`
-
-`;
+const SidebarTeacherNameStyled = styled.p``;
 
 const SidebarTextbooksHolderStyled = styled.div`
   width: 100%;

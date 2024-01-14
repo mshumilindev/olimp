@@ -1,26 +1,42 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { getChatID } from '../utils/getChatID';
+import { getChatID } from "../utils/getChatID";
 
-export const useChatWidget = ({user, location, history, events, usersList, fetchChat, chat, setChatStart, setStopChat, discardChat, onACall, setOnACall, toggleChalkBoard, toggleLesson}) => {
-  const [ muteChat, setMuteChat ] = useState(true);
-  const [ isFullScreen, setIsFullScreen ] = useState(false);
-  const [ isHidden, setIsHidden ] = useState(false);
-  const [ isChatPage, setIsChatPage ] = useState(false);
-  const [ caller, setCaller ] = useState(null);
-  const [ shareScreen, setShareScreen ] = useState(false);
-  const [ isStopping, setIsStopping ] = useState(false);
-  const [ usersLength, setUsersLength ] = useState(1);
-  const [ usersPresent, setUsersPresent ] = useState([]);
-  const [ chatLesson, setChatLesson ] = useState(null);
-  const [ isRecording, setIsRecording ] = useState(false);
-  const [ chatVideo, setChatVideo ] = useState(null);
-  const [ raiseHand, setRaiseHand ] = useState(false);
+export const useChatWidget = ({
+  user,
+  events,
+  usersList,
+  fetchChat,
+  chat,
+  setChatStart,
+  setStopChat,
+  discardChat,
+  onACall,
+  setOnACall,
+  toggleChalkBoard,
+  toggleLesson,
+}) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [muteChat, setMuteChat] = useState(true);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isChatPage, setIsChatPage] = useState(false);
+  const [caller, setCaller] = useState(null);
+  const [shareScreen, setShareScreen] = useState(false);
+  const [isStopping, setIsStopping] = useState(false);
+  const [usersLength, setUsersLength] = useState(1);
+  const [usersPresent, setUsersPresent] = useState([]);
+  const [chatLesson, setChatLesson] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [chatVideo, setChatVideo] = useState(null);
+  const [raiseHand, setRaiseHand] = useState(false);
   const [apiRef, setApiRef] = useState(null);
 
   const currentChatPage = useMemo(() => {
-    if ( location.pathname.startsWith('/chat/') ) {
-      return location.pathname.replace('/chat/', '');
+    if (location.pathname.startsWith("/chat/")) {
+      return location.pathname.replace("/chat/", "");
     }
     return null;
   }, [location]);
@@ -34,7 +50,10 @@ export const useChatWidget = ({user, location, history, events, usersList, fetch
   }, [chat, user]);
 
   const isParticipant = useMemo(() => {
-    return events?.participant?.find(eventItem => eventItem.started)?.id === chat?.id;
+    return (
+      events?.participant?.find((eventItem) => eventItem.started)?.id ===
+      chat?.id
+    );
   }, [events, chat]);
 
   const currentChatOrganizer = useMemo(() => {
@@ -42,106 +61,128 @@ export const useChatWidget = ({user, location, history, events, usersList, fetch
   }, [user, currentChat]);
 
   const currentChatParticipant = useMemo(() => {
-    return !!events?.participant?.find(eventItem => eventItem.started)?.id && currentChatPage && events?.participant?.find(eventItem => eventItem.started)?.id === currentChatPage;
+    return (
+      !!events?.participant?.find((eventItem) => eventItem.started)?.id &&
+      currentChatPage &&
+      events?.participant?.find((eventItem) => eventItem.started)?.id ===
+        currentChatPage
+    );
   }, [events, currentChatPage]);
 
   useEffect(() => {
-    if ( apiRef ) {
-      apiRef.isAudioMuted().then(data => {
-        if ( muteChat !== data ) {
-          apiRef.executeCommand('toggleAudio')
+    if (apiRef) {
+      apiRef.isAudioMuted().then((data) => {
+        if (muteChat !== data) {
+          apiRef.executeCommand("toggleAudio");
         }
       });
     }
   }, [muteChat, apiRef]);
 
   const hasToParticipate = useMemo(() => {
-    return isOrganizer || isParticipant
+    return isOrganizer || isParticipant;
   }, [isOrganizer, isParticipant]);
 
   const canViewByRole = useMemo(() => {
-    return user.isManagement && user.isManagement !== 'teacher'
+    return user.isManagement && user.isManagement !== "teacher";
   }, [user]);
 
   const hasActiveChat = useMemo(() => {
-    return events?.organizer?.find(eventItem => eventItem.started)?.id || events?.participant?.find(eventItem => eventItem.started)?.id || null;
-  }, [events])
+    return (
+      events?.organizer?.find((eventItem) => eventItem.started)?.id ||
+      events?.participant?.find((eventItem) => eventItem.started)?.id ||
+      null
+    );
+  }, [events]);
 
   useEffect(() => {
-    if ( !currentChatOrganizer && !currentChatParticipant && canViewByRole ) {
-      if ( !onACall && chat?.id === currentChatPage && chat?.started && chat?.id === currentChatPage ) {
+    if (!currentChatOrganizer && !currentChatParticipant && canViewByRole) {
+      if (
+        !onACall &&
+        chat?.id === currentChatPage &&
+        chat?.started &&
+        chat?.id === currentChatPage
+      ) {
         setOnACall(true);
-        return
+        return;
       }
-      if ( onACall && chat?.id !== currentChatPage && !hasToParticipate ) {
+      if (onACall && chat?.id !== currentChatPage && !hasToParticipate) {
         setOnACall(false);
-        return
+        return;
       }
     }
-  }, [onACall, currentChatOrganizer, currentChatParticipant, canViewByRole, setOnACall, chat, currentChatPage, hasToParticipate]);
+  }, [
+    onACall,
+    currentChatOrganizer,
+    currentChatParticipant,
+    canViewByRole,
+    setOnACall,
+    chat,
+    currentChatPage,
+    hasToParticipate,
+  ]);
 
   useEffect(() => {
-    if ( chatVideo ) {
-      const link = document.createElement('a');
+    if (chatVideo) {
+      const link = document.createElement("a");
 
-      link.id = 'recordLink';
+      link.id = "recordLink";
       link.href = chatVideo;
       link.download = chat?.name;
 
-      document.querySelector('body').appendChild(link);
-      document.getElementById('recordLink').click();
-      document.getElementById('recordLink').remove();
+      document.querySelector("body").appendChild(link);
+      document.getElementById("recordLink").click();
+      document.getElementById("recordLink").remove();
       setChatVideo(null);
     }
   }, [chatVideo, chat]);
 
   useEffect(() => {
-    if ( user?.role === 'guest' ) {
-      if ( onACall ) {
-        history.push('/chat/' + chat?.id);
-      }
-      else {
-        history.push('/guest');
+    if (user?.role === "guest") {
+      if (onACall) {
+        navigate("/chat/" + chat?.id);
+      } else {
+        navigate("/guest");
       }
     }
-  }, [onACall, chat, user, history]);
+  }, [onACall, chat, user, navigate]);
 
   useEffect(() => {
     setIsChatPage(!!getChatID(location));
   }, [location]);
 
   useEffect(() => {
-    if ( isFullScreen || isChatPage ) {
+    if (isFullScreen || isChatPage) {
       setIsHidden(false);
     }
   }, [isFullScreen, isChatPage]);
 
   useEffect(() => {
-    if ( chat?.organizer === user?.id ) {
+    if (chat?.organizer === user?.id) {
       setOnACall(true);
     }
-    if ( onACall && !chat?.started ) {
+    if (onACall && !chat?.started) {
       setOnACall(false);
     }
   }, [chat, user, setOnACall]);
 
   useEffect(() => {
-    if ( events ) {
-      if ( getChatID(location) ) {
+    if (events) {
+      if (getChatID(location)) {
         fetchChat(getChatID(location), user.id, user.role, user.isManagement);
       }
-      if ( hasActiveChat ) {
+      if (hasActiveChat) {
         fetchChat(hasActiveChat, user.id, user.role, user.isManagement);
       }
-      if ( !hasActiveChat && !getChatID(location) ) {
+      if (!hasActiveChat && !getChatID(location)) {
         discardChat();
       }
     }
   }, [events, location, hasActiveChat, user, discardChat, fetchChat]);
 
   useEffect(() => {
-    if ( chat?.started && usersList ) {
-      setCaller(usersList.find(item => item.id === chat.organizer));
+    if (chat?.started && usersList) {
+      setCaller(usersList.find((item) => item.id === chat.organizer));
     }
   }, [chat, usersList]);
 
@@ -179,6 +220,6 @@ export const useChatWidget = ({user, location, history, events, usersList, fetch
     apiRef,
     setApiRef,
     raiseHand,
-    setRaiseHand
-  }
-}
+    setRaiseHand,
+  };
+};

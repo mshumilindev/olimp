@@ -1,5 +1,5 @@
-@import '../../assets/scss/utils/colors';
-@import '../../assets/scss/utils/fonts';
+@import "../../assets/scss/utils/colors";
+@import "../../assets/scss/utils/fonts";
 
 .adminUsersList {
   position: relative;
@@ -19,11 +19,11 @@
     }
     &-inner {
       background: $white;
-      box-shadow: 0 2px 5px 0 rgba(0,0,0,.15);
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15);
       padding: 10px 10px 10px 15px;
       display: flex;
       cursor: pointer;
-      transition: background-color .15s ease-in-out;
+      transition: background-color 0.15s ease-in-out;
       &:hover {
         background: $lightColor;
       }
@@ -87,7 +87,7 @@
       margin-top: 10px;
       a {
         color: $baseColor;
-        letter-spacing: .5px;
+        letter-spacing: 0.5px;
         &:hover {
           color: $linkHoverColor;
         }
