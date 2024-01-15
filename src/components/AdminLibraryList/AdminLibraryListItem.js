@@ -4,9 +4,9 @@ import TagsList from "../UI/TagsList/TagsList";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from "../UI/Modal/Modal";
 import Form from "../Form/Form";
-import { updateDoc, downloadDoc } from "../../redux/actions/libraryActions";
 import { connect } from "react-redux";
 import classNames from "classnames";
+import { updateDocument, downloadDoc } from "../../redux/actions/libraryActions";
 
 function AdminLibraryListItem({
   user,
@@ -14,7 +14,7 @@ function AdminLibraryListItem({
   setTags,
   onDeleteDoc,
   loading,
-  updateDoc,
+  updateDocument,
   downloadDoc,
   users,
   isCurrent,
@@ -163,7 +163,7 @@ function AdminLibraryListItem({
 
     delete newFile.updated;
 
-    updateDoc(newFile, item.id);
+    updateDocument(newFile, item.id);
     resetItem();
   }
 
@@ -194,8 +194,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateDoc: (newFile, id) => dispatch(updateDoc(newFile, id)),
-  downloadDoc: (ref, isNew) => dispatch(downloadDoc(ref, isNew)),
+  updateDocument: (newFile, id) => dispatch(updateDocument(newFile, id)),
+  downloadDoc: (newFile, id) => dispatch(downloadDoc(newFile, id)),
 });
 export default connect(
   mapStateToProps,

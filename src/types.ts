@@ -104,3 +104,19 @@ export type TClass = {
   schedule: TClassScheduleDay[];
   id?: string;
 };
+
+export type TTextbook = {
+  id: string;
+  name: string;
+  ref: string;
+  tags: string[];
+  teacher: string[];
+};
+
+export type TTextbookNew = {
+  url: any;
+  metadata: {
+    name: any[];
+    customMetadata: any[];
+  }
+};

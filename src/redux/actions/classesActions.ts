@@ -28,7 +28,6 @@ export function fetchClasses() {
             id: doc.id,
           };
         });
-        console.log(classesList)
         dispatch(classesSuccess(classesList));
       });
     };

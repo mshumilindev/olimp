@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { connect } from "react-redux";
-import { deleteDoc, uploadDoc } from "../../redux/actions/libraryActions";
+import { deleteDocument, uploadDoc } from "../../redux/actions/libraryActions";
 import siteSettingsContext from "../../context/siteSettingsContext";
 import Modal from "../../components/UI/Modal/Modal";
 import Form from "../../components/Form/Form";
@@ -19,7 +19,7 @@ function AdminLibrary({
   libraryList,
   setTags,
   searchQuery,
-  deleteDoc,
+  deleteDocument,
   uploadDoc,
   usersList,
   filters,
@@ -56,10 +56,10 @@ function AdminLibrary({
   const [docToDelete, setDocToDelete] = useState(null);
 
   const onConfirmRemove = useCallback(() => {
-    deleteDoc(docToDelete.id, docToDelete.ref);
+    deleteDocument(docToDelete.id, docToDelete.ref);
     setDocToDelete(null);
     setShowConfirmRemove(false);
-  }, [deleteDoc, setDocToDelete, setShowConfirmRemove, docToDelete]);
+  }, [deleteDocument, setDocToDelete, setShowConfirmRemove, docToDelete]);
 
   const onDeleteDoc = useCallback(
     (e, doc) => {
@@ -212,7 +212,7 @@ const mapStateToProps = (state) => ({
   user: state.authReducer.currentUser,
 });
 const mapDispatchToProps = (dispatch) => ({
-  deleteDoc: (docID, docRef) => dispatch(deleteDoc(docID, docRef)),
+  deleteDocument: (docID, docRef) => dispatch(deleteDocument(docID, docRef)),
   uploadDoc: (newFile, file, id) => dispatch(uploadDoc(newFile, file, id)),
 });
 export default connect(
