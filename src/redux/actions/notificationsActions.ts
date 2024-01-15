@@ -38,14 +38,13 @@ export const fetchNotifications = (userID: string) => {
           id: doc.id,
         });
       });
-      console.log(notificationsList)
       dispatch(fetchNotificationsSuccess(notificationsList));
     });
   };
 }
 
 export const updateNotification = (newNotification: TNotification) => {
-  const notificationRef = doc(db, "notifications", newNotification.id);
+  const notificationRef = doc(db, 'notifications', newNotification.id || '');
 
   return (dispatch: Dispatch) => {
     dispatch(fetchNotificationsBegin());

@@ -48,7 +48,6 @@ export type TSiteSettings = {
 
 export type TNotification = {
   heading: TLang;
-  id: string;
   link: {
     url: string;
     text: TLang;
@@ -56,4 +55,12 @@ export type TNotification = {
   targetUsers: string[];
   text: TLang;
   type: 'message' | 'warning' | 'error';
+  id?: string;
+};
+
+export type TContact = {
+  name: TLang;
+  order: number;
+  phone: string;
+  id?: string;
 };
