@@ -15,6 +15,7 @@ export type User = {
   skype: string;
   status: UserStatus;
   tel: string;
+  avatar?: string;
   token?: string;
   isManagement?: UserManagementType;
   courses?: Course[];
