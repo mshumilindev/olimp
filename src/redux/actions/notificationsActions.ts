@@ -1,17 +1,21 @@
+import { TNotification } from "@types";
 import {
   collection,
+  CollectionReference,
   deleteDoc,
   doc,
   onSnapshot,
+  Query,
   query,
   setDoc,
   where,
 } from "firebase/firestore";
+import { Dispatch, Unsubscribe } from "redux";
 import { db } from "../../db/firestore";
 
-export function fetchNotifications(userID) {
-  let notificationsCollection = collection(db, "notifications");
-  let unsubscribe = null;
+export const fetchNotifications = (userID: string) => {
+  let notificationsCollection: CollectionReference | Query = collection(db, "notifications");
+  let unsubscribe: Unsubscribe | null = null;
 
   if (userID) {
     notificationsCollection = query(
@@ -20,29 +24,30 @@ export function fetchNotifications(userID) {
     );
   }
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(fetchNotificationsBegin());
     if (unsubscribe) {
       unsubscribe();
     }
     unsubscribe = onSnapshot(notificationsCollection, (snapshot) => {
-      const notificationsList = [];
+      const notificationsList: TNotification[] = [];
 
       snapshot.docs.forEach((doc) => {
         notificationsList.push({
-          ...doc.data(),
+          ...doc.data() as Omit<TNotification, 'id'>,
           id: doc.id,
         });
       });
+      console.log(notificationsList)
       dispatch(fetchNotificationsSuccess(notificationsList));
     });
   };
 }
 
-export function updateNotification(newNotification) {
+export const updateNotification = (newNotification: TNotification) => {
   const notificationRef = doc(db, "notifications", newNotification.id);
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(fetchNotificationsBegin());
     return setDoc(
       notificationRef,
@@ -54,10 +59,10 @@ export function updateNotification(newNotification) {
   };
 }
 
-export function removeNotification(notificationID) {
+export function removeNotification(notificationID: string) {
   const notificationRef = doc(db, "notifications", notificationID);
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(fetchNotificationsBegin());
     return deleteDoc(notificationRef);
   };
@@ -71,7 +76,7 @@ export const fetchNotificationsBegin = () => {
     type: NOTIFICATIONS_BEGIN,
   };
 };
-export const fetchNotificationsSuccess = (notificationsList) => {
+export const fetchNotificationsSuccess = (notificationsList: TNotification[]) => {
   return {
     type: NOTIFICATIONS_SUCCESS,
     payload: { notificationsList },

@@ -1,4 +1,4 @@
-import { User, UserRole } from "@types";
+import { TUser, TUserRole } from "@types";
 import {
   collection,
   onSnapshot,
@@ -14,7 +14,7 @@ import { db } from "../../db/firestore";
 
 const usersCollection = collection(db, "users");
 
-export const fetchUsers = (role: UserRole) => {
+export const fetchUsers = (role: TUserRole) => {
   let unsubscribe: Unsubscribe | null = null;
 
   return (dispatch: Dispatch) => {
@@ -23,7 +23,7 @@ export const fetchUsers = (role: UserRole) => {
       unsubscribe();
     }
     unsubscribe = onSnapshot(usersCollection, (snapshot) => {
-      const usersList: User[] = [];
+      const usersList: TUser[] = [];
 
       snapshot.docs.forEach((doc) => {
         const docData = doc.data();
@@ -33,7 +33,7 @@ export const fetchUsers = (role: UserRole) => {
             id: doc.id,
           });
 
-          usersList.push(docData as User);
+          usersList.push(docData as TUser);
         }
       });
       dispatch(fetchUsersSuccess(usersList));
@@ -58,12 +58,12 @@ export const fetchProfile = (profileLogin: string) => {
         };
       }
 
-      dispatch(fetchProfileSuccess(profile as User));
+      dispatch(fetchProfileSuccess(profile as TUser));
     });
   };
 }
 
-export const updateUser = (id: string, updatedFields: User) => {
+export const updateUser = (id: string, updatedFields: TUser) => {
   const userDoc = doc(db, "users", id);
 
   return () => {
@@ -90,7 +90,7 @@ export const fetchUsersBegin = () => {
     type: FETCH_USERS_BEGIN,
   };
 };
-export const fetchUsersSuccess = (usersList: User[]) => {
+export const fetchUsersSuccess = (usersList: TUser[]) => {
   return {
     type: FETCH_USERS_SUCCESS,
     payload: { usersList },
@@ -105,7 +105,7 @@ export const fetchProfileBegin = () => {
     type: FETCH_PROFILE_BEGIN,
   };
 };
-export const fetchProfileSuccess = (profile: User) => {
+export const fetchProfileSuccess = (profile: TUser) => {
   return {
     type: FETCH_PROFILE_SUCCESS,
     payload: { profile },
@@ -120,7 +120,7 @@ export const updateUserBegin = () => {
     type: UPDATE_USER_BEGIN,
   };
 };
-export const updateUserSuccess = (usersList: User[]) => {
+export const updateUserSuccess = (usersList: TUser[]) => {
   return {
     type: UPDATE_USER_SUCCESS,
     payload: { usersList },
@@ -135,7 +135,7 @@ export const deleteUserBegin = () => {
     type: DELETE_USER_BEGIN,
   };
 };
-export const deleteUserSuccess = (usersList: User[]) => {
+export const deleteUserSuccess = (usersList: TUser[]) => {
   return {
     type: DELETE_USER_SUCCESS,
     payload: { usersList },

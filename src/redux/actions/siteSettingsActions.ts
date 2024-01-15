@@ -1,10 +1,10 @@
-import { ISiteSettings } from "@types";
+import { TSiteSettings } from "@types";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { Dispatch } from "redux";
 import { db } from "../../db/firestore";
 
 const siteSettingsCollection = collection(db, "config");
-const defaultSiteSettings: ISiteSettings = {
+const defaultSiteSettings: TSiteSettings = {
   address: {
     value: ''
   },
@@ -25,7 +25,6 @@ export function fetchSiteSettings() {
   siteSettingsList = localStorage.getItem("siteSettings")
     ? JSON.parse(localStorage.getItem("siteSettings") || '').data
     : { data: defaultSiteSettings };
-  console.log(siteSettingsList)
   if (!Object.keys(siteSettingsList.data)?.length) {
     return (dispatch: Dispatch) => {
       dispatch(siteSettingsBegin());
@@ -48,7 +47,7 @@ export function fetchSiteSettings() {
   }
 }
 
-export function updateSiteSettings(newSiteSettings: ISiteSettings) {
+export function updateSiteSettings(newSiteSettings: TSiteSettings) {
   const logoRef = doc(db, "config", "logo");
   const siteNameRef = doc(db, "config", "siteName");
   const addressRef = doc(db, "config", "address");
@@ -91,7 +90,7 @@ export const siteSettingsBegin = () => {
     type: SITE_SETTINGS_BEGIN,
   };
 };
-export const siteSettingsSuccess = (siteSettingsList: ISiteSettings) => {
+export const siteSettingsSuccess = (siteSettingsList: TSiteSettings) => {
   return {
     type: SITE_SETTINGS_SUCCESS,
     payload: { siteSettingsList },

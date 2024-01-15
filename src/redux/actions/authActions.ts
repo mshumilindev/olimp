@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { generate } from "generate-password";
 import { Dispatch, Unsubscribe } from "redux";
-import { User } from "@types";
+import { TUser } from "@types";
 import { db } from "../../db/firestore";
 
 export function loginUser(login: string, password: string, remember: boolean = false) {
@@ -44,7 +44,7 @@ export function loginUser(login: string, password: string, remember: boolean = f
                 ? JSON.parse(localStorage.getItem("savedUsers") || '')
                 : [];
 
-              if (!savedUsers?.find((user: User) => user.login === foundUser.login)) {
+              if (!savedUsers?.find((user: TUser) => user.login === foundUser.login)) {
                 savedUsers.push(foundUser);
               }
 
@@ -59,7 +59,7 @@ export function loginUser(login: string, password: string, remember: boolean = f
                 loginUserSuccess({
                   ...foundUser,
                   id: snapshot.docs[0].id,
-                } as User),
+                } as TUser),
               );
             });
           }
@@ -96,7 +96,7 @@ export function checkIfLoggedin(token: string) {
             checkIfLoggedinSuccess({
               ...snapshot.docs[0].data(),
               id: snapshot.docs[0].id,
-            } as User),
+            } as TUser),
           );
         }
       }
@@ -138,7 +138,7 @@ export const loginUserError = (error: string) => {
     payload: { error },
   };
 };
-export const loginUserSuccess = (currentUser: User) => {
+export const loginUserSuccess = (currentUser: TUser) => {
   return {
     type: LOGIN_USER_SUCCESS,
     payload: { currentUser },
@@ -156,7 +156,7 @@ export const checkIfLoggedinError = (error: string) => {
     payload: { error },
   };
 };
-export const checkIfLoggedinSuccess = (currentUser: User) => {
+export const checkIfLoggedinSuccess = (currentUser: TUser) => {
   return {
     type: CHECK_IF_LOGGED_IN_SUCCESS,
     payload: { currentUser },

@@ -1,4 +1,4 @@
-import { ITranslation } from "@types";
+import { TTranslation } from "@types";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Dispatch } from "redux";
 import { db } from "../../db/firestore";
@@ -21,7 +21,7 @@ export const fetchTranslations = () => {
           });
           data.docs.forEach((lang) => {
             const translationsListItem = translationsList.find(
-              (item: ITranslation) => item.id === itemKey,
+              (item: TTranslation) => item.id === itemKey,
             );
 
             if (translationsListItem) {
@@ -64,7 +64,7 @@ export const updateTranslation = (id: string, key: string, value: string) => {
           });
           data.docs.forEach((lang) => {
             const translationsListItem = translationsList.find(
-              (item: ITranslation) => item.id === itemKey,
+              (item: TTranslation) => item.id === itemKey,
             );
 
             if (translationsListItem) {
@@ -90,7 +90,7 @@ export const fetchTranslationsBegin = () => {
     type: FETCH_TRANSLATIONS_BEGIN,
   };
 };
-export const fetchTranslationsSuccess = (translationsList: ITranslation[]) => {
+export const fetchTranslationsSuccess = (translationsList: TTranslation[]) => {
   return {
     type: FETCH_TRANSLATIONS_SUCCESS,
     payload: { translationsList },
@@ -105,7 +105,7 @@ export const updateTranslationBegin = () => {
     type: UPDATE_TRANSLATION_BEGIN,
   };
 };
-export const updateTranslationSuccess = (translationsList: ITranslation[]) => {
+export const updateTranslationSuccess = (translationsList: TTranslation[]) => {
   return {
     type: UPDATE_TRANSLATION_SUCCESS,
     payload: { translationsList },

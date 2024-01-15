@@ -1,6 +1,6 @@
 /* global onTranslationsUpdate */
 
-import { IUpdate } from "@types";
+import { TUpdate } from "@types";
 import { doc, setDoc } from "firebase/firestore";
 import { Dispatch } from "redux";
 import { db } from "../../db/firestore";
@@ -9,7 +9,7 @@ const translationsRef = doc(db, "updates", "translations");
 const siteSettingsRef = doc(db, "updates", "siteSettings");
 const versionRef = doc(db, "updates", "version");
 
-export function setUpdates(type: IUpdate) {
+export function setUpdates(type: TUpdate) {
   const date = new Date();
   return (dispatch: Dispatch) => {
     dispatch(updatesBegin());

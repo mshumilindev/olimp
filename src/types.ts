@@ -1,47 +1,59 @@
-export type UserRole = "admin" | "teacher" | "student" | "guest";
+export type TUserRole = "admin" | "teacher" | "student" | "guest";
 
-export type UserStatus = "active" | "suspended";
+export type TUserStatus = "active" | "suspended";
 
-export type UserManagementType = "teacher" | "deputy" | "headmaster";
+export type TUserManagementType = "teacher" | "deputy" | "headmaster";
 
-export type User = {
+export type TUser = {
   canSeeGuests: boolean;
   email: string;
   id: string;
   login: string;
   name: string;
   password: string;
-  role: UserRole;
+  role: TUserRole;
   skype: string;
-  status: UserStatus;
+  status: TUserStatus;
   tel: string;
   avatar?: string;
   token?: string;
-  isManagement?: UserManagementType;
-  courses?: Course[];
+  isManagement?: TUserManagementType;
+  courses?: TCourse[];
 };
 
-export type Course = {};
+export type TCourse = {};
 
-export type IUpdate = 'translations' | 'siteSettings';
+export type TUpdate = 'translations' | 'siteSettings';
 
-export type ILang = {
+export type TLang = {
   en: string;
   ru: string;
   ua: string;
 };
 
-export type ITranslation = {
+export type TTranslation = {
   id: string;
-  langs: ILang[];
+  langs: TLang[];
 };
 
-export type ISiteSettings = {
+export type TSiteSettings = {
   address: {
     value: string;
   },
   logo: {
     url: string;
   },
-  siteName: ILang;
+  siteName: TLang;
+};
+
+export type TNotification = {
+  heading: TLang;
+  id: string;
+  link: {
+    url: string;
+    text: TLang;
+  },
+  targetUsers: string[];
+  text: TLang;
+  type: 'message' | 'warning' | 'error';
 };
