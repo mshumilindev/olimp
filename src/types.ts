@@ -64,3 +64,21 @@ export type TContact = {
   phone: string;
   id?: string;
 };
+
+export type TBlock = {
+  order: number;
+  id: string;
+};
+
+export type TPage = {
+  featured: string;
+  name: TLang;
+  slug: string;
+  content?: TBlock[];
+  id?: string;
+};
+
+export type TEmptyPage = {
+  id?: string;
+  content?: TBlock[];
+}

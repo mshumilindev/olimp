@@ -1,25 +1,29 @@
+import { TBlock, TEmptyPage, TPage } from "@types";
 import {
   collection,
   deleteDoc,
   doc,
   getDocs,
   query,
+  QuerySnapshot,
   setDoc,
   where,
 } from "firebase/firestore";
+import { Dispatch } from "redux";
 import { db } from "../../db/firestore";
 
-const staticInfoCollection = collection(db, "staticInfo");
-const newStaticInfoList = [];
+const staticInfoCollection = collection(db, 'staticInfo');
+const newStaticInfoList: TPage[] = [];
 
-export function fetchStaticInfo() {
+export const fetchStaticInfo = () => {
+  console.log(newStaticInfoList)
   if (!newStaticInfoList.length) {
-    return (dispatch) => {
+    return (dispatch: Dispatch) => {
       dispatch(staticInfoBegin());
       return getDocs(staticInfoCollection).then((data) => {
         data.docs.map((doc) => {
           return newStaticInfoList.push({
-            ...doc.data(),
+            ...doc.data() as Omit<TPage, 'id'>,
             id: doc.id,
           });
         });
@@ -28,17 +32,20 @@ export function fetchStaticInfo() {
       });
     };
   } else {
-    return (dispatch) => {
+    return (dispatch: Dispatch) => {
       dispatch(staticInfoSuccess(newStaticInfoList));
     };
   }
 }
 
-export function fetchPage(slug) {
+export const fetchPage = (slug: string) => {
   const docRef = query(collection(db, "staticInfo"), where("slug", "==", slug));
-  let page = null;
+  let page: TPage | TEmptyPage = {
+    id: '',
+    content: []
+  };
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(pageBegin());
     return getDocs(docRef).then((snapshot) => {
       if (snapshot.docs.length) {
@@ -48,14 +55,14 @@ export function fetchPage(slug) {
         page = {
           ...doc.data(),
           id: doc.id,
-        };
+        } as TPage;
 
         getDocs(contentRef).then((content) => {
-          const blocks = [];
+          const blocks: TBlock[] = [];
           if (content.docs.length) {
             content.docs.forEach((item) => {
               blocks.push({
-                ...item.data(),
+                ...item.data() as TBlock,
               });
             });
           }
@@ -70,17 +77,17 @@ export function fetchPage(slug) {
   };
 }
 
-export function removePage(pageID) {
+export const removePage = (pageID: string) => {
   const pageRef = doc(db, "staticInfo", pageID);
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(staticInfoBegin());
     return deleteDoc(pageRef).then(() => {
       return getDocs(staticInfoCollection).then((data) => {
         newStaticInfoList.splice(0, newStaticInfoList.length);
         data.docs.map((doc) =>
           newStaticInfoList.push({
-            ...doc.data(),
+            ...doc.data() as Omit<TPage, 'id'>,
             id: doc.id,
           }),
         );
@@ -90,12 +97,12 @@ export function removePage(pageID) {
   };
 }
 
-export function createPage(pageID, page) {
+export const createPage = (pageID: string, page: TPage) => {
   const pageRef = doc(db, "staticInfo", pageID);
   delete page.id;
   delete page.content;
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(staticInfoBegin());
     return setDoc(pageRef, {
       ...page,
@@ -104,7 +111,7 @@ export function createPage(pageID, page) {
         newStaticInfoList.splice(0, newStaticInfoList.length);
         data.docs.map((doc) => {
           return newStaticInfoList.push({
-            ...doc.data(),
+            ...doc.data() as Omit<TPage, 'id'>,
             id: doc.id,
           });
         });
@@ -114,7 +121,7 @@ export function createPage(pageID, page) {
   };
 }
 
-export function updatePage(pageID, page) {
+export const updatePage = (pageID: string, page: TPage) => {
   const pageRef = doc(db, "staticInfo", pageID);
   const slug = page.slug;
   const contentRef = collection(db, "staticInfo", pageID, "content");
@@ -125,10 +132,10 @@ export function updatePage(pageID, page) {
   delete page.id;
   delete page.content;
 
-  const handleContent = (dispatch) => {
+  const handleContent = (dispatch: Dispatch) => {
     getDocs(contentRef).then((snapshot) => {
       if (snapshot.docs.length) {
-        deleteDoc(snapshot, dispatch);
+        deleteDocument(snapshot, dispatch);
       } else {
         if (content && content.length) {
           createDoc(dispatch);
@@ -139,15 +146,12 @@ export function updatePage(pageID, page) {
     });
   };
 
-  const deleteDoc = (snapshot, dispatch) => {
-    const docRef = collection(db, "staticInfo")
-      .doc(pageID)
-      .collection("content")
-      .doc(snapshot.docs[toDeleteI].id);
-    docRef.delete().then(() => {
+  const deleteDocument = (snapshot: QuerySnapshot, dispatch: Dispatch) => {
+    const docRef = doc(db, 'staticInfo', pageID, 'content', snapshot.docs[toDeleteI].id);
+    deleteDoc(docRef).then(() => {
       toDeleteI++;
       if (toDeleteI < snapshot.docs.length) {
-        deleteDoc(snapshot, dispatch);
+        deleteDocument(snapshot, dispatch);
       } else {
         if (content && content.length) {
           createDoc(dispatch);
@@ -158,16 +162,16 @@ export function updatePage(pageID, page) {
     });
   };
 
-  const createDoc = (dispatch) => {
-    const block = content[toCreateI];
-    const docRef = doc(db, "staticInfo", pageID, "content", block.id);
+  const createDoc = (dispatch: Dispatch) => {
+    const block = content?.[toCreateI];
+    const docRef = doc(db, "staticInfo", pageID, "content", block?.id || '');
 
     setDoc(docRef, {
       ...block,
       order: toCreateI,
     }).then(() => {
       toCreateI++;
-      if (toCreateI < content.length) {
+      if (toCreateI < (content?.length || 0)) {
         createDoc(dispatch);
       } else {
         return redoList(dispatch);
@@ -175,12 +179,15 @@ export function updatePage(pageID, page) {
     });
   };
 
-  const redoList = (dispatch) => {
+  const redoList = (dispatch: Dispatch) => {
     const docRef = query(
       collection(db, "staticInfo"),
       where("slug", "==", slug),
     );
-    let page = null;
+    let page: TPage | TEmptyPage = {
+      id: '',
+      content: []
+    };
 
     return getDocs(docRef).then((snapshot) => {
       const doc = snapshot.docs[0];
@@ -189,14 +196,14 @@ export function updatePage(pageID, page) {
       page = {
         ...doc.data(),
         id: doc.id,
-      };
+      } as TPage;
 
       getDocs(contentRef).then((content) => {
-        const blocks = [];
+        const blocks: TBlock[] = [];
         if (content.docs.length) {
           content.docs.forEach((item) => {
             blocks.push({
-              ...item.data(),
+              ...item.data() as TBlock,
             });
           });
         }
@@ -206,7 +213,7 @@ export function updatePage(pageID, page) {
           newStaticInfoList.splice(0, newStaticInfoList.length);
           data.docs.map((doc) => {
             return newStaticInfoList.push({
-              ...doc.data(),
+              ...doc.data() as Omit<TPage, 'id'>,
               id: doc.id,
             });
           });
@@ -218,7 +225,7 @@ export function updatePage(pageID, page) {
     });
   };
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(pageBegin());
     return setDoc(pageRef, {
       ...page,
@@ -238,7 +245,7 @@ export const staticInfoBegin = () => {
     type: STATIC_INFO_BEGIN,
   };
 };
-export const staticInfoSuccess = (staticInfo) => {
+export const staticInfoSuccess = (staticInfo: TPage[]) => {
   return {
     type: STATIC_INFO_SUCCESS,
     payload: { staticInfo },
@@ -249,7 +256,7 @@ export const pageBegin = () => {
     type: PAGE_BEGIN,
   };
 };
-export const pageSuccess = (page) => {
+export const pageSuccess = (page: TPage | TEmptyPage) => {
   return {
     type: PAGE_SUCCESS,
     payload: { page },
