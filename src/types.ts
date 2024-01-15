@@ -46,6 +46,8 @@ export type TSiteSettings = {
   siteName: TLang;
 };
 
+export type TNotificationType = 'message' | 'warning' | 'error';
+
 export type TNotification = {
   heading: TLang;
   link: {
@@ -54,7 +56,7 @@ export type TNotification = {
   },
   targetUsers: string[];
   text: TLang;
-  type: 'message' | 'warning' | 'error';
+  type: TNotificationType;
   id?: string;
 };
 
@@ -81,4 +83,24 @@ export type TPage = {
 export type TEmptyPage = {
   id?: string;
   content?: TBlock[];
-}
+};
+
+export type TLesson = {
+
+};
+
+export type TDayTitle = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+export type TClassScheduleDay = {
+  lessons: TLesson[];
+  title: TDayTitle;
+};
+
+export type TClass = {
+  courses: TCourse[];
+  curator: string;
+  info: TLang;
+  title: TLang;
+  schedule: TClassScheduleDay[];
+  id?: string;
+};

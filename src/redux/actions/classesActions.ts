@@ -1,19 +1,22 @@
+import { TClass } from "@types";
 import {
   collection,
   onSnapshot,
   doc,
   getDocs,
   deleteDoc,
+  setDoc,
 } from "firebase/firestore";
+import { Dispatch, Unsubscribe } from "redux";
 import { db } from "../../db/firestore";
 
 const classesCollection = collection(db, "classes");
-let classesList = [];
+let classesList: TClass[] = [];
 
 export function fetchClasses() {
-  let unsubscribe = null;
+  let unsubscribe: Unsubscribe | null = null;
   if (!classesList.length) {
-    return (dispatch) => {
+    return (dispatch: Dispatch) => {
       dispatch(classesBegin());
       if (unsubscribe) {
         unsubscribe();
@@ -21,31 +24,32 @@ export function fetchClasses() {
       unsubscribe = onSnapshot(classesCollection, (snapshot) => {
         classesList = snapshot.docs.map((doc) => {
           return {
-            ...doc.data(),
+            ...doc.data() as Omit<TClass, 'id'>,
             id: doc.id,
           };
         });
+        console.log(classesList)
         dispatch(classesSuccess(classesList));
       });
     };
   } else {
-    return (dispatch) => {
+    return (dispatch: Dispatch) => {
       dispatch(classesSuccess(classesList));
     };
   }
 }
 
-export function removeClass(classID) {
+export function removeClass(classID: string) {
   const classRef = doc(db, "classes", classID);
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(classesBegin());
     return deleteDoc(classRef).then(() => {
       return getDocs(classesCollection).then((snapshot) => {
         classesList.splice(0, classesList.length);
         snapshot.docs.map((doc) => {
           return classesList.push({
-            ...doc.data(),
+            ...doc.data() as Omit<TClass, 'id'>,
             id: doc.id,
           });
         });
@@ -55,15 +59,14 @@ export function removeClass(classID) {
   };
 }
 
-export function createClass(classID, classData) {
+export function createClass(classID: string, classData: TClass) {
   const classRef = doc(db, "classes", classID);
 
   delete classData.id;
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(classesBegin());
-    return classRef
-      .setDoc({
+    return setDoc(classRef, {
         ...classData,
       })
       .then(() => {
@@ -71,7 +74,7 @@ export function createClass(classID, classData) {
           classesList.splice(0, classesList.length);
           snapshot.docs.map((doc) => {
             return classesList.push({
-              ...doc.data(),
+              ...doc.data() as Omit<TClass, 'id'>,
               id: doc.id,
             });
           });
@@ -81,22 +84,22 @@ export function createClass(classID, classData) {
   };
 }
 
-export function updateClass(classID, classData) {
+export function updateClass(classID: string, classData: TClass) {
   const classRef = doc(db, "classes", classID);
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(classBegin());
-    return classRef.setDoc({
+    return setDoc(classRef, {
       ...classData,
     });
   };
 }
 
-export function fetchClass(classID) {
+export function fetchClass(classID: string) {
   const docRef = doc(db, "classes", classID);
-  let unsubscribe;
+  let unsubscribe: Unsubscribe | null = null;
 
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(classBegin());
     if (unsubscribe) {
       unsubscribe();
@@ -104,7 +107,7 @@ export function fetchClass(classID) {
     unsubscribe = onSnapshot(docRef, (snapshot) => {
       dispatch(
         classSuccess({
-          ...snapshot.data(),
+          ...snapshot.data() as Omit<TClass, 'id'>,
           id: snapshot.id,
         }),
       );
@@ -113,7 +116,7 @@ export function fetchClass(classID) {
 }
 
 export function discardClass() {
-  return (dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(discardClassSuccess());
   };
 }
@@ -129,7 +132,7 @@ export const classesBegin = () => {
     type: CLASSES_BEGIN,
   };
 };
-export const classesSuccess = (classesList) => {
+export const classesSuccess = (classesList: TClass[]) => {
   return {
     type: CLASSES_SUCCESS,
     payload: { classesList },
@@ -140,7 +143,7 @@ export const classBegin = () => {
     type: CLASS_BEGIN,
   };
 };
-export const classSuccess = (classData) => {
+export const classSuccess = (classData: TClass) => {
   return {
     type: CLASS_SUCCESS,
     payload: { classData },
